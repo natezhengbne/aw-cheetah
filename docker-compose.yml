@@ -1,0 +1,41 @@
+version: '3.3'
+
+services:
+  postgresql:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data/
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    networks:
+      - persist
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    restart: always
+    ports:
+      - 8002:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: asyncworking@chui.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - persist
+
+
+volumes:
+  postgresql_data: {}
+  pgadmin-data: {}
+  sonarqube_data: {}
+  sonarqube_conf: {}
+  sonarqube_extensions: {}
+  sonarqube_bundled-plugins: {}
+networks:
+  persist: {}
