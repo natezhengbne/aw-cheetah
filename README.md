@@ -55,19 +55,4 @@ In this project, we use [CheckStyle](https://checkstyle.sourceforge.io/) for sta
 
 Install it to IDEA by opening Preferences -> Plugins, then search CheckStyle in marketplace and install.
 
-### How to run CheckStyle
-
-1. On the bottom of your window you should see a new tab labeled CheckStyle
-2. Click on it and you should see a newly opened window
-3. On the left of the window you should see a few options including Check Current File, Check Module, Check Project, etc.
-4. Click on which you find needed, and the result should appear inside the window.
-
-or use cli in terminal using following:
-
-```
- ./gradlew check
-
- ```
-
-
 
