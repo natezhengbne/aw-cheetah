@@ -1,18 +1,22 @@
 package com.asyncworking.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.User;
+import com.asyncworking.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("test")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    private static final String TEST_MESSAGE = "Test";
+    private final UserService userService;
 
-    @GetMapping
-    public String getTestMessage() {
-        return TEST_MESSAGE;
+    @PostMapping
+    public ResponseEntity<UserInfoDto> createUser(@RequestBody UserInfoDto userInfoDto) {
+        UserInfoDto userInfoDto1 = userService.createUser(userInfoDto);
+        return ResponseEntity.ok(userInfoDto1);
     }
-
 }

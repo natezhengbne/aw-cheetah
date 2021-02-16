@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS "USER";
+DROP TABLE IF EXISTS "user";
 CREATE TYPE status AS ENUM('Unverified', 'Activated', 'Cancelled');
-CREATE TABLE "USER" (
+CREATE TABLE "user" (
     "id" serial PRIMARY KEY,
     "email" VARCHAR(255) UNIQUE NOT NULL,
     "name" VARCHAR(255) NOT NULL,
