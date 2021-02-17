@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=aw_cheetah
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=aw-cheetah
     username: postgres
     password: admin
   flyway:
