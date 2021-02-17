@@ -1,10 +1,10 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.models.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.asyncworking.models.UserEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByName(String name);
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    UserEntity findUserEntityByName(String username);
 }
