@@ -35,7 +35,7 @@ class UserControllerTest {
 		UserEntity mockUser = UserEntity.builder()
 				.id(1)
 				.name("Lengary")
-				.email("a@asyncworking.com")
+				.email("lengary@asyncworking.com")
 				.title("Frontend Developer")
 				.status(Status.Unverified)
 				.password("len123")

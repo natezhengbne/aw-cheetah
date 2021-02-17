@@ -22,7 +22,7 @@ public class UserController {
     public ResponseEntity login(@RequestBody UserInfoDto userInfoDto) {
         System.out.println(userInfoDto);
         try {
-            userService.login(userInfoDto.getName(), userInfoDto.getPassword());
+            userService.login(userInfoDto.getEmail(), userInfoDto.getPassword());
             return ResponseEntity.ok("success");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
