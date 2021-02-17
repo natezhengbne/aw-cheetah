@@ -1,17 +1,21 @@
 package com.asyncworking.models;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Data
 @Getter
-@Setter
-@Table(name = "user", schema = "public")
-public class User {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "user")
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Type(type = "long")
@@ -34,10 +38,10 @@ public class User {
     private Status status;
 
     @CreatedDate
-    @Column(nullable = false)
+    @Column(name = "created_time", nullable = false)
     private Date createdTime;
 
-    @CreatedDate
-    @Column(nullable = false)
+    @LastModifiedDate
+    @Column(name = "updated_time", nullable = false)
     private Date updatedTime;
 }

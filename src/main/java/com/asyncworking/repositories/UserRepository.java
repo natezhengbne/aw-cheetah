@@ -1,13 +1,12 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.models.User;
+import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByNameOrEmail(String name, String email);
-    User findByEmailLike(String email);
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    Optional<UserEntity> findByEmail(String email);
 }

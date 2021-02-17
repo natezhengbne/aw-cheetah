@@ -1,7 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.User;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,31 +9,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    @Autowired
     private UserRepository userRepository;
 
     public UserInfoDto createUser(UserInfoDto userInfoDto) {
-        User userFromDB = userRepository.save(mapInfoDtoToModel(userInfoDto));
+        UserEntity userFromDB = userRepository.save(mapInfoDtoToModel(userInfoDto));
         return mapModelToInfoDto(userFromDB);
     }
 
-    public User findUserByEmail(UserInfoDto userInfoDto) {
-
+    public UserEntity findUserByEmail(UserInfoDto userInfoDto) {
         return userRepository.findByEmailLike(userInfoDto.getEmail());
     }
 
-    public User mapInfoDtoToModel(UserInfoDto userInfoDto) {
-        User user = new User();
-        user.setName(userInfoDto.getName());
-        user.setEmail(userInfoDto.getEmail());
-        return user;
+    public UserEntity mapInfoDtoToModel(UserInfoDto userInfoDto) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setName(userInfoDto.getName());
+        userEntity.setEmail(userInfoDto.getEmail());
+        return userEntity;
     }
 
-    public UserInfoDto mapModelToInfoDto(User user) {
+    public UserInfoDto mapModelToInfoDto(UserEntity userEntity) {
         UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setId(user.getId());
-        userInfoDto.setName(user.getName());
-        userInfoDto.setEmail(user.getEmail());
+        userInfoDto.setId(userEntity.getId());
+        userInfoDto.setName(userEntity.getName());
+        userInfoDto.setEmail(userEntity.getEmail());
         return userInfoDto;
     }
 }

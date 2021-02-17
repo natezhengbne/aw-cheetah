@@ -1,7 +1,6 @@
 package com.asyncworking.controller;
 
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.User;
 import com.asyncworking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
