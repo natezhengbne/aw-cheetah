@@ -1,4 +1,4 @@
-CREATE SCHEMA if not exists aw-cheetah;
+CREATE SCHEMA if not exists "awcheetah";
 
 DROP TABLE IF EXISTS "user";
 CREATE TYPE status AS ENUM('Unverified', 'Activated', 'Cancelled');

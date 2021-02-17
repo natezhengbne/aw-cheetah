@@ -1,14 +1,21 @@
 package com.asyncworking.models;
 
-import java.time.OffsetDateTime;
-import javax.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.*;
+import java.time.OffsetDateTime;
+
 @Entity
-@Getter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user")
 public class UserEntity {
     @Id

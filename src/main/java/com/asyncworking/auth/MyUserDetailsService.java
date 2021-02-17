@@ -1,9 +1,8 @@
 package com.asyncworking.auth;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,29 +12,35 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
 @Service
 public class MyUserDetailsService implements UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        UserEntity userEntity = userRepository.findUserEntityByName(username);
+        Optional<UserEntity> foundUser = userRepository.findUserEntityByEmail(email);
 
-        if (userEntity == null) {
-            throw new UsernameNotFoundException("No user found with username: " + username);
+        if (foundUser.isEmpty()) {
+            throw new UsernameNotFoundException("No user found with username: " + email);
         }
 
-        System.out.println(userEntity);
+        log.info(foundUser.get().toString());
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("role:fake");
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(authority);
 
-        System.out.println(userEntity.getPassword());
-        return new User(userEntity.getName(),
-                userEntity.getPassword().replaceAll("\\s+", ""),
+        log.info(foundUser.get().getPassword());
+        return new User(foundUser.get().getEmail(),
+                foundUser.get().getPassword().replaceAll("\\s+", ""),
                 authorities);
     }
 }

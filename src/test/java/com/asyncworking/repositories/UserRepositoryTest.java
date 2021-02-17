@@ -1,19 +1,22 @@
 package com.asyncworking.repositories;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import javax.persistence.EntityManager;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@DataJpaTest
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
 public class UserRepositoryTest {
 
     @MockBean
@@ -22,29 +25,28 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private EntityManager entityManager;
-
     @BeforeEach
     public void insertMockEmp() {
+        userRepository.deleteAll();
+        when(passwordEncoder.encode("len123")).thenReturn("testpass");
+
         UserEntity mockUser = UserEntity.builder()
                 .id(1)
-                .name(passwordEncoder.encode("Lengary"))
-                .email("lengary@asyncworking.com")
+                .name("Lengary")
+                .email("a@asyncworking.com")
                 .title("Frontend Developer")
                 .status(Status.Unverified)
-                .password("len123")
+                .password(passwordEncoder.encode("len123"))
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
-        entityManager.persist(mockUser);
-        entityManager.flush();
+        userRepository.saveAndFlush(mockUser);
     }
 
     @Test
     public void shouldFindUserByName() {
-        UserEntity userEntity = userRepository.findUserEntityByName("Lengary");
-        assertEquals("Frontend Developer", userEntity.getTitle());
+        Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
+        assertEquals("testpass", userEntity.get().getPassword());
     }
 }
