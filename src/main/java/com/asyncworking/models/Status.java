@@ -2,7 +2,8 @@ package com.asyncworking.models;
 
 public enum Status {
 
-    Unverified,
-    Activated,
-    Cancelled
+    UNVERIFIED,
+    ACTIVATED,
+    CANCELLED
+
 }
