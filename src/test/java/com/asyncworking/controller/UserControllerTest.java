@@ -11,12 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,10 +49,9 @@ class UserControllerTest {
 	@Test
 	void login() throws Exception {
 		String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len123\"}";
-		MvcResult mvcResult = mockMvc.perform(
-				MockMvcRequestBuilders.post("/login")
-				.contentType(MediaType.APPLICATION_JSON_VALUE)
-				.content(inputJson)).andReturn();
+		MvcResult mvcResult = mockMvc.perform(post("/login")
+						.contentType(MediaType.APPLICATION_JSON_VALUE)
+						.content(inputJson)).andReturn();
 
 		assertEquals(200, mvcResult.getResponse().getStatus());
 	}
