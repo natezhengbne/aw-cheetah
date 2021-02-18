@@ -35,7 +35,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 //其余请求都需要验证
                 .anyRequest().authenticated()
                 //授权码模式需要 会弹出默认自带的登录框
-                .and().httpBasic()
                 //禁用跨站伪造
                 .and().csrf().disable();
     }
