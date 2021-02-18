@@ -24,7 +24,7 @@ public class UserController {
         log.info(userInfoDto.getEmail());
         log.info(userInfoDto.getPassword());
         try {
-            userService.login(userInfoDto.getName(), userInfoDto.getPassword());
+            userService.login(userInfoDto.getEmail(), userInfoDto.getPassword());
             return ResponseEntity.ok("success");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
