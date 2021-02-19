@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Type(type = "long")
-    private long id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -27,7 +28,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
     @Column(nullable = false)
@@ -39,9 +40,9 @@ public class UserEntity {
 
     @CreatedDate
     @Column(name = "created_time", nullable = false)
-    private Date createdTime;
+    private OffsetDateTime createdTime;
 
     @LastModifiedDate
     @Column(name = "updated_time", nullable = false)
-    private Date updatedTime;
+    private OffsetDateTime updatedTime;
 }
