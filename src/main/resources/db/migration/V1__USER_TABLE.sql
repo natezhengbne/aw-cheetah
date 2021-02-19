@@ -1,7 +1,6 @@
 CREATE SCHEMA if not exists awcheetah;
 
 DROP TABLE IF EXISTS "user";
-CREATE TYPE status AS ENUM('Unverified', 'Activated', 'Cancelled');
 CREATE TABLE "user" (
     "id" BIGSERIAL PRIMARY KEY,
     "email" VARCHAR(255) UNIQUE NOT NULL,
