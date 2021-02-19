@@ -5,6 +5,7 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,8 +29,8 @@ public class UserService {
 
     private UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
 
-//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
-//        String encodePassword = encoder.encode(userInfoDto.getPassword());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+        String encodePassword = encoder.encode(userInfoDto.getPassword());
 
         return UserEntity.builder()
                 .name(userInfoDto.getName())
