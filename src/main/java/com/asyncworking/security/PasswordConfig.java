@@ -1,4 +1,4 @@
-package com.asyncworking.config;
+package com.asyncworking.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

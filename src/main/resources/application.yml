@@ -4,10 +4,19 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=aw-cheetah
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=awcheetah
     username: postgres
     password: admin
   flyway:
     enabled: true
   jpa:
+    properties:
+      hibernate:
+        default_schema: awcheetah
     show-sql: true
+
+logging:
+  pattern:
+    dateFormat: yyyy-MM-dd HH:mm:ss.SSS ZZZ
+  level:
+    com.asyncworking: debug
