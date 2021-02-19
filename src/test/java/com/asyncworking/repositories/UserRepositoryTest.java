@@ -2,37 +2,51 @@ package com.asyncworking.repositories;
 
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class UserRepositoryTest {
+public class UserRepositoryTest {
+
+	@MockBean
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private  UserRepository repository;
+	private UserRepository userRepository;
 
-	@Test
-	@Transactional
-	public void save() {
-		UserEntity user = UserEntity.builder()
-				.name("username")
-				.email("email")
-				.title("title")
-				.password("password")
+	@BeforeEach
+	public void insertMockEmp() {
+		userRepository.deleteAll();
+		when(passwordEncoder.encode("len123")).thenReturn("testpass");
+
+		UserEntity mockUser = UserEntity.builder()
+				.id(1)
+				.name("Lengary")
+				.email("a@asyncworking.com")
+				.title("Frontend Developer")
 				.status(Status.UNVERIFIED)
-				.createdTime(OffsetDateTime.now())
-				.updatedTime(OffsetDateTime.now())
+				.password(passwordEncoder.encode("len123"))
+				.createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+				.updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
 				.build();
 
-		UserEntity saved = repository.save(user);
-		assertEquals("email", saved.getEmail());
-		assertThat(saved.getId() > 0);
+		userRepository.saveAndFlush(mockUser);
+	}
+
+	@Test
+	public void shouldFindUserByName() {
+		Optional<UserEntity> userEntity = userRepository.findByEmail("a@asyncworking.com");
+		assertEquals("testpass", userEntity.get().getPassword());
 	}
 }

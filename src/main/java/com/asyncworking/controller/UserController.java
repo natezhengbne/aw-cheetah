@@ -20,7 +20,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserInfoDto> createPassword(@RequestBody UserInfoDto userInfoDto){
-        UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
+        UserInfoDto userInfoDtoPassword = userService.createPassword(userInfoDto);
         return ResponseEntity.ok(userInfoDtoPassword);
     }
 
