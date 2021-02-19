@@ -1,5 +1,6 @@
 package com.asyncworking.dtos;
 
+import com.asyncworking.models.Status;
 import lombok.Builder;
 import lombok.Data;
 

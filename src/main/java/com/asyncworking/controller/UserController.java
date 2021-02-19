@@ -14,12 +14,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public String getTestMessage() {
-        return "CREATE PASSWORD";
+    public String getStudent() {
+        return "create password";
     }
 
     @PostMapping
-    public ResponseEntity<UserInfoDto> createPassword(@RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity<UserInfoDto> createPassword(@RequestBody UserInfoDto userInfoDto) {
         UserInfoDto userInfoDtoPassword = userService.createPassword(userInfoDto);
         return ResponseEntity.ok(userInfoDtoPassword);
     }
