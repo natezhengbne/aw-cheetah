@@ -7,20 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/signup")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public String getStudent() {
-        return "create password";
-    }
-
-    @PostMapping
-    public ResponseEntity<UserInfoDto> createPassword(@RequestBody UserInfoDto userInfoDto) {
-        UserInfoDto userInfoDtoPassword = userService.createPassword(userInfoDto);
+    @PostMapping()
+    public ResponseEntity<UserInfoDto> createUser(@RequestBody UserInfoDto userInfoDto) {
+        UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
         return ResponseEntity.ok(userInfoDtoPassword);
     }
 

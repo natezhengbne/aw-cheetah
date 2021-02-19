@@ -6,6 +6,8 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -18,7 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserInfoDto createPassword(UserInfoDto userInfoDto) {
+    public UserInfoDto createUser(UserInfoDto userInfoDto) {
+
         UserEntity userFromDB = userRepository.save(mapInfoDtoToEntity(userInfoDto));
 
         return mapEntityToInfoDto(userFromDB);
@@ -28,26 +31,20 @@ public class UserService {
         return UserInfoDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
-                .password(userEntity.getPassword())
-                .title(userEntity.getTitle())
+                .id(userEntity.getId())
                 .build();
     }
 
     private UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
-
-//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
-//        String encodePassword = encoder.encode(userInfoDto.getPassword());
-
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         return UserEntity.builder()
                 .name(userInfoDto.getName())
                 .email(userInfoDto.getEmail())
-                .password(userInfoDto.getPassword())
-
-                .title(userInfoDto.getTitle())
+                .password(encodedPassword)
                 .status(Status.UNVERIFIED)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-//                .password(encodePassword)
                 .build();
     }
 }
