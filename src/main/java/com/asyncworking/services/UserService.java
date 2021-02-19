@@ -34,8 +34,8 @@ public class UserService {
 
         return UserEntity.builder()
                 .name(userInfoDto.getName())
-//                .password(encodePassword)
-                .password(userInfoDto.getPassword())
+                .password(encodePassword)
+//                .password(userInfoDto.getPassword())
                 .build();
     }
 }
