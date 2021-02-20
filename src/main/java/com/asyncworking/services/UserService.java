@@ -27,14 +27,6 @@ public class UserService {
         return mapEntityToInfoDto(userFromDB);
     }
 
-    private UserInfoDto mapEntityToInfoDto(UserEntity userEntity) {
-        return UserInfoDto.builder()
-                .email(userEntity.getEmail())
-                .name(userEntity.getName())
-                .id(userEntity.getId())
-                .build();
-    }
-
     private UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
@@ -45,6 +37,13 @@ public class UserService {
                 .status(Status.UNVERIFIED)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+    }
+
+    private UserInfoDto mapEntityToInfoDto(UserEntity userEntity) {
+        return UserInfoDto.builder()
+                .email(userEntity.getEmail())
+                .name(userEntity.getName())
                 .build();
     }
 }

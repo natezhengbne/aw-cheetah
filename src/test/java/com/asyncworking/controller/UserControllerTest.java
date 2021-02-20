@@ -1,58 +1,56 @@
 package com.asyncworking.controller;
 
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class UserControllerTest {
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private UserService userService;
+
     @Autowired
-    private UserRepository userRepository;
-
-
-    @BeforeEach
-    public void insertMockEmp() {
-        userRepository.deleteAll();
-        UserEntity mockUser = UserEntity.builder()
-                .id(1)
-                .name("Lengary")
-                .email("lengary@asyncworking.com")
-                .title("Frontend Developer")
-                .status(Status.UNVERIFIED)
-                .password("len123")
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build();
-
-        userRepository.saveAndFlush(mockUser);
-    }
+    ObjectMapper objectMapper;
 
     @Test
-    void login() throws Exception {
-        String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len123\"}";
-        MvcResult mvcResult = mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(inputJson)).andReturn();
+    public void testCreateUser() throws Exception {
 
-        assertEquals(200, mvcResult.getResponse().getStatus());
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaaaa1")
+                .build();
+        UserInfoDto userGetInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .build();
+
+        BDDMockito.given(userService.createUser(userPostInfoDto)).willReturn(userGetInfoDto);
+        mockMvc.perform(post("/signup")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.name").value("aaa"))
+                .andExpect(jsonPath("$.email").exists())
+                .andExpect(jsonPath("$.email").value("aaa@qq.com"));
     }
 }
