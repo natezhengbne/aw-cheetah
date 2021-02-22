@@ -19,8 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
@@ -36,12 +34,13 @@ public class UserControllerTest {
 
     @Test
     public void testCreateUser() throws Exception {
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setName("Steven");
-        userInfoDto.setEmail("skykk0128@gmail.com");
-        BDDMockito.given(userService.createUser(userInfoDto)).willReturn(userInfoDto);
+        UserInfoDto userInfoDtoPost = new UserInfoDto();
+        UserInfoDto userInfoDtoGet = new UserInfoDto();
+        userInfoDtoGet.setName("Steven");
+        userInfoDtoGet.setEmail("skykk0128@gmail.com");
+        BDDMockito.given(userService.createUser(userInfoDtoPost)).willReturn(userInfoDtoGet);
         mockMvc.perform(post("/signup")
-                .content(objectMapper.writeValueAsString(userInfoDto))
+                .content(objectMapper.writeValueAsString(userInfoDtoPost))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
