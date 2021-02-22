@@ -4,35 +4,43 @@ import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/signup")
+//@RequestMapping("/api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<UserInfoDto> createUser(@RequestBody UserInfoDto userInfoDto) {
         UserInfoDto userInfoDto1 = userService.createUser(userInfoDto);
         return ResponseEntity.ok(userInfoDto1);
     }
 
-//    @PostMapping
-//    public ResponseEntity<String> createUserEntity(@RequestBody UserInfoDto userInfoDto) {
-//        UserInfoDto userInfoDto1 = new UserInfoDto();
-//        userInfoDto1.setName("Steven");
-//        userInfoDto1.setEmail("skykk0128@gmail.com");
-//        return ResponseEntity.ok("success");
+//    @PostMapping("/email")
+//    public ResponseEntity<Boolean> checkEmailExists(@RequestBody UserInfoDto userInfoDto) {
+//        Boolean ifEmailExists = userService.ifEmailExists(userInfoDto);
+//        return ResponseEntity.ok(ifEmailExists);
 //    }
 
-//    @GetMapping
-//    public ResponseEntity<String> createUserEntity() {
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setName("Steven");
-//        userEntity.setEmail("skykk0128@gmail.com");
-//        return ResponseEntity.ok(userEntity.toString());
+//    @PostMapping("/register")
+//    public String save(@Validated UserInfoDto userInfoDto, BindingResult bindingResult) {
+//
+//        if (userService.emailExists(userInfoDto.getEmail())) {
+//            bindingResult.addError(new FieldError("userInfoDto",
+//                    "email",
+//                    "Error: Email address already exists"));
+//        }
+//
+//        if (bindingResult.hasErrors()) {
+//            return "register";
+//        }
+//        return "redirect/login";
 //    }
 }

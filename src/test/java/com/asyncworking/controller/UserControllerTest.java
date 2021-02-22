@@ -1,5 +1,6 @@
 package com.asyncworking.controller;
 
+import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@ContextConfiguration(classes = AwCheetahApplication.class)
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
@@ -40,7 +43,7 @@ public class UserControllerTest {
         userInfoDto.setName("Steven");
         userInfoDto.setEmail("skykk0128@gmail.com");
         BDDMockito.given(userService.createUser(userInfoDto)).willReturn(userInfoDto);
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(userInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

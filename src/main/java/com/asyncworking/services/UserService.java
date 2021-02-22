@@ -6,6 +6,8 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -20,23 +22,27 @@ public class UserService {
         return mapModelToInfoDto(userFromDB);
     }
 
-    public Optional<UserEntity> findUserByEmail(UserInfoDto userInfoDto) {
-        return userRepository.findUserEntityByEmailIgnoreCase(userInfoDto.getEmail());
+    public Boolean ifEmailExists(UserInfoDto userInfoDto) {
+        if (userRepository.existsUserEntityByEmailEquals(userInfoDto.getEmail()) == false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Transactional
+    public Optional<UserEntity> findUserByEmail(String email) {
+        return userRepository.findUserEntityByEmailIgnoreCase(email);
+    }
+
+    public boolean emailExists(String email) {
+        return findUserByEmail(email).isPresent();
     }
 
     public UserEntity mapInfoDtoToModel(UserInfoDto userInfoDto) {
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setName(userInfoDto.getName());
-//        userEntity.setEmail(userInfoDto.getEmail());
-//        List<UserEntity> userEntityList = new ArrayList<>();
-//        for (UserEntity userEntity: userEntityList) {
-//            if (userEntity.getName().equals(userInfoDto.getEmail())) {
-//                return null;
-//            }
-//        }
         return UserEntity.builder()
                 .name(userInfoDto.getName())
-                .email(userInfoDto.getEmail())
+                .email(userInfoDto.getEmail().toLowerCase())
                 .title(userInfoDto.getTitle())
                 .password("password12345")
                 .status(Status.UNVERIFIED)
@@ -45,12 +51,9 @@ public class UserService {
     }
 
     public UserInfoDto mapModelToInfoDto(UserEntity userEntity) {
-//        UserInfoDto userInfoDto = new UserInfoDto();
-//        userInfoDto.setName(userEntity.getName());
-//        userInfoDto.setEmail(userEntity.getEmail());
         return UserInfoDto.builder()
                 .name(userEntity.getName())
-                .email(userEntity.getEmail())
+                .email(userEntity.getEmail().toLowerCase())
                 .title(userEntity.getTitle())
                 .password("password12345").build();
     }
