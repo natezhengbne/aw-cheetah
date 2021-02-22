@@ -22,13 +22,13 @@ public class UserController {
     @PostMapping("/signup")
 //    public ResponseEntity<UserInfoDto> createUser(@RequestBody UserInfoDto userInfoDto) {
     public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) {
-        log.info(userInfoDto.getEmail());
-        log.info(userInfoDto.getName());
+        log.info("email: " + userInfoDto.getEmail());
+        log.info("name: " + userInfoDto.getName());
 
         try {
 
             UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
-            log.info(userInfoDtoPassword.getPassword());
+//            log.info(userInfoDtoPassword.getPassword());
             return ResponseEntity.ok(userInfoDtoPassword);
         } catch (Exception e) {
 

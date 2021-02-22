@@ -20,20 +20,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    //AW-9 function test
-    public boolean isEmailUsed(String email) {
-
-//        if (userRepository.findByEmail(email) == null) {
-//            return true;
-//        }
-
-        return false;
-    }
-
     public UserInfoDto createUser(UserInfoDto userInfoDto) {
 
         UserEntity userFromDB = userRepository.save(mapInfoDtoToEntity(userInfoDto));
-        log.info(String.valueOf(userFromDB));
+
+        log.info("email: " + userFromDB.getEmail());
+        log.info("name: " + userFromDB.getName());
+        log.info("encoded password: " + userFromDB.getPassword());
 
         return mapEntityToInfoDto(userFromDB);
     }
@@ -57,4 +50,16 @@ public class UserService {
                 .name(userEntity.getName())
                 .build();
     }
+
+    //AW-9 function test
+    public boolean isEmailUsed(String email) {
+        boolean flag = userRepository.existsByEmail(email);
+        log.info("email exists?: " + flag);
+        return flag;
+//        if (userRepository.findByEmail(email) == null) {
+//            return true;
+//        }
+//        return false;
+    }
+
 }
