@@ -1,4 +1,4 @@
-package com.asyncworking.controller;
+package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;

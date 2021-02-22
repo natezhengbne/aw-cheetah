@@ -1,7 +1,9 @@
-package com.asyncworking.controller;
+package com.asyncworking.controllers;
 
+import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.services.UserService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -17,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = AwCheetahApplication.class)
 @AutoConfigureMockMvc
 class UserControllerUnitTest {
 
@@ -28,7 +32,7 @@ class UserControllerUnitTest {
 	private UserService userService;
 
 	@Test
-	void login() throws Exception {
+	public void login() throws Exception {
 		Authentication mocked = Mockito.mock(Authentication.class);
 		when(mocked.isAuthenticated()).thenReturn(true);
 		when(userService.login(anyString(), anyString())).thenReturn(mocked);

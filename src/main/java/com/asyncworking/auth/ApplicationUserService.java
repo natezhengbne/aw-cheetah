@@ -3,6 +3,8 @@ package com.asyncworking.auth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,28 +20,31 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MyUserDetailsService implements UserDetailsService {
+public class ApplicationUserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<UserEntity> foundUser = userRepository.findUserEntityByEmail(email);
+        UserEntity foundUser = mapToUserDetails(email);
 
-        if (foundUser.isEmpty()) {
-            throw new UsernameNotFoundException("No user found with username: " + email);
-        }
-
-        log.info(foundUser.get().toString());
+        log.info(foundUser.toString());
 
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("role:fake");
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(authority);
 
-        log.info(foundUser.get().getPassword());
-        return new User(foundUser.get().getEmail(),
-                foundUser.get().getPassword().replaceAll("\\s+", ""),
+        log.info(foundUser.getPassword());
+        return new User(foundUser.getEmail(),
+                foundUser.getPassword().replaceAll("\\s+", ""),
                 authorities);
     }
+
+    private UserEntity mapToUserDetails (String email) {
+        return userRepository.findUserEntityByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(String.format("Username %s not found", email)));
+    }
+
 }

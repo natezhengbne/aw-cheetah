@@ -14,10 +14,10 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    public Authentication login(String name, String password) {
+    public Authentication login(String email, String password) {
 
         Authentication authenticate = this.authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(name, password));
+                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
         return authenticate;
     }
