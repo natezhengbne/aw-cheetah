@@ -22,11 +22,13 @@ public class UserInfoDtoRepositoryTest {
     @Test
     public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
         UserEntity userEntity = UserEntity.builder()
-                .name("Steven")
+                .id(1L)
+                .createdTime(OffsetDateTime.now())
                 .email("skykk0128@gmail.com")
+                .name("Steven")
                 .password("password")
                 .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now())
+                .title("Developer")
                 .updatedTime(OffsetDateTime.now()).build();
         UserEntity returnedUserEntity = userRepository.save(userEntity);
         Assertions.assertEquals("Steven", returnedUserEntity.getName());

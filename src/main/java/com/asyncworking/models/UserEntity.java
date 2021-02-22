@@ -7,7 +7,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.Date;
 
 @Entity
 @Data
@@ -28,7 +27,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column()
     private String title;
 
     @Column(nullable = false)

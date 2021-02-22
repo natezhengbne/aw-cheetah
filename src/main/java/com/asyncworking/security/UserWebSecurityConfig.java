@@ -13,8 +13,6 @@ public class UserWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/signup").permitAll()
-                .antMatchers("/email").permitAll()
-                .antMatchers("/register").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }

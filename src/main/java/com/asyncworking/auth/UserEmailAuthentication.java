@@ -28,7 +28,7 @@ public class UserEmailAuthentication implements UserDetailsService {
         Optional<UserEntity> foundUser = userRepository.findUserEntityByEmailIgnoreCase(email);
 
         if (foundUser.isEmpty()) {
-            throw new UsernameNotFoundException("No user found with username: " + email);
+            throw new UsernameNotFoundException("No user found with email: " + email);
         }
 
         log.info(foundUser.get().toString());

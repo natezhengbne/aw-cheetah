@@ -6,10 +6,8 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,23 +18,6 @@ public class UserService {
     public UserInfoDto createUser(UserInfoDto userInfoDto) {
         UserEntity userFromDB = userRepository.save(mapInfoDtoToModel(userInfoDto));
         return mapModelToInfoDto(userFromDB);
-    }
-
-    public Boolean ifEmailExists(UserInfoDto userInfoDto) {
-        if (userRepository.existsUserEntityByEmailEquals(userInfoDto.getEmail()) == false) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Transactional
-    public Optional<UserEntity> findUserByEmail(String email) {
-        return userRepository.findUserEntityByEmailIgnoreCase(email);
-    }
-
-    public boolean emailExists(String email) {
-        return findUserByEmail(email).isPresent();
     }
 
     public UserEntity mapInfoDtoToModel(UserInfoDto userInfoDto) {
