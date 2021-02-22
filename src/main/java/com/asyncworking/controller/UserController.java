@@ -20,7 +20,6 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-//    public ResponseEntity<UserInfoDto> createUser(@RequestBody UserInfoDto userInfoDto) {
     public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) {
         log.info("email: " + userInfoDto.getEmail());
         log.info("name: " + userInfoDto.getName());
@@ -28,7 +27,6 @@ public class UserController {
         try {
 
             UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
-//            log.info(userInfoDtoPassword.getPassword());
             return ResponseEntity.ok(userInfoDtoPassword);
         } catch (Exception e) {
 
