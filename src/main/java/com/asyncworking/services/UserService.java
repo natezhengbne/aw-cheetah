@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -50,16 +49,4 @@ public class UserService {
                 .name(userEntity.getName())
                 .build();
     }
-
-    //AW-9 function test
-    public boolean isEmailUsed(String email) {
-        boolean flag = userRepository.existsByEmail(email);
-        log.info("email exists?: " + flag);
-        return flag;
-//        if (userRepository.findByEmail(email) == null) {
-//            return true;
-//        }
-//        return false;
-    }
-
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-//@RequestMapping("/signup")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
@@ -32,13 +31,5 @@ public class UserController {
 
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    //AW-9 function test
-    @PostMapping("/email")
-    public ResponseEntity<Boolean> verifyEmail(@RequestBody String email) {
-        Boolean isEmailUsed = userService.isEmailUsed(email);
-        System.out.println(isEmailUsed);
-        return ResponseEntity.ok(isEmailUsed);
     }
 }
