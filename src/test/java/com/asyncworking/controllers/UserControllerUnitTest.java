@@ -32,7 +32,7 @@ class UserControllerUnitTest {
 	private UserService userService;
 
 	@Test
-	public void login() throws Exception {
+	public void loginTest() throws Exception {
 		Authentication mocked = Mockito.mock(Authentication.class);
 		when(mocked.isAuthenticated()).thenReturn(true);
 		when(userService.login(anyString(), anyString())).thenReturn(mocked);

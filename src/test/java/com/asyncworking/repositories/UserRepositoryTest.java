@@ -17,6 +17,7 @@ import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 
@@ -47,19 +48,20 @@ public class UserRepositoryTest {
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
+
         userRepository.saveAndFlush(mockUser);
     }
 
     @Test
-    public void shouldFindUserByName() {
+    public void shouldFindUserByEmail() {
         Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
         assertEquals("testpass", userEntity.get().getPassword());
     }
 
     @Test
-    public void shouldReturnNullDueToWrongEmail() {
+    public void shouldReturnEmptyDueToWrongEmail() {
         Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("b@asyncworking.com");
-        assertEquals(Optional.empty(), userEntity);
+        assertTrue(userEntity.isEmpty());
     }
 
 

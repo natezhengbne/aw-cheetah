@@ -22,6 +22,8 @@ import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 
@@ -42,7 +44,6 @@ public class ApplicationUserServiceTest {
     public void insertMockEmp() {
         userRepository.deleteAll();
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
-
         UserEntity mockUser = UserEntity.builder()
                 .id(1L)
                 .name("Lengary")

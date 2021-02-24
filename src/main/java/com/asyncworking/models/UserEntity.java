@@ -1,9 +1,6 @@
 package com.asyncworking.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,7 +9,7 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,7 +26,6 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = true)
     private String title;
 
     @Column(nullable = false)
