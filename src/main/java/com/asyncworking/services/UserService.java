@@ -6,6 +6,7 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public UserInfoDto createUser(UserInfoDto userInfoDto) {
 
         UserEntity userFromDB = userRepository.save(mapInfoDtoToEntity(userInfoDto));
@@ -31,11 +34,10 @@ public class UserService {
     }
 
     private UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(userInfoDto.getPassword());
         return UserEntity.builder()
                 .name(userInfoDto.getName())
-                .email(userInfoDto.getEmail())
+                .email(userInfoDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.UNVERIFIED)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))

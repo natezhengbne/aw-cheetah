@@ -1,6 +1,5 @@
 package com.asyncworking.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,17 +16,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/signup").permitAll()
-                .antMatchers("/email").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }
+
     @Bean
     public BCryptPasswordEncoder bcryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    @Autowired
-    BCryptPasswordEncoder encode;
-
 }
 
