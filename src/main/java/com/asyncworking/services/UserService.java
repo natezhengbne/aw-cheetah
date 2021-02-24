@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,14 @@ public class UserService {
     public UserInfoDto createUser(UserInfoDto userInfoDto) {
         UserEntity userFromDB = userRepository.save(mapInfoDtoToModel(userInfoDto));
         return mapModelToInfoDto(userFromDB);
+    }
+
+    public boolean isEmailExist(String email){
+        Optional<UserEntity> userEntity =userRepository.findByEmail(email);
+        if(userEntity.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public UserEntity mapInfoDtoToModel(UserInfoDto userInfoDto) {
