@@ -53,6 +53,25 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
+
+        UserEntity mockUserEntity = UserEntity.builder()
+                .id(1L)
+                .email("KajjiXin@133.com")
+                .name("KaiXnin")
+                .title("dev")
+                .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO ")
+                .status(Status.UNVERIFIED)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+
+        UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
+        assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
+        assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
+    }
+
+    @Test
     public void shouldFindUserByEmail() {
         Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
         assertEquals("testpass", userEntity.get().getPassword());
@@ -63,7 +82,4 @@ public class UserRepositoryTest {
         Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("b@asyncworking.com");
         assertTrue(userEntity.isEmpty());
     }
-
-
-
 }

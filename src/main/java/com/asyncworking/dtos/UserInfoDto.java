@@ -1,12 +1,14 @@
 package com.asyncworking.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Builder
 public class UserInfoDto {
     private String email;
     private String name;
