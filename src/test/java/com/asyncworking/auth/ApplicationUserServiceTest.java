@@ -7,12 +7,10 @@ import com.asyncworking.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 
@@ -33,7 +27,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = AwCheetahApplication.class)
 public class ApplicationUserServiceTest {
 
-    @MockBean
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Autowired

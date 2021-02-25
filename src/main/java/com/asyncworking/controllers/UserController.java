@@ -14,25 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
-
-    @PostMapping("/signup")
-    public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) {
-        log.info("email: " + userInfoDto.getEmail());
-        log.info("name: " + userInfoDto.getName());
-
-        try {
-
-            UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
-            return ResponseEntity.ok(userInfoDtoPassword);
-        } catch (Exception e) {
-
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
     @GetMapping("/signup")
     public ResponseEntity<String> validEmail(@RequestBody UserInfoDto user) {
@@ -44,7 +28,7 @@ public class UserController {
                 HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody UserInfoDto userInfoDto) {
         log.info(userInfoDto.getEmail());
         try {

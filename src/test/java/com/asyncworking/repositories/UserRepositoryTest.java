@@ -8,21 +8,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -30,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class UserRepositoryTest {
 	UserEntity mockUser;
 
-	@MockBean
+	@Mock
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -53,38 +50,6 @@ public class UserRepositoryTest {
 				.build();
 
 		userRepository.saveAndFlush(mockUser);
-	}
-
-	@Test
-	public void shouldFindUserByEmail() {
-		Optional<UserEntity> userEntity = userRepository
-				.findUserEntityByEmail("a@asyncworking.com");
-		assertEquals("testpass", userEntity.get().getPassword());
-	}
-
-	@Test
-	public void shouldReturnEmptyDueToWrongEmail() {
-		Optional<UserEntity> userEntity = userRepository
-				.findUserEntityByEmail("b@asyncworking.com");
-		assertTrue(userEntity.isEmpty());
-	}
-
-	@Test
-	@Transactional
-	public void save() {
-		UserEntity user = UserEntity.builder()
-				.name("username")
-				.email("email")
-				.title("title")
-				.password("password")
-				.status(Status.UNVERIFIED)
-				.createdTime(OffsetDateTime.now())
-				.updatedTime(OffsetDateTime.now())
-				.build();
-
-		UserEntity saved = userRepository.save(user);
-		assertEquals("email", saved.getEmail());
-		assertThat(saved.getId() > 0);
 	}
 
 	@Test
@@ -119,22 +84,34 @@ public class UserRepositoryTest {
 		Assertions.assertTrue(returnedUserEntity.isEmpty());
 	}
 
-  @Test
-  public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
+	@Test
+	public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
 
-    UserEntity mockUserEntity = UserEntity.builder()
-        .id(1L)
-        .email("KajjiXin@133.com")
-        .name("KaiXnin")
-        .title("dev")
-        .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO ")
-        .status(Status.UNVERIFIED)
-        .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-        .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-        .build();
+		UserEntity mockUserEntity = UserEntity.builder()
+				.id(1L)
+				.email("KajjiXin@133.com")
+				.name("KaiXnin")
+				.title("dev")
+				.password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO ")
+				.status(Status.UNVERIFIED)
+				.createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+				.updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+				.build();
 
-      UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
-      assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
-      assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
-  }
+		UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
+		assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
+		assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
+	}
+
+	@Test
+	public void shouldFindUserByEmail() {
+		Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
+		assertEquals("testpass", userEntity.get().getPassword());
+	}
+
+	@Test
+	public void shouldReturnEmptyDueToWrongEmail() {
+		Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("b@asyncworking.com");
+		assertTrue(userEntity.isEmpty());
+	}
 }
