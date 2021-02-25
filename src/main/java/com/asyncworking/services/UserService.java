@@ -1,16 +1,19 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.Status;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.UserRepository;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -19,10 +22,8 @@ import java.time.ZoneOffset;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
-
+    private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Authentication login(String email, String password) {
@@ -31,6 +32,10 @@ public class UserService {
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
         return authenticate;
+    }
+
+    public boolean isEmailExist(String email){
+        return userRepository.findByEmail(email).isPresent();
     }
 
     public UserInfoDto createUser(UserInfoDto userInfoDto) {
@@ -44,7 +49,7 @@ public class UserService {
         return mapEntityToInfoDto(userFromDB);
     }
 
-    private UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
+    public UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
         String encodedPassword = bCryptPasswordEncoder.encode(userInfoDto.getPassword());
         return UserEntity.builder()
                 .name(userInfoDto.getName())
@@ -56,10 +61,11 @@ public class UserService {
                 .build();
     }
 
-    private UserInfoDto mapEntityToInfoDto(UserEntity userEntity) {
+    public UserInfoDto mapEntityToInfoDto(UserEntity userEntity) {
         return UserInfoDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
                 .build();
     }
+
 }

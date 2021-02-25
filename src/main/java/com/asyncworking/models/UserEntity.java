@@ -36,10 +36,10 @@ public class UserEntity {
     private Status status;
 
     @CreatedDate
-    @Column(name = "created_time")
+    @Column(name = "created_time", nullable = false)
     private OffsetDateTime createdTime;
 
     @LastModifiedDate
-    @Column(name = "updated_time")
+    @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
 }

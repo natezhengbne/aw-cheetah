@@ -11,12 +11,13 @@ spring:
     password: admin
   flyway:
     enabled: true
+    schemas: awcheetah
   jpa:
     properties:
       hibernate:
         default_schema: awcheetah
     show-sql: true
-
+    
 logging:
   pattern:
     dateFormat: yyyy-MM-dd HH:mm:ss.SSS ZZZ

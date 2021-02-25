@@ -13,8 +13,9 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
+    @Query("select u from UserEntity as u where u.email = :email")
+    Optional<UserEntity> findByEmail(@Param("email") String email);
+
     @Query("select u from UserEntity u where u.email = :email and u.status <> 'CANCELLED'")
     Optional<UserEntity> findUserEntityByEmail(@Param("email") String email);
-
-
 }
