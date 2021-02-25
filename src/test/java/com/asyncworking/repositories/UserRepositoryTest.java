@@ -6,6 +6,7 @@ import com.asyncworking.models.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class UserRepositoryTest {
     UserEntity mockUser;
 
-    @MockBean
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Autowired
