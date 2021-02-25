@@ -9,7 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -35,5 +38,21 @@ public class UserServiceTest {
         UserInfoDto userInfoDtoGet = userService.createUser(userInfoDto);
         assertEquals("Steven", userInfoDtoGet.getName());
         assertEquals("skykk0128@gmail.com", userInfoDtoGet.getEmail());
+    }
+
+    @Test
+    public void shouldFindEmailExistSuccessful(){
+        UserInfoDto userInfoDto = new UserInfoDto();
+        userInfoDto.setEmail("a@gmail.com");
+
+        UserEntity mockReturenedUserEntity = UserEntity.builder()
+                .email("a@gmail.com").build();
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockReturenedUserEntity));
+
+        String email = userInfoDto.getEmail();
+        boolean testEmail = userService.isEmailExist(email);
+
+        assertTrue(testEmail);
+
     }
 }
