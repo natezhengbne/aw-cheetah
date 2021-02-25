@@ -29,7 +29,7 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Autowired
+    @InjectMocks
     UserService userService;
 
     @Test
@@ -51,6 +51,7 @@ public class UserServiceTest {
                 .build();
 
         when(userRepository.save(any())).thenReturn(mockUserEntity);
+        UserInfoDto userInfoDtoGet = userService.createUser(userPostDto);
 
         assertEquals("Leo", mockUserEntity.getName());
         assertEquals("Leo7868@qq.com", mockUserEntity.getEmail());
