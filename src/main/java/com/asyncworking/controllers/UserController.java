@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,21 @@ public class UserController {
             userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
             return ResponseEntity.ok("success");
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) {
+        log.info("email: " + userInfoDto.getEmail());
+        log.info("name: " + userInfoDto.getName());
+
+        try {
+
+            UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
+            return ResponseEntity.ok(userInfoDtoPassword);
+        } catch (Exception e) {
+
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
