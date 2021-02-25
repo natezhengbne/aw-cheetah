@@ -11,15 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.OffsetDateTime;
 
 @Slf4j
 @Service
@@ -36,7 +31,8 @@ public class UserService {
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
         return authenticate;
-      
+    }
+
     public boolean isEmailExist(String email){
         return userRepository.findByEmail(email).isPresent();
     }

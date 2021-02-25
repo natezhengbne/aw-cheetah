@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -117,7 +118,7 @@ public class UserRepositoryTest {
 				.findByEmail(userEntity.getEmail());
 		Assertions.assertTrue(returnedUserEntity.isEmpty());
 	}
-  
+
   @Test
   public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
 
@@ -135,5 +136,5 @@ public class UserRepositoryTest {
       UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
       assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
       assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
-  }  
+  }
 }

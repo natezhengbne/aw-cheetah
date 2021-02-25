@@ -78,4 +78,21 @@ class UserControllerUnitTest {
 				.andExpect(jsonPath("$.email").exists())
 				.andExpect(jsonPath("$.email").value("aaa@qq.com"));
 	}
+
+	@Test
+	public void shouldValidEmailExist () throws Exception {
+		UserInfoDto userFE = UserInfoDto.builder()
+				.email("a@gmail.com")
+				.build();
+
+		when(userService.isEmailExist(userFE.getEmail())).thenReturn(true);
+
+		String inputJson = "{\"email\": \"a@gmail.com\"}";
+		MvcResult mvcResult = mockMvc.perform(
+				MockMvcRequestBuilders.get("/signup")
+						.contentType(MediaType.APPLICATION_JSON_VALUE)
+						.content(inputJson)).andReturn();
+
+		assertEquals(400, mvcResult.getResponse().getStatus());
+	}
 }

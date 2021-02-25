@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-  
+
     @Mock
     private UserRepository userRepository;
 
@@ -34,9 +34,10 @@ public class UserServiceTest {
 
     @Test
     public void shouldAddUserSuccessfullyGivenProperUserEntity() {
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setName("Steven");
-        userInfoDto.setEmail("skykk0128@gmail.com");
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .name("Steven")
+                .email("skykk0128@gmail.com")
+                .build();
 
         UserEntity mockReturenedUserEntity = UserEntity.builder()
                 .name("Steven")
@@ -48,9 +49,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldFindEmailExistSuccessful(){
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setEmail("a@gmail.com");
+    public void shouldFindEmailExistSuccessful() {
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .email("a@qq.com")
+                .build();
 
         UserEntity mockReturenedUserEntity = UserEntity.builder()
                 .email("a@gmail.com").build();
@@ -60,6 +62,7 @@ public class UserServiceTest {
         boolean testEmail = userService.isEmailExist(email);
 
         assertTrue(testEmail);
+    }
 
     @Test
     public void shouldAddUserSuccessfullyGivenProperUser() {
