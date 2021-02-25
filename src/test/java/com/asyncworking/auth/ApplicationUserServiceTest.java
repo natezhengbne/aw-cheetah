@@ -1,14 +1,19 @@
-package com.asyncworking.repositories;
+package com.asyncworking.auth;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -16,15 +21,15 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
-public class UserRepositoryTest {
-    UserEntity mockUser;
+public class ApplicationUserServiceTest {
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -32,12 +37,14 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ApplicationUserService applicationUserService;
+
     @BeforeEach
     public void insertMockEmp() {
         userRepository.deleteAll();
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
-
-        mockUser = UserEntity.builder()
+        UserEntity mockUser = UserEntity.builder()
                 .id(1L)
                 .name("Lengary")
                 .email("a@asyncworking.com")
@@ -48,22 +55,22 @@ public class UserRepositoryTest {
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
-
         userRepository.saveAndFlush(mockUser);
     }
 
     @Test
-    public void shouldFindUserByEmail() {
-        Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
-        assertEquals("testpass", userEntity.get().getPassword());
+    public void shouldThrowUsernameNotFoundException() {
+        assertThrows(UsernameNotFoundException.class, () -> {
+            applicationUserService.loadUserByUsername("b@asyncworking.com");
+        });
     }
 
     @Test
-    public void shouldReturnEmptyDueToWrongEmail() {
-        Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("b@asyncworking.com");
-        assertTrue(userEntity.isEmpty());
+    public void shouldReturnUserObjectAccordingToEmailGiven() {
+        UserDetails userDetails = applicationUserService.loadUserByUsername("a@asyncworking.com");
+        assertEquals("a@asyncworking.com", userDetails.getUsername());
+        assertEquals("testpass", userDetails.getPassword());
+        assertFalse(userDetails.getAuthorities().stream().findFirst().isEmpty());
     }
-
-
 
 }

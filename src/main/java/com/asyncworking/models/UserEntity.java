@@ -1,7 +1,6 @@
 package com.asyncworking.models;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,12 +11,14 @@ import java.time.OffsetDateTime;
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Type(type = "long")
-    private long id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -25,7 +26,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
     @Column(nullable = false)

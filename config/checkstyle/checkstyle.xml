@@ -54,7 +54,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
 <!--      &lt;!&ndash; Checks for out of order import statements. &ndash;&gt;-->
 
 <!--      <property name="severity" value="warning"/>-->
-<!--      <property name="groups" value="com.google,android,junit,net,org,java,javax"/>-->
+<!--      <property name="groups" value="com.google,android,junit,net,java,org,javax"/>-->
 <!--      &lt;!&ndash; This ensures that static imports go first. &ndash;&gt;-->
 <!--      <property name="option" value="top"/>-->
 <!--      <property name="tokens" value="STATIC_IMPORT, IMPORT"/>-->
@@ -178,7 +178,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
 
     <module name="LineLength">
       <!-- Checks if a line is too long. -->
-      <property name="max" value="${com.puppycrawl.tools.checkstyle.checks.sizes.LineLength.max}" default="100"/>
+      <property name="max" value="${com.puppycrawl.tools.checkstyle.checks.sizes.LineLength.max}" default="120"/>
       <property name="severity" value="error"/>
 
       <!--
