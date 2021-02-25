@@ -38,7 +38,7 @@ class UserControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    public void shouldloginSussceeful() throws Exception {
+    public void shouldLoginSussceeful() throws Exception {
         Authentication mocked = Mockito.mock(Authentication.class);
         when(mocked.isAuthenticated()).thenReturn(true);
         when(userService.login(anyString(), anyString())).thenReturn(mocked);
