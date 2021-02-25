@@ -70,6 +70,5 @@ public class UserControllerTest {
                         .content(inputJson)).andReturn();
 
         assertEquals(400, mvcResult.getResponse().getStatus());
-
     }
 }
