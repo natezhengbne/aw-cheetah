@@ -26,7 +26,7 @@ class UserRepositoryTest {
 				.email("email")
 				.title("title")
 				.password("password")
-				.status(Status.Unverified)
+				.status(Status.UNVERIFIED)
 				.createdTime(OffsetDateTime.now())
 				.updatedTime(OffsetDateTime.now())
 				.build();
