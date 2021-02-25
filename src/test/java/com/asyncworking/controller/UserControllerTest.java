@@ -48,4 +48,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").exists())
                 .andExpect(jsonPath("$.email").value("skykk0128@gmail.com"));
     }
+
+
 }

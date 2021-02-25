@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Data
 @Getter
 @Builder
 @NoArgsConstructor
