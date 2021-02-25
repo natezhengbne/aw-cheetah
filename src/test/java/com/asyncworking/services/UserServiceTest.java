@@ -21,18 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = AwCheetahApplication.class)
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
     UserService userService;
-
-    @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
     public void shouldAddUserSuccessfullyGivenProperUser() {
@@ -44,7 +39,7 @@ public class UserServiceTest {
 
         UserEntity mockUserEntity = UserEntity.builder()
                 .email("Leo7868@qq.com")
-                .password(bCryptPasswordEncoder.encode(userPostDto.getPassword()))
+                .password("encoded password")
                 .name("Leo")
                 .id(1L)
                 .status(Status.UNVERIFIED)
