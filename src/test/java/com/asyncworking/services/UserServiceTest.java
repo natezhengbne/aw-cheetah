@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -12,17 +13,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = AwCheetahApplication.class)
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class UserServiceTest {
@@ -31,6 +30,9 @@ public class UserServiceTest {
 
     @InjectMocks
     UserService userService;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
     public void shouldAddUserSuccessfullyGivenProperUser() {
@@ -42,7 +44,7 @@ public class UserServiceTest {
 
         UserEntity mockUserEntity = UserEntity.builder()
                 .email("Leo7868@qq.com")
-                .password("encodedPassword")
+                .password(bCryptPasswordEncoder.encode(userPostDto.getPassword()))
                 .name("Leo")
                 .id(1L)
                 .status(Status.UNVERIFIED)
@@ -53,8 +55,8 @@ public class UserServiceTest {
         when(userRepository.save(any())).thenReturn(mockUserEntity);
         UserInfoDto userInfoDtoGet = userService.createUser(userPostDto);
 
-        assertEquals("Leo", mockUserEntity.getName());
-        assertEquals("Leo7868@qq.com", mockUserEntity.getEmail());
+        assertEquals("Leo", userInfoDtoGet.getName());
+        assertEquals("Leo7868@qq.com", userInfoDtoGet.getEmail());
 
     }
 }
