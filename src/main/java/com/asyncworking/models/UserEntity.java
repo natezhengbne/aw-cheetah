@@ -4,7 +4,6 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -26,7 +25,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column()
+    @Column
     private String title;
 
     @Column(nullable = false)

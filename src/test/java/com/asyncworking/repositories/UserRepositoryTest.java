@@ -4,6 +4,7 @@ import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,12 +14,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -115,4 +117,23 @@ public class UserRepositoryTest {
 				.findByEmail(userEntity.getEmail());
 		Assertions.assertTrue(returnedUserEntity.isEmpty());
 	}
+  
+  @Test
+  public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
+
+    UserEntity mockUserEntity = UserEntity.builder()
+        .id(1L)
+        .email("KajjiXin@133.com")
+        .name("KaiXnin")
+        .title("dev")
+        .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO ")
+        .status(Status.UNVERIFIED)
+        .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+        .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+        .build();
+
+      UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
+      assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
+      assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
+  }  
 }

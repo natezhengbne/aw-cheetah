@@ -17,9 +17,9 @@ spring:
       hibernate:
         default_schema: awcheetah
     show-sql: true
-
-  logging:
-    pattern:
-      dateFormat: yyyy-MM-dd HH:mm:ss.SSS ZZZ
-    level:
-      com.asyncworking: debug
+    
+logging:
+  pattern:
+    dateFormat: yyyy-MM-dd HH:mm:ss.SSS ZZZ
+  level:
+    com.asyncworking: debug

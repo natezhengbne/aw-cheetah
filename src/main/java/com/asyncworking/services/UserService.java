@@ -4,13 +4,21 @@ import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
 
+import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.Status;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.OffsetDateTime;
 
 @Slf4j
@@ -20,32 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
-
-    public UserInfoDto createUser(UserInfoDto userInfoDto) {
-        UserEntity userFromDB = userRepository.save(mapInfoDtoToModel(userInfoDto));
-        return mapModelToInfoDto(userFromDB);
-    }
-
-    public boolean isEmailExist(String email){
-        return userRepository.findByEmail(email).isPresent();
-    }
-
-    public UserEntity mapInfoDtoToModel(UserInfoDto userInfoDto) {
-        return UserEntity.builder()
-                .name(userInfoDto.getName())
-                .email(userInfoDto.getEmail().toLowerCase())
-                .password("password12345")
-                .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now())
-                .updatedTime(OffsetDateTime.now()).build();
-    }
-
-    public UserInfoDto mapModelToInfoDto(UserEntity userEntity) {
-        return UserInfoDto.builder()
-                .name(userEntity.getName())
-                .email(userEntity.getEmail().toLowerCase())
-                .password("password12345").build();
-    }
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Authentication login(String email, String password) {
 
@@ -53,5 +36,38 @@ public class UserService {
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
         return authenticate;
+      
+    public boolean isEmailExist(String email){
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    public UserInfoDto createUser(UserInfoDto userInfoDto) {
+
+        UserEntity userFromDB = userRepository.save(mapInfoDtoToEntity(userInfoDto));
+
+        log.info("email: " + userFromDB.getEmail());
+        log.info("name: " + userFromDB.getName());
+        log.info("encoded password: " + userFromDB.getPassword());
+
+        return mapEntityToInfoDto(userFromDB);
+    }
+
+    private UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
+        String encodedPassword = bCryptPasswordEncoder.encode(userInfoDto.getPassword());
+        return UserEntity.builder()
+                .name(userInfoDto.getName())
+                .email(userInfoDto.getEmail().toLowerCase())
+                .password(encodedPassword)
+                .status(Status.UNVERIFIED)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+    }
+
+    private UserInfoDto mapEntityToInfoDto(UserEntity userEntity) {
+        return UserInfoDto.builder()
+                .email(userEntity.getEmail())
+                .name(userEntity.getName())
+                .build();
     }
 }
