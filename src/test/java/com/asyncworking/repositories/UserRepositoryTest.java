@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,113 +29,94 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
 public class UserRepositoryTest {
-	UserEntity mockUser;
 
-	@MockBean
-	private PasswordEncoder passwordEncoder;
+    UserEntity mockUser;
 
-	@Autowired
-	private  UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
-	@BeforeEach
-	public void insertMockEmp() {
-		userRepository.deleteAll();
-		when(passwordEncoder.encode("len123")).thenReturn("testpass");
+    @Autowired
+    private UserRepository userRepository;
 
-		mockUser = UserEntity.builder()
-				.id(1L)
-				.name("Lengary")
-				.email("a@asyncworking.com")
-				.title("Frontend Developer")
-				.status(Status.UNVERIFIED)
-				.password(passwordEncoder.encode("len123"))
-				.createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-				.updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-				.build();
+    @BeforeEach
+    public void insertMockEmp() {
+        userRepository.deleteAll();
+        when(passwordEncoder.encode("len123")).thenReturn("testpass");
 
-		userRepository.saveAndFlush(mockUser);
-	}
+        mockUser = UserEntity.builder()
+                .id(1L)
+                .name("Lengary")
+                .email("a@asyncworking.com")
+                .title("Frontend Developer")
+                .status(Status.UNVERIFIED)
+                .password(passwordEncoder.encode("len123"))
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
 
-	@Test
-	public void shouldFindUserByEmail() {
-		Optional<UserEntity> userEntity = userRepository
-				.findUserEntityByEmail("a@asyncworking.com");
-		assertEquals("testpass", userEntity.get().getPassword());
-	}
+        userRepository.saveAndFlush(mockUser);
+    }
+  
+    @Test
+    public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
+      UserEntity userEntity = UserEntity.builder()
+          .id(1L)
+          .createdTime(OffsetDateTime.now())
+          .email("skykk0128@gmail.com")
+          .name("Steven")
+          .password("password")
+          .status(Status.UNVERIFIED)
+          .title("Developer")
+          .updatedTime(OffsetDateTime.now()).build();
+      UserEntity returnedUserEntity = userRepository.save(userEntity);
+      Assertions.assertEquals("Steven", returnedUserEntity.getName());
+      Assertions.assertEquals("skykk0128@gmail.com", returnedUserEntity.getEmail());
+    }
 
-	@Test
-	public void shouldReturnEmptyDueToWrongEmail() {
-		Optional<UserEntity> userEntity = userRepository
-				.findUserEntityByEmail("b@asyncworking.com");
-		assertTrue(userEntity.isEmpty());
-	}
+    @Test
+    public void shouldFindUserExistByEmail() {
+      UserEntity userEntity = UserEntity.builder()
+          .id(1L)
+          .createdTime(OffsetDateTime.now())
+          .email("skykk0128@gmail.com")
+          .name("Steven")
+          .password("password")
+          .status(Status.UNVERIFIED)
+          .title("Developer")
+          .updatedTime(OffsetDateTime.now()).build();
+      Optional<UserEntity> returnedUserEntity = userRepository
+          .findByEmail(userEntity.getEmail());
+      Assertions.assertTrue(returnedUserEntity.isEmpty());
+    }
 
-	@Test
-	@Transactional
-	public void save() {
-		UserEntity user = UserEntity.builder()
-				.name("username")
-				.email("email")
-				.title("title")
-				.password("password")
-				.status(Status.UNVERIFIED)
-				.createdTime(OffsetDateTime.now())
-				.updatedTime(OffsetDateTime.now())
-				.build();
+    @Test
+    public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
 
-		UserEntity saved = userRepository.save(user);
-		assertEquals("email", saved.getEmail());
-		assertThat(saved.getId() > 0);
-	}
+        UserEntity mockUserEntity = UserEntity.builder()
+                .id(1L)
+                .email("KajjiXin@133.com")
+                .name("KaiXnin")
+                .title("dev")
+                .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO ")
+                .status(Status.UNVERIFIED)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
 
-	@Test
-	public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
-		UserEntity userEntity = UserEntity.builder()
-				.id(1L)
-				.createdTime(OffsetDateTime.now())
-				.email("skykk0128@gmail.com")
-				.name("Steven")
-				.password("password")
-				.status(Status.UNVERIFIED)
-				.title("Developer")
-				.updatedTime(OffsetDateTime.now()).build();
-		UserEntity returnedUserEntity = userRepository.save(userEntity);
-		Assertions.assertEquals("Steven", returnedUserEntity.getName());
-		Assertions.assertEquals("skykk0128@gmail.com", returnedUserEntity.getEmail());
-	}
+        UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
+        assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
+        assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
+    }
 
-	@Test
-	public void shouldFindUserExistByEmail() {
-		UserEntity userEntity = UserEntity.builder()
-				.id(1L)
-				.createdTime(OffsetDateTime.now())
-				.email("skykk0128@gmail.com")
-				.name("Steven")
-				.password("password")
-				.status(Status.UNVERIFIED)
-				.title("Developer")
-				.updatedTime(OffsetDateTime.now()).build();
-		Optional<UserEntity> returnedUserEntity = userRepository
-				.findByEmail(userEntity.getEmail());
-		Assertions.assertTrue(returnedUserEntity.isEmpty());
-	}
+    @Test
+    public void shouldFindUserByEmail() {
+        Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
+        assertEquals("testpass", userEntity.get().getPassword());
+    }
 
-  @Test
-  public void shouldAddUserIntoSuccessfullyPropertyUserObject() {
-
-    UserEntity mockUserEntity = UserEntity.builder()
-        .id(1L)
-        .email("KajjiXin@133.com")
-        .name("KaiXnin")
-        .title("dev")
-        .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO ")
-        .status(Status.UNVERIFIED)
-        .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-        .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-        .build();
-
-      UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
-      assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
-      assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
-  }
+    @Test
+    public void shouldReturnEmptyDueToWrongEmail() {
+        Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("b@asyncworking.com");
+        assertTrue(userEntity.isEmpty());
+    }
 }
