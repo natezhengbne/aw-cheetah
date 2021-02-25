@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,21 +22,24 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @InjectMocks
     UserService userService;
 
     @Test
     public void shouldAddUserSuccessfullyGivenProperUser() {
         UserInfoDto userPostDto = UserInfoDto.builder()
-                .email("Leo7868@qq.com")
-                .password("dddd1dd")
-                .name("Leo")
+                .email("user@qq.com")
+                .password("password")
+                .name("user")
                 .build();
 
         UserEntity mockUserEntity = UserEntity.builder()
-                .email("Leo7868@qq.com")
-                .password("encoded password")
-                .name("Leo")
+                .email("user@qq.com")
+                .password(bCryptPasswordEncoder.encode(userPostDto.getPassword()))
+                .name("user")
                 .id(1L)
                 .status(Status.UNVERIFIED)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
@@ -44,8 +49,8 @@ public class UserServiceTest {
         when(userRepository.save(any())).thenReturn(mockUserEntity);
         UserInfoDto userInfoDtoGet = userService.createUser(userPostDto);
 
-        assertEquals("Leo", userInfoDtoGet.getName());
-        assertEquals("Leo7868@qq.com", userInfoDtoGet.getEmail());
+        assertEquals(userPostDto.getName(), userInfoDtoGet.getName());
+        assertEquals(userPostDto.getEmail(), userInfoDtoGet.getEmail());
 
     }
 }
