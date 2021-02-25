@@ -2,8 +2,8 @@ package com.asyncworking.dtos;
 
 import lombok.*;
 
-//@NoArgsConstructor
-//@AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class UserInfoDto {
