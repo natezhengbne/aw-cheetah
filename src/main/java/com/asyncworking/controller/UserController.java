@@ -22,8 +22,8 @@ public class UserController {
 
     @GetMapping("/signup")
     public ResponseEntity<String> validEmail(@RequestBody UserInfoDto user) {
-        if(userService.isEmailExist(user.getEmail())){
-            return new ResponseEntity<>( "Email has taken",
+        if (userService.isEmailExist(user.getEmail())){
+            return new ResponseEntity<>("Email has taken",
                     HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("Email does not exist" ,

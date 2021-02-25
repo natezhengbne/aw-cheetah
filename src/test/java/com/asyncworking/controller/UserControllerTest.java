@@ -33,7 +33,7 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    public void testCreateUser() throws Exception {
+    public void shouldCreateNewUserWithGivenNameAndEmail() throws Exception {
         UserInfoDto userInfoDtoPost = new UserInfoDto();
         UserInfoDto userInfoDtoGet = new UserInfoDto();
         userInfoDtoGet.setName("Steven");

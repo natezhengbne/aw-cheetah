@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
@@ -20,8 +21,6 @@ public class UserInfoDtoRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    private TestEntityManager entityManager;
 
     @Test
     public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
@@ -41,9 +40,16 @@ public class UserInfoDtoRepositoryTest {
 
     @Test
     public void shouldFindUserByEmail() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail("skykk0128@gmail.com");
-        UserEntity returnedUserEntity = entityManager.persistAndFlush(userEntity);
-        Assertions.assertEquals(userRepository.findByEmail(userEntity.getEmail()).get(), returnedUserEntity);
+        UserEntity userEntity = UserEntity.builder()
+                .id(1L)
+                .createdTime(OffsetDateTime.now())
+                .email("skykk0128@gmail.com")
+                .name("Steven")
+                .password("password")
+                .status(Status.UNVERIFIED)
+                .title("Developer")
+                .updatedTime(OffsetDateTime.now()).build();
+        Optional<UserEntity> returnedUserEntity = userRepository.findByEmail(userEntity.getEmail());
+        Assertions.assertTrue(returnedUserEntity.isEmpty());
     }
 }

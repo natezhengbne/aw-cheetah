@@ -28,9 +28,9 @@ public class UserServiceTest {
         userInfoDto.setName("Steven");
         userInfoDto.setEmail("skykk0128@gmail.com");
 
-        UserEntity mockReturenedUserEntity = new UserEntity();
-        mockReturenedUserEntity.setName("Steven");
-        mockReturenedUserEntity.setEmail("skykk0128@gmail.com");
+        UserEntity mockReturenedUserEntity = UserEntity.builder()
+                .name("Steven")
+                .email("skykk0128@gmail.com").build();
         when(userRepository.save(any())).thenReturn(mockReturenedUserEntity);
         UserInfoDto userInfoDtoGet = userService.createUser(userInfoDto);
         assertEquals("Steven", userInfoDtoGet.getName());
