@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -10,11 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import static org.junit.jupiter.api.Assertions.assertEquals;

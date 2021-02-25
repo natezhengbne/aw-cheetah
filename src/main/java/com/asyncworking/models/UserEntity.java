@@ -9,10 +9,7 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "user")
 public class UserEntity {
     @Id
