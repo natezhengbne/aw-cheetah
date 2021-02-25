@@ -5,18 +5,13 @@ import com.asyncworking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Locale;
-
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/login")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
@@ -28,6 +23,21 @@ public class UserController {
             userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
             return ResponseEntity.ok("success");
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) {
+        log.info("email: " + userInfoDto.getEmail());
+        log.info("name: " + userInfoDto.getName());
+
+        try {
+
+            UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
+            return ResponseEntity.ok(userInfoDtoPassword);
+        } catch (Exception e) {
+
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
