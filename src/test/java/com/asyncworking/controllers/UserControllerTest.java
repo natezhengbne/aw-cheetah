@@ -6,6 +6,7 @@ import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
@@ -84,6 +87,30 @@ class UserControllerTest {
                         .content(inputJson)).andReturn();
 
         assertEquals(200, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    public void testCreateUser() throws Exception {
+
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaaaa1")
+                .build();
+        UserInfoDto userGetInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .build();
+
+        BDDMockito.given(userService.createUser(userPostInfoDto)).willReturn(userGetInfoDto);
+        mockMvc.perform(post("/signup")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.name").value("aaa"))
+                .andExpect(jsonPath("$.email").exists())
+                .andExpect(jsonPath("$.email").value("aaa@qq.com"));
     }
 }
 
