@@ -31,7 +31,7 @@ public class UserRepositoryTest {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private  UserRepository userRepository;
+    private UserRepository userRepository;
 
     @BeforeEach
     public void insertMockEmp() throws InterruptedException {
