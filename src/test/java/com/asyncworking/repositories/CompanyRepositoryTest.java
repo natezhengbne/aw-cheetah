@@ -30,6 +30,9 @@ public class CompanyRepositoryTest {
     private CompanyRepository companyRepository;
 
     @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Test
@@ -49,7 +52,7 @@ public class CompanyRepositoryTest {
                 .build();
 
 
-        //UserEntity savedUser = userRepository.saveAndFlush(userEntity);
+        UserEntity savedUser = userRepository.saveAndFlush(userEntity);
 
         Company company = Company.builder()
                 .id(1L)
@@ -60,8 +63,19 @@ public class CompanyRepositoryTest {
                 .employees(new HashSet<>())
                 .build();
 
+        //Company savedCompany = companyRepository.save(company);
 
-        userEntity.getEmployees().add(
+        Employee employee = Employee.builder()
+                .id( new EmployeeId(savedUser.getId(), company.getId()))
+                .userEntity(savedUser)
+                .company(company)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+
+        userRepository.saveAndFlush()
+
+
+        /*savedCompany.getEmployees().add(
                 Employee.builder()
                 .id(new EmployeeId(userEntity.getId(), company.getId()))
                 .userEntity(userEntity)
@@ -69,12 +83,22 @@ public class CompanyRepositoryTest {
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build()
         );
-        userRepository.saveAndFlush(userEntity);
 
-        Optional<Company> selectedCompany = companyRepository.findById(1L);
+        savedUser.getEmployees().add(
+                Employee.builder()
+                        .id(new EmployeeId(userEntity.getId(), company.getId()))
+                        .userEntity(userEntity)
+                        .company(company)
+                        .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                        .build()
+        );
+        userRepository.saveAndFlush(savedUser);
+        companyRepository.saveAndFlush(savedCompany);
+*/
+        List<Company> selectedCompany = companyRepository.findAll();
 
-        Assertions.assertFalse(selectedCompany.isEmpty());
-        //Assertions.assertEquals("Async Working", companiesWithGivenEmail.get(0).getName());
+        Assertions.assertTrue(selectedCompany.get(0).getEmployees().contains(employee));
+       // Assertions.assertEquals(1L, selectedCompany.));
 
 
     }
