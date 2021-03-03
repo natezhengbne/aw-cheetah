@@ -60,6 +60,14 @@ public class Company {
     cascade = CascadeType.ALL)
     private Set<Employee> employees = new HashSet<>();
 
+    public void addEmployee(Employee employee) {
+        employees.add(employee);
+    }
+
+    public void removeEmployee(Employee employee) {
+        employees.remove(employee);
+    }
+
 
 }
 

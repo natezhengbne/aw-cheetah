@@ -14,8 +14,16 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-    @Query(value = "SELECT * FROM company c " +
-            "JOIN employee e on c.id = e.company_id " +
-            "JOIN where u.email = :email", nativeQuery = true)
+    /*@Query(value = "SELECT * FROM (SELECT * FROM company c " +
+            "JOIN employee e ON c.id = e.company_id " +
+            "JOIN user u ON e.user_id = u.id) " +
+            "WHERE u.email = :email",  nativeQuery = true)
     List<Company> findCompaniesByUserEmail(@Param("email") String email);
+*/
+    @Query(value = "SELECT * FROM company c " +
+            "JOIN employee e ON c.id = e.company_id " +
+            "WHERE e.user_id = :userId", nativeQuery = true)
+    List<Company> findCompaniesByUserId(@Param("userId") Long userId);
+
+
 }

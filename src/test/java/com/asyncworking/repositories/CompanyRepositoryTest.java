@@ -51,8 +51,21 @@ public class CompanyRepositoryTest {
                 .employees(new HashSet<>())
                 .build();
 
+        UserEntity userEntity2 = UserEntity.builder()
+                .id(2L)
+                .name("Robert")
+                .email("b@asyncworking.com")
+                .title("Frontend Developer")
+                .status(Status.ACTIVATED)
+                .password(passwordEncoder.encode("rob123"))
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .employees(new HashSet<>())
+                .build();
+
 
         UserEntity savedUser = userRepository.saveAndFlush(userEntity);
+        userRepository.saveAndFlush(userEntity2);
 
         Company company = Company.builder()
                 .id(1L)
@@ -65,40 +78,28 @@ public class CompanyRepositoryTest {
 
         //Company savedCompany = companyRepository.save(company);
 
+        Company savedCompany = companyRepository.saveAndFlush(company);
+
         Employee employee = Employee.builder()
-                .id( new EmployeeId(savedUser.getId(), company.getId()))
+                .id(new EmployeeId(savedUser.getId(), company.getId()))
                 .userEntity(savedUser)
-                .company(company)
+                .company(savedCompany)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
-        userRepository.saveAndFlush()
+        employeeRepository.saveAndFlush(employee);
 
 
-        /*savedCompany.getEmployees().add(
-                Employee.builder()
-                .id(new EmployeeId(userEntity.getId(), company.getId()))
-                .userEntity(userEntity)
-                .company(company)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build()
-        );
-
-        savedUser.getEmployees().add(
-                Employee.builder()
-                        .id(new EmployeeId(userEntity.getId(), company.getId()))
-                        .userEntity(userEntity)
-                        .company(company)
-                        .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                        .build()
-        );
-        userRepository.saveAndFlush(savedUser);
-        companyRepository.saveAndFlush(savedCompany);
-*/
         List<Company> selectedCompany = companyRepository.findAll();
 
-        Assertions.assertTrue(selectedCompany.get(0).getEmployees().contains(employee));
+        //Assertions.assertTrue(selectedCompany.get(0).getEmployees().contains(employee));
        // Assertions.assertEquals(1L, selectedCompany.));
+        Assertions.assertFalse(selectedCompany.isEmpty());
+        Assertions.assertTrue(!employeeRepository.findByUserId(1L).isEmpty());
+        Assertions.assertTrue(!userRepository.findAllByEmail(savedUser.getEmail()).isEmpty());
+        Assertions.assertTrue(userRepository.findAllByEmail("b@asyncworking.com").isEmpty());
+        System.out.println(companyRepository.findCompaniesByUserId(savedUser.getId()));
+
 
 
     }
