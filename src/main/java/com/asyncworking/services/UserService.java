@@ -34,7 +34,7 @@ public class UserService {
         return authenticate;
     }
 
-    public boolean isEmailExist(String email){
+    public boolean ifEmailExists(String email){
         return userRepository.findByEmail(email).isPresent();
     }
 

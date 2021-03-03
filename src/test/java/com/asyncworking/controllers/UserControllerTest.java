@@ -56,37 +56,28 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldValidEmailExist () throws Exception {
-        UserInfoDto userFE = UserInfoDto.builder()
-                .email("a@gmail.com")
-                .build();
+    public void shouldReturnErrorIfEmailExists() throws Exception {
+        String email = "a@gmail.com";
+        when(userService.ifEmailExists(email)).thenReturn(true);
 
-        when(userService.isEmailExist(userFE.getEmail())).thenReturn(true);
-
-        String inputJson = "{\"email\": \"a@gmail.com\"}";
-        MvcResult mvcResult = mockMvc.perform(
+        mockMvc.perform(
                 MockMvcRequestBuilders.get("/signup")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(inputJson)).andReturn();
-
-        assertEquals(400, mvcResult.getResponse().getStatus());
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isConflict());
     }
 
     @Test
-    public void shouldValidEmailNoExist () throws Exception {
-        UserInfoDto userFE = UserInfoDto.builder()
-                .email("a@gmail.com")
-                .build();
+    public void shouldReturnOkIfEmailNotExist() throws Exception {
 
-        when(userService.isEmailExist(userFE.getEmail())).thenReturn(false);
+        String email = "a@gmail.com";
+        when(userService.ifEmailExists(email)).thenReturn(false);
 
-        String inputJson = "{\"email\": \"b@gmail.com\"}";
-        MvcResult mvcResult = mockMvc.perform(
+        mockMvc.perform(
                 MockMvcRequestBuilders.get("/signup")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(inputJson)).andReturn();
-
-        assertEquals(200, mvcResult.getResponse().getStatus());
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 
     @Test

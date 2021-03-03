@@ -38,10 +38,10 @@ public class UserServiceTest {
                 .email("skykk0128@gmail.com")
                 .build();
 
-        UserEntity mockReturenedUserEntity = UserEntity.builder()
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
                 .name("Steven")
                 .email("skykk0128@gmail.com").build();
-        when(userRepository.save(any())).thenReturn(mockReturenedUserEntity);
+        when(userRepository.save(any())).thenReturn(mockReturnedUserEntity);
         UserInfoDto userInfoDtoGet = userService.createUser(userInfoDto);
         assertEquals("Steven", userInfoDtoGet.getName());
         assertEquals("skykk0128@gmail.com", userInfoDtoGet.getEmail());
@@ -53,12 +53,12 @@ public class UserServiceTest {
                 .email("a@qq.com")
                 .build();
 
-        UserEntity mockReturenedUserEntity = UserEntity.builder()
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
                 .email("a@gmail.com").build();
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockReturenedUserEntity));
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
         String email = userInfoDto.getEmail();
-        boolean testEmail = userService.isEmailExist(email);
+        boolean testEmail = userService.ifEmailExists(email);
 
         assertTrue(testEmail);
     }

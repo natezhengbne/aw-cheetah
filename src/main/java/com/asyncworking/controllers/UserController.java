@@ -16,22 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping("/signup")
-    public ResponseEntity<String> validEmail(@RequestBody UserInfoDto user) {
-        if (userService.isEmailExist(user.getEmail())){
-            return new ResponseEntity<>("Email has taken",
-                    HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> validateEmail(@RequestParam("email") String email) {
+        if (userService.ifEmailExists(email)){
+            return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>("Email does not exist" ,
-                HttpStatus.OK);
+        return new ResponseEntity<>("Email does not exist", HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserInfoDto userInfoDto) {
+    public ResponseEntity<?> login(@RequestBody UserInfoDto userInfoDto) {
         log.info(userInfoDto.getEmail());
         try {
             userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
@@ -42,16 +41,14 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) {
+    public ResponseEntity<?> createUser(@RequestBody UserInfoDto userInfoDto) {
         log.info("email: " + userInfoDto.getEmail());
         log.info("name: " + userInfoDto.getName());
 
         try {
-
-            UserInfoDto userInfoDtoPassword = userService.createUser(userInfoDto);
-            return ResponseEntity.ok(userInfoDtoPassword);
+            userService.createUser(userInfoDto);
+            return ResponseEntity.ok("success");
         } catch (Exception e) {
-
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

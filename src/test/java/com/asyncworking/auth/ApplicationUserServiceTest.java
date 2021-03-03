@@ -67,5 +67,4 @@ public class ApplicationUserServiceTest {
         assertEquals("testpass", userDetails.getPassword());
         assertFalse(userDetails.getAuthorities().stream().findFirst().isEmpty());
     }
-
 }
