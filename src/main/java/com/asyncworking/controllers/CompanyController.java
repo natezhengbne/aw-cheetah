@@ -21,16 +21,15 @@ import java.util.Optional;
 public class CompanyController {
 
     private final CompanyService companyService;
-/*
     @GetMapping
-    public ResponseEntity getCompanies(@RequestParam("email") String email) {
+    public ResponseEntity<List<CompanyInfoDto>> getCompanies(@RequestParam("email") String email) {
 
         try {
-            return ResponseEntity.ok(companyService.fetchCompaniesWithGivenUserEmail(email));
+            return ResponseEntity.ok(companyService.fetchCompaniesWithGivenUser(email));
         } catch (NoCompanyWithSuchUserException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-    }*/
+    }
 
  /*   @PostMapping("/create_company")
     public ResponseEntity createCompany(@RequestBody CompanyInfoDto companyInfoDto){
