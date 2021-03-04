@@ -3,6 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.EmployeeInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
+import com.asyncworking.models.EmployeeId;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
@@ -12,6 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.HashSet;
 
 @Slf4j
 @Service
@@ -23,20 +28,26 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
 
+
     @Transactional
     public EmployeeInfoDto createCompany(EmployeeInfoDto employeeInfoDto){
 
         UserEntity selectedUser = fetchUserByEmployeeInfoDto(employeeInfoDto);
+        System.out.println(selectedUser.getEmail());
         Company newCompany = mapDtoToEntity(employeeInfoDto, selectedUser.getId());
 
+        Company createdCompany = companyRepository.save(newCompany);
+
         Employee employee = Employee.builder()
-                .company(newCompany)
+                .id(new EmployeeId(selectedUser.getId(),createdCompany.getId()))
+                .company(createdCompany)
                 .userEntity(selectedUser)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         if(employeeInfoDto.getUserTitle() != null){
             employee.setTitle(employeeInfoDto.getUserTitle());
         }
-
+        employeeRepository.saveAndFlush(employee);
 
         return mapEntityToDto(employee);
     }
@@ -50,6 +61,9 @@ public class EmployeeService {
         return Company.builder()
                 .name(employeeInfoDto.getCompanyName())
                 .adminId(userId)
+                .employees(new HashSet<>())
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
