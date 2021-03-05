@@ -107,5 +107,20 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void testCreateCompany() throws Exception {
+
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .email("aaa@qq.com")
+                .company("AW")
+                .title("VI")
+                .build();
+        doNothing().when(userService).createCompanyAndEmployee(userPostInfoDto);
+        mockMvc.perform(post("/create_company")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
 

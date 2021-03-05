@@ -114,4 +114,14 @@ public class UserServiceTest {
 
         verify(userRepository).updateStatusByEmail("user@gmail.com", Status.ACTIVATED);
     }
+
+    @Test
+    public void createCompanyAndEmployeeGivenProperUserInfoDto() {
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .email("aaa@qq.com")
+                .company("AW")
+                .title("VI")
+                .build();
+        userService.createCompanyAndEmployee(userPostInfoDto);
+    }
 }
