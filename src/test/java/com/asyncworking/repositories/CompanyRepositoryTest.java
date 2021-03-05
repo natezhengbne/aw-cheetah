@@ -100,8 +100,6 @@ public class CompanyRepositoryTest {
         Assertions.assertTrue(userRepository.findAllByEmail("b@asyncworking.com").isEmpty());
         System.out.println(companyRepository.findCompaniesByUserId(savedUser.getId()));
 
-
-
     }
 
 }

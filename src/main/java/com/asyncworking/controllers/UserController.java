@@ -77,4 +77,14 @@ public class UserController {
     public void deleteAllUsers() {
         userService.deleteAllUsers();
     }
+
+    @PostMapping("/create_company")
+    public ResponseEntity createCompany(@RequestBody UserInfoDto userInfoDto){
+        try {
+            userService.createCompanyAndEmployee(userInfoDto);
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

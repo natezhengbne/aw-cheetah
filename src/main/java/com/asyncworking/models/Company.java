@@ -58,6 +58,7 @@ public class Company {
 
     @OneToMany(mappedBy = "company",
     cascade = CascadeType.ALL)
+
     private Set<Employee> employees = new HashSet<>();
 
     public void addEmployee(Employee employee) {
@@ -67,7 +68,6 @@ public class Company {
     public void removeEmployee(Employee employee) {
         employees.remove(employee);
     }
-
 
 }
 

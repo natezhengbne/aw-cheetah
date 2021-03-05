@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -36,5 +37,9 @@ public class Employee {
     @CreatedDate
     @Column(name = "created_time", nullable = false)
     private OffsetDateTime createdTime;
+
+    @LastModifiedDate
+    @Column(name = "updated_time", nullable = false)
+    private OffsetDateTime updatedTime;
 
 }

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS "employee" (
     "company_id" BIGSERIAL NOT NULL REFERENCES "company" (id),
     "title" VARCHAR(255),
     "created_time" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "updated_time" TIMESTAMP WITH TIME ZONE NOT NULL,
     UNIQUE (user_id, company_id)
 );
 

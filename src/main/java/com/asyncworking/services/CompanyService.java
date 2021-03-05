@@ -22,8 +22,8 @@ public class CompanyService {
 
     public List<CompanyInfoDto> fetchCompaniesWithGivenUser(String email) throws NoCompanyWithSuchUserException {
 
-        UserEntity LoggedInUser = userRepository.findByEmail(email).get();
-        List<Company> companies = companyRepository.findCompaniesByUserId(LoggedInUser.getId());
+        UserEntity loginUser = userRepository.findByEmail(email).get();
+        List<Company> companies = companyRepository.findCompaniesByUserId(loginUser.getId());
 
         if (companies.isEmpty()) {
             throw new NoCompanyWithSuchUserException("No company found with such user");

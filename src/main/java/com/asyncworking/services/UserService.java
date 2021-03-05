@@ -1,8 +1,9 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import io.jsonwebtoken.Claims;
@@ -15,10 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.HashSet;
 
 @Slf4j
 @Service
@@ -26,7 +31,13 @@ import javax.transaction.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final CompanyRepository companyRepository;
+
+    private final EmployeeRepository employeeRepository;
+
     private final AuthenticationManager authenticationManager;
+
     private final Mapper mapper;
 
     @Value("${jwt.secret}")
@@ -56,7 +67,6 @@ public class UserService {
         return verifyLink;
     }
 
-
     private String generateJws(UserInfoDto userInfoDto) {
         String jws = Jwts.builder()
                 .setSubject("signUp")
@@ -74,7 +84,6 @@ public class UserService {
         this.activeUser(email);
     }
 
-
     private String decodedEmail(String code) throws Exception{
 
             Jws<Claims> jws = Jwts.parserBuilder()
@@ -84,10 +93,8 @@ public class UserService {
 
             Claims body = jws.getBody();
 
-            String email = body.get("email").toString();
-            return email;
+        return body.get("email").toString();
     }
-
 
     private void activeUser(String email) throws Exception{
 
@@ -103,6 +110,44 @@ public class UserService {
 
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+
+    @Transactional
+    public void createCompanyAndEmployee(UserInfoDto userInfoDto){
+
+        UserEntity selectedUser = fetchUserByUserInfoDto(userInfoDto);
+        log.info("selectedUser's email" + selectedUser.getEmail());
+        Company newCompany = mapDtoToEntity(userInfoDto, selectedUser.getId());
+
+        Company createdCompany = companyRepository.save(newCompany);
+
+        Employee employee = Employee.builder()
+                .id(new EmployeeId(selectedUser.getId(), createdCompany.getId()))
+                .company(createdCompany)
+                .userEntity(selectedUser)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+        if (userInfoDto.getTitle() != null){
+            employee.setTitle(userInfoDto.getTitle());
+        }
+        employeeRepository.saveAndFlush(employee);
+
+    }
+
+    private UserEntity fetchUserByUserInfoDto(UserInfoDto userInfoDto){
+        return  userRepository.findUserEntityByEmail(userInfoDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("No such user!"));
+    }
+
+    private Company mapDtoToEntity(UserInfoDto userInfoDto, Long userId){
+        return Company.builder()
+                .name(userInfoDto.getCompany())
+                .adminId(userId)
+                .employees(new HashSet<>())
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
     }
 
 }

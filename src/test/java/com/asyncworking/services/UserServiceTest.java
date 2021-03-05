@@ -3,6 +3,8 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +32,13 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private EmployeeRepository employeeRepository;
+
+    @Mock
+    private CompanyRepository companyRepository;
+
+
+    @Mock
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -39,7 +48,7 @@ public class UserServiceTest {
 
     @BeforeEach()
     void setup() {
-        userService = new UserService(userRepository, authenticationManager, mapper);
+        userService = new UserService(userRepository, companyRepository,employeeRepository,authenticationManager, mapper);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
