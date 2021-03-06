@@ -24,7 +24,7 @@ public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Type(type = "long")
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -57,9 +57,8 @@ public class Company {
     private OffsetDateTime updatedTime;
 
     @OneToMany(mappedBy = "company",
-    cascade = CascadeType.ALL)
-
-    private Set<Employee> employees = new HashSet<>();
+    cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Employee> employees;
 
     public void addEmployee(Employee employee) {
         employees.add(employee);
@@ -70,4 +69,3 @@ public class Company {
     }
 
 }
-

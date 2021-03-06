@@ -4,18 +4,14 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import org.springframework.stereotype.Service;
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
 @Setter
-@Service
+@Getter
 @ToString
 @Builder
 @NoArgsConstructor
@@ -53,7 +49,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userEntity",
     cascade = CascadeType.ALL)
-    private Set<Employee> employees = new HashSet<>();
+    private Set<Employee> employees;
 
     public void addEmployee(Employee employee) {
         employees.add(employee);

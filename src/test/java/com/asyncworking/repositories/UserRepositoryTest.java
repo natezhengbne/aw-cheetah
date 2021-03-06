@@ -1,6 +1,7 @@
 package com.asyncworking.repositories;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.models.*;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import org.junit.jupiter.api.AfterEach;

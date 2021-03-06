@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PostMapping("/create_company")
-    public ResponseEntity createCompany(@RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity<?> createCompany(@RequestBody UserInfoDto userInfoDto){
         try {
             userService.createCompanyAndEmployee(userInfoDto);
             return ResponseEntity.ok("success");

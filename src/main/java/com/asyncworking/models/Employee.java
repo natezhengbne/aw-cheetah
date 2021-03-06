@@ -19,14 +19,15 @@ import java.time.OffsetDateTime;
 public class Employee {
 
     @EmbeddedId
+    @Id
     private EmployeeId id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("companyId")
     @JoinColumn(name = "company_id")
     private Company company;

@@ -113,41 +113,64 @@ public class UserService {
     }
 
     @Transactional
-    public void createCompanyAndEmployee(UserInfoDto userInfoDto){
+    public void createCompanyAndEmployee(UserInfoDto userInfoDto) {
 
-        UserEntity selectedUser = fetchUserByUserInfoDto(userInfoDto);
-        log.info("selectedUser's email" + selectedUser.getEmail());
-        Company newCompany = mapDtoToEntity(userInfoDto, selectedUser.getId());
+        UserEntity selectedUserEntity = fetchUserEntityByEmail(userInfoDto.getEmail());
+        log.info("selectedUser's email" + selectedUserEntity.getEmail());
+        Company newCompany = createCompany(userInfoDto.getCompany(), selectedUserEntity.getId());
 
-        Company createdCompany = companyRepository.save(newCompany);
+        saveCompany(newCompany);
 
-        Employee employee = Employee.builder()
-                .id(new EmployeeId(selectedUser.getId(), createdCompany.getId()))
-                .company(createdCompany)
-                .userEntity(selectedUser)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build();
+        Employee newEmployee = createEmployee
+                (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
+                        selectedUserEntity,
+                        newCompany);
         if (userInfoDto.getTitle() != null){
-            employee.setTitle(userInfoDto.getTitle());
+            newEmployee.setTitle(userInfoDto.getTitle());
         }
-        employeeRepository.saveAndFlush(employee);
-
+        saveEmployee(newEmployee);
     }
 
-    private UserEntity fetchUserByUserInfoDto(UserInfoDto userInfoDto){
-        return  userRepository.findUserEntityByEmail(userInfoDto.getEmail())
+    private UserEntity fetchUserEntityByEmail(String email) {
+
+        return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No such user!"));
     }
 
-    private Company mapDtoToEntity(UserInfoDto userInfoDto, Long userId){
+    private Company createCompany(String company, Long userId){
         return Company.builder()
-                .name(userInfoDto.getCompany())
+                .name(company)
                 .adminId(userId)
                 .employees(new HashSet<>())
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
+    }
+
+    private void saveCompany(Company company) {
+        try {
+            companyRepository.save(company);
+        } catch (Exception e) {
+            log.error("Something wrong when saving to database " + e.getMessage(), e);
+        }
+    }
+
+    private Employee createEmployee(EmployeeId employeeId, UserEntity userEntity, Company company) {
+        return Employee.builder()
+                .id(employeeId)
+                .company(company)
+                .userEntity(userEntity)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+    }
+
+    private void saveEmployee(Employee employee) {
+        try {
+            employeeRepository.save(employee);
+        } catch (Exception e) {
+            log.error("Something wrong when saving to database " + e.getMessage(), e);
+        }
     }
 
 }

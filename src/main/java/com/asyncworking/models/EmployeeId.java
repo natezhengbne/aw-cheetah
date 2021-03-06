@@ -24,8 +24,12 @@ public class EmployeeId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         EmployeeId that = (EmployeeId) o;
         return Objects.equals(userId, that.userId) && Objects.equals(companyId, that.companyId);
     }
