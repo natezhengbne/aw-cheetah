@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
@@ -35,14 +36,15 @@ public class CompanyControllerTest {
 
     @Test
     public void testCreateCompany() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
-                .email("aaa@qq.com")
-                .company("AW")
-                .title("VI")
+
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .adminEmail("aaa@qq.com")
+                .name("AW")
+                .userTitle("VI")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(userPostInfoDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
         mockMvc.perform(post("/create_company")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .content(objectMapper.writeValueAsString(companyInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

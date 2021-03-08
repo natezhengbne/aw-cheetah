@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -45,22 +46,22 @@ public class CompanyServiceTest {
     @Test
     @Transactional
     public void createCompanyAndEmployeeGivenProperUserInfoDto() {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
-                .email("lengary@asyncworking.com")
-                .company("AW")
-                .title("VI")
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .adminEmail("lengary@asyncworking.com")
+                .name("AW")
+                .userTitle("VI")
                 .build();
 
         UserEntity mockReturnedUserEntity = UserEntity.builder()
                 .email("lengary@asyncworking.com")
                 .name("ven").build();
 
-        when(userRepository.findUserEntityByEmail(userPostInfoDto.getEmail()))
+        when(userRepository.findUserEntityByEmail(companyInfoDto.getAdminEmail()))
                 .thenReturn(Optional.of(mockReturnedUserEntity));
 
         ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
-        companyService.createCompanyAndEmployee(userPostInfoDto);
+        companyService.createCompanyAndEmployee(companyInfoDto);
         verify(companyRepository).save(companyCaptor.capture());
         verify(employeeRepository).save(employeeCaptor.capture());
         Employee savedEmployee = employeeCaptor.getValue();

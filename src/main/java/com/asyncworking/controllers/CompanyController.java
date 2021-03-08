@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
@@ -20,9 +21,9 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/create_company")
-    public ResponseEntity<?> createCompany(@RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity<?> createCompany(@RequestBody CompanyInfoDto companyInfoDto){
         try {
-            companyService.createCompanyAndEmployee(userInfoDto);
+            companyService.createCompanyAndEmployee(companyInfoDto);
             return ResponseEntity.ok("success");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

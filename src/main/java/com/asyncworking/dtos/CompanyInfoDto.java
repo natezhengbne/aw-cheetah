@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompanyInfoDto {
     private String name;
+    private String adminEmail;
     private String description;
+    private String userTitle;
     private String website;
     private String contactNumber;
     private String contactEmail;

@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -30,11 +31,11 @@ public class CompanyService {
     private final EmployeeRepository employeeRepository;
 
     @Transactional
-    public void createCompanyAndEmployee(UserInfoDto userInfoDto) {
+    public void createCompanyAndEmployee(CompanyInfoDto companyInfoDto) {
 
-        UserEntity selectedUserEntity = fetchUserEntityByEmail(userInfoDto.getEmail());
+        UserEntity selectedUserEntity = fetchUserEntityByEmail(companyInfoDto.getAdminEmail());
         log.info("selectedUser's email" + selectedUserEntity.getEmail());
-        Company newCompany = createCompany(userInfoDto.getCompany(), selectedUserEntity.getId());
+        Company newCompany = createCompany(companyInfoDto.getName(), selectedUserEntity.getId());
 
         saveCompany(newCompany);
 
@@ -42,8 +43,8 @@ public class CompanyService {
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
                         selectedUserEntity,
                         newCompany);
-        if (userInfoDto.getTitle() != null){
-            newEmployee.setTitle(userInfoDto.getTitle());
+        if (companyInfoDto.getUserTitle() != null){
+            newEmployee.setTitle(companyInfoDto.getUserTitle());
         }
         saveEmployee(newEmployee);
     }
