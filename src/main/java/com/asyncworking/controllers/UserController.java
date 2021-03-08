@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +74,15 @@ public class UserController {
     @DeleteMapping("/signup")
     public void deleteAllUsers() {
         userService.deleteAllUsers();
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<?> validateEmployment(@RequestParam("email") String email) {
+        log.info(email);
+        if (userService.ifCompanyExits(email)){
+            return ResponseEntity.ok("success");
+        }
+        return new ResponseEntity<>("first login", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/create_company")

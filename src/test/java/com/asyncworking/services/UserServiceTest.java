@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -168,5 +169,15 @@ public class UserServiceTest {
 
         assertEquals("VI", savedEmployee.getTitle());
         assertEquals(mockReturnedUserEntity.getId(), savedCompany.getAdminId());
+    }
+
+    @Test
+    public void shouldFindEmploymentExistSuccessful() {
+        String email = "a@gmail.com";
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
+                .email("a@gmail.com").build();
+        when(userRepository.findEmploymentByEmail(anyString())).thenReturn(Optional.of(mockReturnedUserEntity));
+        boolean testEmail = userService.ifCompanyExits(email);
+        assertTrue(testEmail);
     }
 }

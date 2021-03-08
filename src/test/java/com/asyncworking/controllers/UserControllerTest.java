@@ -110,7 +110,6 @@ class UserControllerTest {
 
     @Test
     public void testCreateCompany() throws Exception {
-
         UserInfoDto userPostInfoDto = UserInfoDto.builder()
                 .email("aaa@qq.com")
                 .company("AW")
@@ -121,6 +120,30 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(userPostInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfCompanyExists() throws Exception {
+        String email = "kkk@gmail.com";
+        when(userService.ifCompanyExits(email)).thenReturn(true);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/login")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnErrorIfCompanyNotExist() throws Exception {
+        String email = "a@gmail.com";
+        when(userService.ifCompanyExits(email)).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/login")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
     }
 }
 

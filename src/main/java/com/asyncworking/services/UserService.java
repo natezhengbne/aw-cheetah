@@ -173,4 +173,7 @@ public class UserService {
         }
     }
 
+    public boolean ifCompanyExits(String email){
+        return userRepository.findEmploymentByEmail(email).isPresent();
+    }
 }

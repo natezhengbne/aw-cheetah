@@ -34,6 +34,9 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     @BeforeEach
     public void insertMockEmp() throws InterruptedException {
         userRepository.deleteAll();
@@ -117,5 +120,41 @@ public class UserRepositoryTest {
     public void shouldUpdateStatusToActivatedByEmail() {
         int number = userRepository.updateStatusByEmail("a@asyncworking.com", Status.ACTIVATED);
         assertEquals(1, number);
+    }
+
+    @Test void shouldReturnEmptyDueToNoCompanyUserEmail() {
+        Optional<UserEntity> userEntity = userRepository.findEmploymentByEmail("b@asyncworking.com");
+        assertTrue(userEntity.isEmpty());
+    }
+
+    @Test void shouldFindUserDueToEmployeeEmail() {
+        UserEntity mockUserEntity = UserEntity.builder()
+                .id(1L)
+                .name("Lengary")
+                .email("lengary@qq.com")
+                .title("Frontend Developer")
+                .status(Status.UNVERIFIED)
+                .password("testpass")
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+        Company mockCompany = Company.builder()
+                .id(1L)
+                .name("AW")
+                .adminId(1L)
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+        Employee mockEmployee = Employee.builder()
+                .id(new EmployeeId(mockUserEntity.getId(), mockCompany.getId()))
+                .company(mockCompany)
+                .userEntity(mockUserEntity)
+                .title("kkk")
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+        employeeRepository.save(mockEmployee);
+        Optional<UserEntity> userEntity = userRepository.findEmploymentByEmail("lengary@qq.com");
+        assertEquals("testpass", userEntity.get().getPassword().trim());
     }
 }
