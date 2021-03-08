@@ -4,47 +4,43 @@ import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.Mapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class UserServiceTest {
-
     @Mock
     private UserRepository userRepository;
 
     @Mock
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private AuthenticationManager authenticationManager;
 
-    @InjectMocks
-    UserService userService;
+    @Autowired
+    private Mapper mapper;
 
-    @Test
-    public void shouldAddUserSuccessfullyGivenProperUserEntity() {
-        UserInfoDto userInfoDto = UserInfoDto.builder()
-                .name("Steven")
-                .email("skykk0128@gmail.com")
-                .build();
+    private UserService userService;
 
-        UserEntity mockReturnedUserEntity = UserEntity.builder()
-                .name("Steven")
-                .email("skykk0128@gmail.com").build();
-        when(userRepository.save(any())).thenReturn(mockReturnedUserEntity);
-        UserInfoDto userInfoDtoGet = userService.createUser(userInfoDto);
-        assertEquals("Steven", userInfoDtoGet.getName());
-        assertEquals("skykk0128@gmail.com", userInfoDtoGet.getEmail());
+    @BeforeEach()
+    void setup() {
+        userService = new UserService(userRepository, authenticationManager, mapper);
+        ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
     @Test
@@ -53,38 +49,60 @@ public class UserServiceTest {
                 .email("a@qq.com")
                 .build();
 
-        UserEntity mockReturnedUserEntity = UserEntity.builder()
-                .email("a@gmail.com").build();
+        UserEntity mockReturnedUserEntity = UserEntity.builder().email("a@gmail.com").build();
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
         String email = userInfoDto.getEmail();
-        boolean testEmail = userService.ifEmailExists(email);
-
-        assertTrue(testEmail);
+        assertTrue(userService.ifEmailExists(email));
     }
 
     @Test
-    public void shouldAddUserSuccessfullyGivenProperUser() {
+    public void shouldGenerateActivationLinkGivenUserDtoAndHttpServletRequest() {
         UserInfoDto userPostDto = UserInfoDto.builder()
-                .email("user@qq.com")
-                .password("password")
+                .email("user@gmail.com")
+                .password("len123")
+                .name("user")
+                .build();
+        String siteUrl = "http://localhost";
+        String verifyLink = userService.generateVerifyLink(userPostDto, siteUrl);
+
+        assertEquals(
+                "http://localhost/verify?code="
+                        .concat("eyJhbGciOiJIUzI1NiJ9.")
+                        .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
+                        .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw"),
+                verifyLink
+        );
+    }
+
+    @Test
+    public void shouldCreateUserAndGenerateActivationLinkGivenProperUserDto() {
+        UserInfoDto userPostDto = UserInfoDto.builder()
+                .email("user@gmail.com")
+                .password("len123")
                 .name("user")
                 .build();
 
-        UserEntity mockUserEntity = UserEntity.builder()
-                .email("user@qq.com")
-                .password(bCryptPasswordEncoder.encode(userPostDto.getPassword()))
-                .name("user")
-                .id(1L)
-                .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build();
+        ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        when(userRepository.save(any())).thenReturn(mockUserEntity);
-        UserInfoDto userInfoDtoGet = userService.createUser(userPostDto);
+        userService.createUserAndGenerateVerifyLink(userPostDto, "http://localhost");
 
-        assertEquals(userPostDto.getName(), userInfoDtoGet.getName());
-        assertEquals(userPostDto.getEmail(), userInfoDtoGet.getEmail());
+        verify(userRepository).save(captor.capture());
+        UserEntity savedUser = captor.getValue();
+        assertEquals("user@gmail.com", savedUser.getEmail());
+        assertEquals("user", savedUser.getName());
+    }
+
+    @Test
+    public void shouldDecodeEmailAndActiveUserStatus() throws Exception {
+        String code = "eyJhbGciOiJIUzI1NiJ9."
+                .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
+                .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw");
+
+        when(userRepository.updateStatusByEmail("user@gmail.com", Status.ACTIVATED)).thenReturn(1);
+
+        userService.verifyAccountAndActiveUser(code);
+
+        verify(userRepository).updateStatusByEmail("user@gmail.com", Status.ACTIVATED);
     }
 }

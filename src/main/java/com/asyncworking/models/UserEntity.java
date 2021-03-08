@@ -4,11 +4,14 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.stereotype.Service;
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
 @Getter
+@Setter
+@Service
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
