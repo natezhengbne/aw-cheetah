@@ -2,8 +2,6 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.*;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import io.jsonwebtoken.Claims;
@@ -16,14 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.HashSet;
 
 @Slf4j
 @Service
@@ -31,10 +24,6 @@ import java.util.HashSet;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final CompanyRepository companyRepository;
-
-    private final EmployeeRepository employeeRepository;
 
     private final AuthenticationManager authenticationManager;
 
@@ -111,68 +100,7 @@ public class UserService {
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
-
-    @Transactional
-    public void createCompanyAndEmployee(UserInfoDto userInfoDto) {
-
-        UserEntity selectedUserEntity = fetchUserEntityByEmail(userInfoDto.getEmail());
-        log.info("selectedUser's email" + selectedUserEntity.getEmail());
-        Company newCompany = createCompany(userInfoDto.getCompany(), selectedUserEntity.getId());
-
-        saveCompany(newCompany);
-
-        Employee newEmployee = createEmployee
-                (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
-                        selectedUserEntity,
-                        newCompany);
-        if (userInfoDto.getTitle() != null){
-            newEmployee.setTitle(userInfoDto.getTitle());
-        }
-        saveEmployee(newEmployee);
-    }
-
-    private UserEntity fetchUserEntityByEmail(String email) {
-
-        return userRepository.findUserEntityByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("No such user!"));
-    }
-
-    private Company createCompany(String company, Long userId){
-        return Company.builder()
-                .name(company)
-                .adminId(userId)
-                .employees(new HashSet<>())
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build();
-    }
-
-    private void saveCompany(Company company) {
-        try {
-            companyRepository.save(company);
-        } catch (Exception e) {
-            log.error("Something wrong when saving to database " + e.getMessage(), e);
-        }
-    }
-
-    private Employee createEmployee(EmployeeId employeeId, UserEntity userEntity, Company company) {
-        return Employee.builder()
-                .id(employeeId)
-                .company(company)
-                .userEntity(userEntity)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build();
-    }
-
-    private void saveEmployee(Employee employee) {
-        try {
-            employeeRepository.save(employee);
-        } catch (Exception e) {
-            log.error("Something wrong when saving to database " + e.getMessage(), e);
-        }
-    }
-
+    
     public boolean ifCompanyExits(String email){
         return userRepository.findEmploymentByEmail(email).isPresent();
     }

@@ -85,13 +85,4 @@ public class UserController {
         return new ResponseEntity<>("first login", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/create_company")
-    public ResponseEntity<?> createCompany(@RequestBody UserInfoDto userInfoDto){
-        try {
-            userService.createCompanyAndEmployee(userInfoDto);
-            return ResponseEntity.ok("success");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 }
