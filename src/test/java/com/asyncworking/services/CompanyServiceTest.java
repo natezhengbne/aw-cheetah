@@ -2,7 +2,6 @@ package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyInfoDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
 import com.asyncworking.models.UserEntity;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
