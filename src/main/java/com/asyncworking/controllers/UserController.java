@@ -76,4 +76,14 @@ public class UserController {
     public void deleteAllUsers() {
         userService.deleteAllUsers();
     }
+
+    @GetMapping("/company_check")
+    public ResponseEntity<?> companyCheck(@RequestParam("email") String email) {
+        log.info(email);
+        if (userService.ifCompanyExits(email)){
+            return ResponseEntity.ok("success");
+        }
+        return new ResponseEntity<>("first login", HttpStatus.NOT_FOUND);
+    }
+
 }

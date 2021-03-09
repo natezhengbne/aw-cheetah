@@ -3,6 +3,8 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,9 +21,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +32,12 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+
+    @Mock
+    private CompanyRepository companyRepository;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -127,5 +135,35 @@ public class UserServiceTest {
         userService.verifyAccountAndActiveUser(code);
 
         verify(userRepository).updateStatusByEmail("user@gmail.com", Status.ACTIVATED);
+    }
+
+    @Test
+    public void throwExceptionWhenEmailNotExist() {
+        String expectedMessage = "No such user!";
+
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .email("lengary@asyncworking.com")
+                .company("AW")
+                .title("VI")
+                .build();
+
+        when(userRepository.findByEmail(userPostInfoDto.getEmail()))
+                .thenThrow(new RuntimeException(expectedMessage));
+
+        Exception exception = assertThrows(RuntimeException.class,
+                () -> userService.ifEmailExists(userPostInfoDto.getEmail()));
+
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void shouldFindEmploymentExistSuccessful() {
+        String email = "a@gmail.com";
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
+                .email("a@gmail.com").build();
+        when(userRepository.findEmploymentByEmail(anyString())).thenReturn(Optional.of(mockReturnedUserEntity));
+        boolean testEmail = userService.ifCompanyExits(email);
+        assertTrue(testEmail);
     }
 }

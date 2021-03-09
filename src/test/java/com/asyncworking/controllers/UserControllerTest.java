@@ -27,8 +27,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
 @AutoConfigureMockMvc
@@ -107,6 +105,30 @@ class UserControllerTest {
                         .param("code", code)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfCompanyExists() throws Exception {
+        String email = "kkk@gmail.com";
+        when(userService.ifCompanyExits(email)).thenReturn(true);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/company_check")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnErrorIfCompanyNotExist() throws Exception {
+        String email = "a@gmail.com";
+        when(userService.ifCompanyExits(email)).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/company_check")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
     }
 }
 

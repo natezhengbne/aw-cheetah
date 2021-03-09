@@ -1,8 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import io.jsonwebtoken.Claims;
@@ -17,7 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -25,7 +24,9 @@ import javax.transaction.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
     private final AuthenticationManager authenticationManager;
+
     private final Mapper mapper;
 
     @Value("${jwt.secret}")
@@ -59,7 +60,6 @@ public class UserService {
         return verifyLink;
     }
 
-
     private String generateJws(UserInfoDto userInfoDto) {
         String jws = Jwts.builder()
                 .setSubject("signUp")
@@ -77,7 +77,6 @@ public class UserService {
         this.activeUser(email);
     }
 
-
     private String decodedEmail(String code) throws Exception{
 
             Jws<Claims> jws = Jwts.parserBuilder()
@@ -87,10 +86,8 @@ public class UserService {
 
             Claims body = jws.getBody();
 
-            String email = body.get("email").toString();
-            return email;
+        return body.get("email").toString();
     }
-
 
     private void activeUser(String email) throws Exception{
 
@@ -107,5 +104,8 @@ public class UserService {
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
-
+    
+    public boolean ifCompanyExits(String email){
+        return userRepository.findEmploymentByEmail(email).isPresent();
+    }
 }
