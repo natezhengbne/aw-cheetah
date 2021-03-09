@@ -20,8 +20,8 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PostMapping("/firstlogin")
-    public ResponseEntity<?> createCompany(@RequestBody CompanyInfoDto companyInfoDto){
+    @PostMapping("/company_create")
+    public ResponseEntity<?> companyCreate(@RequestBody CompanyInfoDto companyInfoDto){
         try {
             companyService.createCompanyAndEmployee(companyInfoDto);
             return ResponseEntity.ok("success");

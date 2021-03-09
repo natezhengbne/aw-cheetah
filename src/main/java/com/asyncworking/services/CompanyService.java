@@ -37,7 +37,7 @@ public class CompanyService {
         log.info("selectedUser's email" + selectedUserEntity.getEmail());
         Company newCompany = createCompany(companyInfoDto.getName(), selectedUserEntity.getId());
 
-        saveCompany(newCompany);
+        companyRepository.save(newCompany);
 
         Employee newEmployee = createEmployee
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
@@ -46,11 +46,10 @@ public class CompanyService {
         if (companyInfoDto.getUserTitle() != null){
             newEmployee.setTitle(companyInfoDto.getUserTitle());
         }
-        saveEmployee(newEmployee);
+        employeeRepository.save(newEmployee);
     }
 
     private UserEntity fetchUserEntityByEmail(String email) {
-
         return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No such user!"));
     }
@@ -65,14 +64,6 @@ public class CompanyService {
                 .build();
     }
 
-    private void saveCompany(Company company) {
-        try {
-            companyRepository.save(company);
-        } catch (Exception e) {
-            log.error("Something wrong when saving to database " + e.getMessage(), e);
-        }
-    }
-
     private Employee createEmployee(EmployeeId employeeId, UserEntity userEntity, Company company) {
         return Employee.builder()
                 .id(employeeId)
@@ -83,11 +74,4 @@ public class CompanyService {
                 .build();
     }
 
-    private void saveEmployee(Employee employee) {
-        try {
-            employeeRepository.save(employee);
-        } catch (Exception e) {
-            log.error("Something wrong when saving to database " + e.getMessage(), e);
-        }
-    }
 }

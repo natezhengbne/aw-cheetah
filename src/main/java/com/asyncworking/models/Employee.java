@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "employee")
+@Table(name = "company_user")
 public class Employee {
 
     @EmbeddedId

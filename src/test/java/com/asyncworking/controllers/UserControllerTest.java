@@ -114,7 +114,7 @@ class UserControllerTest {
         when(userService.ifCompanyExits(email)).thenReturn(true);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/login")
+                MockMvcRequestBuilders.get("/company_check")
                         .param("email", email)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
@@ -126,7 +126,7 @@ class UserControllerTest {
         when(userService.ifCompanyExits(email)).thenReturn(false);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/login")
+                MockMvcRequestBuilders.get("/company_check")
                         .param("email", email)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
