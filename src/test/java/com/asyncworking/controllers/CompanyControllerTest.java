@@ -43,7 +43,7 @@ public class CompanyControllerTest {
                 .userTitle("VI")
                 .build();
         doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
-        mockMvc.perform(post("/create_company")
+        mockMvc.perform(post("/firstlogin")
                 .content(objectMapper.writeValueAsString(companyInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
