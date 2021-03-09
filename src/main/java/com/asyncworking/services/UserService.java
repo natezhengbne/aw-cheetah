@@ -32,12 +32,16 @@ public class UserService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public Authentication login(String email, String password) {
-
+    public UserInfoDto login(String email, String password) {
+        String name = userRepository.findUserEntityByEmail(email).get().getName();
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .email(email)
+                .name(name)
+                .build();
         Authentication authenticate = this.authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
-        return authenticate;
+        return userInfoDto;
     }
 
     public boolean ifEmailExists(String email){

@@ -45,7 +45,6 @@ class UserControllerTest {
     public void shouldLoginSuccessful() throws Exception {
         Authentication mocked = Mockito.mock(Authentication.class);
         when(mocked.isAuthenticated()).thenReturn(true);
-        when(userService.login(anyString(), anyString())).thenReturn(mocked);
 
         String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len123\"}";
         MvcResult mvcResult = mockMvc.perform(

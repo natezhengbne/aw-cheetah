@@ -32,8 +32,9 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody UserInfoDto userInfoDto) {
         log.info(userInfoDto.getEmail());
         try {
-            userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
-            return ResponseEntity.ok("success");
+            UserInfoDto userInfoDto1 =
+                    userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
+            return ResponseEntity.ok(userInfoDto1);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
