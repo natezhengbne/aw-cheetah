@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
@@ -21,7 +22,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -54,6 +56,27 @@ public class UserServiceTest {
 
         String email = userInfoDto.getEmail();
         assertTrue(userService.ifEmailExists(email));
+    }
+
+    @Test
+    public void shouldLoginSuccessfulAndReturnDto() {
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .email("plus@gmail.com")
+                .name("aName")
+                .password("password")
+                .build();
+
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
+                .email("plus@gmail.com")
+                .name("aName")
+                .build();
+
+        when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
+
+        UserInfoDto returnedUserInfoDto = userService.login(userInfoDto.getEmail(), userInfoDto.getPassword());
+        String testName = returnedUserInfoDto.getName();
+
+        assertEquals(testName, mockReturnedUserEntity.getName());
     }
 
     @Test
