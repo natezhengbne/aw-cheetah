@@ -35,7 +35,7 @@ public class CompanyControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    public void testCreateCompany() throws Exception {
+    public void testCompanyCreateSuccess() throws Exception {
 
         CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
                 .adminEmail("aaa@qq.com")
@@ -47,6 +47,48 @@ public class CompanyControllerTest {
                 .content(objectMapper.writeValueAsString(companyInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void throwBadRequestWhenCompanyNameIsNull() throws Exception {
+
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .adminEmail("aaa@qq.com")
+                .name("")
+                .build();
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
+        mockMvc.perform(post("/company")
+                .content(objectMapper.writeValueAsString(companyInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void throwBadRequestWhenAdminEmailIsNull() throws Exception {
+
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .adminEmail("")
+                .name("AW")
+                .build();
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
+        mockMvc.perform(post("/company")
+                .content(objectMapper.writeValueAsString(companyInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void throwBadRequestWhenAdminEmailInvalid() throws Exception {
+
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .adminEmail("aaaqq.com")
+                .name("aw")
+                .build();
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
+        mockMvc.perform(post("/company")
+                .content(objectMapper.writeValueAsString(companyInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 }

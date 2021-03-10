@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
 import com.asyncworking.models.UserEntity;
@@ -20,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,5 +67,28 @@ public class CompanyServiceTest {
 
         assertEquals("VI", savedEmployee.getTitle());
         assertEquals(mockReturnedUserEntity.getId(), savedCompany.getAdminId());
+    }
+
+    @Test
+    public void throwNotFoundExceptionWhenUserNotExit() {
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .adminEmail("lengary@asyncworking.com")
+                .name("AW")
+                .userTitle("VI")
+                .build();
+
+        when(userRepository.findUserEntityByEmail(companyInfoDto.getAdminEmail()))
+                .thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(UserNotFoundException.class,
+                () -> companyService.createCompanyAndEmployee(companyInfoDto));
+
+        String expectedMessage = "Can not found user by email";
+
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+
+
     }
 }

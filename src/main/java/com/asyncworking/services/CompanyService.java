@@ -1,7 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyInfoDto;
-import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
 import com.asyncworking.models.EmployeeId;
@@ -11,7 +11,6 @@ import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +50,7 @@ public class CompanyService {
 
     private UserEntity fetchUserEntityByEmail(String email) {
         return userRepository.findUserEntityByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("No such user!"));
+                .orElseThrow(() -> new UserNotFoundException("Can not found user by email:" + email));
     }
 
     private Company createCompany(String company, Long userId){

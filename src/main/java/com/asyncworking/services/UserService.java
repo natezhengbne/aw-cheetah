@@ -1,14 +1,15 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.*;
+import com.asyncworking.exceptions.UserNotFoundException;
+import com.asyncworking.models.Status;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,7 +36,15 @@ public class UserService {
     private String jwtSecret;
 
     public UserInfoDto login(String email, String password) {
-        String name = userRepository.findUserEntityByEmail(email).get().getName();
+        Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
+
+        if (foundUserEntity.isEmpty()){
+            throw new UserNotFoundException("user not found");
+        }
+
+        String name = foundUserEntity.get().getName();
+        log.debug(name);
+
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .email(email)
                 .name(name)
@@ -72,12 +83,19 @@ public class UserService {
     }
 
     @Transactional
-    public void verifyAccountAndActiveUser(String code) throws Exception{
+    public void verifyAccountAndActiveUser(String code) {
         String email = this.decodedEmail(code);
-        this.activeUser(email);
+        int numberOfActiveUse = this.activeUser(email);
+
+        log.debug("number of activated userEntity" + numberOfActiveUse);
+
+        if (numberOfActiveUse == 0) {
+            throw new UserNotFoundException("Can not found user by email:" + email);
+        }
+
     }
 
-    private String decodedEmail(String code) throws Exception{
+    private String decodedEmail(String code) {
 
             Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
@@ -89,16 +107,9 @@ public class UserService {
         return body.get("email").toString();
     }
 
-    private void activeUser(String email) throws Exception{
-
+    private int activeUser(String email) {
         int numberOfActivatedUse = userRepository.updateStatusByEmail(email, Status.ACTIVATED);
-
-        log.info("number of activated userEntity" + numberOfActivatedUse);
-
-        if (numberOfActivatedUse == 0) {
-            throw new NotFoundException("User not found");
-        }
-
+        return numberOfActivatedUse;
     }
 
     public void deleteAllUsers() {
