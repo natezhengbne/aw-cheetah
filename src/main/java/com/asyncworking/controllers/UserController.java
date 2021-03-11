@@ -77,7 +77,7 @@ public class UserController {
         userService.deleteAllUsers();
     }
 
-    @GetMapping("/company_check")
+    @GetMapping("/company")
     public ResponseEntity<?> companyCheck(@RequestParam("email") String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
