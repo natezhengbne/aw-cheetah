@@ -35,7 +35,7 @@ public class CompanyControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    public void testCompanyCreate() throws Exception {
+    public void testCreateCompany() throws Exception {
 
         CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
                 .adminEmail("aaa@qq.com")
@@ -43,7 +43,7 @@ public class CompanyControllerTest {
                 .userTitle("VI")
                 .build();
         doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
-        mockMvc.perform(post("/company_create")
+        mockMvc.perform(post("/company")
                 .content(objectMapper.writeValueAsString(companyInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
