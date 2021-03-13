@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,13 +45,41 @@ class UserControllerTest {
         Authentication mocked = Mockito.mock(Authentication.class);
         when(mocked.isAuthenticated()).thenReturn(true);
 
-        String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len123\"}";
+        String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len1234567\"}";
         MvcResult mvcResult = mockMvc.perform(
                 post("/login")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputJson)).andReturn();
 
         assertEquals(200, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenEmailNotValidForLogin() throws Exception {
+        Authentication mocked = Mockito.mock(Authentication.class);
+        when(mocked.isAuthenticated()).thenReturn(true);
+
+        String inputJson = "{\"email\": \"lengaasyncworking.com\", \"password\":\"len1234567\"}";
+        MvcResult mvcResult = mockMvc.perform(
+                post("/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputJson)).andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenPasswordNotValidForLogin() throws Exception {
+        Authentication mocked = Mockito.mock(Authentication.class);
+        when(mocked.isAuthenticated()).thenReturn(true);
+
+        String inputJson = "{\"email\": \"lenga@asyncworking.com\", \"password\":\"123\"}";
+        MvcResult mvcResult = mockMvc.perform(
+                post("/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputJson)).andReturn();
+
+        assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -87,13 +114,86 @@ class UserControllerTest {
                 .password("aaaaaaaa1")
                 .build();
 
-        HttpServletRequest  mockedRequest = Mockito.mock(HttpServletRequest.class);
-
         doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
         mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(userPostInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenEmailIsNotValidForSignup() throws Exception {
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaaqq.com")
+                .password("aaaaaaaa1")
+                .build();
+
+        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        mockMvc.perform(post("/signup")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenPasswordIsNotValidForSignup() throws Exception {
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaa")
+                .build();
+
+        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        mockMvc.perform(post("/signup")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldResendActivationLinkSuccessful() throws Exception {
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaaaa1")
+                .build();
+
+        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        mockMvc.perform(post("/resend")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenEmailIsNotValidForResend() throws Exception {
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaaqq.com")
+                .password("aaaaaaaa1")
+                .build();
+
+        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        mockMvc.perform(post("/resend")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenPasswordIsNotValidForResend() throws Exception {
+        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaa")
+                .build();
+
+        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        mockMvc.perform(post("/resend")
+                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -120,7 +220,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldReturnErrorIfCompanyNotExist() throws Exception {
+    public void shouldReturnNotFoundIfCompanyNotExist() throws Exception {
         String email = "a@gmail.com";
         when(userService.ifCompanyExits(email)).thenReturn(false);
 

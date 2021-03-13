@@ -32,7 +32,13 @@ environment:
       PGADMIN_DEFAULT_EMAIL: {EMAIL}
       PGADMIN_DEFAULT_PASSWORD: {PASSWORD}
 ```
-
+create a new server by entering postgresql in host name/address area, username postgres and password admin. You can customise email and password in docker-compose.yml.
+```
+environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER={username}
+      - POSTGRES_PASSWORD={password}
+```
 ## Running the tests
 
  Run the automated tests for this system by following:

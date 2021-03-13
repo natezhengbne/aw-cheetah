@@ -1,10 +1,9 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,12 +31,6 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    @Mock
-    private CompanyRepository companyRepository;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -88,6 +81,28 @@ public class UserServiceTest {
     }
 
     @Test
+    public void shouldThrowExceptionWhenUserIsNotExist() {
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .email("plus@gmail.com")
+                .name("aName")
+                .password("password")
+                .build();
+
+        String expectedMessage = "user not found";
+
+        when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            userService.login(userInfoDto.getEmail(), userInfoDto.getPassword());
+        });
+
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+
+    }
+
+    @Test
     public void shouldGenerateActivationLinkGivenUserDtoAndHttpServletRequest() {
         UserInfoDto userPostDto = UserInfoDto.builder()
                 .email("user@gmail.com")
@@ -125,7 +140,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldDecodeEmailAndActiveUserStatus() throws Exception {
+    public void shouldDecodeEmailAndActiveUserStatus() {
         String code = "eyJhbGciOiJIUzI1NiJ9."
                 .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
                 .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw");
@@ -138,12 +153,29 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenEmailNotExist() {
-        String expectedMessage = "No such user!";
+    public void throwExceptionWhenNoUserFound() {
+        String code = "eyJhbGciOiJIUzI1NiJ9."
+                .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
+                .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw");
+
+        when(userRepository.updateStatusByEmail("user@gmail.com", Status.ACTIVATED)).thenReturn(0);
+
+        Exception exception = assertThrows(UserNotFoundException.class,
+                () -> userService.verifyAccountAndActiveUser(code));
+
+        String expectedMessage = "Can not found user by email";
+
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void throwExceptionWhenUserDatabaseWrong() {
+        String expectedMessage = "database wrong";
 
         UserInfoDto userPostInfoDto = UserInfoDto.builder()
                 .email("lengary@asyncworking.com")
-                .company("AW")
                 .title("VI")
                 .build();
 
