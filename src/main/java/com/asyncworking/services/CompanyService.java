@@ -53,12 +53,6 @@ public class CompanyService {
         employeeRepository.save(newEmployee);
     }
 
-    public CompanyInfoDto getCompanyInfo(String email) {
-        String company = companyRepository.findCompanyInfoByEmail(email).toString();
-        log.info("!!!"+company);
-        return new CompanyInfoDto();
-    }
-
     private UserEntity fetchUserEntityByEmail(String email) {
         return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Can not found user by email:" + email));
