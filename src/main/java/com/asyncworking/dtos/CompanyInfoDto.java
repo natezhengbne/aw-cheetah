@@ -21,7 +21,6 @@ public class CompanyInfoDto {
     private String name;
 
     @Email(message = "Email is not valid")
-    @NotEmpty(message = "Email can not be empty")
     private String adminEmail;
 
     @Size(max = 1024, message = "Company description can not be more than 1024 characters ")
