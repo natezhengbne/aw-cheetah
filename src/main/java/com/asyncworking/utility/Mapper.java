@@ -1,6 +1,8 @@
 package com.asyncworking.utility;
 
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,14 @@ public class Mapper {
                 .status(Status.UNVERIFIED)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+    }
+
+    public Company mapInfoDtoToEntity(CompanyInfoDto companyInfoDto){
+        return Company.builder()
+                .name(companyInfoDto.getName())
+                .contactEmail(companyInfoDto.getAdminEmail())
+                .description(companyInfoDto.getDescription())
                 .build();
     }
 

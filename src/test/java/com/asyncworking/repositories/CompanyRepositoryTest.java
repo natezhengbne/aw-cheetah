@@ -37,6 +37,7 @@ public class CompanyRepositoryTest {
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         Company returnedCompany = companyRepository.save(mockCompany);
-        assertEquals("AW", returnedCompany.getName());
+        System.out.println("Company :    " + returnedCompany.toString());
+
     }
 }

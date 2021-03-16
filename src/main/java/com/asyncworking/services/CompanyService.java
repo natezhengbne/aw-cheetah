@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -9,6 +10,7 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
 
     private final EmployeeRepository employeeRepository;
+
+    private final Mapper mapper;
 
     @Transactional
     public void createCompanyAndEmployee(CompanyInfoDto companyInfoDto) {
@@ -73,4 +77,15 @@ public class CompanyService {
                 .build();
     }
 
+    public String fetchCompanyDescriptionById(Long companyId){
+        Company company=companyRepository.findById(companyId)
+                .orElseThrow(()-> new CompanyNotFoundException("Can not found company with Id:"+companyId));
+        return company.getDescription();
+    }
+
+    @Transactional
+    public void updateCompanyDescription(CompanyInfoDto companyInfoDto){
+        Company company=mapper.mapInfoDtoToEntity(companyInfoDto);
+        companyRepository.save(company);
+    }
 }
