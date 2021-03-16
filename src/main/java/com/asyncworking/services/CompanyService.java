@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -52,8 +53,10 @@ public class CompanyService {
         employeeRepository.save(newEmployee);
     }
 
-    public Company getCompanyInfo(){
-        return new Company();
+    public CompanyInfoDto getCompanyInfo(String email) {
+        String company = companyRepository.findCompanyInfoByEmail(email).toString();
+        log.info("!!!"+company);
+        return new CompanyInfoDto();
     }
 
     private UserEntity fetchUserEntityByEmail(String email) {

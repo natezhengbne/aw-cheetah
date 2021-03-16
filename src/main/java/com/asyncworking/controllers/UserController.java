@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import java.net.URI;
@@ -26,6 +27,7 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+    private final CompanyService companyService;
 
     @GetMapping("/signup")
     public ResponseEntity<String> validateEmail(@RequestParam(value = "email", required = true) String email) {
@@ -79,7 +81,8 @@ public class UserController {
     public ResponseEntity companyCheck(@RequestParam(value = "email", required = true) String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
-            return ResponseEntity.ok("success");
+            CompanyInfoDto companyInfoDto = companyService.getCompanyInfo(email);
+            return ResponseEntity.ok(companyInfoDto);
         }
         return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
     }

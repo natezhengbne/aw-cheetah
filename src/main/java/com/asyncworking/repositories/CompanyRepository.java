@@ -2,8 +2,10 @@ package com.asyncworking.repositories;
 
 
 import com.asyncworking.models.Company;
+import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+
+import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
@@ -24,4 +28,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             @Param("updatedTime") Date updatedTime,
             @Param("id")Long id);
 
+    @Query("select u from UserEntity u where u.email=:email")
+    Optional<Company> findCompanyInfoByEmail(@Param("email") String email);
 }
