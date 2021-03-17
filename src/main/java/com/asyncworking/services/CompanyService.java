@@ -53,7 +53,7 @@ public class CompanyService {
         employeeRepository.save(newEmployee);
     }
 
-    public CompanyInfoDto getCompanyInfo(String email) {
+    public CompanyInfoDto getCompanyInfoDto(String email) {
         Company companyInfo = companyRepository.findCompanyInfoByEmail(email).get();
         return mapCompanyToCompanyDto(companyInfo);
     }
