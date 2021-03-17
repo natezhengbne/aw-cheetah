@@ -28,6 +28,11 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query(nativeQuery = true, value =
+            "SELECT * FROM company c, company_user cu, user_info u WHERE \n" +
+                    "c.id = cu.company_id AND \n" +
+                    "cu.user_id = u.id AND \n" +
+                    "u.email = :email")
+    @Query(nativeQuery = true, value =
             "SELECT c.id, c.name, c.description FROM company c, company_user cu, user_info u WHERE \n" +
                     "c.id = cu.company_id AND \n" +
                     "cu.user_id = u.id AND \n" +
