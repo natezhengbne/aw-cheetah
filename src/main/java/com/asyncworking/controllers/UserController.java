@@ -24,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/signup")
-    public ResponseEntity<String> validateEmail(@Valid @RequestParam("email") String email) {
+    public ResponseEntity<String> validateEmail(@RequestParam(value = "email", required = true) String email) {
         if (userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
         }
@@ -51,14 +51,12 @@ public class UserController {
                                                HttpServletRequest request) {
         userService.generateVerifyLink(userInfoDto, SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
-
     }
 
     @GetMapping("/verify")
     public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) {
         userService.verifyAccountAndActiveUser(code);
         return ResponseEntity.ok("success");
-
     }
 
     @DeleteMapping("/signup")
@@ -67,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/company")
-    public ResponseEntity companyCheck(@Valid @RequestParam("email") String email) {
+    public ResponseEntity companyCheck(@RequestParam(value = "email", required = true) String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
             return ResponseEntity.ok("success");
