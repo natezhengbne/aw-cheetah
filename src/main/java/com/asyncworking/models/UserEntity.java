@@ -17,8 +17,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "user_info")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

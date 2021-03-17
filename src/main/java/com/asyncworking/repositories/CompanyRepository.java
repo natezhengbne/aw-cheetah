@@ -2,7 +2,6 @@ package com.asyncworking.repositories;
 
 
 import com.asyncworking.models.Company;
-import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +18,11 @@ import java.util.Optional;
 @Repository
 @EnableJpaRepositories
 public interface CompanyRepository extends JpaRepository<Company, Long> {
+    @Query(nativeQuery = true, value =
+            "SELECT * FROM company c, company_user cu, user_info u WHERE \n" +
+                    "c.id = cu.company_id AND \n" +
+                    "cu.user_id = u.id AND \n" +
+                    "u.email = :email")
 
     @Modifying
     @Query("update Company c  set c.name=:name, c.description=:description, c.updatedTime=:updatedTime where c.id=:id")
