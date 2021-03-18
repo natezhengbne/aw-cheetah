@@ -1,5 +1,7 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
+import com.asyncworking.models.ICompanyInfo;
 import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

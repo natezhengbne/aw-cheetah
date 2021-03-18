@@ -1,5 +1,7 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
@@ -20,6 +22,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -50,6 +53,8 @@ public class CompanyService {
 
         if (companyModificationDto.getUserTitle() != null) {
             newEmployee.setTitle(companyModificationDto.getUserTitle());
+        if (companyInfoDto.getUserTitle() != null) {
+            newEmployee.setTitle(companyInfoDto.getUserTitle());
         }
         employeeRepository.save(newEmployee);
     }
@@ -59,6 +64,16 @@ public class CompanyService {
         List<String> colleague = userRepository.findNameById(companyInfo.getId());
 
         return mapCompanyToCompanyDto(companyInfo, colleague);
+    public CompanyColleagueDto getCompanyInfoDto(String email) {
+        List<ICompanyInfo> companyInfo = companyRepository.findCompanyInfoByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Can not found your company by email:" + email));
+
+        ICompanyInfo iCompanyInfo = companyInfo.get(0);
+        Long companyId = iCompanyInfo.getId();
+        List<String> colleague = userRepository.findNameById(companyId)
+                .orElseThrow(() -> new UserNotFoundException(
+                        "Can not found your colleagues by company name:" + iCompanyInfo.getName()));
+        return mapCompanyToCompanyDto(iCompanyInfo, colleague);
     }
 
     private CompanyColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo,
