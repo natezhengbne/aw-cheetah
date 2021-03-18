@@ -1,7 +1,9 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 
 import com.asyncworking.models.Company;
+import com.asyncworking.models.ICompanyInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
@@ -19,7 +22,7 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query(nativeQuery = true, value =
-            "SELECT * FROM company c, company_user cu, user_info u WHERE \n" +
+            "SELECT c.id, c.name, c.description FROM company c, company_user cu, user_info u WHERE \n" +
                     "c.id = cu.company_id AND \n" +
                     "cu.user_id = u.id AND \n" +
                     "u.email = :email")
@@ -33,5 +36,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             @Param("id")Long id);
 
     @Query("select u from UserEntity u where u.email=:email")
-    Optional<Company> findCompanyInfoByEmail(@Param("email") String email);
+    Optional<List<ICompanyInfo>> findCompanyInfoByEmail(@Param("email") String email);
+
 }

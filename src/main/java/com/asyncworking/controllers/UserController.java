@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.UserInfoDto;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -82,7 +83,7 @@ public class UserController {
     public ResponseEntity companyCheck(@RequestParam(value = "email", required = true) String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
-            CompanyInfoDto companyInfoDto = companyService.getCompanyInfoDto(email);
+            CompanyNameDescriptionColleagueDto companyInfoDto = companyService.getCompanyInfoDto(email);
             return ResponseEntity.ok(companyInfoDto);
         }
         return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);

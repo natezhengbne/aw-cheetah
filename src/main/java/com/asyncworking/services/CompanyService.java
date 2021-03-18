@@ -1,12 +1,11 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.UserNotFoundException;
-import com.asyncworking.models.Company;
-import com.asyncworking.models.Employee;
-import com.asyncworking.models.EmployeeId;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -53,15 +52,25 @@ public class CompanyService {
         employeeRepository.save(newEmployee);
     }
 
-    public CompanyInfoDto getCompanyInfoDto(String email) {
-        Company companyInfo = companyRepository.findCompanyInfoByEmail(email).get();
-        return mapCompanyToCompanyDto(companyInfo);
+    public CompanyNameDescriptionColleagueDto getCompanyInfoDto(String email) {
+        List<ICompanyInfo> companyInfo = companyRepository.findCompanyInfoByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Can not found your company by email:" + email));
+
+        ICompanyInfo iCompanyInfo = companyInfo.get(0);
+        Long companyId = iCompanyInfo.getId();
+        List<String> colleague = userRepository.findNameById(companyId)
+                .orElseThrow(() -> new UserNotFoundException(
+                        "Can not found your colleagues by company name:" + iCompanyInfo.getName()));
+        return mapCompanyToCompanyDto(iCompanyInfo, colleague);
     }
 
-    private CompanyInfoDto mapCompanyToCompanyDto(Company company){
-        return CompanyInfoDto.builder()
-                .name(company.getName())
-                .description(company.getDescription())
+    private CompanyNameDescriptionColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo,
+                                                                      List<String> colleague) {
+        return CompanyNameDescriptionColleagueDto.builder()
+                .id(companyInfo.getId())
+                .name(companyInfo.getName())
+                .description(companyInfo.getDescription())
+                .colleague(colleague)
                 .build();
     }
 
