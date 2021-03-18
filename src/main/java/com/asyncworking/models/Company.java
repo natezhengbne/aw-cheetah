@@ -2,6 +2,8 @@ package com.asyncworking.models;
 
 import lombok.*;
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@ToString
 @Entity
 @Builder
 @Setter
@@ -57,7 +60,7 @@ public class Company {
     private OffsetDateTime updatedTime;
 
     @OneToMany(mappedBy = "company",
-    cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Employee> employees;
 
     public void addEmployee(Employee employee) {

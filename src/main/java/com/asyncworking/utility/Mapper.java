@@ -5,6 +5,7 @@ import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,9 +35,10 @@ public class Mapper {
 
     public Company mapInfoDtoToEntity(CompanyInfoDto companyInfoDto){
         return Company.builder()
+                .id(companyInfoDto.getCompanyId())
                 .name(companyInfoDto.getName())
-                .contactEmail(companyInfoDto.getAdminEmail())
                 .description(companyInfoDto.getDescription())
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
@@ -44,6 +46,14 @@ public class Mapper {
         return UserInfoDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
+                .build();
+    }
+
+    public CompanyInfoDto mapEntityToCompanyProfileDto(Company company){
+        return CompanyInfoDto.builder()
+                .companyId(company.getId())
+                .name(company.getName())
+                .description(company.getDescription())
                 .build();
     }
 }

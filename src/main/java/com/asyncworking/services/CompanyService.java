@@ -46,7 +46,7 @@ public class CompanyService {
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
                         selectedUserEntity,
                         newCompany);
-        if (companyInfoDto.getUserTitle() != null){
+        if (companyInfoDto.getUserTitle() != null) {
             newEmployee.setTitle(companyInfoDto.getUserTitle());
         }
         employeeRepository.save(newEmployee);
@@ -57,7 +57,7 @@ public class CompanyService {
                 .orElseThrow(() -> new UserNotFoundException("Can not found user by email:" + email));
     }
 
-    private Company createCompany(String company, Long userId){
+    private Company createCompany(String company, Long userId) {
         return Company.builder()
                 .name(company)
                 .adminId(userId)
@@ -77,15 +77,26 @@ public class CompanyService {
                 .build();
     }
 
-    public String fetchCompanyDescriptionById(Long companyId){
-        Company company=companyRepository.findById(companyId)
-                .orElseThrow(()-> new CompanyNotFoundException("Can not found company with Id:"+companyId));
-        return company.getDescription();
+    public CompanyInfoDto fetchCompanyProfileById(Long companyId) {
+        Company company = fetchCompanyById(companyId);
+        return mapper.mapEntityToCompanyProfileDto(company);
+    }
+
+    private Company fetchCompanyById(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException("Can not found company with Id:" + companyId));
     }
 
     @Transactional
-    public void updateCompanyDescription(CompanyInfoDto companyInfoDto){
-        Company company=mapper.mapInfoDtoToEntity(companyInfoDto);
-        companyRepository.save(company);
+    public void updateCompany(CompanyInfoDto companyInfoDto) {
+        Company company = mapper.mapInfoDtoToEntity(companyInfoDto);
+        int res=companyRepository.updateCompanyProfileById(
+                company.getName(),
+                company.getDescription(),
+                company.getUpdatedTime(),
+                company.getId());
+        if(res==0){
+            throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());
+        }
     }
 }

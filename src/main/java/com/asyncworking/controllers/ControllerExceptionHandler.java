@@ -25,17 +25,17 @@ public class ControllerExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(e.getLocalizedMessage());
         ErrorDto error = new ErrorDto("User not found", details);
-        return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {CompanyNotFoundException.class})
-    public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e){
-        log.debug("Company is not found.",e);
+    public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
+        log.debug("Company is not found.", e);
 
-        List<String> details= new ArrayList<>();
+        List<String> details = new ArrayList<>();
         details.add(e.getLocalizedMessage());
-        ErrorDto error=new ErrorDto("Company is not found.",details);
-        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+        ErrorDto error = new ErrorDto("Company is not found.", details);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
@@ -45,7 +45,7 @@ public class ControllerExceptionHandler {
             details.add(error.getDefaultMessage());
         }
         ErrorDto error = new ErrorDto("Validation Failed", details);
-        return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
@@ -55,6 +55,6 @@ public class ControllerExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(e.getLocalizedMessage());
         ErrorDto error = new ErrorDto("Server Error", details);
-        return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

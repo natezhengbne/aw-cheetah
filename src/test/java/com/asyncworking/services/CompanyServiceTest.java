@@ -19,6 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.AssertTrue;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -89,6 +93,30 @@ public class CompanyServiceTest {
 
         assertTrue(actualMessage.contains(expectedMessage));
 
+    }
 
+    @Test
+    @Transactional
+    void updateCompanyDescription() {
+        Company company = Company.builder()
+                .id(1L)
+                .name("AW")
+                .adminId(11L)
+                .description("com")
+                .employees(new HashSet<>())
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+        companyRepository.save(company);
+        assertTrue(companyRepository.findById(1L).isPresent());
+      /*  if (companyRepository.findById(1L).isPresent()) {
+            System.out.println(companyRepository.findById(1L).get().getDescription());
+        }
+
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .name("AWAW")
+                .description("hahahaha")
+                .build();
+        companyService.updateCompanyDescription(companyInfoDto, 1L);*/
     }
 }
