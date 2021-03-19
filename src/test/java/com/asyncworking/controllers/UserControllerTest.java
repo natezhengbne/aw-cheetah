@@ -1,8 +1,10 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -39,6 +44,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private CompanyService companyService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -227,7 +235,15 @@ class UserControllerTest {
     @Test
     public void shouldReturnOkIfCompanyExists() throws Exception {
         String email = "kkk@gmail.com";
+        List<String> colleagueList = Arrays.asList("+", "-", "*");
+        CompanyNameDescriptionColleagueDto companyInfo = CompanyNameDescriptionColleagueDto.builder()
+                .id(1L)
+                .name("+ company")
+                .description("description for +")
+                .colleague(colleagueList)
+                .build();
         when(userService.ifCompanyExits(email)).thenReturn(true);
+        when(companyService.getCompanyInfoDto(email)).thenReturn(companyInfo);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/company")

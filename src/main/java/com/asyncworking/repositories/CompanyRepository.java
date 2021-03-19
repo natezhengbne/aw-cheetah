@@ -26,6 +26,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
                     "c.id = cu.company_id AND \n" +
                     "cu.user_id = u.id AND \n" +
                     "u.email = :email")
+    List<ICompanyInfo> findCompanyInfoByEmail(@Param("email") String email);
 
     @Modifying
     @Query("update Company c  set c.name=:name, c.description=:description, c.updatedTime=:updatedTime where c.id=:id")

@@ -53,15 +53,10 @@ public class CompanyService {
     }
 
     public CompanyNameDescriptionColleagueDto getCompanyInfoDto(String email) {
-        List<ICompanyInfo> companyInfo = companyRepository.findCompanyInfoByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Can not found your company by email:" + email));
+        ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
+        List<String> colleague = userRepository.findNameById(companyInfo.getId());
 
-        ICompanyInfo iCompanyInfo = companyInfo.get(0);
-        Long companyId = iCompanyInfo.getId();
-        List<String> colleague = userRepository.findNameById(companyId)
-                .orElseThrow(() -> new UserNotFoundException(
-                        "Can not found your colleagues by company name:" + iCompanyInfo.getName()));
-        return mapCompanyToCompanyDto(iCompanyInfo, colleague);
+        return mapCompanyToCompanyDto(companyInfo, colleague);
     }
 
     private CompanyNameDescriptionColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo,
