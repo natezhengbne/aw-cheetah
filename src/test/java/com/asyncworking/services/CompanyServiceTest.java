@@ -166,5 +166,6 @@ public class CompanyServiceTest {
 
         CompanyNameDescriptionColleagueDto companyInfo = companyService.getCompanyInfoDto(email);
         assertEquals("p", companyInfo.getName());
+        assertEquals(mockCompanyInfo.getDescription(), companyInfo.getDescription());
     }
 }

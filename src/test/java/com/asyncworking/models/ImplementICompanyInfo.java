@@ -9,7 +9,6 @@ import javax.persistence.Table;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Table(name = "company")
 public class ImplementICompanyInfo implements ICompanyInfo {
     @Id
@@ -20,16 +19,16 @@ public class ImplementICompanyInfo implements ICompanyInfo {
 
     @Override
     public Long getId() {
-        return null;
+        return id;
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return description;
     }
 }
