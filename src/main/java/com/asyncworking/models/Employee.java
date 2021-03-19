@@ -6,9 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 @Entity
 @Builder
@@ -16,6 +18,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "company_user")
+@EntityListeners(AuditingEntityListener.class)
 public class Employee {
 
     @EmbeddedId
@@ -37,10 +40,10 @@ public class Employee {
 
     @CreatedDate
     @Column(name = "created_time", nullable = false)
-    private OffsetDateTime createdTime;
+    private Date createdTime;
 
     @LastModifiedDate
     @Column(name = "updated_time", nullable = false)
-    private OffsetDateTime updatedTime;
+    private Date updatedTime;
 
 }

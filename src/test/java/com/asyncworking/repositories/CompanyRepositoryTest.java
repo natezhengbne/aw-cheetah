@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,8 +34,6 @@ public class CompanyRepositoryTest {
                 .name("AW")
                 .adminId(1L)
                 .employees(new HashSet<>())
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         Company returnedCompany = companyRepository.save(mockCompany);
         System.out.println("Company :    " + returnedCompany.toString());

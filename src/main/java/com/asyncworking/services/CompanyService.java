@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.HashSet;
 
 @Slf4j
@@ -62,8 +63,6 @@ public class CompanyService {
                 .name(company)
                 .adminId(userId)
                 .employees(new HashSet<>())
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
@@ -72,8 +71,6 @@ public class CompanyService {
                 .id(employeeId)
                 .company(company)
                 .userEntity(userEntity)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
@@ -90,12 +87,12 @@ public class CompanyService {
     @Transactional
     public void updateCompany(CompanyInfoDto companyInfoDto) {
         Company company = mapper.mapInfoDtoToEntity(companyInfoDto);
-        int res=companyRepository.updateCompanyProfileById(
+        int res = companyRepository.updateCompanyProfileById(
                 company.getName(),
                 company.getDescription(),
-                company.getUpdatedTime(),
+                new Date(),
                 company.getId());
-        if(res==0){
+        if (res == 0){
             throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());
         }
     }

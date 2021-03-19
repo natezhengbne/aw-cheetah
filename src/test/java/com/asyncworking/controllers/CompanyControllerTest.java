@@ -36,6 +36,7 @@ public class CompanyControllerTest {
     public void testCompanyCreateSuccess() throws Exception {
 
         CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+                .companyId(1L)
                 .adminEmail("aaa@qq.com")
                 .name("AW")
                 .userTitle("VI")

@@ -46,8 +46,6 @@ public class ApplicationUserServiceTest {
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
         userRepository.saveAndFlush(mockUser);

@@ -16,6 +16,8 @@ spring:
     properties:
       hibernate:
         default_schema: awcheetah
+        jdbc:
+          time_zone: UTC
     show-sql: true
 
 logging:

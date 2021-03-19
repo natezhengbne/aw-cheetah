@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Validated
 public class CompanyInfoDto {
-    @NotNull(message = "company must have an Id")
+
     private Long companyId;
 
     @NotEmpty(message = "Company name can not be empty")
@@ -37,6 +37,7 @@ public class CompanyInfoDto {
 
     private String contactNumber;
 
+    @Email(message = "email should be a valid email")
     private String contactEmail;
 
     private String industry;

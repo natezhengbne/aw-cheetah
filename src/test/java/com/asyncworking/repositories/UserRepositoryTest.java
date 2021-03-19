@@ -49,8 +49,6 @@ public class UserRepositoryTest {
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
         System.out.println(userRepository.count());
@@ -67,13 +65,12 @@ public class UserRepositoryTest {
     public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
         UserEntity userEntity = UserEntity.builder()
                 .id(1L)
-                .createdTime(OffsetDateTime.now())
                 .email("skykk0128@gmail.com")
                 .name("Steven")
                 .password("password")
                 .status(Status.UNVERIFIED)
                 .title("Developer")
-                .updatedTime(OffsetDateTime.now()).build();
+                .build();
         UserEntity returnedUserEntity = userRepository.save(userEntity);
         Assertions.assertEquals("Steven", returnedUserEntity.getName());
         Assertions.assertEquals("skykk0128@gmail.com", returnedUserEntity.getEmail());
@@ -94,8 +91,6 @@ public class UserRepositoryTest {
                 .title("dev")
                 .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO")
                 .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
         UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
@@ -135,23 +130,17 @@ public class UserRepositoryTest {
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password("testpass")
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         Company mockCompany = Company.builder()
                 .id(1L)
                 .name("AW")
                 .adminId(1L)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         Employee mockEmployee = Employee.builder()
                 .id(new EmployeeId(mockUserEntity.getId(), mockCompany.getId()))
                 .company(mockCompany)
                 .userEntity(mockUserEntity)
                 .title("kkk")
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         employeeRepository.save(mockEmployee);
         Optional<UserEntity> userEntity = userRepository.findEmploymentByEmail("lengary@qq.com");

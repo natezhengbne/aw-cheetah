@@ -38,24 +38,18 @@ public class EmployeeRepositoryTest {
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password("fff")
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         Company mockCompany = Company.builder()
                 .id(1L)
                 .name("AW")
                 .adminId(1L)
                 .employees(new HashSet<>())
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         Employee mockEmployee = Employee.builder()
                 .id(new EmployeeId(mockUserEntity.getId(), mockCompany.getId()))
                 .company(mockCompany)
                 .userEntity(mockUserEntity)
                 .title("kkk")
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
         employeeRepository.save(mockEmployee);
         List<Employee> employeeList = employeeRepository.findAll();

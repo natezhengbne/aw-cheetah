@@ -28,8 +28,6 @@ public class Mapper {
                 .email(userInfoDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
@@ -38,7 +36,6 @@ public class Mapper {
                 .id(companyInfoDto.getCompanyId())
                 .name(companyInfoDto.getName())
                 .description(companyInfoDto.getDescription())
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
