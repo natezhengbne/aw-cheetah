@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;

@@ -1,7 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
+import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.dtos.CompanyColleagueDto;
@@ -23,9 +23,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Arrays;
-import java.util.List;
 
 import java.util.Arrays;
 import java.util.List;
