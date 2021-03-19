@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.CompanyInfoDto;
@@ -83,7 +84,7 @@ public class UserController {
     public ResponseEntity companyCheck(@RequestParam(value = "email", required = true) String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
-            CompanyNameDescriptionColleagueDto companyInfoDto = companyService.getCompanyInfoDto(email);
+            CompanyColleagueDto companyInfoDto = companyService.getCompanyInfoDto(email);
             return ResponseEntity.ok(companyInfoDto);
         }
         return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);

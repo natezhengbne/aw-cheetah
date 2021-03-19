@@ -35,8 +35,4 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             @Param("description") String description,
             @Param("updatedTime") Date updatedTime,
             @Param("id")Long id);
-
-    @Query("select u from UserEntity u where u.email=:email")
-    Optional<List<ICompanyInfo>> findCompanyInfoByEmail(@Param("email") String email);
-
 }

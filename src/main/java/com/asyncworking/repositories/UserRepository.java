@@ -1,7 +1,5 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
-import com.asyncworking.models.ICompanyInfo;
 import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,14 +30,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("select u from UserEntity u join fetch u.employees where u.email = :email")
     Optional<UserEntity> findEmploymentByEmail(@Param("email") String email);
-
-//    @Query(nativeQuery = true, value =
-//            "select ui.name from user_info ui, company_user cu " +
-//                    "where ui.id = cu.user_id and cu.company_id = " +
-//                    "(select cu.company_id from company_user cu, user_info ui " +
-//                    "where ui.id = cu.user_id " +
-//                    "and ui.email = :email )")
-//    List<String> findNameByEmail(@Param("email") String email);
 
     @Query(nativeQuery = true, value =
             "select ui.name from user_info ui, company_user cu where ui.id = cu.user_id and cu.company_id = :id")

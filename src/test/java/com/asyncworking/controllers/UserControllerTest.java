@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
@@ -21,8 +22,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import javax.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -236,7 +235,7 @@ class UserControllerTest {
     public void shouldReturnOkIfCompanyExists() throws Exception {
         String email = "kkk@gmail.com";
         List<String> colleagueList = Arrays.asList("+", "-", "*");
-        CompanyNameDescriptionColleagueDto companyInfo = CompanyNameDescriptionColleagueDto.builder()
+        CompanyColleagueDto companyInfo = CompanyColleagueDto.builder()
                 .id(1L)
                 .name("+ company")
                 .description("description for +")

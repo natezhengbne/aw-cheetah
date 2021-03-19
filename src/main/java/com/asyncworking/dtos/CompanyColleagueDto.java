@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Validated
-public class CompanyNameDescriptionColleagueDto {
+public class CompanyColleagueDto {
     private Long id;
 
     private String name;
