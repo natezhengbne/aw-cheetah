@@ -181,20 +181,6 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void shouldReturnBadRequestWhenPasswordIsNotValidForResend() throws Exception {
-        AccountDto accountDto = AccountDto.builder()
-                .name("aaa")
-                .email("aaa@qq.com")
-                .password("aaaaaa")
-                .build();
-
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
-        mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(accountDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
 
     @Test
     public void shouldVerifyAccountAndActiveUserSuccessful() throws Exception {
