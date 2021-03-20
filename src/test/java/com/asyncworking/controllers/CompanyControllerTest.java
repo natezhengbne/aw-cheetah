@@ -2,6 +2,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
@@ -37,14 +38,14 @@ public class CompanyControllerTest {
     @Test
     public void testCompanyCreateSuccess() throws Exception {
 
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("AW")
                 .userTitle("VI")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -52,41 +53,28 @@ public class CompanyControllerTest {
     @Test
     public void throwBadRequestWhenCompanyNameIsNull() throws Exception {
 
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void throwBadRequestWhenAdminEmailIsNull() throws Exception {
-
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
-                .adminEmail("")
-                .name("AW")
-                .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
-        mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
 
     @Test
     public void throwBadRequestWhenAdminEmailInvalid() throws Exception {
 
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaaqq.com")
                 .name("aw")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

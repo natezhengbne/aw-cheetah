@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,19 +69,7 @@ class UserControllerTest {
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
 
-    @Test
-    public void shouldReturnBadRequestWhenPasswordNotValidForLogin() throws Exception {
-        Authentication mocked = Mockito.mock(Authentication.class);
-        when(mocked.isAuthenticated()).thenReturn(true);
 
-        String inputJson = "{\"email\": \"lenga@asyncworking.com\", \"password\":\"123\"}";
-        MvcResult mvcResult = mockMvc.perform(
-                post("/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(inputJson)).andReturn();
-
-        assertEquals(400, mvcResult.getResponse().getStatus());
-    }
 
     @Test
     public void shouldReturnErrorIfEmailExists() throws Exception {
@@ -119,93 +108,79 @@ class UserControllerTest {
 
     @Test
     public void shouldCreateUserAndGenerateLinkSuccessful() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .name("aaa")
                 .email("aaa@qq.com")
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/signup")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnBadRequestWhenEmailIsNotValidForSignup() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .name("aaa")
                 .email("aaaqq.com")
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/signup")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void shouldReturnBadRequestWhenPasswordIsNotValidForSignup() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .name("aaa")
                 .email("aaa@qq.com")
                 .password("aaaaaa")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/signup")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void shouldResendActivationLinkSuccessful() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .name("aaa")
                 .email("aaa@qq.com")
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnBadRequestWhenEmailIsNotValidForResend() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .name("aaa")
                 .email("aaaqq.com")
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
+        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
+                .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void shouldReturnBadRequestWhenPasswordIsNotValidForResend() throws Exception {
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
-                .name("aaa")
-                .email("aaa@qq.com")
-                .password("aaaaaa")
-                .build();
-
-        doNothing().when(userService).createUserAndGenerateVerifyLink(userPostInfoDto, "http://localhost");
-        mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(userPostInfoDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
 
     @Test
     public void shouldVerifyAccountAndActiveUserSuccessful() throws Exception {

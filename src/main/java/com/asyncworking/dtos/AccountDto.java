@@ -8,21 +8,21 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
-public class UserInfoDto {
-
-    @Email(message = "email should be a valid email")
-    private String email;
+public class AccountDto {
 
     private String name;
 
-    private String password;
+    @Email(message = "email should be a valid email")
+    @NotEmpty(message = "email must not be empty")
+    private String email;
 
-    @Size(max = 128, message = "Title can not be more than 128 characters! ")
-    private String title;
+    @NotEmpty(message = "password must not be empty")
+    @Pattern(regexp = "^(?=.*[0-9])(?=\\S+$).{8,}$",
+            message = "Your password must be at least 8 character long and contains at least one non-letter character")
+    private String password;
 }

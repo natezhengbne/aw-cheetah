@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
@@ -59,22 +60,22 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndGenerateVerifyLink(UserInfoDto userInfoDto, String siteUrl) {
-        UserEntity userEntity = mapper.mapInfoDtoToEntity(userInfoDto);
+    public void createUserAndGenerateVerifyLink(AccountDto accountDto, String siteUrl) {
+        UserEntity userEntity = mapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
-        this.generateVerifyLink(userInfoDto, siteUrl);
+        this.generateVerifyLink(accountDto.getEmail(), siteUrl);
     }
 
-    public String generateVerifyLink(UserInfoDto userInfoDto, String siteUrl) {
-        String verifyLink = siteUrl + "/verify?code=" + this.generateJws(userInfoDto);
+    public String generateVerifyLink(String email, String siteUrl) {
+        String verifyLink = siteUrl + "/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
 
-    private String generateJws(UserInfoDto userInfoDto) {
+    private String generateJws(String email) {
         String jws = Jwts.builder()
                 .setSubject("signUp")
-                .claim("email", userInfoDto.getEmail())
+                .claim("email", email)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .compact();
         log.info("jwt token" + jws);

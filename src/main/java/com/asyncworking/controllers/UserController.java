@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
 import com.asyncworking.utility.SiteUrl;
@@ -39,17 +40,17 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@Valid @RequestBody UserInfoDto userInfoDto,
+    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto,
                                      HttpServletRequest request) {
-        log.info("email: {}, name: {}", userInfoDto.getEmail(), userInfoDto.getName());
-        userService.createUserAndGenerateVerifyLink(userInfoDto, SiteUrl.getSiteUrl(request));
+        log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
+        userService.createUserAndGenerateVerifyLink(accountDto, SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
     }
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto,
                                                HttpServletRequest request) {
-        userService.generateVerifyLink(userInfoDto, SiteUrl.getSiteUrl(request));
+        userService.generateVerifyLink(userInfoDto.getEmail(), SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
     }
 

@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -30,11 +31,11 @@ public class CompanyService {
     private final EmployeeRepository employeeRepository;
 
     @Transactional
-    public void createCompanyAndEmployee(CompanyInfoDto companyInfoDto) {
+    public void createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
 
-        UserEntity selectedUserEntity = fetchUserEntityByEmail(companyInfoDto.getAdminEmail());
+        UserEntity selectedUserEntity = fetchUserEntityByEmail(companyModificationDto.getAdminEmail());
         log.info("selectedUser's email" + selectedUserEntity.getEmail());
-        Company newCompany = createCompany(companyInfoDto.getName(), selectedUserEntity.getId());
+        Company newCompany = createCompany(companyModificationDto.getName(), selectedUserEntity.getId());
 
         companyRepository.save(newCompany);
 
@@ -42,8 +43,8 @@ public class CompanyService {
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
                         selectedUserEntity,
                         newCompany);
-        if (companyInfoDto.getUserTitle() != null){
-            newEmployee.setTitle(companyInfoDto.getUserTitle());
+        if (companyModificationDto.getUserTitle() != null){
+            newEmployee.setTitle(companyModificationDto.getUserTitle());
         }
         employeeRepository.save(newEmployee);
     }

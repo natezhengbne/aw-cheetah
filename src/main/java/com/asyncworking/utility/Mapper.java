@@ -1,5 +1,6 @@
 package com.asyncworking.utility;
 
+import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -18,11 +19,11 @@ public class Mapper {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
-        String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
+    public UserEntity mapInfoDtoToEntity(AccountDto accountDto) {
+        String encodedPassword = passwordEncoder.encode(accountDto.getPassword());
         return UserEntity.builder()
-                .name(userInfoDto.getName())
-                .email(userInfoDto.getEmail().toLowerCase())
+                .name(accountDto.getName())
+                .email(accountDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.UNVERIFIED)
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
