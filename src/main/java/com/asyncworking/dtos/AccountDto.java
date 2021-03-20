@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +16,11 @@ import javax.validation.constraints.Pattern;
 @Builder
 public class AccountDto {
 
+    @Size(max = 128, message = "Name can not be more than 128 characters! ")
     private String name;
 
-    @Email(message = "email should be a valid email")
+    @Size(max = 128, message = "Email name can not be more than 128 characters! ")
+    @Email(message = "email should be a valid email ")
     @NotEmpty(message = "email must not be empty")
     private String email;
 

@@ -35,8 +35,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody UserInfoDto userInfoDto) {
         log.info(userInfoDto.getEmail());
-        UserInfoDto userInfoDto1 = userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
-        return ResponseEntity.ok(userInfoDto1);
+        UserInfoDto userLoginInfoDto
+                = userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
+        return ResponseEntity.ok(userLoginInfoDto);
     }
 
     @PostMapping("/signup")

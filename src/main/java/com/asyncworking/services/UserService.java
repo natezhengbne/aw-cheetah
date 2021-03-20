@@ -46,14 +46,14 @@ public class UserService {
         String name = foundUserEntity.get().getName();
         log.debug(name);
 
-        UserInfoDto userInfoDto = UserInfoDto.builder()
+        UserInfoDto userLoginInfoDto = UserInfoDto.builder()
                 .email(email)
                 .name(name)
                 .build();
         Authentication authenticate = this.authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
-        return userInfoDto;
+        return userLoginInfoDto;
     }
 
     public boolean ifEmailExists(String email){
