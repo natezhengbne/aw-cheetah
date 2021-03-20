@@ -5,6 +5,7 @@ import com.asyncworking.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -44,6 +45,14 @@ public class ControllerExceptionHandler {
         details.add(e.getLocalizedMessage());
         ErrorDto error = new ErrorDto("Missing Params", details);
         return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public ResponseEntity<ErrorDto> handleBadCredential(AuthenticationException e) {
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto errorDto = new ErrorDto("Authentication Failed", details);
+        return new ResponseEntity<ErrorDto>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

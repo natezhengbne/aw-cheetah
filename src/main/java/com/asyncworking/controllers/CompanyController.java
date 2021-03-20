@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.services.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,8 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/company")
-    public ResponseEntity<?> companyCreate(@Valid @RequestBody CompanyInfoDto companyInfoDto){
-        companyService.createCompanyAndEmployee(companyInfoDto);
+    public ResponseEntity<?> companyCreate(@Valid @RequestBody CompanyModificationDto companyModificationDto){
+        companyService.createCompanyAndEmployee(companyModificationDto);
         return ResponseEntity.ok("success");
     }
 }
