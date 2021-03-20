@@ -48,9 +48,9 @@ public class UserController {
     }
 
     @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody AccountDto accountDto,
+    public ResponseEntity resendActivationLink(@RequestBody UserInfoDto userInfoDto,
                                                HttpServletRequest request) {
-        userService.generateVerifyLink(accountDto, SiteUrl.getSiteUrl(request));
+        userService.generateVerifyLink(userInfoDto.getEmail(), SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
     }
 

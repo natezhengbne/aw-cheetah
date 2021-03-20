@@ -63,19 +63,19 @@ public class UserService {
     public void createUserAndGenerateVerifyLink(AccountDto accountDto, String siteUrl) {
         UserEntity userEntity = mapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
-        this.generateVerifyLink(accountDto, siteUrl);
+        this.generateVerifyLink(accountDto.getEmail(), siteUrl);
     }
 
-    public String generateVerifyLink(AccountDto accountDto, String siteUrl) {
-        String verifyLink = siteUrl + "/verify?code=" + this.generateJws(accountDto);
+    public String generateVerifyLink(String email, String siteUrl) {
+        String verifyLink = siteUrl + "/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
 
-    private String generateJws(AccountDto accountDto) {
+    private String generateJws(String email) {
         String jws = Jwts.builder()
                 .setSubject("signUp")
-                .claim("email", accountDto.getEmail())
+                .claim("email", email)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .compact();
         log.info("jwt token" + jws);

@@ -111,7 +111,7 @@ public class UserServiceTest {
                 .name("user")
                 .build();
         String siteUrl = "http://localhost";
-        String verifyLink = userService.generateVerifyLink(accountDto, siteUrl);
+        String verifyLink = userService.generateVerifyLink(accountDto.getEmail(), siteUrl);
 
         assertEquals(
                 "http://localhost/verify?code="
