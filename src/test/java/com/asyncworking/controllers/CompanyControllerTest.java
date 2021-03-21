@@ -1,8 +1,9 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.*;
+import com.asyncworking.exceptions.CompanyNotFoundException;
+import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -15,13 +16,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
@@ -39,15 +46,14 @@ public class CompanyControllerTest {
 
     @Test
     public void testCompanyCreateSuccess() throws Exception {
-
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("AW")
                 .userTitle("VI")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
+                .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -73,14 +79,13 @@ public class CompanyControllerTest {
 
     @Test
     public void throwBadRequestWhenCompanyNameIsNull() throws Exception {
-
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
+                .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -88,15 +93,13 @@ public class CompanyControllerTest {
 
     @Test
     public void throwBadRequestWhenAdminEmailInvalid() throws Exception {
-
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
-                .adminEmail("aaaqq.com")
-                .name("aw")
-                .description("desc")
+        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+                .adminEmail("")
+                .name("AW")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
+                .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -115,19 +118,84 @@ public class CompanyControllerTest {
                 .andExpect(status().isOk());
     }
 
-
     @Test
     void updateCompanyDescription() throws Exception {
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
-                .companyId(1L)
+        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+                .adminEmail("aaaqq.com")
                 .name("aw")
                 .description("desc")
                 .build();
-        doNothing().when(companyService).updateCompany(companyModificationDto);
-        mockMvc.perform(put("/company/profile")
-
-                .content(objectMapper.writeValueAsString(companyModificationDto))
+        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
+        mockMvc.perform(post("/company")
+                .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldGetCompanyInfoDtoGivenId() throws Exception {
+
+        CompanyInfoGetDto companyInfoGetDto = CompanyInfoGetDto.builder()
+                .name("Apple")
+                .id(1L)
+                .description("hello world")
+                .build();
+        when(companyService.findCompanyById(1L)).thenReturn(companyInfoGetDto);
+
+        mockMvc.perform(get("/company/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$.name").value("Apple"))
+                .andExpect(jsonPath("$.description").value("hello world"));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfCompanyNotExist() throws Exception {
+        CompanyNotFoundException error =  new CompanyNotFoundException("Can not found company by id: 1");
+        when(companyService.findCompanyById(1L)).thenThrow(error);
+
+        String errorMsg = mockMvc.perform(get("/company/1"))
+                .andExpect(status().isNotFound())
+                .andReturn().getResolvedException().getMessage();
+
+        assertEquals("Can not found company by id: 1", errorMsg);
+
+    }
+
+    @Test
+    public void shouldGetEmployeeGivenCompanyId() throws Exception{
+        EmployeeGetDto mockEmployee1 = EmployeeGetDto.builder()
+                .email("xxx@gmail.com")
+                .name("lydia")
+                .title("frontend developer")
+                .build();
+
+        EmployeeGetDto mockEmployee2 = EmployeeGetDto.builder()
+                .email("yyy@gmail.com")
+                .name("leo")
+                .title("backend developer")
+                .build();
+
+        List<EmployeeGetDto> employees = new ArrayList<>();
+
+        employees.add(mockEmployee1);
+        employees.add(mockEmployee2);
+
+        when(companyService.findAllEmployeeByCompanyId(1L)).thenReturn(employees);
+
+        mockMvc.perform(get("/employee/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfNoEmployees() throws Exception {
+        EmployeeNotFoundException error =  new EmployeeNotFoundException("Can not found employee by company id: 1");
+        when(companyService.findAllEmployeeByCompanyId(1L)).thenThrow(error);
+
+        String errorMsg = mockMvc.perform(get("/employee/1"))
+                .andExpect(status().isNotFound())
+                .andReturn().getResolvedException().getMessage();
+
+        assertEquals("Can not found employee by company id: 1", errorMsg);
     }
 }

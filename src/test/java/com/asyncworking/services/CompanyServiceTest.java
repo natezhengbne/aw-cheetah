@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyInfoPostDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
@@ -9,18 +10,23 @@ import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
-import com.asyncworking.utility.Mapper;
+import com.asyncworking.utility.mapper.CompanyMapper;
+import com.asyncworking.utility.mapper.EmployeeMapper;
+import com.asyncworking.utility.mapper.UserMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,17 +44,34 @@ public class CompanyServiceTest {
     @Mock
     private CompanyRepository companyRepository;
 
-    @Mock
-    Mapper mapper;
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
-    @InjectMocks
-    CompanyService companyService;
+    @Autowired
+    private CompanyMapper companyMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    private CompanyService companyService;
+
+    @BeforeEach()
+    public void setup() {
+        companyService = new CompanyService(
+            userRepository,
+            companyRepository,
+            employeeRepository,
+            companyMapper,
+            userMapper,
+            employeeMapper
+        );
+    }
 
 
     @Test
     @Transactional
     public void createCompanyAndEmployeeGivenProperUserInfoDto() {
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
                 .adminEmail("lengary@asyncworking.com")
                 .name("AW")
                 .userTitle("VI")
@@ -58,12 +81,14 @@ public class CompanyServiceTest {
                 .email("lengary@asyncworking.com")
                 .name("ven").build();
 
-        when(userRepository.findUserEntityByEmail(companyModificationDto.getAdminEmail()))
+        when(userRepository.findUserEntityByEmail(companyInfoPostDto.getAdminEmail()))
                 .thenReturn(Optional.of(mockReturnedUserEntity));
 
         ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
-        companyService.createCompanyAndEmployee(companyModificationDto);
+
+        companyService.createCompanyAndEmployee(companyInfoPostDto);
+
         verify(companyRepository).save(companyCaptor.capture());
         verify(employeeRepository).save(employeeCaptor.capture());
         Employee savedEmployee = employeeCaptor.getValue();
@@ -75,17 +100,17 @@ public class CompanyServiceTest {
 
     @Test
     public void throwNotFoundExceptionWhenUserNotExit() {
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
                 .adminEmail("lengary@asyncworking.com")
                 .name("AW")
                 .userTitle("VI")
                 .build();
 
-        when(userRepository.findUserEntityByEmail(companyModificationDto.getAdminEmail()))
+        when(userRepository.findUserEntityByEmail(companyInfoPostDto.getAdminEmail()))
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(UserNotFoundException.class,
-                () -> companyService.createCompanyAndEmployee(companyModificationDto));
+                () -> companyService.createCompanyAndEmployee(companyInfoPostDto));
 
         String expectedMessage = "Can not found user by email";
 
@@ -93,7 +118,6 @@ public class CompanyServiceTest {
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
-
 
     @Test
     public void getCompanyInfoWhenGivenUserEmail() {
@@ -128,8 +152,6 @@ public class CompanyServiceTest {
 
         when(companyRepository.findById(1L))
                 .thenReturn(Optional.of(mockReturnedCompany));
-        when(mapper.mapEntityToCompanyProfileDto(mockReturnedCompany))
-                .thenReturn(companyModificationDto);
 
         String expectedDescription = "desc";
 

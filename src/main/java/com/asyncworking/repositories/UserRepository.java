@@ -1,5 +1,6 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.models.IEmployeeInfo;
 import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,5 +38,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     "and cu.company_id = :id " +
                     "order by ui.name")
     List<String> findNameById(@Param("id") Long id);
+
+    @Query(
+        value = "select u.name, u.email, cu.title  from company_user cu inner join user_info u on cu.user_id = u.id",
+        nativeQuery = true
+    )
+    Optional<List<IEmployeeInfo>> findAllEmployeeByCompanyId(@Param("id") Long id);
 }
 

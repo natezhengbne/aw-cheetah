@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'checkstyle'
+	id "org.flywaydb.flyway" version "7.7.0"
 }
 
 group = 'com.asyncworking'
@@ -44,6 +45,13 @@ dependencies {
 test {
 	useJUnitPlatform()
 	dependsOn(checkstyleMain, checkstyleTest)
+}
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/postgres?currentSchema=awcheetah'
+	user = 'postgres'
+	password = 'admin'
+	locations = ['classpath:db/migration']
 }
 
 //task installGitHooks() {

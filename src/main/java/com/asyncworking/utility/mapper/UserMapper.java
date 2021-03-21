@@ -1,9 +1,9 @@
-package com.asyncworking.utility;
+package com.asyncworking.utility.mapper;
 
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.CompanyModificationDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
+import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-
-public class Mapper {
+public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
 
@@ -35,8 +34,8 @@ public class Mapper {
                 .build();
     }
 
-    public UserInfoDto mapEntityToInfoDto(UserEntity userEntity) {
-        return UserInfoDto.builder()
+    public UserInfoPostDto mapEntityToInfoDto(UserEntity userEntity) {
+        return UserInfoPostDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
                 .build();

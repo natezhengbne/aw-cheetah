@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 @EnableJpaRepositories
 public interface EmployeeRepository extends JpaRepository<Employee, EmployeeId> {
-
 }

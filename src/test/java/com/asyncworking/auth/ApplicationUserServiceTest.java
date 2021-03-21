@@ -48,9 +48,7 @@ public class ApplicationUserServiceTest {
 
     @Test
     public void shouldThrowUsernameNotFoundException() {
-        assertThrows(UsernameNotFoundException.class, () -> {
-            applicationUserService.loadUserByUsername("b@asyncworking.com");
-        });
+        assertThrows(UsernameNotFoundException.class, () -> applicationUserService.loadUserByUsername("b@asyncworking.com"));
     }
 
     @Test

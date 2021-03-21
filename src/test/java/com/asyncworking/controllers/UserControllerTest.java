@@ -1,8 +1,8 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.services.CompanyService;
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -19,12 +19,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.net.URI;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
@@ -207,6 +209,20 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void shouldReturnBadRequestWhenPasswordIsNotValidForResend() throws Exception {
+        AccountDto accountDto = AccountDto.builder()
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaa")
+                .build();
+
+        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
+        mockMvc.perform(post("/resend")
+                .content(objectMapper.writeValueAsString(accountDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 
     @Test
     public void shouldRedirectGivenVerifyAccountAndActiveUserSuccessful() throws Exception {

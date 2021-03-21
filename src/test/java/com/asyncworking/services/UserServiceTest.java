@@ -1,11 +1,11 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
-import com.asyncworking.utility.Mapper;
+import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,26 +33,26 @@ public class UserServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private Mapper mapper;
+    private UserMapper userMapper;
 
     private UserService userService;
 
     @BeforeEach()
     void setup() {
-        userService = new UserService(userRepository, authenticationManager, mapper);
+        userService = new UserService(userRepository, authenticationManager, userMapper);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
     @Test
     public void shouldFindEmailExistSuccessful() {
-        UserInfoDto userInfoDto = UserInfoDto.builder()
+        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
                 .email("a@qq.com")
                 .build();
 
         UserEntity mockReturnedUserEntity = UserEntity.builder().email("a@gmail.com").build();
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
-        String email = userInfoDto.getEmail();
+        String email = userInfoPostDto.getEmail();
         assertTrue(userService.ifEmailExists(email));
     }
 
@@ -77,7 +77,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldLoginSuccessfulAndReturnDto() {
-        UserInfoDto userInfoDto = UserInfoDto.builder()
+        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
                 .email("plus@gmail.com")
                 .name("aName")
                 .password("password")
@@ -90,15 +90,16 @@ public class UserServiceTest {
 
         when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
-        UserInfoDto returnedUserInfoDto = userService.login(userInfoDto.getEmail(), userInfoDto.getPassword());
-        String testName = returnedUserInfoDto.getName();
+        UserInfoPostDto returnedUserInfoPostDto = userService.login(
+                userInfoPostDto.getEmail(), userInfoPostDto.getPassword());
+        String testName = returnedUserInfoPostDto.getName();
 
         assertEquals(testName, mockReturnedUserEntity.getName());
     }
 
     @Test
     public void shouldThrowExceptionWhenUserIsNotExist() {
-        UserInfoDto userInfoDto = UserInfoDto.builder()
+        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
                 .email("plus@gmail.com")
                 .name("aName")
                 .password("password")
@@ -108,9 +109,8 @@ public class UserServiceTest {
 
         when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            userService.login(userInfoDto.getEmail(), userInfoDto.getPassword());
-        });
+        Exception exception = assertThrows(RuntimeException.class,
+            () -> userService.login(userInfoPostDto.getEmail(), userInfoPostDto.getPassword()));
 
         String actualMessage = exception.getMessage();
 
@@ -170,7 +170,7 @@ public class UserServiceTest {
     public void throwExceptionWhenUserDatabaseWrong() {
         String expectedMessage = "database wrong";
 
-        UserInfoDto userPostInfoDto = UserInfoDto.builder()
+        UserInfoPostDto userPostInfoDto = UserInfoPostDto.builder()
                 .email("lengary@asyncworking.com")
                 .title("VI")
                 .build();
@@ -190,7 +190,8 @@ public class UserServiceTest {
         String email = "a@gmail.com";
         UserEntity mockReturnedUserEntity = UserEntity.builder()
                 .email("a@gmail.com").build();
-        when(userRepository.findEmploymentByEmail(anyString())).thenReturn(Optional.of(mockReturnedUserEntity));
+        when(userRepository.findEmploymentByEmail(anyString()))
+                .thenReturn(Optional.of(mockReturnedUserEntity));
         boolean testEmail = userService.ifCompanyExits(email);
         assertTrue(testEmail);
     }

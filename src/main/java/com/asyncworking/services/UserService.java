@@ -1,12 +1,12 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
-import com.asyncworking.utility.Mapper;
+import com.asyncworking.utility.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -30,12 +30,12 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final Mapper mapper;
+    private final UserMapper userMapper;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public UserInfoDto login(String email, String password) {
+    public UserInfoPostDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
 
         if (foundUserEntity.isEmpty()) {
@@ -45,14 +45,14 @@ public class UserService {
         String name = foundUserEntity.get().getName();
         log.debug(name);
 
-        UserInfoDto userLoginInfoDto = UserInfoDto.builder()
+        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
                 .email(email)
                 .name(name)
                 .build();
         Authentication authenticate = this.authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
-        return userLoginInfoDto;
+        return userInfoPostDto;
     }
 
     public boolean ifEmailExists(String email) {
@@ -60,7 +60,7 @@ public class UserService {
     }
 
     public void createUserAndGenerateVerifyLink(AccountDto accountDto, String siteUrl) {
-        UserEntity userEntity = mapper.mapInfoDtoToEntity(accountDto);
+        UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
         this.generateVerifyLink(accountDto.getEmail(), siteUrl);
     }
@@ -105,8 +105,7 @@ public class UserService {
     }
 
     private int activeUser(String email) {
-        int numberOfActivatedUse = userRepository.updateStatusByEmail(email, Status.ACTIVATED);
-        return numberOfActivatedUse;
+        return userRepository.updateStatusByEmail(email, Status.ACTIVATED);
     }
 
     public void deleteAllUsers() {

@@ -53,4 +53,9 @@ public class EmployeeRepositoryTest {
         List<Employee> employeeList = employeeRepository.findAll();
         assertNotNull(employeeList);
     }
+
+    @Test
+    public void shouldFindAllEmployeeGivenCompanyIdProvided() {
+
+    }
 }

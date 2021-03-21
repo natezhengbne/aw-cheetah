@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Data
 @Builder
-public class UserInfoDto {
+public class UserInfoPostDto {
 
     @Email(message = "email should be a valid email")
     private String email;
