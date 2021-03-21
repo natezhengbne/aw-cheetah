@@ -32,7 +32,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findEmploymentByEmail(@Param("email") String email);
 
     @Query(nativeQuery = true, value =
-            "select ui.name from user_info ui, company_user cu where ui.id = cu.user_id and cu.company_id = :id")
+            "select ui.name from user_info ui, company_user cu " +
+                    "where ui.id = cu.user_id " +
+                    "and cu.company_id = :id " +
+                    "order by ui.name")
     List<String> findNameById(@Param("id") Long id);
 }
 
