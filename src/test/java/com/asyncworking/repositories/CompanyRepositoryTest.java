@@ -2,8 +2,6 @@ package com.asyncworking.repositories;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.Company;
-import com.asyncworking.models.UserEntity;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;

@@ -8,7 +8,6 @@ import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

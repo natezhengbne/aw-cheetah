@@ -1,9 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;

@@ -2,9 +2,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

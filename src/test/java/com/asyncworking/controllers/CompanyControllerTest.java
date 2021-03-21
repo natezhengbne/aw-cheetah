@@ -1,11 +1,8 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyModificationDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
-import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
