@@ -1,6 +1,6 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
@@ -35,11 +35,11 @@ public class CompanyService {
     private final Mapper mapper;
 
     @Transactional
-    public void createCompanyAndEmployee(CompanyInfoDto companyInfoDto) {
+    public void createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
 
-        UserEntity selectedUserEntity = fetchUserEntityByEmail(companyInfoDto.getAdminEmail());
+        UserEntity selectedUserEntity = fetchUserEntityByEmail(companyModificationDto.getAdminEmail());
         log.info("selectedUser's email" + selectedUserEntity.getEmail());
-        Company newCompany = createCompany(companyInfoDto.getName(), selectedUserEntity.getId());
+        Company newCompany = createCompany(companyModificationDto.getName(), selectedUserEntity.getId());
 
         companyRepository.save(newCompany);
 
@@ -47,8 +47,8 @@ public class CompanyService {
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
                         selectedUserEntity,
                         newCompany);
-        if (companyInfoDto.getUserTitle() != null) {
-            newEmployee.setTitle(companyInfoDto.getUserTitle());
+        if (companyModificationDto.getUserTitle() != null) {
+            newEmployee.setTitle(companyModificationDto.getUserTitle());
         }
         employeeRepository.save(newEmployee);
     }
@@ -74,7 +74,7 @@ public class CompanyService {
                 .build();
     }
 
-    public CompanyInfoDto fetchCompanyProfileById(Long companyId) {
+    public CompanyModificationDto fetchCompanyProfileById(Long companyId) {
         Company company = fetchCompanyById(companyId);
         return mapper.mapEntityToCompanyProfileDto(company);
     }
@@ -85,14 +85,14 @@ public class CompanyService {
     }
 
     @Transactional
-    public void updateCompany(CompanyInfoDto companyInfoDto) {
-        Company company = mapper.mapInfoDtoToEntity(companyInfoDto);
+    public void updateCompany(CompanyModificationDto CompanyModificationDto) {
+        Company company = mapper.mapInfoDtoToEntity(CompanyModificationDto);
         int res = companyRepository.updateCompanyProfileById(
                 company.getName(),
                 company.getDescription(),
                 new Date(),
                 company.getId());
-        if (res == 0){
+        if (res == 0) {
             throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());
         }
     }

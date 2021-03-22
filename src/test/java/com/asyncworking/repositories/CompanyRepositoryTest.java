@@ -36,7 +36,7 @@ public class CompanyRepositoryTest {
                 .employees(new HashSet<>())
                 .build();
         Company returnedCompany = companyRepository.save(mockCompany);
-        System.out.println("Company :    " + returnedCompany.toString());
+        assertEquals("AW", returnedCompany.getName());
 
     }
 }

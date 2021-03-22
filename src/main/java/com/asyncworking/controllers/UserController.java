@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
 import com.asyncworking.utility.SiteUrl;
@@ -24,7 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/signup")
-    public ResponseEntity<String> validateEmail(@Valid @RequestParam("email") String email) {
+    public ResponseEntity<String> validateEmail(@RequestParam(value = "email", required = true) String email) {
         if (userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
         }
@@ -34,31 +35,30 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody UserInfoDto userInfoDto) {
         log.info(userInfoDto.getEmail());
-        UserInfoDto userInfoDto1 = userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
-        return ResponseEntity.ok(userInfoDto1);
+        UserInfoDto userLoginInfoDto
+                = userService.login(userInfoDto.getEmail().toLowerCase(), userInfoDto.getPassword());
+        return ResponseEntity.ok(userLoginInfoDto);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@Valid @RequestBody UserInfoDto userInfoDto,
+    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto,
                                      HttpServletRequest request) {
-        log.info("email: {}, name: {}", userInfoDto.getEmail(), userInfoDto.getName());
-        userService.createUserAndGenerateVerifyLink(userInfoDto, SiteUrl.getSiteUrl(request));
+        log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
+        userService.createUserAndGenerateVerifyLink(accountDto, SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
     }
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto,
                                                HttpServletRequest request) {
-        userService.generateVerifyLink(userInfoDto, SiteUrl.getSiteUrl(request));
+        userService.generateVerifyLink(userInfoDto.getEmail(), SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
-
     }
 
     @GetMapping("/verify")
     public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) {
         userService.verifyAccountAndActiveUser(code);
         return ResponseEntity.ok("success");
-
     }
 
     @DeleteMapping("/signup")
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping("/company")
-    public ResponseEntity companyCheck(@Valid @RequestParam("email") String email) {
+    public ResponseEntity companyCheck(@RequestParam(value = "email", required = true) String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
             return ResponseEntity.ok("success");

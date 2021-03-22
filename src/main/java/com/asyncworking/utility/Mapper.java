@@ -1,6 +1,7 @@
 package com.asyncworking.utility;
 
-import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
@@ -21,21 +22,21 @@ public class Mapper {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity mapInfoDtoToEntity(UserInfoDto userInfoDto) {
-        String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
+    public UserEntity mapInfoDtoToEntity(AccountDto accountDto) {
+        String encodedPassword = passwordEncoder.encode(accountDto.getPassword());
         return UserEntity.builder()
-                .name(userInfoDto.getName())
-                .email(userInfoDto.getEmail().toLowerCase())
+                .name(accountDto.getName())
+                .email(accountDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.UNVERIFIED)
                 .build();
     }
 
-    public Company mapInfoDtoToEntity(CompanyInfoDto companyInfoDto){
+    public Company mapInfoDtoToEntity(CompanyModificationDto CompanyModificationDto) {
         return Company.builder()
-                .id(companyInfoDto.getCompanyId())
-                .name(companyInfoDto.getName())
-                .description(companyInfoDto.getDescription())
+                .id(CompanyModificationDto.getCompanyId())
+                .name(CompanyModificationDto.getName())
+                .description(CompanyModificationDto.getDescription())
                 .build();
     }
 
@@ -46,8 +47,8 @@ public class Mapper {
                 .build();
     }
 
-    public CompanyInfoDto mapEntityToCompanyProfileDto(Company company){
-        return CompanyInfoDto.builder()
+    public CompanyModificationDto mapEntityToCompanyProfileDto(Company company) {
+        return CompanyModificationDto.builder()
                 .companyId(company.getId())
                 .name(company.getName())
                 .description(company.getDescription())

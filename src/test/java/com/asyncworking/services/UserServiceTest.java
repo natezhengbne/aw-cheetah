@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
@@ -104,13 +105,13 @@ public class UserServiceTest {
 
     @Test
     public void shouldGenerateActivationLinkGivenUserDtoAndHttpServletRequest() {
-        UserInfoDto userPostDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email("user@gmail.com")
                 .password("len123")
                 .name("user")
                 .build();
         String siteUrl = "http://localhost";
-        String verifyLink = userService.generateVerifyLink(userPostDto, siteUrl);
+        String verifyLink = userService.generateVerifyLink(accountDto.getEmail(), siteUrl);
 
         assertEquals(
                 "http://localhost/verify?code="
@@ -123,7 +124,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldCreateUserAndGenerateActivationLinkGivenProperUserDto() {
-        UserInfoDto userPostDto = UserInfoDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email("user@gmail.com")
                 .password("len123")
                 .name("user")
@@ -131,7 +132,7 @@ public class UserServiceTest {
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        userService.createUserAndGenerateVerifyLink(userPostDto, "http://localhost");
+        userService.createUserAndGenerateVerifyLink(accountDto, "http://localhost");
 
         verify(userRepository).save(captor.capture());
         UserEntity savedUser = captor.getValue();

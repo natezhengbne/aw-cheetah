@@ -2,6 +2,8 @@ package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -49,7 +51,7 @@ public class CompanyServiceTest {
     @Test
     @Transactional
     public void createCompanyAndEmployeeGivenProperUserInfoDto() {
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("lengary@asyncworking.com")
                 .name("AW")
                 .userTitle("VI")
@@ -59,12 +61,12 @@ public class CompanyServiceTest {
                 .email("lengary@asyncworking.com")
                 .name("ven").build();
 
-        when(userRepository.findUserEntityByEmail(companyInfoDto.getAdminEmail()))
+        when(userRepository.findUserEntityByEmail(companyModificationDto.getAdminEmail()))
                 .thenReturn(Optional.of(mockReturnedUserEntity));
 
         ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
-        companyService.createCompanyAndEmployee(companyInfoDto);
+        companyService.createCompanyAndEmployee(companyModificationDto);
         verify(companyRepository).save(companyCaptor.capture());
         verify(employeeRepository).save(employeeCaptor.capture());
         Employee savedEmployee = employeeCaptor.getValue();
@@ -76,17 +78,17 @@ public class CompanyServiceTest {
 
     @Test
     public void throwNotFoundExceptionWhenUserNotExit() {
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("lengary@asyncworking.com")
                 .name("AW")
                 .userTitle("VI")
                 .build();
 
-        when(userRepository.findUserEntityByEmail(companyInfoDto.getAdminEmail()))
+        when(userRepository.findUserEntityByEmail(companyModificationDto.getAdminEmail()))
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(UserNotFoundException.class,
-                () -> companyService.createCompanyAndEmployee(companyInfoDto));
+                () -> companyService.createCompanyAndEmployee(companyModificationDto));
 
         String expectedMessage = "Can not found user by email";
 
@@ -96,28 +98,41 @@ public class CompanyServiceTest {
 
     }
 
-  /*  @Test
-    @Transactional
-    void updateCompanyDescription() {
-        Company company = Company.builder()
+    @Test
+    void fetchCompanyProfileById() {
+        Company mockReturnedCompany = Company.builder()
                 .id(1L)
                 .name("AW")
-                .adminId(11L)
-                .description("com")
-                .employees(new HashSet<>())
-                .createdTime(new Date())
-                .updatedTime(new Date())
+                .description("desc")
                 .build();
-        Company c = companyRepository.save(company);
-        assertTrue(companyRepository.findById(1L).isPresent());*/
-      /*  if (companyRepository.findById(1L).isPresent()) {
-            System.out.println(companyRepository.findById(1L).get().getDescription());
-        }
 
-        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
-                .name("AWAW")
-                .description("hahahaha")
-                .build();
-        companyService.updateCompanyDescription(companyInfoDto, 1L);*/
+        when(companyRepository.findById(1L))
+                .thenReturn(Optional.of(mockReturnedCompany));
+
+        String expectedDescription = "desc";
+
+        String actualDescription = companyService
+                .fetchCompanyProfileById(1L)
+                .getDescription();
+
+        assertEquals(expectedDescription, actualDescription);
     }
-//}
+
+    @Test
+    void throwNotFoundExceptionWhenIdNotExist(){
+
+        when(companyRepository.findById(2L))
+                .thenReturn(Optional.empty());
+        Exception exception=assertThrows(CompanyNotFoundException.class,
+                ()->companyService.fetchCompanyProfileById(2L));
+
+        String expectedMessage = "Can not found company with Id:2";
+
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+
+
+}
