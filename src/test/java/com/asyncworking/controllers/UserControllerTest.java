@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.net.URI;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
@@ -183,15 +185,20 @@ class UserControllerTest {
 
 
     @Test
-    public void shouldVerifyAccountAndActiveUserSuccessful() throws Exception {
+    public void shouldRedirectGivenVerifyAccountAndActiveUserSuccessful() throws Exception {
         String code = "xxxxxxx";
-        doNothing().when(userService).verifyAccountAndActiveUser(code);
+        when(userService.isAccountActivated(code)).thenReturn(true);
+        URI redirectPage = new URI("http://localhost:3001?verify=true");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(redirectPage);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/verify")
                         .param("code", code)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+                .andExpect(status().is3xxRedirection());
     }
+
 
     @Test
     public void shouldReturnOkIfCompanyExists() throws Exception {
