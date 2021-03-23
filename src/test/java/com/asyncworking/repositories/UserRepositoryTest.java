@@ -43,9 +43,19 @@ public class UserRepositoryTest {
 
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
 
-        UserEntity mockUser = UserEntity.builder()
+        UserEntity activatedMockUser = UserEntity.builder()
                 .name("Lengary")
                 .email("a@asyncworking.com")
+                .title("Frontend Developer")
+                .status(Status.ACTIVATED)
+                .password(passwordEncoder.encode("len123"))
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+
+        UserEntity unverifiedMockUser = UserEntity.builder()
+                .name("Plus")
+                .email("p@asyncworking.com")
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password(passwordEncoder.encode("len123"))
@@ -55,7 +65,8 @@ public class UserRepositoryTest {
 
         System.out.println(userRepository.count());
 
-        userRepository.save(mockUser);
+        userRepository.save(activatedMockUser);
+        userRepository.save(unverifiedMockUser);
     }
 
     @AfterEach
@@ -81,9 +92,27 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindUserExistByEmail() {
-        Optional<UserEntity> returnedUserEntity = userRepository
-                .findByEmail("skykk0128@gmail.com");
-        Assertions.assertTrue(returnedUserEntity.isEmpty());
+        Optional<UserEntity> returnedActivatedUserEntity = userRepository
+                .findByEmail("a@asyncworking.com");
+        Optional<UserEntity> returnedUnverifiedUserEntity = userRepository.findByEmail("p@asyncworking.com");
+        assertEquals("testpass", returnedActivatedUserEntity.get().getPassword().trim());
+        assertEquals("testpass", returnedUnverifiedUserEntity.get().getPassword().trim());
+    }
+
+    @Test
+    public void shouldFindUserByEmail() {
+        Optional<UserEntity> returnedActivatedUserEntity = userRepository
+                .findByEmail("a@asyncworking.com");
+        Optional<UserEntity> returnedUnverifiedUserEntity = userRepository.findByEmail("p@asyncworking.com");
+        assertEquals("testpass", returnedActivatedUserEntity.get().getPassword().trim());
+        assertEquals("testpass", returnedUnverifiedUserEntity.get().getPassword().trim());
+    }
+
+    @Test
+    public void shouldFindUnverifiedUserExistByEmail() {
+        Optional<UserEntity> activatedUserEntity = userRepository
+                .findUnverifiedStatusByEmail("p@asyncworking.com");
+        assertEquals("testpass", activatedUserEntity.get().getPassword().trim());
     }
 
     @Test
@@ -101,12 +130,6 @@ public class UserRepositoryTest {
         UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
         assertEquals(mockUserEntity.getName(), returnedUerEntity.getName());
         assertEquals(mockUserEntity.getEmail(), returnedUerEntity.getEmail());
-    }
-
-    @Test
-    public void shouldFindUserByEmail() {
-        Optional<UserEntity> userEntity = userRepository.findUserEntityByEmail("a@asyncworking.com");
-        assertEquals("testpass", userEntity.get().getPassword().trim());
     }
 
     @Test

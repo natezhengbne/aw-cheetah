@@ -61,6 +61,25 @@ public class UserServiceTest {
     }
 
     @Test
+    public void shouldFindUnverifiedUserSuccessful() {
+        String email = "a@qq.com";
+
+        UserEntity mockReturnedUserEntity = UserEntity.builder().email("a@gmail.com").status(Status.UNVERIFIED).build();
+        when(userRepository.findUnverifiedStatusByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
+
+        assertTrue(userService.ifUnverified(email));
+    }
+
+    @Test
+    public void shouldFindUnverifiedUserUnsuccessfully() {
+        String email = "a@qq.com";
+
+        when(userRepository.findUnverifiedStatusByEmail(any())).thenReturn(Optional.empty());
+
+        assertFalse(userService.ifUnverified(email));
+    }
+
+    @Test
     public void shouldLoginSuccessfulAndReturnDto() {
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .email("plus@gmail.com")

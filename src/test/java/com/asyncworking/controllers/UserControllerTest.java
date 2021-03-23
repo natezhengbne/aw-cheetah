@@ -58,6 +58,30 @@ class UserControllerTest {
     }
 
     @Test
+    public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception{
+        String email = "a@gmail.com";
+        when(userService.ifUnverified(email)).thenReturn(true);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/login")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNonAuthoritativeInformation());
+    }
+
+    @Test
+    public void shouldReturnOkWhenEmailNotUnverifiedForLogin() throws Exception {
+        String email = "a@gmail.com";
+        when(userService.ifUnverified(email)).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/login")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldReturnBadRequestWhenEmailNotValidForLogin() throws Exception {
         Authentication mocked = Mockito.mock(Authentication.class);
         when(mocked.isAuthenticated()).thenReturn(true);
@@ -70,8 +94,6 @@ class UserControllerTest {
 
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
-
-
 
     @Test
     public void shouldReturnErrorIfEmailExists() throws Exception {
@@ -183,7 +205,6 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void shouldRedirectGivenVerifyAccountAndActiveUserSuccessful() throws Exception {
         String code = "xxxxxxx";
@@ -213,7 +234,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldReturnNotFoundIfCompanyNotExist() throws Exception {
+    public void shouldReturnNoContentIfCompanyNotExist() throws Exception {
         String email = "a@gmail.com";
         when(userService.ifCompanyExits(email)).thenReturn(false);
 
@@ -221,7 +242,7 @@ class UserControllerTest {
                 MockMvcRequestBuilders.get("/company")
                         .param("email", email)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
     }
 
     @Test

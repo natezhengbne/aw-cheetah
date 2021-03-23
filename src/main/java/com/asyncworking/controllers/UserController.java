@@ -81,7 +81,15 @@ public class UserController {
         if (userService.ifCompanyExits(email)){
             return ResponseEntity.ok("success");
         }
-        return new ResponseEntity<>("first login", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/login")
+    public ResponseEntity statusCheck(@RequestParam(value = "email", required = true) String email) {
+        log.info("email: {}", email);
+        if (userService.ifUnverified(email)) {
+            return new ResponseEntity<>("Unverified user", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+        return ResponseEntity.ok("success");
+    }
 }

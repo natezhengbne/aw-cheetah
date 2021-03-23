@@ -25,7 +25,7 @@ public class AccountDto {
     private String email;
 
     @NotEmpty(message = "password must not be empty")
-    @Pattern(regexp = "^(?=.*[0-9])(?=\\S+$).{8,}$",
+    @Pattern(regexp = "^(?=\\S*[a-zA-Z])(?=\\S*[0-9#!\"$%&'()*+,-./:;<=>?@\\[\\]^_`{|}~]).{8,}$",
             message = "Your password must be at least 8 character long and contains at least one non-letter character")
     private String password;
 }
