@@ -62,7 +62,7 @@ public class UserController {
     public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) throws URISyntaxException {
         boolean isVerified = userService.isAccountActivated(code);
 
-        URI redirectPage = new URI("http://localhost:3000/verifylink/?verify=" + isVerified);
+        URI redirectPage = new URI("http://localhost:3000/verifylink?verify=" + isVerified);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(redirectPage);
