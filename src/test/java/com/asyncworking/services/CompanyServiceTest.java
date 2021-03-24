@@ -119,12 +119,12 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void throwNotFoundExceptionWhenIdNotExist(){
+    void throwNotFoundExceptionWhenIdNotExist() {
 
         when(companyRepository.findById(2L))
                 .thenReturn(Optional.empty());
-        Exception exception=assertThrows(CompanyNotFoundException.class,
-                ()->companyService.fetchCompanyProfileById(2L));
+        Exception exception = assertThrows(CompanyNotFoundException.class,
+                () -> companyService.fetchCompanyProfileById(2L));
 
         String expectedMessage = "Can not found company with Id:2";
 
@@ -132,7 +132,6 @@ public class CompanyServiceTest {
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
-
 
 
 }

@@ -1,7 +1,5 @@
 package com.asyncworking.controllers;
 
-
-import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.services.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -23,18 +21,21 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/company")
-    public ResponseEntity<?> companyCreate(@Valid @RequestBody CompanyModificationDto CompanyModificationDto) {
-        companyService.createCompanyAndEmployee(CompanyModificationDto);
+    public ResponseEntity<?> companyCreate(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
+        companyService.createCompanyAndEmployee(companyModificationDto);
         return ResponseEntity.ok("success");
     }
 
     @GetMapping("/company/profile")
-    public ResponseEntity<CompanyModificationDto> prefillDescription(@RequestParam("companyId") @NotNull Long companyId) {
+    public ResponseEntity<CompanyModificationDto> prefillDescription(@RequestParam("companyId")
+                                                                     @NotNull Long companyId) {
         return ResponseEntity.ok(companyService.fetchCompanyProfileById(companyId));
     }
 
     @PutMapping("/company/profile")
-    public ResponseEntity<?> updateCompanyDescription(@Valid @RequestBody CompanyModificationDto CompanyModificationDto) {
-        companyService.updateCompany(CompanyModificationDto);
+    public ResponseEntity<?> updateCompanyDescription(@Valid
+                                                          @RequestBody CompanyModificationDto companyModificationDto) {
+        companyService.updateCompany(companyModificationDto);
+        return ResponseEntity.ok("success");
     }
 }

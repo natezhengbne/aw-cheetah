@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -87,8 +85,8 @@ public class CompanyService {
     }
 
     @Transactional
-    public void updateCompany(CompanyModificationDto CompanyModificationDto) {
-        Company company = mapper.mapInfoDtoToEntity(CompanyModificationDto);
+    public void updateCompany(CompanyModificationDto companyModificationDto) {
+        Company company = mapper.mapInfoDtoToEntity(companyModificationDto);
         int res = companyRepository.updateCompanyProfileById(
                 company.getName(),
                 company.getDescription(),

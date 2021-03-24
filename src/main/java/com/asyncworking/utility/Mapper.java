@@ -32,11 +32,11 @@ public class Mapper {
                 .build();
     }
 
-    public Company mapInfoDtoToEntity(CompanyModificationDto CompanyModificationDto) {
+    public Company mapInfoDtoToEntity(CompanyModificationDto companyModificationDto) {
         return Company.builder()
-                .id(CompanyModificationDto.getCompanyId())
-                .name(CompanyModificationDto.getName())
-                .description(CompanyModificationDto.getDescription())
+                .id(companyModificationDto.getCompanyId())
+                .name(companyModificationDto.getName())
+                .description(companyModificationDto.getDescription())
                 .build();
     }
 
