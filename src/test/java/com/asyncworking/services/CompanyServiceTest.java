@@ -11,11 +11,13 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.Mapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -45,8 +47,12 @@ public class CompanyServiceTest {
     @Mock
     private CompanyRepository companyRepository;
 
+    @Mock
+    Mapper mapper;
+
     @InjectMocks
     CompanyService companyService;
+
 
     @Test
     @Transactional
@@ -105,9 +111,16 @@ public class CompanyServiceTest {
                 .name("AW")
                 .description("desc")
                 .build();
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+                .companyId(1L)
+                .name("AW")
+                .description("desc")
+                .build();
 
         when(companyRepository.findById(1L))
                 .thenReturn(Optional.of(mockReturnedCompany));
+        when(mapper.mapEntityToCompanyProfileDto(mockReturnedCompany))
+                .thenReturn(companyModificationDto);
 
         String expectedDescription = "desc";
 

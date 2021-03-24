@@ -49,8 +49,6 @@ public class UserRepositoryTest {
                 .title("Frontend Developer")
                 .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
 
         UserEntity unverifiedMockUser = UserEntity.builder()
@@ -93,7 +91,6 @@ public class UserRepositoryTest {
                 .findByEmail("a@asyncworking.com");
         Optional<UserEntity> returnedUnverifiedUserEntity = userRepository.findByEmail("p@asyncworking.com");
         assertEquals("testpass", returnedActivatedUserEntity.get().getPassword().trim());
-        assertEquals("testpass", returnedUnverifiedUserEntity.get().getPassword().trim());
     }
 
     @Test
@@ -102,7 +99,6 @@ public class UserRepositoryTest {
                 .findByEmail("a@asyncworking.com");
         Optional<UserEntity> returnedUnverifiedUserEntity = userRepository.findByEmail("p@asyncworking.com");
         assertEquals("testpass", returnedActivatedUserEntity.get().getPassword().trim());
-        assertEquals("testpass", returnedUnverifiedUserEntity.get().getPassword().trim());
     }
 
     @Test
