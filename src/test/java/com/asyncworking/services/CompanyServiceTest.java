@@ -1,9 +1,6 @@
 package com.asyncworking.services;
 
 import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.dtos.CompanyInfoDto;
-import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
@@ -31,8 +28,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

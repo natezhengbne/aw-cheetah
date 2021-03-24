@@ -4,9 +4,6 @@ import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 
 import com.asyncworking.models.Company;
-import com.asyncworking.models.UserEntity;
-import com.asyncworking.models.ICompanyInfo;
-import com.asyncworking.models.UserEntity;
 import com.asyncworking.models.ICompanyInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,11 +26,6 @@ import java.util.List;
 @Repository
 @EnableJpaRepositories
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    @Query(nativeQuery = true, value =
-            "SELECT c.id, c.name, c.description FROM company c, company_user cu, user_info u WHERE \n" +
-                    "c.id = cu.company_id AND \n" +
-                    "cu.user_id = u.id AND \n" +
-                    "u.email = :email")
     @Query(nativeQuery = true, value =
             "SELECT c.id, c.name, c.description FROM company c, company_user cu, user_info u WHERE \n" +
                     "c.id = cu.company_id AND \n" +

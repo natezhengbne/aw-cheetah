@@ -2,11 +2,8 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
-import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -23,10 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -243,7 +238,7 @@ class UserControllerTest {
                 .colleague(colleagueList)
                 .build();
         when(userService.ifCompanyExits(email)).thenReturn(true);
-        when(companyService.getCompanyInfoDto(email)).thenReturn(companyInfo);
+//        when(companyService.(email)).thenReturn(companyInfo);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/company")

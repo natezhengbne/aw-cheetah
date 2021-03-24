@@ -1,10 +1,6 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.CompanyInfoDto;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.dtos.UserInfoDto;
 import java.net.URI;
 import java.net.URISyntaxException;
