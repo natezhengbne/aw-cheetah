@@ -84,16 +84,13 @@ public class UserService {
     }
 
     @Transactional
-    public void verifyAccountAndActiveUser(String code) {
+    public Boolean isAccountActivated(String code) {
         String email = this.decodedEmail(code);
         int numberOfActiveUse = this.activeUser(email);
 
         log.debug("number of activated userEntity" + numberOfActiveUse);
 
-        if (numberOfActiveUse == 0) {
-            throw new UserNotFoundException("Can not found user by email:" + email);
-        }
-
+        return numberOfActiveUse != 0;
     }
 
     private String decodedEmail(String code) {
@@ -119,5 +116,9 @@ public class UserService {
 
     public boolean ifCompanyExits(String email) {
         return userRepository.findEmploymentByEmail(email).isPresent();
+    }
+
+    public boolean ifUnverified(String email) {
+        return userRepository.findUnverifiedStatusByEmail(email).isPresent();
     }
 }

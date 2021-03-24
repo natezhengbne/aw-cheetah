@@ -44,7 +44,7 @@ public class ApplicationUserServiceTest {
                 .name("Lengary")
                 .email("a@asyncworking.com")
                 .title("Frontend Developer")
-                .status(Status.UNVERIFIED)
+                .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
                 .build();
 

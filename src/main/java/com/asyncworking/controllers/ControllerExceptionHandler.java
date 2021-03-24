@@ -58,6 +58,15 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(value = {MissingServletRequestParameterException.class})
+    public ResponseEntity<ErrorDto> handleMissingParams(MissingServletRequestParameterException e) {
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Missing Params", details);
+        return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+    }
+  
     @ExceptionHandler(value = {AuthenticationException.class})
     public ResponseEntity<ErrorDto> handleBadCredential(AuthenticationException e) {
         List<String> details = new ArrayList<>();

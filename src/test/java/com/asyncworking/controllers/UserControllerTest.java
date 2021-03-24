@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.net.URI;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
@@ -56,6 +58,31 @@ class UserControllerTest {
     }
 
     @Test
+    public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception{
+        String email = "a@gmail.com";
+        when(userService.ifUnverified(email)).thenReturn(true);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/login")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNonAuthoritativeInformation());
+    }
+
+    @Test
+    public void shouldReturnOkWhenEmailNotUnverifiedForLogin() throws Exception {
+        String email = "a@gmail.com";
+        when(userService.ifUnverified(email)).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/login")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
     public void shouldReturnBadRequestWhenEmailNotValidForLogin() throws Exception {
         Authentication mocked = Mockito.mock(Authentication.class);
         when(mocked.isAuthenticated()).thenReturn(true);
@@ -68,7 +95,6 @@ class UserControllerTest {
 
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
-
 
 
     @Test
@@ -183,15 +209,20 @@ class UserControllerTest {
 
 
     @Test
-    public void shouldVerifyAccountAndActiveUserSuccessful() throws Exception {
+    public void shouldRedirectGivenVerifyAccountAndActiveUserSuccessful() throws Exception {
         String code = "xxxxxxx";
-        doNothing().when(userService).verifyAccountAndActiveUser(code);
+        when(userService.isAccountActivated(code)).thenReturn(true);
+        URI redirectPage = new URI("http://localhost:3001?verify=true");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(redirectPage);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/verify")
                         .param("code", code)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+                .andExpect(status().is3xxRedirection());
     }
+
 
     @Test
     public void shouldReturnOkIfCompanyExists() throws Exception {
@@ -206,7 +237,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldReturnNotFoundIfCompanyNotExist() throws Exception {
+    public void shouldReturnNoContentIfCompanyNotExist() throws Exception {
         String email = "a@gmail.com";
         when(userService.ifCompanyExits(email)).thenReturn(false);
 
@@ -214,7 +245,18 @@ class UserControllerTest {
                 MockMvcRequestBuilders.get("/company")
                         .param("email", email)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldReturnBadRequestIfParamNotExist() throws Exception {
+        String email = "a@gmail.com";
+        when(userService.ifCompanyExits(email)).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/company")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

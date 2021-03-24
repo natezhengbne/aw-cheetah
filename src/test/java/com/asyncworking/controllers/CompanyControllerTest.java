@@ -102,9 +102,9 @@ public class CompanyControllerTest {
                 .companyId(1L)
                 .name("aw")
                 .description("desc")
-                .build();
         doNothing().when(companyService).updateCompany(companyModificationDto);
         mockMvc.perform(put("/company/profile")
+
                 .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

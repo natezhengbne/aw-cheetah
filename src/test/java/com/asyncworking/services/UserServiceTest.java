@@ -61,6 +61,25 @@ public class UserServiceTest {
     }
 
     @Test
+    public void shouldFindUnverifiedUserSuccessful() {
+        String email = "a@qq.com";
+
+        UserEntity mockReturnedUserEntity = UserEntity.builder().email("a@gmail.com").status(Status.UNVERIFIED).build();
+        when(userRepository.findUnverifiedStatusByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
+
+        assertTrue(userService.ifUnverified(email));
+    }
+
+    @Test
+    public void shouldFindUnverifiedUserUnsuccessfully() {
+        String email = "a@qq.com";
+
+        when(userRepository.findUnverifiedStatusByEmail(any())).thenReturn(Optional.empty());
+
+        assertFalse(userService.ifUnverified(email));
+    }
+
+    @Test
     public void shouldLoginSuccessfulAndReturnDto() {
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .email("plus@gmail.com")
@@ -141,34 +160,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldDecodeEmailAndActiveUserStatus() {
+    public void shouldReturnTrueIfAccountActivated() {
         String code = "eyJhbGciOiJIUzI1NiJ9."
                 .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
                 .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw");
 
         when(userRepository.updateStatusByEmail("user@gmail.com", Status.ACTIVATED)).thenReturn(1);
 
-        userService.verifyAccountAndActiveUser(code);
-
-        verify(userRepository).updateStatusByEmail("user@gmail.com", Status.ACTIVATED);
-    }
-
-    @Test
-    public void throwExceptionWhenNoUserFound() {
-        String code = "eyJhbGciOiJIUzI1NiJ9."
-                .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
-                .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw");
-
-        when(userRepository.updateStatusByEmail("user@gmail.com", Status.ACTIVATED)).thenReturn(0);
-
-        Exception exception = assertThrows(UserNotFoundException.class,
-                () -> userService.verifyAccountAndActiveUser(code));
-
-        String expectedMessage = "Can not found user by email";
-
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertTrue(userService.isAccountActivated(code));
     }
 
     @Test

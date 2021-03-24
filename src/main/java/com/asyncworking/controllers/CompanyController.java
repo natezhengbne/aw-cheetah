@@ -1,5 +1,7 @@
 package com.asyncworking.controllers;
 
+
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.services.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,5 @@ public class CompanyController {
     @PutMapping("/company/profile")
     public ResponseEntity<?> updateCompanyDescription(@Valid @RequestBody CompanyModificationDto CompanyModificationDto) {
         companyService.updateCompany(CompanyModificationDto);
-        return ResponseEntity.ok("success");
     }
 }

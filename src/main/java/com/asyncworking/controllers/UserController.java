@@ -2,11 +2,14 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
+import java.net.URI;
+import java.net.URISyntaxException;
 import com.asyncworking.services.UserService;
 import com.asyncworking.utility.SiteUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -56,9 +59,15 @@ public class UserController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) {
-        userService.verifyAccountAndActiveUser(code);
-        return ResponseEntity.ok("success");
+    public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) throws URISyntaxException {
+        boolean isVerified = userService.isAccountActivated(code);
+
+        URI redirectPage = new URI("http://localhost:3000?verify=" + isVerified);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(redirectPage);
+
+        return new ResponseEntity(httpHeaders, HttpStatus.SEE_OTHER);
     }
 
     @DeleteMapping("/signup")
@@ -72,7 +81,15 @@ public class UserController {
         if (userService.ifCompanyExits(email)){
             return ResponseEntity.ok("success");
         }
-        return new ResponseEntity<>("first login", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/login")
+    public ResponseEntity statusCheck(@RequestParam(value = "email", required = true) String email) {
+        log.info("email: {}", email);
+        if (userService.ifUnverified(email)) {
+            return new ResponseEntity<>("Unverified user", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+        return ResponseEntity.ok("success");
+    }
 }

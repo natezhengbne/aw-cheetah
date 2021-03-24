@@ -1,7 +1,8 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
+import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -47,6 +48,7 @@ public class CompanyService {
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
                         selectedUserEntity,
                         newCompany);
+
         if (companyModificationDto.getUserTitle() != null) {
             newEmployee.setTitle(companyModificationDto.getUserTitle());
         }
