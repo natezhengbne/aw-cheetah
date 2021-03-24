@@ -1,7 +1,6 @@
 package com.asyncworking.services;
 
 import com.asyncworking.exceptions.CompanyNotFoundException;
-import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
