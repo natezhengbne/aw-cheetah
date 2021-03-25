@@ -40,6 +40,16 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {CompanyNotFoundException.class})
+    public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
+        log.info("Company is not found.", e);
+
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Company not found", details);
+        return new ResponseEntity(error, HttpStatus.NO_CONTENT);
+    }
+
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorDto> handleArgumentNotValid(MethodArgumentNotValidException e) {
         List<String> details = new ArrayList<>();

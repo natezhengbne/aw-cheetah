@@ -4,6 +4,7 @@ import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
@@ -62,10 +63,14 @@ public class CompanyService {
     }
 
     public CompanyColleagueDto getCompanyInfoDto(String email) {
-        ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
-        List<String> colleague = userRepository.findNameById(companyInfo.getId());
+        if (companyRepository.findCompanyInfoByEmail(email) == null || companyRepository.findCompanyInfoByEmail(email).isEmpty()){
+            throw new CompanyNotFoundException("company not found");
+        }else{
+            ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
+            List<String> colleague = userRepository.findNameById(companyInfo.getId());
 
-        return mapCompanyToCompanyDto(companyInfo, colleague);
+            return mapCompanyToCompanyDto(companyInfo, colleague);
+        }
     }
 
     private CompanyColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo, List<String> colleague) {
