@@ -63,9 +63,10 @@ public class CompanyService {
     }
 
     public CompanyColleagueDto getCompanyInfoDto(String email) {
-        if (companyRepository.findCompanyInfoByEmail(email) == null || companyRepository.findCompanyInfoByEmail(email).isEmpty()){
+        if (companyRepository.findCompanyInfoByEmail(email) == null ||
+                companyRepository.findCompanyInfoByEmail(email).isEmpty()) {
             throw new CompanyNotFoundException("company not found");
-        }else{
+        } else {
             ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
             List<String> colleague = userRepository.findNameById(companyInfo.getId());
 
