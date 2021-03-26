@@ -230,15 +230,7 @@ class UserControllerTest {
     @Test
     public void shouldReturnOkIfCompanyExists() throws Exception {
         String email = "kkk@gmail.com";
-        List<String> colleagueList = Arrays.asList("+", "-", "*");
-        CompanyColleagueDto companyInfo = CompanyColleagueDto.builder()
-                .id(1L)
-                .name("+ company")
-                .description("description for +")
-                .colleague(colleagueList)
-                .build();
         when(userService.ifCompanyExits(email)).thenReturn(true);
-//        when(companyService.(email)).thenReturn(companyInfo);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/company")

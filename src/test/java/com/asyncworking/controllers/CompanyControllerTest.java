@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.AwCheetahApplication;
+import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.services.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,8 +14,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +52,25 @@ public class CompanyControllerTest {
         mockMvc.perform(post("/company")
                 .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfGetCompanyInfoSuccessful() throws Exception {
+        String email = "kkk@gmail.com";
+        List<String> colleagueList = Arrays.asList("+", "-", "*");
+        CompanyColleagueDto companyInfoDto = CompanyColleagueDto.builder()
+                .id(1L)
+                .name("+company")
+                .description("description for + company")
+                .colleague(colleagueList)
+                .build();
+        when(companyService.getCompanyInfoDto(email)).thenReturn(companyInfoDto);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/companyinfo")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 

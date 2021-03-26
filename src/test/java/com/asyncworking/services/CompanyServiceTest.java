@@ -153,7 +153,7 @@ public class CompanyServiceTest {
     @Test
     public void getCompanyInfoWhenGivenUserEmail() {
         String email = "p@asyncworking.com";
-        ImplementICompanyInfo mockCompanyInfo = ImplementICompanyInfo.builder()
+        ICompanyInfoImpl mockCompanyInfo = ICompanyInfoImpl.builder()
                 .id(1L)
                 .name("p")
                 .description("the description for + HQ")

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "company")
-public class ImplementICompanyInfo implements ICompanyInfo {
+public class ICompanyInfoImpl implements ICompanyInfo {
     @Id
     @Type(type = "long")
     private Long id;

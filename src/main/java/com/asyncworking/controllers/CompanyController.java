@@ -27,9 +27,9 @@ public class CompanyController {
         return ResponseEntity.ok("success");
     }
 
-    @GetMapping("/companyInfo")
-    public ResponseEntity companyCheck(@RequestParam(value = "email", required = true) String email) {
-        log.info(email);
+    @GetMapping("/companyinfo")
+    public ResponseEntity companyInfoDisplay(@RequestParam(value = "email", required = true) String email) {
+        log.info("email: {}", email);
         CompanyColleagueDto companyInfoDto = companyService.getCompanyInfoDto(email);
         return ResponseEntity.ok(companyInfoDto);
     }
