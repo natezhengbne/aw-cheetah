@@ -81,6 +81,7 @@ class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+
     @Test
     public void shouldReturnBadRequestWhenEmailNotValidForLogin() throws Exception {
         Authentication mocked = Mockito.mock(Authentication.class);
@@ -94,6 +95,7 @@ class UserControllerTest {
 
         assertEquals(400, mvcResult.getResponse().getStatus());
     }
+
 
     @Test
     public void shouldReturnErrorIfEmailExists() throws Exception {
@@ -205,6 +207,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
     @Test
     public void shouldRedirectGivenVerifyAccountAndActiveUserSuccessful() throws Exception {
         String code = "xxxxxxx";
@@ -255,5 +258,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
     }
+
 }
 

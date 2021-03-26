@@ -18,7 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -71,6 +72,7 @@ public class CompanyControllerTest {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaaqq.com")
                 .name("aw")
+                .description("desc")
                 .build();
         doNothing().when(companyService).createCompanyAndEmployee(companyModificationDto);
         mockMvc.perform(post("/company")
@@ -79,4 +81,33 @@ public class CompanyControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
+    @Test
+    void prefillDescription() throws Exception {
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+                .companyId(1L)
+                .name("aw")
+                .description("desc")
+                .build();
+        when(companyService.fetchCompanyProfileById(1L)).thenReturn(companyModificationDto);
+        mockMvc.perform(get("/company/profile")
+                .param("companyId", "1"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void updateCompanyDescription() throws Exception {
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+                .companyId(1L)
+                .name("aw")
+                .description("desc")
+                .build();
+        doNothing().when(companyService).updateCompany(companyModificationDto);
+        mockMvc.perform(put("/company/profile")
+
+                .content(objectMapper.writeValueAsString(companyModificationDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

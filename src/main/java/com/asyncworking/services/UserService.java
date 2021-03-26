@@ -39,7 +39,7 @@ public class UserService {
     public UserInfoDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
 
-        if (foundUserEntity.isEmpty()){
+        if (foundUserEntity.isEmpty()) {
             throw new UserNotFoundException("user not found");
         }
 
@@ -56,7 +56,7 @@ public class UserService {
         return userLoginInfoDto;
     }
 
-    public boolean ifEmailExists(String email){
+    public boolean ifEmailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
@@ -95,12 +95,12 @@ public class UserService {
 
     private String decodedEmail(String code) {
 
-            Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
-                    .build()
-                    .parseClaimsJws(code);
+        Jws<Claims> jws = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
+                .build()
+                .parseClaimsJws(code);
 
-            Claims body = jws.getBody();
+        Claims body = jws.getBody();
 
         return body.get("email").toString();
     }
@@ -113,8 +113,8 @@ public class UserService {
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
-    
-    public boolean ifCompanyExits(String email){
+
+    public boolean ifCompanyExits(String email) {
         return userRepository.findEmploymentByEmail(email).isPresent();
     }
 

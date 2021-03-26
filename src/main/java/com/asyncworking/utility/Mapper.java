@@ -1,9 +1,12 @@
 package com.asyncworking.utility;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,8 +29,14 @@ public class Mapper {
                 .email(accountDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+    }
+
+    public Company mapInfoDtoToEntity(CompanyModificationDto companyModificationDto) {
+        return Company.builder()
+                .id(companyModificationDto.getCompanyId())
+                .name(companyModificationDto.getName())
+                .description(companyModificationDto.getDescription())
                 .build();
     }
 
@@ -35,6 +44,14 @@ public class Mapper {
         return UserInfoDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
+                .build();
+    }
+
+    public CompanyModificationDto mapEntityToCompanyProfileDto(Company company) {
+        return CompanyModificationDto.builder()
+                .companyId(company.getId())
+                .name(company.getName())
+                .description(company.getDescription())
                 .build();
     }
 }

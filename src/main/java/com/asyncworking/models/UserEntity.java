@@ -4,9 +4,11 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -16,6 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user")
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +43,11 @@ public class UserEntity {
 
     @CreatedDate
     @Column(name = "created_time", nullable = false)
-    private OffsetDateTime createdTime;
+    private Date createdTime;
 
     @LastModifiedDate
     @Column(name = "updated_time", nullable = false)
-    private OffsetDateTime updatedTime;
+    private Date updatedTime;
 
     @OneToMany(mappedBy = "userEntity",
     cascade = CascadeType.ALL)

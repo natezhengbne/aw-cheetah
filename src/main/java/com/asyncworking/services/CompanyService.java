@@ -1,6 +1,6 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
@@ -10,13 +10,13 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.HashSet;
 
 @Slf4j
@@ -29,6 +29,8 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
 
     private final EmployeeRepository employeeRepository;
+
+    private final Mapper mapper;
 
     @Transactional
     public void createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
@@ -43,7 +45,8 @@ public class CompanyService {
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
                         selectedUserEntity,
                         newCompany);
-        if (companyModificationDto.getUserTitle() != null){
+
+        if (companyModificationDto.getUserTitle() != null) {
             newEmployee.setTitle(companyModificationDto.getUserTitle());
         }
         employeeRepository.save(newEmployee);
@@ -54,13 +57,11 @@ public class CompanyService {
                 .orElseThrow(() -> new UserNotFoundException("Can not found user by email:" + email));
     }
 
-    private Company createCompany(String company, Long userId){
+    private Company createCompany(String company, Long userId) {
         return Company.builder()
                 .name(company)
                 .adminId(userId)
                 .employees(new HashSet<>())
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
@@ -69,9 +70,29 @@ public class CompanyService {
                 .id(employeeId)
                 .company(company)
                 .userEntity(userEntity)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
     }
 
+    public CompanyModificationDto fetchCompanyProfileById(Long companyId) {
+        Company company = fetchCompanyById(companyId);
+        return mapper.mapEntityToCompanyProfileDto(company);
+    }
+
+    private Company fetchCompanyById(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException("Can not found company with Id:" + companyId));
+    }
+
+    @Transactional
+    public void updateCompany(CompanyModificationDto companyModificationDto) {
+        Company company = mapper.mapInfoDtoToEntity(companyModificationDto);
+        int res = companyRepository.updateCompanyProfileById(
+                company.getName(),
+                company.getDescription(),
+                new Date(),
+                company.getId());
+        if (res == 0) {
+            throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());
+        }
+    }
 }

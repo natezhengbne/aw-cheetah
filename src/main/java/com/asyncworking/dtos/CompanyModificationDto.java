@@ -17,6 +17,8 @@ import javax.validation.constraints.Size;
 @Validated
 public class CompanyModificationDto {
 
+    private Long companyId;
+
     @NotEmpty(message = "Company name can not be empty")
     @Size(max = 128, message = "Company name can not be more than 128 characters! ")
     private String name;
