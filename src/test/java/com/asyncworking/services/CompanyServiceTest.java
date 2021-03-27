@@ -106,6 +106,22 @@ public class CompanyServiceTest {
     }
 
 
+    @Test
+    public void getCompanyInfoWhenGivenUserEmail() {
+        String email = "p@asyncworking.com";
+        ICompanyInfoImpl mockCompanyInfo = ICompanyInfoImpl.builder()
+                .companyId(1L)
+                .name("p")
+                .description("the description for + HQ")
+                .build();
+
+        List<ICompanyInfo> returnedCompanyInfo = List.of(mockCompanyInfo);
+
+        when(companyRepository.findCompanyInfoByEmail(email)).thenReturn(returnedCompanyInfo);
+
+        CompanyColleagueDto companyInfo = companyService.getCompanyInfoDto(email);
+        assertEquals("p", companyInfo.getName());
+        assertEquals(mockCompanyInfo.getDescription(), companyInfo.getDescription());
     }
 
     @Test

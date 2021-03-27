@@ -13,13 +13,13 @@ import javax.persistence.Table;
 public class ICompanyInfoImpl implements ICompanyInfo {
     @Id
     @Type(type = "long")
-    private Long id;
+    private Long companyId;
     private String name;
     private String description;
 
     @Override
-    public Long getId() {
-        return id;
+    public Long getCompanyId() {
+        return companyId;
     }
 
     @Override

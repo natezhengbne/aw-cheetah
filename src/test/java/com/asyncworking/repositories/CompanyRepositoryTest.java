@@ -2,6 +2,7 @@ package com.asyncworking.repositories;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,8 +56,8 @@ public class CompanyRepositoryTest {
                 .contactNumber("123345")
                 .contactEmail("email@gmail.com")
                 .industry("industry")
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
 
         UserEntity mockUser = UserEntity.builder()
@@ -67,8 +67,8 @@ public class CompanyRepositoryTest {
                 .title("Frontend Developer")
                 .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
 
         EmployeeId mockEmployeeId = EmployeeId.builder()
@@ -81,8 +81,8 @@ public class CompanyRepositoryTest {
                 .company(mockCompany)
                 .userEntity(mockUser)
                 .id(mockEmployeeId)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
 
         companyRepository.save(mockCompany);
@@ -104,6 +104,8 @@ public class CompanyRepositoryTest {
                 .name("AW")
                 .adminId(1L)
                 .employees(new HashSet<>())
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
         Company returnedCompany = companyRepository.save(mockCompany);
         assertEquals("AW", returnedCompany.getName());
@@ -119,6 +121,8 @@ public class CompanyRepositoryTest {
                 .name("AW")
                 .adminId(1L)
                 .employees(new HashSet<>())
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
         companyRepository.save(mockCompany);
 

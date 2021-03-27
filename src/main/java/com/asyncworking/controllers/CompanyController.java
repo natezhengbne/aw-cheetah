@@ -42,7 +42,7 @@ public class CompanyController {
 
     @PutMapping("/company/profile")
     public ResponseEntity<?> updateCompanyDescription(@Valid
-                                                          @RequestBody CompanyModificationDto companyModificationDto) {
+                                                      @RequestBody CompanyModificationDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);
         return ResponseEntity.ok("success");
     }

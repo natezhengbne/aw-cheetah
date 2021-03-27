@@ -32,16 +32,6 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(value = {CompanyNotFoundException.class})
     public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
-        log.debug("Company is not found.", e);
-
-        List<String> details = new ArrayList<>();
-        details.add(e.getLocalizedMessage());
-        ErrorDto error = new ErrorDto("Company is not found.", details);
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(value = {CompanyNotFoundException.class})
-    public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
         log.info("Company is not found.", e);
 
         List<String> details = new ArrayList<>();
