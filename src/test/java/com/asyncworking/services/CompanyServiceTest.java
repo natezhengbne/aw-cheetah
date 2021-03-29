@@ -9,8 +9,6 @@ import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
-import org.assertj.core.util.Lists;
-import org.assertj.core.util.Lists;
 import com.asyncworking.utility.Mapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,15 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.transaction.Transactional;
 import java.util.List;
-import javax.validation.constraints.AssertTrue;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -163,23 +153,5 @@ public class CompanyServiceTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    public void getCompanyInfoWhenGivenUserEmail() {
-        String email = "p@asyncworking.com";
-        ICompanyInfoImpl mockCompanyInfo = ICompanyInfoImpl.builder()
-                .id(1L)
-                .name("p")
-                .description("the description for + HQ")
-                .build();
-
-        List<ICompanyInfo> returnedCompanyInfo = List.of(mockCompanyInfo);
-
-        when(companyRepository.findCompanyInfoByEmail(email)).thenReturn(returnedCompanyInfo);
-
-        CompanyColleagueDto companyInfo = companyService.getCompanyInfoDto(email);
-        assertEquals("p", companyInfo.getName());
-        assertEquals(mockCompanyInfo.getDescription(), companyInfo.getDescription());
     }
 }

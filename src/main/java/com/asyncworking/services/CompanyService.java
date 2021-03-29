@@ -1,9 +1,8 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
-import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
@@ -52,13 +51,6 @@ public class CompanyService {
             }
             employeeRepository.save(newEmployee);
         }
-
-        if (companyModificationDto.getUserTitle() != null) {
-            newEmployee.setTitle(companyModificationDto.getUserTitle());
-        if (companyInfoDto.getUserTitle() != null) {
-            newEmployee.setTitle(companyInfoDto.getUserTitle());
-        }
-        employeeRepository.save(newEmployee);
     }
 
     public CompanyColleagueDto getCompanyInfoDto(String email) {

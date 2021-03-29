@@ -1,28 +1,15 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
-import com.asyncworking.dtos.CompanyNameDescriptionColleagueDto;
-
 import com.asyncworking.models.Company;
 import com.asyncworking.models.ICompanyInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
-
-import java.time.OffsetDateTime;
 import java.util.Date;
-
-import java.util.Optional;
-
-import java.util.Optional;
-
-import java.util.List;
 
 @Repository
 @EnableJpaRepositories
@@ -33,12 +20,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
                     "cu.user_id = u.id AND \n" +
                     "u.email = :email")
     List<ICompanyInfo> findCompanyInfoByEmail(@Param("email") String email);
-    @Query("select u from UserEntity u where u.email=:email")
-    Optional<Company> findCompanyInfoByEmail(@Param("email") String email);
-    @Query("select u from UserEntity u where u.email=:email")
-    Optional<Company> findCompanyInfoByEmail(@Param("email") String email);
-    Optional<List<ICompanyInfo>> findCompanyInfoByEmail(@Param("email") String email);
-
 
     @Modifying
     @Query("update Company c  set c.name=:name, c.description=:description, c.updatedTime=:updatedTime where c.id=:id")
