@@ -18,7 +18,7 @@ public class ICompanyInfoImpl implements ICompanyInfo {
     private String description;
 
     @Override
-    public Long getCompanyId() {
+    public Long getId() {
         return companyId;
     }
 

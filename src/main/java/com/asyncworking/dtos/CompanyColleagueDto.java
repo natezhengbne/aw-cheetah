@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class CompanyColleagueDto {
-    private Long id;
+    private Long companyId;
 
     private String name;
 

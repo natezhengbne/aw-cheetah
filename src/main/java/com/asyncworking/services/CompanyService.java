@@ -67,7 +67,7 @@ public class CompanyService {
             throw new CompanyNotFoundException("company not found");
         } else {
             ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
-            List<String> colleague = userRepository.findNameById(companyInfo.getCompanyId());
+            List<String> colleague = userRepository.findNameById(companyInfo.getId());
 
             return mapCompanyToCompanyDto(companyInfo, colleague);
         }
@@ -75,7 +75,7 @@ public class CompanyService {
 
     private CompanyColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo, List<String> colleague) {
         return CompanyColleagueDto.builder()
-                .id(companyInfo.getCompanyId())
+                .companyId(companyInfo.getId())
                 .name(companyInfo.getName())
                 .description(companyInfo.getDescription())
                 .colleague(colleague)

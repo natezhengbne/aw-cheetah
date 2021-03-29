@@ -1,7 +1,7 @@
 package com.asyncworking.models;
 
 public interface ICompanyInfo {
-    Long getCompanyId();
+    Long getId();
     String getName();
     String getDescription();
 }

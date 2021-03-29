@@ -6,13 +6,9 @@ import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 @RequiredArgsConstructor
 @Component
