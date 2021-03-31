@@ -25,6 +25,16 @@ public class UserMapper {
                 .build();
     }
 
+    public UserEntity mapInfoDtoToEntityInvitation(AccountDto accountDto) {
+        String encodedPassword = passwordEncoder.encode(accountDto.getPassword());
+        return UserEntity.builder()
+                .name(accountDto.getName())
+                .email(accountDto.getEmail().toLowerCase())
+                .password(encodedPassword)
+                .status(Status.ACTIVATED)
+                .build();
+    }
+
     public Company mapInfoDtoToEntity(CompanyModificationDto companyModificationDto) {
         return Company.builder()
                 .id(companyModificationDto.getCompanyId())

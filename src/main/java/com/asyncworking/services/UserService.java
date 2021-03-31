@@ -19,7 +19,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -68,10 +72,32 @@ public class UserService {
         this.generateVerifyLink(accountDto.getEmail(), siteUrl);
     }
 
+    public void createUserViaInvitationLink(AccountDto accountDto) {
+        UserEntity userEntity = mapper.mapInfoDtoToEntityInvitation(accountDto);
+        userRepository.save(userEntity);
+    }
+
     public String generateVerifyLink(String email, String siteUrl) {
         String verifyLink = siteUrl + "/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
+    }
+
+    public String generateMailUrl(String email) {
+        String redisKey = String.format("%s%s", UserServiceRedisKey.PASSWORD_RESET, email);
+        try {
+            User userByEmail = userService.findUserByEmail(email);
+            String key = randomUtils.GenerateRandomNumber(6) + "";
+            Timestamp outDate = new Timestamp(System.currentTimeMillis() + (long) (10 * 60 * 1000));
+            long outtimes = outDate.getTime();
+            String sid = userByEmail.getEmail() + "&" + key + "&" + outtimes;
+            redisTemplate.opsForValue().set(redisKey, MD5Util.md5Encrypt32Lower(sid));
+            redisTemplate.expire(redisKey, 10, TimeUnit.MINUTES);
+            return String.format("%s%s%s%s%s", emailConfig.getFrontendUrl(), "/update_password?sid=",MD5Util.md5Encrypt32Lower(sid),"&email=",userByEmail.getEmail());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private String generateJws(String email) {

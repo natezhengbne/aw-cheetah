@@ -51,6 +51,13 @@ public class UserController {
         return ResponseEntity.ok("success");
     }
 
+    @PostMapping("/invitations")
+    public ResponseEntity createInvitationsUser(@Valid @RequestBody AccountDto accountDto) {
+        log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
+        userService.createUserViaInvitationLink(accountDto);
+        return ResponseEntity.ok("success");
+    }
+
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto,
                                                HttpServletRequest request) {
