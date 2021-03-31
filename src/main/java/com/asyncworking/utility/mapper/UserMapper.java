@@ -1,9 +1,8 @@
 package com.asyncworking.utility.mapper;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.CompanyInfoPostDto;
 import com.asyncworking.models.Company;
-import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class UserMapper {
                 .build();
     }
 
-    public Company mapInfoDtoToEntity(CompanyModificationDto companyModificationDto) {
+    public Company mapInfoDtoToEntity(CompanyInfoPostDto companyModificationDto) {
         return Company.builder()
                 .id(companyModificationDto.getCompanyId())
                 .name(companyModificationDto.getName())
@@ -34,15 +33,16 @@ public class UserMapper {
                 .build();
     }
 
-    public UserInfoPostDto mapEntityToInfoDto(UserEntity userEntity) {
-        return UserInfoPostDto.builder()
+    public AccountDto mapEntityToInfoDto(UserEntity userEntity) {
+        return AccountDto.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
+                .title(userEntity.getTitle())
                 .build();
     }
 
-    public CompanyModificationDto mapEntityToCompanyProfileDto(Company company) {
-        return CompanyModificationDto.builder()
+    public CompanyInfoPostDto mapEntityToCompanyProfileDto(Company company) {
+        return CompanyInfoPostDto.builder()
                 .companyId(company.getId())
                 .name(company.getName())
                 .description(company.getDescription())

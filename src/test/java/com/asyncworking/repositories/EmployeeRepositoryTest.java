@@ -1,37 +1,23 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = AwCheetahApplication.class)
-public class EmployeeRepositoryTest {
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+@SpringBootTest
+@Transactional
+public class EmployeeRepositoryTest extends DBHelper {
 
     @BeforeEach
-    void setup() {
-        employeeRepository.deleteAll();
-        companyRepository.deleteAll();
-        userRepository.deleteAll();
+    void setUp() {
+        clearDb();
     }
 
     @Test

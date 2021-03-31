@@ -1,9 +1,7 @@
 package com.asyncworking.services;
 
-import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyInfoPostDto;
-import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
@@ -15,13 +13,10 @@ import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -31,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = AwCheetahApplication.class)
-@AutoConfigureMockMvc
+@SpringBootTest
 public class CompanyServiceTest {
     @Mock
     private UserRepository userRepository;
@@ -144,7 +137,7 @@ public class CompanyServiceTest {
                 .name("AW")
                 .description("desc")
                 .build();
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+        CompanyInfoPostDto companyModificationDto = CompanyInfoPostDto.builder()
                 .companyId(1L)
                 .name("AW")
                 .description("desc")

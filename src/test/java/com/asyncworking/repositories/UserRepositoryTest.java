@@ -1,17 +1,13 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -19,22 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = AwCheetahApplication.class)
-public class UserRepositoryTest {
+@SpringBootTest
+public class UserRepositoryTest extends DBHelper {
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
     @BeforeEach
     public void insertMockEmp() throws InterruptedException {
-        userRepository.deleteAll();
+        clearDb();
 
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
 
@@ -56,11 +45,6 @@ public class UserRepositoryTest {
 
         userRepository.save(activatedMockUser);
         userRepository.save(unverifiedMockUser);
-    }
-
-    @AfterEach
-    void tearDown() {
-        userRepository.deleteAll();
     }
 
     @Test

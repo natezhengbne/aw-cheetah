@@ -1,7 +1,6 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.services.UserService;
 import com.asyncworking.utility.SiteUrl;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +35,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody UserInfoPostDto userInfoPostDto) {
-        log.info(userInfoPostDto.getEmail());
-        UserInfoPostDto userInfoPostDto1 = userService.login(
-            userInfoPostDto.getEmail().toLowerCase(),
-            userInfoPostDto.getPassword());
+    public ResponseEntity login(@Valid @RequestBody AccountDto accountDto) {
+        log.info(accountDto.getEmail());
+        AccountDto userInfoPostDto1 = userService.login(
+            accountDto.getEmail().toLowerCase(),
+            accountDto.getPassword());
         return ResponseEntity.ok(userInfoPostDto1);
     }
 

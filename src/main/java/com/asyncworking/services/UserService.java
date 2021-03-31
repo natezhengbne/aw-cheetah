@@ -1,7 +1,6 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -35,7 +34,7 @@ public class UserService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public UserInfoPostDto login(String email, String password) {
+    public AccountDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
 
         if (foundUserEntity.isEmpty()) {
@@ -45,14 +44,14 @@ public class UserService {
         String name = foundUserEntity.get().getName();
         log.debug(name);
 
-        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email(email)
                 .name(name)
                 .build();
         Authentication authenticate = this.authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
-        return userInfoPostDto;
+        return accountDto;
     }
 
     public boolean ifEmailExists(String email) {

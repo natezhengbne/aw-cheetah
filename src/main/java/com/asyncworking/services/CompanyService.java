@@ -1,7 +1,6 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.dtos.CompanyInfoGetDto;
 import com.asyncworking.dtos.CompanyInfoPostDto;
@@ -117,7 +116,7 @@ public class CompanyService {
 				.build();
 	}
 
-	public CompanyModificationDto fetchCompanyProfileById(Long companyId) {
+	public CompanyInfoPostDto fetchCompanyProfileById(Long companyId) {
 		Company company = fetchCompanyById(companyId);
 		return userMapper.mapEntityToCompanyProfileDto(company);
 	}
@@ -129,7 +128,7 @@ public class CompanyService {
 	}
 
 	@Transactional
-	public void updateCompany(CompanyModificationDto companyModificationDto) {
+	public void updateCompany(CompanyInfoPostDto companyModificationDto) {
 		Company company = userMapper.mapInfoDtoToEntity(companyModificationDto);
 
 		int res = companyRepository.updateCompanyProfileById(company.getId(),

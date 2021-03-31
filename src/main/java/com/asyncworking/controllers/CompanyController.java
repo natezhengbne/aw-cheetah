@@ -33,14 +33,14 @@ public class CompanyController {
     }
 
     @GetMapping("/company/profile")
-    public ResponseEntity<CompanyModificationDto> prefillDescription(@RequestParam("companyId")
+    public ResponseEntity<CompanyInfoPostDto> prefillDescription(@RequestParam("companyId")
                                                                      @NotNull Long companyId) {
         return ResponseEntity.ok(companyService.fetchCompanyProfileById(companyId));
     }
 
     @PutMapping("/company/profile")
     public ResponseEntity<?> updateCompanyDescription(@Valid
-                                                      @RequestBody CompanyModificationDto companyModificationDto) {
+                                                      @RequestBody CompanyInfoPostDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);
         return ResponseEntity.ok("success");
     }

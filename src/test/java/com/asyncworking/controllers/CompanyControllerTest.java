@@ -105,7 +105,7 @@ public class CompanyControllerTest {
 
     @Test
     void prefillDescription() throws Exception {
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+        CompanyInfoPostDto companyModificationDto = CompanyInfoPostDto.builder()
                 .companyId(1L)
                 .name("aw")
                 .description("desc")

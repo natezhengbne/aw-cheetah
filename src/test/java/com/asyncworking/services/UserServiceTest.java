@@ -1,29 +1,27 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class UserServiceTest {
     @Mock
@@ -45,14 +43,14 @@ public class UserServiceTest {
 
     @Test
     public void shouldFindEmailExistSuccessful() {
-        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email("a@qq.com")
                 .build();
 
         UserEntity mockReturnedUserEntity = UserEntity.builder().email("a@gmail.com").build();
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
-        String email = userInfoPostDto.getEmail();
+        String email = accountDto.getEmail();
         assertTrue(userService.ifEmailExists(email));
     }
 
@@ -77,7 +75,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldLoginSuccessfulAndReturnDto() {
-        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email("plus@gmail.com")
                 .name("aName")
                 .password("password")
@@ -90,8 +88,8 @@ public class UserServiceTest {
 
         when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
-        UserInfoPostDto returnedUserInfoPostDto = userService.login(
-                userInfoPostDto.getEmail(), userInfoPostDto.getPassword());
+        AccountDto returnedUserInfoPostDto = userService.login(
+                accountDto.getEmail(), accountDto.getPassword());
         String testName = returnedUserInfoPostDto.getName();
 
         assertEquals(testName, mockReturnedUserEntity.getName());
@@ -99,7 +97,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldThrowExceptionWhenUserIsNotExist() {
-        UserInfoPostDto userInfoPostDto = UserInfoPostDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email("plus@gmail.com")
                 .name("aName")
                 .password("password")
@@ -110,7 +108,7 @@ public class UserServiceTest {
         when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class,
-            () -> userService.login(userInfoPostDto.getEmail(), userInfoPostDto.getPassword()));
+            () -> userService.login(accountDto.getEmail(), accountDto.getPassword()));
 
         String actualMessage = exception.getMessage();
 
@@ -170,16 +168,16 @@ public class UserServiceTest {
     public void throwExceptionWhenUserDatabaseWrong() {
         String expectedMessage = "database wrong";
 
-        UserInfoPostDto userPostInfoDto = UserInfoPostDto.builder()
+        AccountDto accountDto = AccountDto.builder()
                 .email("lengary@asyncworking.com")
                 .title("VI")
                 .build();
 
-        when(userRepository.findByEmail(userPostInfoDto.getEmail()))
+        when(userRepository.findByEmail(accountDto.getEmail()))
                 .thenThrow(new RuntimeException(expectedMessage));
 
         Exception exception = assertThrows(RuntimeException.class,
-                () -> userService.ifEmailExists(userPostInfoDto.getEmail()));
+                () -> userService.ifEmailExists(accountDto.getEmail()));
 
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));

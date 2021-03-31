@@ -14,16 +14,20 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyInfoPostDto {
+    private Long companyId;
+
     @NotEmpty(message = "Company name can not be empty")
-    @Size(max = 128, message = "Company name can not be more than 128 characters ")
+    @Size(max = 128, message = "Company name can not be more than 128 characters! ")
     private String name;
 
-    @Email(message = "admin email should be a valid email")
+    @Email(message = "Admin Email is not valid")
     @NotEmpty(message = "admin email must not be empty")
     private String adminEmail;
 
+    @Size(max = 1024, message = "Description cannot exceed 1024 characters! ")
     private String description;
 
+    @Size(max = 128, message = "Title can not be more than 128 characters! ")
     private String userTitle;
 
     private String website;
