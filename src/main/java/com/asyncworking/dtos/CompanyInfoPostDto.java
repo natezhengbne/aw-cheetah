@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -13,12 +13,13 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Validated
 public class CompanyInfoPostDto {
     @NotEmpty(message = "Company name can not be empty")
     @Size(max = 128, message = "Company name can not be more than 128 characters ")
     private String name;
 
+    @Email(message = "admin email should be a valid email")
+    @NotEmpty(message = "admin email must not be empty")
     private String adminEmail;
 
     private String description;

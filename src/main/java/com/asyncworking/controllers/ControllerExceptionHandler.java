@@ -38,7 +38,7 @@ public class ControllerExceptionHandler {
 		List<String> details = new ArrayList<>();
 		details.add(e.getLocalizedMessage());
 		ErrorDto error = new ErrorDto("Company not found", details);
-		return new ResponseEntity(error, HttpStatus.NO_CONTENT);
+		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(value = {EmployeeNotFoundException.class})

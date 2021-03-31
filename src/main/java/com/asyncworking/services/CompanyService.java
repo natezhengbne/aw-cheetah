@@ -132,11 +132,10 @@ public class CompanyService {
 	public void updateCompany(CompanyModificationDto companyModificationDto) {
 		Company company = userMapper.mapInfoDtoToEntity(companyModificationDto);
 
-		int res = companyRepository.updateCompanyProfileById(
+		int res = companyRepository.updateCompanyProfileById(company.getId(),
 				company.getName(),
 				company.getDescription(),
-				new Date(),
-				company.getId());
+				new Date());
 
 		if (res == 0) {
 			throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());

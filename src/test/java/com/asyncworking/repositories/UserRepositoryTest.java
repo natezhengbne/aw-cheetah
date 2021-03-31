@@ -54,8 +54,6 @@ public class UserRepositoryTest {
                 .password(passwordEncoder.encode("len123"))
                 .build();
 
-        System.out.println(userRepository.count());
-
         userRepository.save(activatedMockUser);
         userRepository.save(unverifiedMockUser);
     }

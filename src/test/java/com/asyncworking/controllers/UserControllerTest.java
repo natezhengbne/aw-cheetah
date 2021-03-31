@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -142,7 +141,6 @@ class UserControllerTest {
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -157,7 +155,6 @@ class UserControllerTest {
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -172,7 +169,6 @@ class UserControllerTest {
                 .password("aaaaaa")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -187,7 +183,6 @@ class UserControllerTest {
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/resend")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -202,7 +197,6 @@ class UserControllerTest {
                 .password("aaaaaaaa1")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/resend")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -217,7 +211,6 @@ class UserControllerTest {
                 .password("aaaaaa")
                 .build();
 
-        doNothing().when(userService).createUserAndGenerateVerifyLink(accountDto, "http://localhost");
         mockMvc.perform(post("/resend")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))

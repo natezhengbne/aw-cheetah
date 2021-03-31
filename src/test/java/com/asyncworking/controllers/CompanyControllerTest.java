@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,7 +50,6 @@ public class CompanyControllerTest {
                 .name("AW")
                 .userTitle("VI")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
         mockMvc.perform(post("/company")
                 .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -83,7 +81,7 @@ public class CompanyControllerTest {
                 .adminEmail("aaa@qq.com")
                 .name("")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
+
         mockMvc.perform(post("/company")
                 .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -97,7 +95,7 @@ public class CompanyControllerTest {
                 .adminEmail("")
                 .name("AW")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
+
         mockMvc.perform(post("/company")
                 .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -121,11 +119,11 @@ public class CompanyControllerTest {
     @Test
     void updateCompanyDescription() throws Exception {
         CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
-                .adminEmail("aaaqq.com")
+                .adminEmail("aaa@qq.com")
                 .name("aw")
                 .description("desc")
                 .build();
-        doNothing().when(companyService).createCompanyAndEmployee(companyInfoPostDto);
+
         mockMvc.perform(post("/company")
                 .content(objectMapper.writeValueAsString(companyInfoPostDto))
                 .contentType(MediaType.APPLICATION_JSON))

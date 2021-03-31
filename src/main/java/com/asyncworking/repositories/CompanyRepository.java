@@ -23,9 +23,10 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Modifying
     @Query("update Company c  set c.name=:name, c.description=:description, c.updatedTime=:updatedTime where c.id=:id")
-    int updateCompanyProfileById(
+    int updateCompanyProfileById(@Param("id")Long id,
             @Param("name") String name,
             @Param("description") String description,
-            @Param("updatedTime") Date updatedTime,
-            @Param("id")Long id);
+            @Param("updatedTime") Date updatedTime);
+
+    List<Company> findByAdminId(Long adminId);
 }

@@ -2,13 +2,13 @@ package com.asyncworking.repositories;
 
 import com.asyncworking.AwCheetahApplication;
 import com.asyncworking.models.*;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,15 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AwCheetahApplication.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class EmployeeRepositoryTest {
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @AfterEach
-    void tearDown() {
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setup() {
         employeeRepository.deleteAll();
+        companyRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

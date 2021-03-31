@@ -1,8 +1,6 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.AccountDto;
-import java.net.URI;
-import java.net.URISyntaxException;
 import com.asyncworking.dtos.UserInfoPostDto;
 import com.asyncworking.services.UserService;
 import com.asyncworking.utility.SiteUrl;
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Slf4j
 @RestController
@@ -53,9 +53,9 @@ public class UserController {
     }
 
     @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoPostDto userInfoPostDto,
+    public ResponseEntity resendActivationLink(@Valid @RequestBody AccountDto accountDto,
                                                HttpServletRequest request) {
-        userService.generateVerifyLink(userInfoPostDto.getEmail(), SiteUrl.getSiteUrl(request));
+        userService.generateVerifyLink(accountDto.getEmail(), SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
     }
 
