@@ -1,7 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyInfoPostDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
@@ -60,11 +60,10 @@ public class CompanyServiceTest {
         );
     }
 
-
     @Test
     @Transactional
     public void createCompanyAndEmployeeGivenProperUserInfoDto() {
-        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("lengary@asyncworking.com")
                 .name("AW")
                 .userTitle("VI")
@@ -74,13 +73,13 @@ public class CompanyServiceTest {
                 .email("lengary@asyncworking.com")
                 .name("ven").build();
 
-        when(userRepository.findUserEntityByEmail(companyInfoPostDto.getAdminEmail()))
+        when(userRepository.findUserEntityByEmail(companyModificationDto.getAdminEmail()))
                 .thenReturn(Optional.of(mockReturnedUserEntity));
 
         ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
         ArgumentCaptor<Company> companyCaptor = ArgumentCaptor.forClass(Company.class);
 
-        companyService.createCompanyAndEmployee(companyInfoPostDto);
+        companyService.createCompanyAndEmployee(companyModificationDto);
 
         verify(companyRepository).save(companyCaptor.capture());
         verify(employeeRepository).save(employeeCaptor.capture());
@@ -93,17 +92,17 @@ public class CompanyServiceTest {
 
     @Test
     public void throwNotFoundExceptionWhenUserNotExit() {
-        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("lengary@asyncworking.com")
                 .name("AW")
                 .userTitle("VI")
                 .build();
 
-        when(userRepository.findUserEntityByEmail(companyInfoPostDto.getAdminEmail()))
+        when(userRepository.findUserEntityByEmail(companyModificationDto.getAdminEmail()))
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(UserNotFoundException.class,
-                () -> companyService.createCompanyAndEmployee(companyInfoPostDto));
+                () -> companyService.createCompanyAndEmployee(companyModificationDto));
 
         String expectedMessage = "Can not found user by email";
 
@@ -137,7 +136,7 @@ public class CompanyServiceTest {
                 .name("AW")
                 .description("desc")
                 .build();
-        CompanyInfoPostDto companyModificationDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .companyId(1L)
                 .name("AW")
                 .description("desc")

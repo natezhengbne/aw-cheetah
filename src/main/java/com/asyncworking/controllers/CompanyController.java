@@ -20,8 +20,8 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/company")
-    public ResponseEntity companyCreate(@Valid @RequestBody CompanyInfoPostDto companyInfoPostDto) {
-        companyService.createCompanyAndEmployee(companyInfoPostDto);
+    public ResponseEntity companyCreate(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
+        companyService.createCompanyAndEmployee(companyModificationDto);
         return ResponseEntity.ok("success");
     }
 
@@ -33,14 +33,14 @@ public class CompanyController {
     }
 
     @GetMapping("/company/profile")
-    public ResponseEntity<CompanyInfoPostDto> prefillDescription(@RequestParam("companyId")
+    public ResponseEntity<CompanyModificationDto> prefillDescription(@RequestParam("companyId")
                                                                      @NotNull Long companyId) {
         return ResponseEntity.ok(companyService.fetchCompanyProfileById(companyId));
     }
 
     @PutMapping("/company/profile")
     public ResponseEntity<?> updateCompanyDescription(@Valid
-                                                      @RequestBody CompanyInfoPostDto companyModificationDto) {
+                                                      @RequestBody CompanyModificationDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);
         return ResponseEntity.ok("success");
     }

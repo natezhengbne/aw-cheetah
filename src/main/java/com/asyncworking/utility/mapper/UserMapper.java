@@ -1,7 +1,7 @@
 package com.asyncworking.utility.mapper;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.CompanyInfoPostDto;
+import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -25,7 +25,7 @@ public class UserMapper {
                 .build();
     }
 
-    public Company mapInfoDtoToEntity(CompanyInfoPostDto companyModificationDto) {
+    public Company mapInfoDtoToEntity(CompanyModificationDto companyModificationDto) {
         return Company.builder()
                 .id(companyModificationDto.getCompanyId())
                 .name(companyModificationDto.getName())
@@ -41,8 +41,8 @@ public class UserMapper {
                 .build();
     }
 
-    public CompanyInfoPostDto mapEntityToCompanyProfileDto(Company company) {
-        return CompanyInfoPostDto.builder()
+    public CompanyModificationDto mapEntityToCompanyProfileDto(Company company) {
+        return CompanyModificationDto.builder()
                 .companyId(company.getId())
                 .name(company.getName())
                 .description(company.getDescription())

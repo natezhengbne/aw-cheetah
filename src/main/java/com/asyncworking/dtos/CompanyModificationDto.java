@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyInfoPostDto {
+public class CompanyModificationDto {
     private Long companyId;
 
     @NotEmpty(message = "Company name can not be empty")

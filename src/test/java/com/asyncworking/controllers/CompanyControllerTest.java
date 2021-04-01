@@ -45,13 +45,13 @@ public class CompanyControllerTest {
 
     @Test
     public void testCompanyCreateSuccess() throws Exception {
-        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("AW")
                 .userTitle("VI")
                 .build();
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoPostDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -77,13 +77,13 @@ public class CompanyControllerTest {
 
     @Test
     public void throwBadRequestWhenCompanyNameIsNull() throws Exception {
-        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("")
                 .build();
 
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoPostDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -91,13 +91,13 @@ public class CompanyControllerTest {
 
     @Test
     public void throwBadRequestWhenAdminEmailInvalid() throws Exception {
-        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("")
                 .name("AW")
                 .build();
 
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoPostDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -105,7 +105,7 @@ public class CompanyControllerTest {
 
     @Test
     void prefillDescription() throws Exception {
-        CompanyInfoPostDto companyModificationDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .companyId(1L)
                 .name("aw")
                 .description("desc")
@@ -118,14 +118,14 @@ public class CompanyControllerTest {
 
     @Test
     void updateCompanyDescription() throws Exception {
-        CompanyInfoPostDto companyInfoPostDto = CompanyInfoPostDto.builder()
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaa@qq.com")
                 .name("aw")
                 .description("desc")
                 .build();
 
         mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyInfoPostDto))
+                .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
