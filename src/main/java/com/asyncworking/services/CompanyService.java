@@ -19,11 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -36,16 +32,6 @@ public class CompanyService {
 
 	private final EmployeeRepository employeeRepository;
 
-	//<<<<<<< HEAD
-//    private final Mapper mapper;
-//
-//    @Transactional
-//    public void createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
-//
-//        UserEntity selectedUserEntity = fetchUserEntityByEmail(companyModificationDto.getAdminEmail());
-//        log.info("selectedUser's email" + selectedUserEntity.getEmail());
-//        Company newCompany = createCompany(companyModificationDto.getName(), selectedUserEntity.getId());
-//=======
 	private final CompanyMapper companyMapper;
 
 	private final UserMapper userMapper;
@@ -82,6 +68,7 @@ public class CompanyService {
 			ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
 			List<String> colleague = userRepository.findNameById(companyInfo.getId());
 
+			log.info("company ID: {}", companyInfo.getId());
 			return mapCompanyToCompanyDto(companyInfo, colleague);
 		}
 	}
@@ -143,26 +130,22 @@ public class CompanyService {
 
 	public CompanyInfoGetDto findCompanyById(Long id) {
 		Optional<Company> foundCompany = companyRepository.findById(id);
-
 		if (foundCompany.isEmpty()) {
 			throw new CompanyNotFoundException("Can not found company by id:" + id);
 		}
-
 		return companyMapper.mapEntityToDto(foundCompany.get());
 	}
 
 	public List<EmployeeGetDto> findAllEmployeeByCompanyId(Long id) {
-		Optional<List<IEmployeeInfo>> employees = userRepository.findAllEmployeeByCompanyId(id);
-
+		log.info("company ID: {}", id);
+		List<IEmployeeInfo> employees = userRepository.findAllEmployeeByCompanyId(id);
 		if (employees.isEmpty()) {
 			throw new EmployeeNotFoundException("Can not found employee by company id:" + id);
 		}
-
-		return employees.get()
-				.stream()
-				.map(employeeInfo -> {
-					return employeeMapper.mapEntityToDto(employeeInfo);
-				})
-				.collect(Collectors.toList());
+		List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
+		for (IEmployeeInfo IEmployeeInfo: employees) {
+			employeeGetDtoList.add(employeeMapper.mapEntityToDto(IEmployeeInfo));
+		}
+		return employeeGetDtoList;
 	}
 }

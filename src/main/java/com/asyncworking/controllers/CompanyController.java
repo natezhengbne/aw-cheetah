@@ -47,14 +47,15 @@ public class CompanyController {
 
     @GetMapping("/company/{id}")
     public ResponseEntity getCompanyById(@PathVariable Long id) {
+        log.info("company ID: {}", id);
         CompanyInfoGetDto companyInfoGetDto = companyService.findCompanyById(id);
         return ResponseEntity.ok(companyInfoGetDto);
     }
 
     @GetMapping("/employee/{id}")
     public ResponseEntity getEmployeeByCompanyId(@PathVariable Long id) {
+        log.info("company ID: {}", id);
         List<EmployeeGetDto> employees = companyService.findAllEmployeeByCompanyId(id);
         return ResponseEntity.ok(employees);
     }
-
 }

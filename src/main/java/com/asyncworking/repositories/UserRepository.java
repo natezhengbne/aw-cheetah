@@ -39,10 +39,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     "order by ui.name")
     List<String> findNameById(@Param("id") Long id);
 
-    @Query(
-        value = "select u.name, u.email, cu.title  from company_user cu inner join user_info u on cu.user_id = u.id",
-        nativeQuery = true
-    )
-    Optional<List<IEmployeeInfo>> findAllEmployeeByCompanyId(@Param("id") Long id);
+    @Query( nativeQuery = true,
+        value = "select u.name, u.email, cu.title \n" +
+                "from awcheetah.company_user cu, awcheetah.user_info u\n" +
+                "where cu.user_id = u.id \n" +
+                "and cu.company_id = :id")
+    List<IEmployeeInfo> findAllEmployeeByCompanyId(@Param("id") Long id);
 }
 
