@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -173,42 +174,28 @@ class UserControllerTest {
 
     @Test
     public void shouldResendActivationLinkSuccessful() throws Exception {
-        AccountDto accountDto = AccountDto.builder()
+        UserInfoDto userInfoDto = UserInfoDto.builder()
                 .name("aaa")
                 .email("aaa@qq.com")
                 .password("aaaaaaaa1")
                 .build();
 
         mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(accountDto))
+                .content(objectMapper.writeValueAsString(userInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnBadRequestWhenEmailIsNotValidForResend() throws Exception {
-        AccountDto accountDto = AccountDto.builder()
+        UserInfoDto userInfoDto = UserInfoDto.builder()
                 .name("aaa")
                 .email("aaaqq.com")
                 .password("aaaaaaaa1")
                 .build();
 
         mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(accountDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void shouldReturnBadRequestWhenPasswordIsNotValidForResend() throws Exception {
-        AccountDto accountDto = AccountDto.builder()
-                .name("aaa")
-                .email("aaa@qq.com")
-                .password("aaaaaa")
-                .build();
-
-        mockMvc.perform(post("/resend")
-                .content(objectMapper.writeValueAsString(accountDto))
+                .content(objectMapper.writeValueAsString(userInfoDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +47,7 @@ public class UserRepositoryTest extends DBHelper {
         userRepository.save(activatedMockUser);
         userRepository.save(unverifiedMockUser);
     }
+
 
     @Test
     public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {

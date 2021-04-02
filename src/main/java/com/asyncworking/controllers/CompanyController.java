@@ -28,8 +28,8 @@ public class CompanyController {
     @GetMapping("/companyinfo")
     public ResponseEntity companyInfoDisplay(@RequestParam(value = "email") String email) {
         log.info("email: {}", email);
-        CompanyColleagueDto companyInfoDto = companyService.getCompanyInfoDto(email);
-        return ResponseEntity.ok(companyInfoDto);
+        CompanyColleagueDto companyColleagueDto = companyService.getCompanyInfoDto(email);
+        return ResponseEntity.ok(companyColleagueDto);
     }
 
     @GetMapping("/company/profile")
