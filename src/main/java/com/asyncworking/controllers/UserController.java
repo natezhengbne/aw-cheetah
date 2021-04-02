@@ -37,10 +37,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody AccountDto accountDto) {
         log.info(accountDto.getEmail());
-        AccountDto userInfoPostDto1 = userService.login(
+        AccountDto accountInfoDto = userService.login(
             accountDto.getEmail().toLowerCase(),
             accountDto.getPassword());
-        return ResponseEntity.ok(userInfoPostDto1);
+        return ResponseEntity.ok(accountInfoDto);
     }
 
     @PostMapping("/signup")
