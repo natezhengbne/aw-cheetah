@@ -29,4 +29,11 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             @Param("updatedTime") Date updatedTime);
 
     List<Company> findByAdminId(Long adminId);
+
+    @Query(nativeQuery = true, value =
+            "select ui.name from user_info ui, company_user cu " +
+                    "where ui.id = cu.user_id " +
+                    "and cu.company_id = :id " +
+                    "order by ui.name")
+    List<String> findNameById(@Param("id") Long id);
 }

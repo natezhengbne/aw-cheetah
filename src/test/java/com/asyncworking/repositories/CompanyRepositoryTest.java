@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -67,8 +68,17 @@ public class CompanyRepositoryTest extends DBHelper {
         assertEquals("Lengary", returnedCompany.get(0).getName().trim());
     }
 
+    @Test
+    public void shouldGetEmployeeListSuccessfullyGivenEmail() {
+//        saveMockData();
+        List<String> employeeList = companyRepository.findNameById(1L);
+        List<String> mockList = new ArrayList<>();
+        assertEquals(mockList, employeeList);
+    }
+
     private void saveMockData() {
         UserEntity mockUser = UserEntity.builder()
+            .id(1L)
             .name("Lengary")
             .email("a@asyncworking.com")
             .title("Frontend Developer")
@@ -80,6 +90,7 @@ public class CompanyRepositoryTest extends DBHelper {
         userRepository.save(mockUser);
 
         Company mockCompany = Company.builder()
+            .id(1L)
             .name("Lengary")
             .description("description")
             .website("www.website.com")
