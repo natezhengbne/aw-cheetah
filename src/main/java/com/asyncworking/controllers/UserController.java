@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
 import com.asyncworking.utility.SiteUrl;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,9 @@ public class UserController {
     }
 
     @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody AccountDto accountDto,
+    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto,
                                                HttpServletRequest request) {
-        userService.generateVerifyLink(accountDto.getEmail(), SiteUrl.getSiteUrl(request));
+        userService.generateVerifyLink(userInfoDto.getEmail(), SiteUrl.getSiteUrl(request));
         return ResponseEntity.ok("success");
     }
 
