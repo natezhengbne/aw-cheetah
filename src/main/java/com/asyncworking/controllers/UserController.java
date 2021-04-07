@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.config.EmailConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
@@ -25,6 +26,8 @@ import java.net.URISyntaxException;
 public class UserController {
 
     private final UserService userService;
+
+    private final EmailConfig emailConfig;
 
     @GetMapping("/signup")
     public ResponseEntity<String> validateEmail(@RequestParam(value = "email") String email) {
@@ -69,7 +72,7 @@ public class UserController {
     public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) throws URISyntaxException {
         boolean isVerified = userService.isAccountActivated(code);
 
-        URI redirectPage = new URI("http://localhost:3000/verifylink?verify=" + isVerified);
+        URI redirectPage = new URI(emailConfig.getFrontendUrl() + "verifylink?verify=" + isVerified);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(redirectPage);

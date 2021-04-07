@@ -1,7 +1,9 @@
 package com.asyncworking.services;
 
+import com.asyncworking.config.EmailConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.exceptions.JPAOptException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -31,9 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final AuthenticationManager authenticationManager;
-
     private final UserMapper userMapper;
 
     @Value("${jwt.secret}")
@@ -73,8 +73,17 @@ public class UserService {
     }
 
     public void createUserViaInvitationLink(AccountDto accountDto) {
-        UserEntity userEntity = mapper.mapInfoDtoToEntityInvitation(accountDto);
+        UserEntity userEntity = userMapper.mapInfoDtoToEntityInvitation(accountDto);
         userRepository.save(userEntity);
+    }
+
+    public UserEntity findUserByEmail(String email) throws JPAOptException {
+        Optional<UserEntity> userByEmail = userRepository.findByEmail(email);
+        if (userByEmail.isPresent()){
+            return userByEmail.get();
+        } else {
+            throw new JPAOptException("User not found");
+        }
     }
 
     public String generateVerifyLink(String email, String siteUrl) {
@@ -83,17 +92,16 @@ public class UserService {
         return verifyLink;
     }
 
-    public String generateMailUrl(String email) {
-        String redisKey = String.format("%s%s", UserServiceRedisKey.PASSWORD_RESET, email);
+    public String generateEmailUrl(String email) {
         try {
-            User userByEmail = userService.findUserByEmail(email);
-            String key = randomUtils.GenerateRandomNumber(6) + "";
-            Timestamp outDate = new Timestamp(System.currentTimeMillis() + (long) (10 * 60 * 1000));
-            long outtimes = outDate.getTime();
-            String sid = userByEmail.getEmail() + "&" + key + "&" + outtimes;
-            redisTemplate.opsForValue().set(redisKey, MD5Util.md5Encrypt32Lower(sid));
-            redisTemplate.expire(redisKey, 10, TimeUnit.MINUTES);
-            return String.format("%s%s%s%s%s", emailConfig.getFrontendUrl(), "/update_password?sid=",MD5Util.md5Encrypt32Lower(sid),"&email=",userByEmail.getEmail());
+//            UserEntity userByEmail = findUserByEmail(email);
+//            String key = randomUtils.GenerateRandomNumber(6) + "";
+//            Timestamp outDate = new Timestamp(System.currentTimeMillis() + (long) (10 * 60 * 1000));
+//            long outtimes = outDate.getTime();
+//            String sid = userByEmail.getEmail() + "&" + key + "&" + outtimes;
+            String encodedLink = generateJws(email);
+            return encodedLink;
+//            return String.format("%s%s%s%s%s", emailConfig.getFrontendUrl(), "/update_password?sid=","&email=",userByEmail.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -27,7 +27,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.antMatchers("/login", "/signup", "/company", "/employee/{id}",
 						"/companyinfo", "/company/{id}",
-						"/verify", "/resend", "/company/profile", "/project")
+						"/verify", "/resend", "/invitations", "/company/profile", "/project")
 				.permitAll()
 				.antMatchers("/", "index", "/css/*", "/actuator/*")
 				.permitAll()
@@ -58,4 +58,5 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(10);
 	}
+
 }
