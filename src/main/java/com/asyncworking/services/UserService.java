@@ -22,10 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -77,35 +74,10 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public UserEntity findUserByEmail(String email) throws JPAOptException {
-        Optional<UserEntity> userByEmail = userRepository.findByEmail(email);
-        if (userByEmail.isPresent()){
-            return userByEmail.get();
-        } else {
-            throw new JPAOptException("User not found");
-        }
-    }
-
     public String generateVerifyLink(String email, String siteUrl) {
-        String verifyLink = siteUrl + "/verify?code=" + this.generateJws(email);
+        String verifyLink = siteUrl + "/verifylink?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
-    }
-
-    public String generateEmailUrl(String email) {
-        try {
-//            UserEntity userByEmail = findUserByEmail(email);
-//            String key = randomUtils.GenerateRandomNumber(6) + "";
-//            Timestamp outDate = new Timestamp(System.currentTimeMillis() + (long) (10 * 60 * 1000));
-//            long outtimes = outDate.getTime();
-//            String sid = userByEmail.getEmail() + "&" + key + "&" + outtimes;
-            String encodedLink = generateJws(email);
-            return encodedLink;
-//            return String.format("%s%s%s%s%s", emailConfig.getFrontendUrl(), "/update_password?sid=","&email=",userByEmail.getEmail());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private String generateJws(String email) {
@@ -114,7 +86,7 @@ public class UserService {
                 .claim("email", email)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .compact();
-        log.info("jwt token" + jws);
+        log.info("jwt token: " + jws);
 
         return jws;
     }

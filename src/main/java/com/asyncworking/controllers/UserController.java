@@ -47,10 +47,9 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto,
-                                     HttpServletRequest request) {
+    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndGenerateVerifyLink(accountDto, SiteUrl.getSiteUrl(request));
+        userService.createUserAndGenerateVerifyLink(accountDto, emailConfig.getFrontendUrl());
         return ResponseEntity.ok("success");
     }
 
@@ -62,9 +61,8 @@ public class UserController {
     }
 
     @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto,
-                                               HttpServletRequest request) {
-        userService.generateVerifyLink(userInfoDto.getEmail(), SiteUrl.getSiteUrl(request));
+    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
+        userService.generateVerifyLink(userInfoDto.getEmail(), emailConfig.getFrontendUrl());
         return ResponseEntity.ok("success");
     }
 
@@ -72,7 +70,7 @@ public class UserController {
     public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) throws URISyntaxException {
         boolean isVerified = userService.isAccountActivated(code);
 
-        URI redirectPage = new URI(emailConfig.getFrontendUrl() + "verifylink?verify=" + isVerified);
+        URI redirectPage = new URI(emailConfig.getFrontendUrl() + "/verifylink?verify=" + isVerified);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(redirectPage);
