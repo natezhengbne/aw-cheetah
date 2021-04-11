@@ -32,13 +32,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("select u from UserEntity u join fetch u.employees where u.email = :email")
     Optional<UserEntity> findEmploymentByEmail(@Param("email") String email);
 
-//    @Query(nativeQuery = true, value =
-//            "select ui.name from user_info ui, company_user cu " +
-//                    "where ui.id = cu.user_id " +
-//                    "and cu.company_id = :id " +
-//                    "order by ui.name")
-//    List<String> findNameById(@Param("id") Long id);
-
     @Query( nativeQuery = true,
         value = "select u.name, u.email, cu.title \n" +
                 "from company_user cu, user_info u \n" +
@@ -48,4 +41,3 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                 "order by u.name")
     List<IEmployeeInfo> findAllEmployeeByCompanyId(@Param("id") Long id);
 }
-
