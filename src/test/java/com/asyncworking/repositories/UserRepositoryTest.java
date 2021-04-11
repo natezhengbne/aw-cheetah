@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +22,7 @@ public class UserRepositoryTest extends DBHelper {
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
-    public void insertMockEmp() throws InterruptedException {
+    public void insertMockEmp() {
         clearDb();
 
         when(passwordEncoder.encode("len123")).thenReturn("testpass");

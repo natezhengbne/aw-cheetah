@@ -26,8 +26,8 @@ public class CompanyRepositoryTest extends DBHelper {
 
     @BeforeEach
     public void insertMockEmp() {
-        when(passwordEncoder.encode("len123")).thenReturn("testpass");
         clearDb();
+        when(passwordEncoder.encode("len123")).thenReturn("testpass");
     }
 
 //    @AfterEach
@@ -76,7 +76,7 @@ public class CompanyRepositoryTest extends DBHelper {
 
     @Test
     public void shouldGetEmployeeListSuccessfullyGivenEmail() {
-//        saveMockData();
+        saveMockData();
         List<String> employeeList = companyRepository.findNameById(1L);
         List<String> mockList = new ArrayList<>();
         assertEquals(mockList, employeeList);
@@ -84,7 +84,6 @@ public class CompanyRepositoryTest extends DBHelper {
 
     private void saveMockData() {
         UserEntity mockUser = UserEntity.builder()
-            .id(1L)
             .name("Lengary")
             .email("a@asyncworking.com")
             .title("Frontend Developer")
@@ -96,7 +95,6 @@ public class CompanyRepositoryTest extends DBHelper {
         userRepository.save(mockUser);
 
         Company mockCompany = Company.builder()
-            .id(1L)
             .name("Lengary")
             .description("description")
             .website("www.website.com")
