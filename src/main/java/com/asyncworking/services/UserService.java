@@ -1,9 +1,9 @@
 package com.asyncworking.services;
 
-import com.asyncworking.config.EmailConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.JPAOptException;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
