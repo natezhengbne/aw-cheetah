@@ -23,7 +23,6 @@ public class CompanyModificationDto {
     private String name;
 
     @Email(message = "Admin Email is not valid")
-    @NotBlank
     private String adminEmail;
 
     @Size(max = 1024, message = "Description cannot exceed 1024 characters! ")
