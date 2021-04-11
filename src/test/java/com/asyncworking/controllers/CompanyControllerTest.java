@@ -133,12 +133,11 @@ public class CompanyControllerTest {
     @Test
     public void shouldGetCompanyInfoDtoGivenId() throws Exception {
 
-        CompanyInfoGetDto companyInfoGetDto = CompanyInfoGetDto.builder()
+        CompanyInfoDto companyInfoDto = CompanyInfoDto.builder()
                 .name("Apple")
-                .id(1L)
                 .description("hello world")
                 .build();
-        when(companyService.findCompanyById(1L)).thenReturn(companyInfoGetDto);
+        when(companyService.findCompanyById(1L)).thenReturn(companyInfoDto);
 
         mockMvc.perform(get("/company/1"))
                 .andExpect(status().isOk())

@@ -48,8 +48,8 @@ public class CompanyController {
     @GetMapping("/company/{id}")
     public ResponseEntity getCompanyById(@PathVariable Long id) {
         log.info("company ID: {}", id);
-        CompanyInfoGetDto companyInfoGetDto = companyService.findCompanyById(id);
-        return ResponseEntity.ok(companyInfoGetDto);
+        CompanyInfoDto companyInfoDto = companyService.findCompanyById(id);
+        return ResponseEntity.ok(companyInfoDto);
     }
 
     @GetMapping("/employee/{id}")

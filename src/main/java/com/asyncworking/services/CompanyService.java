@@ -1,7 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyInfoGetDto;
+import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
@@ -125,7 +125,7 @@ public class CompanyService {
 		}
 	}
 
-	public CompanyInfoGetDto findCompanyById(Long id) {
+	public CompanyInfoDto findCompanyById(Long id) {
 		Optional<Company> foundCompany = companyRepository.findById(id);
 		if (foundCompany.isEmpty()) {
 			throw new CompanyNotFoundException("Can not found company by id:" + id);
