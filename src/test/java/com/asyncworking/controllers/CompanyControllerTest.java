@@ -88,21 +88,6 @@ public class CompanyControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-
-    @Test
-    public void throwBadRequestWhenAdminEmailInvalid() throws Exception {
-        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
-                .adminEmail("")
-                .name("AW")
-                .build();
-
-        mockMvc.perform(post("/company")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-
     @Test
     void prefillDescription() throws Exception {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
