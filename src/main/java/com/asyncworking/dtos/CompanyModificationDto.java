@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -22,6 +23,7 @@ public class CompanyModificationDto {
     private String name;
 
     @Email(message = "Admin Email is not valid")
+    @NotBlank
     private String adminEmail;
 
     @Size(max = 1024, message = "Description cannot exceed 1024 characters! ")

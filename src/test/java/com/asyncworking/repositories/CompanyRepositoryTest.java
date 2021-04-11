@@ -1,7 +1,6 @@
 package com.asyncworking.repositories;
 
 import com.asyncworking.models.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,11 +28,6 @@ public class CompanyRepositoryTest extends DBHelper {
         clearDb();
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
     }
-
-//    @AfterEach
-//    public void clearDb() {
-//        clearDb();
-//    }
 
     @Test
     public void shouldAddCompanyIntoDBSuccessfullyGivenProperCompany() {
