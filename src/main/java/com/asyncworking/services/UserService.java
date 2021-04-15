@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -34,7 +35,7 @@ public class UserService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public AccountDto login(String email, String password) {
+    public UserInfoDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
 
         if (foundUserEntity.isEmpty()) {
@@ -44,14 +45,17 @@ public class UserService {
         String name = foundUserEntity.get().getName();
         log.debug(name);
 
-        AccountDto accountDto = AccountDto.builder()
+        Long id = foundUserEntity.get().getId();
+
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .id(id)
                 .email(email)
                 .name(name)
                 .build();
         Authentication authenticate = this.authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         log.info(String.valueOf(authenticate));
-        return accountDto;
+        return userInfoDto;
     }
 
     public boolean ifEmailExists(String email) {
@@ -113,6 +117,10 @@ public class UserService {
 
     public boolean ifCompanyExits(String email) {
         return userRepository.findEmploymentByEmail(email).isPresent();
+    }
+
+    public Long fetchCompanyId(String email) {
+        return userRepository.findEmployeesByEmail(email).get(0).getId().getCompanyId();
     }
 
     public boolean ifUnverified(String email) {

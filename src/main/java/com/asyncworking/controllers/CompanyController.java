@@ -21,8 +21,7 @@ public class CompanyController {
 
     @PostMapping("/company")
     public ResponseEntity companyCreate(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
-        companyService.createCompanyAndEmployee(companyModificationDto);
-        return ResponseEntity.ok("success");
+        return ResponseEntity.ok(companyService.createCompanyAndEmployee(companyModificationDto));
     }
 
     @GetMapping("/companyinfo")

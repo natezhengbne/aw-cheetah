@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
@@ -88,9 +89,9 @@ public class UserServiceTest {
 
         when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
 
-        AccountDto returnedUserInfoPostDto = userService.login(
+        UserInfoDto returnedUserInfoDto = userService.login(
                 accountDto.getEmail(), accountDto.getPassword());
-        String testName = returnedUserInfoPostDto.getName();
+        String testName = returnedUserInfoDto.getName();
 
         assertEquals(testName, mockReturnedUserEntity.getName());
     }

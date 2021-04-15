@@ -12,13 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Validated
-public class CompanyColleagueDto {
+public class ProjectInfoDto {
 
-    private Long companyId;
+    private Long id;
 
     private String name;
 
-    private String description;
+    private List<String> projectUserNames;
 
-    private List<String> colleague;
 }

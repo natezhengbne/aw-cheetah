@@ -75,6 +75,7 @@ public class CompanyControllerTest {
                 .andExpect(status().isOk());
     }
 
+
     @Test
     public void throwBadRequestWhenCompanyNameIsNull() throws Exception {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()

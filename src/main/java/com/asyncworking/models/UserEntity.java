@@ -52,6 +52,10 @@ public class UserEntity {
     cascade = CascadeType.ALL)
     private Set<Employee> employees;
 
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProjectUser> projectUsers;
+
     public void addEmployee(Employee employee) {
         employees.add(employee);
     }
@@ -59,4 +63,5 @@ public class UserEntity {
     public void removeEmployee(Employee employee) {
         employees.remove(employee);
     }
+
 }

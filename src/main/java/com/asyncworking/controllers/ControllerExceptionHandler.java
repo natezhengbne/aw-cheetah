@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ErrorDto;
+import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,10 +36,20 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
 		log.info("Company is not found.", e);
 
-		List<String> details = new ArrayList<>();
-		details.add(e.getLocalizedMessage());
-		ErrorDto error = new ErrorDto("Company not found", details);
-		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Company not found", details);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {ProjectNotFoundException.class})
+    public ResponseEntity<ErrorDto> handleProjectNotFoundException(ProjectNotFoundException e) {
+        log.info("Project is not found.", e);
+
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Project not found", details);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(value = {EmployeeNotFoundException.class})

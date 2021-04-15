@@ -14,6 +14,8 @@ import javax.validation.constraints.Size;
 @Builder
 public class UserInfoDto {
 
+    private Long id;
+
     @Email(message = "email should be a valid email")
     private String email;
 

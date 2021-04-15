@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,19 +29,25 @@ public class UserRepositoryTest extends DBHelper {
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
 
         UserEntity activatedMockUser = UserEntity.builder()
+                .id(1L)
                 .name("Lengary")
                 .email("a@asyncworking.com")
                 .title("Frontend Developer")
                 .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
 
         UserEntity unverifiedMockUser = UserEntity.builder()
+                .id(2L)
                 .name("Plus")
                 .email("p@asyncworking.com")
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password(passwordEncoder.encode("len123"))
+                .createdTime(new Date())
+                .updatedTime(new Date())
                 .build();
 
         userRepository.save(activatedMockUser);
@@ -51,7 +58,7 @@ public class UserRepositoryTest extends DBHelper {
     @Test
     public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
         UserEntity userEntity = UserEntity.builder()
-                .id(1L)
+                .id(3L)
                 .email("skykk0128@gmail.com")
                 .name("Steven")
                 .password("password")
@@ -143,4 +150,13 @@ public class UserRepositoryTest extends DBHelper {
         Optional<UserEntity> userEntity = userRepository.findEmploymentByEmail("lengary@qq.com");
         assertEquals("testpass", userEntity.get().getPassword().trim());
     }
+
+    @Test
+    public void shouldReturnEmptyDueToWrongUserId() {
+        Optional<UserEntity> returnedUserEntity = userRepository.findUserEntityById(300L);
+        assertTrue(returnedUserEntity.isEmpty());
+    }
+
+    //TODO(add test): shouldFindUserByUserId
+
 }

@@ -12,6 +12,12 @@ public abstract class DBHelper {
 	@Autowired
 	protected EmployeeRepository employeeRepository;
 
+	@Autowired
+	protected ProjectUserRepository projectUserRepository;
+
+	@Autowired
+	protected ProjectRepository projectRepository;
+
 	protected void clearDb() {
 		employeeRepository.deleteAll();
 		employeeRepository.flush();
@@ -21,5 +27,12 @@ public abstract class DBHelper {
 
 		userRepository.deleteAll();
 		userRepository.flush();
+
+		projectUserRepository.deleteAll();
+		projectUserRepository.flush();
+
+		projectRepository.deleteAll();
+		projectRepository.flush();
+
 	}
 }

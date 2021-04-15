@@ -38,10 +38,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody AccountDto accountDto) {
         log.info(accountDto.getEmail());
-        AccountDto accountInfoDto = userService.login(
+        UserInfoDto userInfoDto = userService.login(
             accountDto.getEmail().toLowerCase(),
             accountDto.getPassword());
-        return ResponseEntity.ok(accountInfoDto);
+        return ResponseEntity.ok(userInfoDto);
     }
 
     @PostMapping("/signup")
@@ -80,7 +80,7 @@ public class UserController {
     public ResponseEntity companyCheck(@RequestParam(value = "email") String email) {
         log.info(email);
         if (userService.ifCompanyExits(email)){
-            return ResponseEntity.ok("success");
+            return ResponseEntity.ok(userService.fetchCompanyId(email));
         }
         return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
     }

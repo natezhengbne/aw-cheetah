@@ -39,7 +39,7 @@ public class CompanyService {
 	private final EmployeeMapper employeeMapper;
 
 	@Transactional
-	public void createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
+	public Long createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
 
 		UserEntity selectedUserEntity = fetchUserEntityByEmail(companyModificationDto.getAdminEmail());
 		log.info("selectedUser's email" + selectedUserEntity.getEmail());
@@ -55,6 +55,7 @@ public class CompanyService {
 			newEmployee.setTitle(companyModificationDto.getUserTitle());
 			employeeRepository.save(newEmployee);
 		}
+        return newCompany.getId();
 	}
 
 	public CompanyColleagueDto getCompanyInfoDto(String email) {
