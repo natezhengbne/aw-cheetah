@@ -1,6 +1,8 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.models.*;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -15,13 +17,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserServiceTest {
@@ -193,5 +195,23 @@ public class UserServiceTest {
                 .thenReturn(Optional.of(mockReturnedUserEntity));
         boolean testEmail = userService.ifCompanyExits(email);
         assertTrue(testEmail);
+    }
+
+    @Test
+    public void getCompanyInfoWhenGivenUserEmail() {
+        Long id  = 1L;
+        String email = "p@asyncworking.com";
+        IEmployeeInfoImpl mockEmployeeInfo = IEmployeeInfoImpl.builder()
+                .email(email)
+                .name("p")
+                .title("dev")
+                .build();
+
+        List<IEmployeeInfo> returnedEmployeeInfo = List.of(mockEmployeeInfo);
+
+        when(userRepository.findAllEmployeeByCompanyId(id)).thenReturn(returnedEmployeeInfo);
+
+        List<IEmployeeInfo> employeeInfo = userRepository.findAllEmployeeByCompanyId(id);
+        assertEquals("p", employeeInfo.get(0).getName());
     }
 }

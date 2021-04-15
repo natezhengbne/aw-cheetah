@@ -9,7 +9,6 @@ import javax.persistence.Table;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "company")
 public class ICompanyInfoImpl implements ICompanyInfo {
     @Id
     @Type(type = "long")
