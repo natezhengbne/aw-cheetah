@@ -147,6 +147,21 @@ class UserControllerTest {
     }
 
     @Test
+    public void shouldCreateNewUserViaInvitationsRegisterSuccessfully() throws Exception {
+        AccountDto accountDto = AccountDto.builder()
+                .name("Steven S Wang")
+                .email("skykk0128@gmail.com")
+                .password("password12345")
+                .title("Dev")
+                .build();
+
+        mockMvc.perform(post("/invitationsregister")
+                .content(objectMapper.writeValueAsString(accountDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldReturnBadRequestWhenEmailIsNotValidForSignup() throws Exception {
         AccountDto accountDto = AccountDto.builder()
                 .name("aaa")
@@ -206,15 +221,15 @@ class UserControllerTest {
     public void shouldRedirectGivenVerifyAccountAndActiveUserSuccessful() throws Exception {
         String code = "xxxxxxx";
         when(userService.isAccountActivated(code)).thenReturn(true);
-        URI redirectPage = new URI("http://localhost:3001?verify=true");
+        URI redirectPage = new URI("http://localhost:3001/verifylink?verify=true");
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(redirectPage);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/verify")
+                MockMvcRequestBuilders.post("/verify")
                         .param("code", code)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isOk());
     }
 
 

@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.config.EmailConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.JPAOptException;
@@ -32,6 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
+    private final EmailConfig emailConfig;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -63,10 +65,10 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndGenerateVerifyLink(AccountDto accountDto, String siteUrl) {
+    public void createUserAndGenerateVerifyLink(AccountDto accountDto) {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
-        this.generateVerifyLink(accountDto.getEmail(), siteUrl);
+        this.generateVerifyLink(accountDto.getEmail());
     }
 
     public void createUserViaInvitationLink(AccountDto accountDto) {
@@ -74,8 +76,8 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public String generateVerifyLink(String email, String siteUrl) {
-        String verifyLink = siteUrl + "/verifylink?code=" + this.generateJws(email);
+    public String generateVerifyLink(String email) {
+        String verifyLink = emailConfig.getFrontendUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
@@ -94,11 +96,11 @@ public class UserService {
     @Transactional
     public Boolean isAccountActivated(String code) {
         String email = this.decodedEmail(code);
-        int numberOfActiveUse = this.activeUser(email);
+        int numberOfActiveUser = this.activeUser(email);
 
-        log.debug("number of activated userEntity" + numberOfActiveUse);
+        log.debug("number of activated userEntity" + numberOfActiveUser);
 
-        return numberOfActiveUse != 0;
+        return numberOfActiveUser != 0;
     }
 
     private String decodedEmail(String code) {

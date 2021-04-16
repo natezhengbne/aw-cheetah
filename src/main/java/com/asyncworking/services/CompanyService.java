@@ -141,8 +141,8 @@ public class CompanyService {
 			throw new EmployeeNotFoundException("Can not found employee by company id:" + id);
 		}
 		List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
-		for (IEmployeeInfo IEmployeeInfo: employees) {
-			employeeGetDtoList.add(employeeMapper.mapEntityToDto(IEmployeeInfo));
+		for (IEmployeeInfo iEmployeeInfo: employees) {
+			employeeGetDtoList.add(employeeMapper.mapEntityToDto(iEmployeeInfo));
 		}
 		return employeeGetDtoList;
 	}

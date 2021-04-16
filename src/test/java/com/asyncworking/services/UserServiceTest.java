@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.config.EmailConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.IEmployeeInfo;
@@ -41,9 +42,11 @@ public class UserServiceTest {
 
     private UserService userService;
 
+    private EmailConfig emailConfig;
+
     @BeforeEach()
     void setup() {
-        userService = new UserService(userRepository, authenticationManager, userMapper);
+        userService = new UserService(userRepository, authenticationManager, userMapper, emailConfig);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
@@ -123,20 +126,16 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldGenerateActivationLinkGivenUserDtoAndHttpServletRequest() {
-        AccountDto accountDto = AccountDto.builder()
-                .email("user@gmail.com")
-                .password("len123")
-                .name("user")
-                .build();
-        String siteUrl = "http://localhost";
-        String verifyLink = userService.generateVerifyLink(accountDto.getEmail(), siteUrl);
-
+    public void shouldGenerateActivationLinkGivenUserEmail() {
+        String siteUrl = emailConfig.getFrontendUrl();
+        String verifyLink = userService.generateVerifyLink("user0001@test.com");
+        System.out.println(siteUrl);
+        System.out.println(verifyLink);
         assertEquals(
-                "http://localhost/verify?code="
-                        .concat("eyJhbGciOiJIUzI1NiJ9.")
-                        .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXJAZ21haWwuY29tIn0.")
-                        .concat("tC8BAIWlF8U5z5Ue-SPBZBxMUBqLwGeKbbLVCtMTmhw"),
+                siteUrl.concat("/verifylink/verify?code=")
+                        .concat("eyJhbGciOiJIUzUxMiJ9.")
+                        .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXIwMDAxQHRlc3QuY29tIn0.")
+                        .concat("VQQkDIPY0ybfJcSaqnl1Ek3HIl50MQjaxTLh1YEN9TuIZ933yATJWrrfkMB4yquOicGfgsZhMiTYiS0pskqqRw"),
                 verifyLink
         );
     }
@@ -147,16 +146,36 @@ public class UserServiceTest {
                 .email("user@gmail.com")
                 .password("len123")
                 .name("user")
+                .title("dev")
                 .build();
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        userService.createUserAndGenerateVerifyLink(accountDto, "http://localhost");
+        userService.createUserAndGenerateVerifyLink(accountDto);
 
         verify(userRepository).save(captor.capture());
         UserEntity savedUser = captor.getValue();
         assertEquals("user@gmail.com", savedUser.getEmail());
         assertEquals("user", savedUser.getName());
+    }
+
+    @Test
+    public void shouldCreateNewUserViaInvitationLink() {
+        AccountDto accountDto = AccountDto.builder()
+                .name("Steven S Wang")
+                .email("skykk0128@gmail.com")
+                .password("password12345")
+                .title("Dev")
+                .build();
+
+        ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
+
+        userService.createUserViaInvitationLink(accountDto);
+
+        verify(userRepository).save(captor.capture());
+        UserEntity savedUser = captor.getValue();
+        assertEquals("skykk0128@gmail.com", savedUser.getEmail());
+        assertEquals("Steven S Wang", savedUser.getName());
     }
 
     @Test

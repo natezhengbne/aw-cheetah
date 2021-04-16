@@ -49,11 +49,11 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndGenerateVerifyLink(accountDto, emailConfig.getFrontendUrl());
+        userService.createUserAndGenerateVerifyLink(accountDto);
         return ResponseEntity.ok("success");
     }
 
-    @PostMapping("/invitations")
+    @PostMapping("/invitationsregister")
     public ResponseEntity createInvitationsUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
         userService.createUserViaInvitationLink(accountDto);
@@ -62,20 +62,18 @@ public class UserController {
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
-        userService.generateVerifyLink(userInfoDto.getEmail(), emailConfig.getFrontendUrl());
+        userService.generateVerifyLink(userInfoDto.getEmail());
         return ResponseEntity.ok("success");
     }
 
-    @GetMapping("/verify")
-    public ResponseEntity verifyAccountAndActiveUser(@Param("code") String code) throws URISyntaxException {
+    @PostMapping("/verify")
+    public ResponseEntity verifyAccountAndActiveUser(@RequestParam(value = "code") String code) throws URISyntaxException {
+        log.info(code);
         boolean isVerified = userService.isAccountActivated(code);
-
-        URI redirectPage = new URI(emailConfig.getFrontendUrl() + "/verifylink?verify=" + isVerified);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(redirectPage);
-
-        return new ResponseEntity(httpHeaders, HttpStatus.SEE_OTHER);
+        if (isVerified) {
+            return ResponseEntity.ok("success");
+        }
+        return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
     @GetMapping("/company")
