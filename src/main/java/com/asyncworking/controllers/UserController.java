@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok("success");
     }
 
-    @PostMapping("/invitationsregister")
+    @PostMapping("/invitations/register")
     public ResponseEntity createInvitationsUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
         userService.createUserViaInvitationLink(accountDto);

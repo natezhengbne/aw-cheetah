@@ -155,7 +155,7 @@ class UserControllerTest {
                 .title("Dev")
                 .build();
 
-        mockMvc.perform(post("/invitationsregister")
+        mockMvc.perform(post("/invitations/register")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
