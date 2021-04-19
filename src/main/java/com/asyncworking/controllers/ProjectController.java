@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
 @Validated
 public class ProjectController {
 

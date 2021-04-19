@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
 @Validated
 public class UserController {
 
@@ -69,11 +68,6 @@ public class UserController {
         httpHeaders.setLocation(redirectPage);
 
         return new ResponseEntity(httpHeaders, HttpStatus.SEE_OTHER);
-    }
-
-    @DeleteMapping("/signup")
-    public void deleteAllUsers() {
-        userService.deleteAllUsers();
     }
 
     @GetMapping("/company")

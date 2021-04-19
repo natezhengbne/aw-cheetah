@@ -14,7 +14,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
 public class CompanyController {
 
     private final CompanyService companyService;
