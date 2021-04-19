@@ -1,9 +1,9 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.models.*;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.IEmployeeInfo;
+import com.asyncworking.models.IEmployeeInfoImpl;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -23,9 +24,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;

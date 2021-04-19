@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 public class ProjectRepositoryTest extends DBHelper {
     @Mock
     private PasswordEncoder passwordEncoder;

@@ -1,23 +1,21 @@
 package com.asyncworking.services;
 
-import com.asyncworking.AwCheetahApplication;
-import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
-import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.models.*;
+import com.asyncworking.models.IProjectInfoImpl;
+import com.asyncworking.models.Project;
+import com.asyncworking.models.ProjectUser;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -27,9 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = AwCheetahApplication.class)
-@AutoConfigureMockMvc
+@SpringBootTest
+@ActiveProfiles("test")
 public class ProjectServiceTest {
     @Mock
     private UserRepository userRepository;
