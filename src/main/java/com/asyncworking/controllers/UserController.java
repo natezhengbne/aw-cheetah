@@ -27,8 +27,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final EmailConfig emailConfig;
-
     @GetMapping("/signup")
     public ResponseEntity<String> validateEmail(@RequestParam(value = "email") String email) {
         if (userService.ifEmailExists(email)) {

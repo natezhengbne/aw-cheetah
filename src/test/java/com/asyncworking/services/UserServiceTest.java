@@ -42,6 +42,7 @@ public class UserServiceTest {
 
     private UserService userService;
 
+    @Autowired
     private EmailConfig emailConfig;
 
     @BeforeEach()
