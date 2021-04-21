@@ -134,9 +134,9 @@ public class UserServiceTest {
         System.out.println(verifyLink);
         assertEquals(
                 siteUrl.concat("/verifylink/verify?code=")
-                        .concat("eyJhbGciOiJIUzUxMiJ9.")
+                        .concat("eyJhbGciOiJIUzI1NiJ9.")
                         .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXIwMDAxQHRlc3QuY29tIn0.")
-                        .concat("VQQkDIPY0ybfJcSaqnl1Ek3HIl50MQjaxTLh1YEN9TuIZ933yATJWrrfkMB4yquOicGfgsZhMiTYiS0pskqqRw"),
+                        .concat("Lm7JlWoG0lyw2KWYBpnGfmt2HMP6H3vvPeN36gSVGrE"),
                 verifyLink
         );
     }
