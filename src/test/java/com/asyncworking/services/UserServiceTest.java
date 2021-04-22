@@ -130,8 +130,6 @@ public class UserServiceTest {
     public void shouldGenerateActivationLinkGivenUserEmail() {
         String siteUrl = emailConfig.getFrontendUrl();
         String verifyLink = userService.generateVerifyLink("user0001@test.com");
-        System.out.println(siteUrl);
-        System.out.println(verifyLink);
         assertEquals(
                 siteUrl.concat("/verifylink/verify?code=")
                         .concat("eyJhbGciOiJIUzI1NiJ9.")
