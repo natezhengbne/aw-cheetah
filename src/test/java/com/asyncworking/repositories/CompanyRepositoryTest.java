@@ -9,11 +9,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -37,8 +39,8 @@ public class CompanyRepositoryTest extends DBHelper {
                 .name("AW")
                 .adminId(1L)
                 .employees(new HashSet<>())
-                .createdTime(new Date())
-                .updatedTime(new Date())
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         Company returnedCompany = companyRepository.save(mockCompany);
         assertEquals("AW", returnedCompany.getName());
@@ -52,12 +54,15 @@ public class CompanyRepositoryTest extends DBHelper {
                 .name("AW")
                 .adminId(savedUser.getId())
                 .employees(new HashSet<>())
-                .createdTime(new Date())
-                .updatedTime(new Date())
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         companyRepository.save(mockCompany);
 
-        int count = companyRepository.updateCompanyProfileById(mockCompany.getId(), "Async Working", "Startup company", new Date());
+        int count = companyRepository.updateCompanyProfileById(mockCompany.getId(),
+                "Async Working",
+                "Startup company",
+                OffsetDateTime.now(UTC));
 
         assertEquals(1, count);
     }
@@ -85,8 +90,8 @@ public class CompanyRepositoryTest extends DBHelper {
             .title("Frontend Developer")
             .status(Status.ACTIVATED)
             .password(passwordEncoder.encode("len123"))
-            .createdTime(new Date())
-            .updatedTime(new Date())
+            .createdTime(OffsetDateTime.now(UTC))
+            .updatedTime(OffsetDateTime.now(UTC))
             .build();
         userRepository.save(mockUser);
 
@@ -98,8 +103,8 @@ public class CompanyRepositoryTest extends DBHelper {
             .contactNumber("123345")
             .contactEmail("email@gmail.com")
             .industry("industry")
-            .createdTime(new Date())
-            .updatedTime(new Date())
+            .createdTime(OffsetDateTime.now(UTC))
+            .updatedTime(OffsetDateTime.now(UTC))
             .build();
         companyRepository.save(mockCompany);
 
@@ -113,8 +118,8 @@ public class CompanyRepositoryTest extends DBHelper {
             .company(mockCompany)
             .userEntity(mockUser)
             .id(mockEmployeeId)
-            .createdTime(new Date())
-            .updatedTime(new Date())
+            .createdTime(OffsetDateTime.now(UTC))
+            .updatedTime(OffsetDateTime.now(UTC))
             .build();
 
         employeeRepository.save(mockEmployee);

@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -40,13 +41,11 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @CreatedDate
     @Column(name = "created_time", nullable = false)
-    private Date createdTime;
+    private OffsetDateTime createdTime;
 
-    @LastModifiedDate
     @Column(name = "updated_time", nullable = false)
-    private Date updatedTime;
+    private OffsetDateTime updatedTime;
 
     @OneToMany(mappedBy = "userEntity",
     cascade = CascadeType.ALL)

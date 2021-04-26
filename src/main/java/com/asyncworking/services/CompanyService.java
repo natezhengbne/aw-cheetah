@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.*;
+
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Service
@@ -89,6 +92,8 @@ public class CompanyService {
 		return Company.builder()
 				.name(company)
 				.adminId(userId)
+				.createdTime(OffsetDateTime.now(UTC))
+				.updatedTime(OffsetDateTime.now(UTC))
 				.employees(new HashSet<>())
 				.build();
 	}
@@ -98,6 +103,8 @@ public class CompanyService {
 				.id(employeeId)
 				.company(company)
 				.userEntity(userEntity)
+				.createdTime(OffsetDateTime.now(UTC))
+				.updatedTime(OffsetDateTime.now(UTC))
 				.build();
 	}
 
@@ -119,7 +126,7 @@ public class CompanyService {
 		int res = companyRepository.updateCompanyProfileById(company.getId(),
 				company.getName(),
 				company.getDescription(),
-				new Date());
+				OffsetDateTime.now(UTC));
 
 		if (res == 0) {
 			throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());

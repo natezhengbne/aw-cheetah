@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Entity
@@ -37,12 +38,10 @@ public class Employee {
     @Column(name = "title")
     private String title;
 
-    @CreatedDate
     @Column(name = "created_time", nullable = false)
-    private Date createdTime;
+    private OffsetDateTime createdTime;
 
-    @LastModifiedDate
     @Column(name = "updated_time", nullable = false)
-    private Date updatedTime;
+    private OffsetDateTime updatedTime;
 
 }
