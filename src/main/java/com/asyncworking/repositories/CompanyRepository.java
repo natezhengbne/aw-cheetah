@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Date;
 
@@ -26,7 +28,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     int updateCompanyProfileById(@Param("id")Long id,
             @Param("name") String name,
             @Param("description") String description,
-            @Param("updatedTime") Date updatedTime);
+            @Param("updatedTime") OffsetDateTime updatedTime);
 
     @Query(nativeQuery = true, value =
             "select ui.name from user_info ui, company_user cu " +

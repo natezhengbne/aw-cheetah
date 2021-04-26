@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
+
+import static java.time.ZoneOffset.UTC;
+
 @RequiredArgsConstructor
 @Component
 public class UserMapper {
@@ -22,6 +26,8 @@ public class UserMapper {
                 .email(accountDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.UNVERIFIED)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
     }
 
@@ -32,6 +38,7 @@ public class UserMapper {
                 .email(accountDto.getEmail().toLowerCase())
                 .password(encodedPassword)
                 .status(Status.ACTIVATED)
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
     }
 
@@ -40,6 +47,7 @@ public class UserMapper {
                 .id(companyModificationDto.getCompanyId())
                 .name(companyModificationDto.getName())
                 .description(companyModificationDto.getDescription())
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
     }
 

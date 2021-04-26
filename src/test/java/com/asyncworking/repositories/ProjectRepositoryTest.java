@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -39,8 +40,8 @@ public class ProjectRepositoryTest extends DBHelper {
                 .isPrivate(false)
                 .leaderId(1L)
                 .companyId(1L)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         Project returnedProject = projectRepository.save(mockProject);
         assertEquals(mockProject.getName(), returnedProject.getName());
@@ -55,8 +56,8 @@ public class ProjectRepositoryTest extends DBHelper {
                 .isPrivate(false)
                 .leaderId(1L)
                 .companyId(1L)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         projectRepository.save(mockIDProject);
         Optional<IProjectInfo> returnedIProjectInfo = projectRepository.findProjectInfoByProjectId(mockIDProject.getId());
@@ -106,8 +107,8 @@ public class ProjectRepositoryTest extends DBHelper {
                 .isPrivate(false)
                 .leaderId(1L)
                 .companyId(1L)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         UserEntity mockUser = UserEntity.builder()
@@ -116,8 +117,8 @@ public class ProjectRepositoryTest extends DBHelper {
                 .title("Frontend Developer")
                 .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(new Date())
-                .updatedTime(new Date())
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         ProjectUserId mockProjectUserId = ProjectUserId.builder()
@@ -130,8 +131,8 @@ public class ProjectRepositoryTest extends DBHelper {
                 .project(mockProject)
                 .userEntity(mockUser)
                 .id(mockProjectUserId)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         userRepository.save(mockUser);

@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.OffsetDateTime;
+
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +43,8 @@ public class ApplicationUserServiceTest {
                 .title("Frontend Developer")
                 .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         userRepository.saveAndFlush(mockUser);

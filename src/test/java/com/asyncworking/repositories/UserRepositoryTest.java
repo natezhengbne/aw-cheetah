@@ -10,9 +10,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -37,8 +39,8 @@ public class UserRepositoryTest extends DBHelper {
                 .title("Frontend Developer")
                 .status(Status.ACTIVATED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(new Date())
-                .updatedTime(new Date())
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         UserEntity unverifiedMockUser = UserEntity.builder()
@@ -48,8 +50,8 @@ public class UserRepositoryTest extends DBHelper {
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password(passwordEncoder.encode("len123"))
-                .createdTime(new Date())
-                .updatedTime(new Date())
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         userRepository.save(activatedMockUser);
@@ -66,6 +68,8 @@ public class UserRepositoryTest extends DBHelper {
                 .password("password")
                 .status(Status.UNVERIFIED)
                 .title("Developer")
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         UserEntity returnedUserEntity = userRepository.save(userEntity);
         Assertions.assertEquals("Steven", returnedUserEntity.getName());
@@ -103,6 +107,8 @@ public class UserRepositoryTest extends DBHelper {
                 .title("dev")
                 .password("$2y$10$XbhxiobJbdZ/vcJapMHU/.UK4PKStLEVpPM8eth6CYXd2hW99EWRO")
                 .status(Status.UNVERIFIED)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         UserEntity returnedUerEntity = userRepository.save(mockUserEntity);
@@ -136,16 +142,22 @@ public class UserRepositoryTest extends DBHelper {
                 .title("Frontend Developer")
                 .status(Status.UNVERIFIED)
                 .password("testpass")
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         Company mockCompany = Company.builder()
                 .id(1L)
                 .name("AW")
                 .adminId(1L)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         Employee mockEmployee = Employee.builder()
                 .id(new EmployeeId(mockUserEntity.getId(), mockCompany.getId()))
                 .company(mockCompany)
                 .userEntity(mockUserEntity)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .title("kkk")
                 .build();
         employeeRepository.save(mockEmployee);
