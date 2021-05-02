@@ -1,6 +1,6 @@
 package com.asyncworking.services;
 
-import com.asyncworking.config.EmailConfig;
+import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.UserNotFoundException;
@@ -31,10 +31,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
-    private final EmailConfig emailConfig;
+    private final FrontEndUrlConfig frontEndUrlConfig;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
 
     public UserInfoDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
@@ -75,12 +76,12 @@ public class UserService {
     }
 
     public String generateVerifyLink(String email) {
-        String verifyLink = emailConfig.getFrontendUrl() + "/verifylink/verify?code=" + this.generateJws(email);
+        String verifyLink = frontEndUrlConfig.getDevelopmentUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
 
-    private String generateJws(String email) {
+    public String generateJws(String email) {
         String jws = Jwts.builder()
                 .setSubject("signUp")
                 .claim("email", email)
@@ -89,6 +90,40 @@ public class UserService {
         log.info("jwt token: " + jws);
 
         return jws;
+    }
+
+    public String generateInvitationLink(Long companyId, String email, String name, String title) {
+        String invitationLink = frontEndUrlConfig.getDevelopmentUrl()
+                + "/invitations/register?code=" + this.encodeInvitation(companyId, email, name, title);
+        log.info("invitationLink: " + invitationLink);
+        return invitationLink;
+    }
+
+    private String encodeInvitation(Long companyId, String email, String name, String title) {
+        String invitationJwt = Jwts.builder()
+                .setSubject("invitation")
+                .claim("companyId", companyId)
+                .claim("email", email)
+                .claim("name", name)
+                .claim("title", title)
+                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
+                .compact();
+        log.info("invitationJwt: " + invitationJwt);
+        return invitationJwt;
+    }
+
+    private String decodedInvitationLink(String code) {
+        Jws<Claims> jws = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
+                .build()
+                .parseClaimsJws(code);
+
+        Claims body = jws.getBody();
+
+        return body.get("companyId").toString() +
+                body.get("email").toString() +
+                body.get("name").toString() +
+                body.get("title").toString();
     }
 
     @Transactional
@@ -115,10 +150,6 @@ public class UserService {
 
     private int activeUser(String email) {
         return userRepository.updateStatusByEmail(email, Status.ACTIVATED);
-    }
-
-    public void deleteAllUsers() {
-        userRepository.deleteAll();
     }
 
     public boolean ifCompanyExits(String email) {

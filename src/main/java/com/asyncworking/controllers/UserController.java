@@ -1,22 +1,17 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.config.EmailConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
-import com.asyncworking.utility.SiteUrl;
+import com.asyncworking.utility.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
@@ -26,6 +21,7 @@ import java.net.URISyntaxException;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("/signup")
     public ResponseEntity<String> validateEmail(@RequestParam(value = "email") String email) {
@@ -51,10 +47,19 @@ public class UserController {
         return ResponseEntity.ok("success");
     }
 
+    @GetMapping("/invitation")
+    public  ResponseEntity createInvitationLink(@RequestParam(value = "companyId") Long companyId,
+                                                @RequestParam(value = "title") String title,
+                                                @RequestParam(value = "name") String name,
+                                                @RequestParam(value = "email") String email){
+        return ResponseEntity.ok(userService.generateInvitationLink(companyId, title, name, email));
+    }
+
     @PostMapping("/invitations/register")
     public ResponseEntity createInvitationsUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
         userService.createUserViaInvitationLink(accountDto);
+
         return ResponseEntity.ok("success");
     }
 

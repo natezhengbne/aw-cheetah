@@ -1,6 +1,6 @@
 package com.asyncworking.services;
 
-import com.asyncworking.config.EmailConfig;
+import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.IEmployeeInfo;
@@ -43,11 +43,11 @@ public class UserServiceTest {
     private UserService userService;
 
     @Autowired
-    private EmailConfig emailConfig;
+    private FrontEndUrlConfig frontEndUrlConfig;
 
     @BeforeEach()
     void setup() {
-        userService = new UserService(userRepository, authenticationManager, userMapper, emailConfig);
+        userService = new UserService(userRepository, authenticationManager, userMapper, frontEndUrlConfig);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
@@ -127,8 +127,22 @@ public class UserServiceTest {
     }
 
     @Test
+    public void shouldGenerateInvitationLinkGivenDetail() {
+        String siteUrl = frontEndUrlConfig.getDevelopmentUrl();
+        String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
+        assertEquals(
+                siteUrl.concat("/invitations/register?code=")
+                .concat("eyJhbGciOiJIUzI1NiJ9." +
+                        "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
+                        "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
+                        "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
+                invitationLink
+        );
+    }
+
+    @Test
     public void shouldGenerateActivationLinkGivenUserEmail() {
-        String siteUrl = emailConfig.getFrontendUrl();
+        String siteUrl = frontEndUrlConfig.getDevelopmentUrl();
         String verifyLink = userService.generateVerifyLink("user0001@test.com");
         assertEquals(
                 siteUrl.concat("/verifylink/verify?code=")

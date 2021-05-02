@@ -24,6 +24,7 @@ import java.net.URI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -143,6 +144,22 @@ class UserControllerTest {
         mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldCreateInvitationLinkSuccessful() throws Exception {
+        Long companyId = 1L;
+        String title = "developer";
+        String name = "user1";
+        String email = "user1@gmail.com";
+
+        mockMvc.perform(get("/invitation")
+                .param("companyId", String.valueOf(companyId))
+                .param("title", title)
+                .param("name", name)
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 
