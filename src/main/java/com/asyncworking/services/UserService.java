@@ -76,7 +76,7 @@ public class UserService {
     }
 
     public String generateVerifyLink(String email) {
-        String verifyLink = frontEndUrlConfig.getDevelopmentUrl() + "/verifylink/verify?code=" + this.generateJws(email);
+        String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
@@ -93,7 +93,7 @@ public class UserService {
     }
 
     public String generateInvitationLink(Long companyId, String email, String name, String title) {
-        String invitationLink = frontEndUrlConfig.getDevelopmentUrl()
+        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
                 + "/invitations/register?code=" + this.encodeInvitation(companyId, email, name, title);
         log.info("invitationLink: " + invitationLink);
         return invitationLink;

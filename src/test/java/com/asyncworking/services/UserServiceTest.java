@@ -128,7 +128,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldGenerateInvitationLinkGivenDetail() {
-        String siteUrl = frontEndUrlConfig.getDevelopmentUrl();
+        String siteUrl = frontEndUrlConfig.getFrontEndUrl();
         String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
         assertEquals(
                 siteUrl.concat("/invitations/register?code=")
@@ -142,7 +142,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldGenerateActivationLinkGivenUserEmail() {
-        String siteUrl = frontEndUrlConfig.getDevelopmentUrl();
+        String siteUrl = frontEndUrlConfig.getFrontEndUrl();
         String verifyLink = userService.generateVerifyLink("user0001@test.com");
         assertEquals(
                 siteUrl.concat("/verifylink/verify?code=")

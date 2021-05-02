@@ -26,11 +26,9 @@ logging:
   level:
     com.asyncworking: debug
 
-frontend:
-    developmentUrl: http://localhost:3000
-    productionUrl: https://www.asyncworking.com
+url: http://localhost:3000
+
 
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
-
 

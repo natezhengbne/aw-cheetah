@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 @Configuration
 public class FrontEndUrlConfig {
 
-    @Value("${frontend.developmentUrl}")
-    private String developmentUrl;
-    @Value("${frontend.productionUrl}")
-    private String productionUrl;
+    @Value("${url}")
+    private String FrontEndUrl;
 }
