@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
 public class FrontEndUrlConfig {
 
     @Value("${url}")
-    private String FrontEndUrl;
+    private String frontEndUrl;
 }
