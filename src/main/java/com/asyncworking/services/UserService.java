@@ -81,7 +81,7 @@ public class UserService {
         return verifyLink;
     }
 
-    public String generateJws(String email) {
+    private String generateJws(String email) {
         String jws = Jwts.builder()
                 .setSubject("signUp")
                 .claim("email", email)
