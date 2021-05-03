@@ -173,6 +173,7 @@ public class ProjectRepositoryTest extends DBHelper {
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
+
         userRepository.save(mockUser);
         projectRepository.save(mockProject);
         projectUserRepository.save(mockProjectUser);

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Date;
 
 @Repository
 @EnableJpaRepositories

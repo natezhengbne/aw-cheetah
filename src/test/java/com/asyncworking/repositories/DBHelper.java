@@ -1,5 +1,6 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.models.TodoBoard;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class DBHelper {
@@ -18,6 +19,12 @@ public abstract class DBHelper {
 	@Autowired
 	protected ProjectRepository projectRepository;
 
+	@Autowired
+	protected TodoBoardRepository todoBoardRepository;
+
+	@Autowired
+	protected TodoListRepository todoListRepository;
+
 	protected void clearDb() {
 		employeeRepository.deleteAll();
 		employeeRepository.flush();
@@ -33,6 +40,12 @@ public abstract class DBHelper {
 
 		projectRepository.deleteAll();
 		projectRepository.flush();
+
+		todoBoardRepository.deleteAll();
+		todoBoardRepository.flush();
+
+		todoListRepository.deleteAll();
+		todoListRepository.flush();
 
 	}
 }

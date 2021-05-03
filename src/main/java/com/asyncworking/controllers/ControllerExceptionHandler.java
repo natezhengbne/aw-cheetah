@@ -1,10 +1,6 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.exceptions.CompanyNotFoundException;
-import com.asyncworking.exceptions.EmployeeNotFoundException;
-import com.asyncworking.exceptions.ErrorDto;
-import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.exceptions.UserNotFoundException;
+import com.asyncworking.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +18,19 @@ import java.util.List;
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-	@ExceptionHandler(value = {UserNotFoundException.class})
-	public ResponseEntity<ErrorDto> handleUserNotFoundException(UserNotFoundException e) {
-		log.info("User is not found.", e);
+    @ExceptionHandler(value = {UserNotFoundException.class})
+    public ResponseEntity<ErrorDto> handleUserNotFoundException(UserNotFoundException e) {
+        log.info("User is not found.", e);
 
-		List<String> details = new ArrayList<>();
-		details.add(e.getLocalizedMessage());
-		ErrorDto error = new ErrorDto("User not found", details);
-		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-	}
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("User not found", details);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 
-	@ExceptionHandler(value = {CompanyNotFoundException.class})
-	public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
-		log.info("Company is not found.", e);
+    @ExceptionHandler(value = {CompanyNotFoundException.class})
+    public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
+        log.info("Company is not found.", e);
 
         List<String> details = new ArrayList<>();
         details.add(e.getLocalizedMessage());
@@ -50,51 +46,62 @@ public class ControllerExceptionHandler {
         details.add(e.getLocalizedMessage());
         ErrorDto error = new ErrorDto("Project not found", details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-	}
+    }
 
-	@ExceptionHandler(value = {EmployeeNotFoundException.class})
-	public ResponseEntity<ErrorDto> handleEmployeeNotFoundException(EmployeeNotFoundException e) {
-		log.info("Employee is not found.", e);
+    @ExceptionHandler(value = {EmployeeNotFoundException.class})
+    public ResponseEntity<ErrorDto> handleEmployeeNotFoundException(EmployeeNotFoundException e) {
+        log.info("Employee is not found.", e);
 
-		List<String> details = new ArrayList<>();
-		details.add(e.getLocalizedMessage());
-		ErrorDto error = new ErrorDto("Employee not found", details);
-		return new ResponseEntity(error, HttpStatus.NOT_FOUND);
-	}
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Employee not found", details);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 
-	@ExceptionHandler(value = {MethodArgumentNotValidException.class})
-	public ResponseEntity<ErrorDto> handleArgumentNotValid(MethodArgumentNotValidException e) {
-		List<String> details = new ArrayList<>();
-		for (ObjectError error : e.getBindingResult().getAllErrors()) {
-			details.add(error.getDefaultMessage());
-		}
-		ErrorDto error = new ErrorDto("Validation Failed", details);
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
+    @ExceptionHandler(value = {TodoBoardNotFoundException.class})
+    public ResponseEntity<ErrorDto> handleTodoBoardNotFoundException(TodoBoardNotFoundException e) {
+        log.info("TodoBoard is not found.", e);
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("TodoBoard not found", details);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 
-	@ExceptionHandler(value = {MissingServletRequestParameterException.class})
-	public ResponseEntity<ErrorDto> handleMissingParams(MissingServletRequestParameterException e) {
-		List<String> details = new ArrayList<>();
-		details.add(e.getLocalizedMessage());
-		ErrorDto error = new ErrorDto("Missing Params", details);
-		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
-	}
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<ErrorDto> handleArgumentNotValid(MethodArgumentNotValidException e) {
+        List<String> details = new ArrayList<>();
+        for (ObjectError error : e.getBindingResult().getAllErrors()) {
+            details.add(error.getDefaultMessage());
+        }
+        ErrorDto error = new ErrorDto("Validation Failed", details);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
-	@ExceptionHandler(value = {AuthenticationException.class})
-	public ResponseEntity<ErrorDto> handleBadCredential(AuthenticationException e) {
-		List<String> details = new ArrayList<>();
-		details.add(e.getLocalizedMessage());
-		ErrorDto errorDto = new ErrorDto("Authentication Failed", details);
-		return new ResponseEntity<ErrorDto>(errorDto, HttpStatus.BAD_REQUEST);
-	}
+    @ExceptionHandler(value = {MissingServletRequestParameterException.class})
+    public ResponseEntity<ErrorDto> handleMissingParams(MissingServletRequestParameterException e) {
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Missing Params", details);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorDto> handleAllExceptions(Exception e) {
-		log.error("There is Exception occurred", e);
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public ResponseEntity<ErrorDto> handleBadCredential(AuthenticationException e) {
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto errorDto = new ErrorDto("Authentication Failed", details);
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
 
-		List<String> details = new ArrayList<>();
-		details.add(e.getLocalizedMessage());
-		ErrorDto error = new ErrorDto("Server Error", details);
-		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDto> handleAllExceptions(Exception e) {
+        log.error("There is Exception occurred", e);
+
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Server Error", details);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 }

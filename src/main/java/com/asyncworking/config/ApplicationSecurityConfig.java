@@ -28,7 +28,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/login", "/signup", "/company", "/employee/{id}",
 						"/companyinfo", "/company/{id}", "/company/profile",
 						"/verify", "/resend", "/invitation", "/invitations/register",
-						"/project", "/projectinfo", "/project/profile")
+						"/project", "/projectinfo", "/project/profile",
+						"/companyinfo", "/company/{id}",
+						"/verify", "/resend", "/invitations/register", "/company/profile",
+						"/project", "/project/todoBoard", "/project/todoBoard/todoLists/{todoBoardId}",
+						"/project/todoBoard/todoList")
 				.permitAll()
 				.antMatchers("/", "index", "/css/*", "/actuator/*")
 				.permitAll()
@@ -59,5 +63,5 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(10);
 	}
-
 }
+
