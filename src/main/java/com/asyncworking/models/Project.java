@@ -33,6 +33,9 @@ public class Project {
     @Column(name = "company_id", nullable = false)
     private Long companyId;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "is_private", nullable = false, columnDefinition = "boolean default false")
     private Boolean isPrivate;
 

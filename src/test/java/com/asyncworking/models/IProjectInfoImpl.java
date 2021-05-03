@@ -19,6 +19,7 @@ public class IProjectInfoImpl implements IProjectInfo {
     @Type(type = "long")
     private Long projectId;
     private String name;
+    private String description;
 
     @Override
     public Long getId() {
@@ -28,6 +29,11 @@ public class IProjectInfoImpl implements IProjectInfo {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
 }

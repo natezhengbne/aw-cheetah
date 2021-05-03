@@ -11,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -33,7 +32,6 @@ public class UserRepositoryTest extends DBHelper {
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
 
         UserEntity activatedMockUser = UserEntity.builder()
-                .id(1L)
                 .name("Lengary")
                 .email("a@asyncworking.com")
                 .title("Frontend Developer")
@@ -44,7 +42,6 @@ public class UserRepositoryTest extends DBHelper {
                 .build();
 
         UserEntity unverifiedMockUser = UserEntity.builder()
-                .id(2L)
                 .name("Plus")
                 .email("p@asyncworking.com")
                 .title("Frontend Developer")
@@ -57,7 +54,6 @@ public class UserRepositoryTest extends DBHelper {
         userRepository.save(activatedMockUser);
         userRepository.save(unverifiedMockUser);
     }
-
 
     @Test
     public void shouldAddUserEntityIntoDBSuccessfullyGivenProperUserEntity() {
@@ -171,6 +167,19 @@ public class UserRepositoryTest extends DBHelper {
         assertTrue(returnedUserEntity.isEmpty());
     }
 
-    //TODO(add test): shouldFindUserByUserId
-
+    @Test
+    public void shouldFindUserByUserId() {
+        UserEntity mockUser = UserEntity.builder()
+                .name("new")
+                .email("new@asyncworking.com")
+                .title("BA")
+                .status(Status.ACTIVATED)
+                .password(passwordEncoder.encode("len123"))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        userRepository.save(mockUser);
+        Optional<UserEntity> returnedUserEntity = userRepository.findUserEntityById(mockUser.getId());
+        assertEquals("testpass", returnedUserEntity.get().getPassword().trim());
+    }
 }

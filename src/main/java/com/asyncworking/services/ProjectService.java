@@ -2,10 +2,12 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.*;
+import com.asyncworking.utility.mapper.ProjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Service
@@ -25,9 +29,23 @@ public class ProjectService {
 
     private final ProjectUserRepository projectUserRepository;
 
+    private final ProjectMapper projectMapper;
+
+    public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
+        if (projectRepository.findProjectByProjectId(projectId).isEmpty()) {
+            throw new ProjectNotFoundException("Can not find project by projectId:" + projectId);
+        } else {
+            List<String> newProjectUserNames = projectRepository.findNamesByProjectId(projectId);
+            IProjectInfo iProjectInfo = projectRepository.findProjectInfoByProjectId(projectId).get();
+            ProjectInfoDto projectInfoDto = mapProjectInfoToProjectInfoDto(projectId,
+                    iProjectInfo.getName(), iProjectInfo.getDescription(), newProjectUserNames);
+            return projectInfoDto;
+        }
+    }
+
     public List<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
         if (projectRepository.findProjectIdsByCompanyId(companyId).isEmpty()) {
-            throw new ProjectNotFoundException("Can not found project by companyId:" + companyId);
+            throw new ProjectNotFoundException("Can not find project by companyId:" + companyId);
         } else {
             List<Long> projectIdList = projectRepository.findProjectIdsByCompanyId(companyId);
             List<ProjectInfoDto> projectInfoDtoList = new LinkedList<>();
@@ -35,16 +53,20 @@ public class ProjectService {
                 List<String> newProjectUserNames = projectRepository.findNamesByProjectId(projectId);
                 IProjectInfo iProjectInfo = projectRepository.findProjectInfoByProjectId(projectId).get();
                 projectInfoDtoList.add(mapProjectInfoToProjectInfoDto(projectId,
-                        iProjectInfo.getName(), newProjectUserNames));
+                        iProjectInfo.getName(), iProjectInfo.getDescription(), newProjectUserNames));
             });
             return projectInfoDtoList;
         }
     }
+
     private ProjectInfoDto mapProjectInfoToProjectInfoDto(Long projectId,
-                                                          String projectName, List<String> projectUserNames) {
+                                                          String projectName,
+                                                          String description,
+                                                          List<String> projectUserNames) {
         return ProjectInfoDto.builder()
                 .id(projectId)
                 .name(projectName)
+                .description(description)
                 .projectUserNames(projectUserNames)
                 .build();
     }
@@ -54,7 +76,7 @@ public class ProjectService {
 
         UserEntity selectedUserEntity = fetchUserEntityById(projectDto.getOwnerId());
         log.info("selectedUser's id" + selectedUserEntity.getId());
-        Project newProject = createProject(projectDto);
+        Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
 
         projectRepository.save(newProject);
 
@@ -68,21 +90,9 @@ public class ProjectService {
 
     private UserEntity fetchUserEntityById(Long userId) {
         return userRepository.findUserEntityById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Can not found user by userId:" + userId));
+                .orElseThrow(() -> new UserNotFoundException("Can not find user by userId:" + userId));
     }
 
-    private Project createProject(ProjectDto projectDto) {
-        return Project.builder()
-                .name(projectDto.getName())
-                .leaderId(projectDto.getOwnerId())
-                .companyId(projectDto.getCompanyId())
-                .projectUsers(new HashSet<>())
-                .isDeleted(false)
-                .isPrivate(false)
-                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
-                .build();
-    }
 
     private ProjectUser createProjectUser(ProjectUserId projectUserId, UserEntity userEntity, Project project) {
         return ProjectUser.builder()
@@ -93,5 +103,18 @@ public class ProjectService {
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
+    }
+
+    @Transactional
+    public void updateProjectInfo(ProjectModificationDto projectModificationDto) {
+
+        int res = projectRepository.updateProjectInfo(projectModificationDto.getProjectId(),
+                projectModificationDto.getName(),
+                projectModificationDto.getDescription(),
+                OffsetDateTime.now(UTC));
+
+        if (res == 0) {
+            throw new ProjectNotFoundException("Can not find project with Id:" + projectModificationDto.getProjectId());
+        }
     }
 }

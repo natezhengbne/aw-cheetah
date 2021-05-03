@@ -106,7 +106,7 @@ public class CompanyServiceTest {
         Exception exception = assertThrows(UserNotFoundException.class,
                 () -> companyService.createCompanyAndEmployee(companyModificationDto));
 
-        String expectedMessage = "Can not found user by email";
+        String expectedMessage = "Can not find user by email";
 
         String actualMessage = exception.getMessage();
 
@@ -164,7 +164,7 @@ public class CompanyServiceTest {
         Exception exception = assertThrows(CompanyNotFoundException.class,
                 () -> companyService.fetchCompanyProfileById(2L));
 
-        String expectedMessage = "Can not found company with Id:2";
+        String expectedMessage = "Can not find company with Id:2";
 
         String actualMessage = exception.getMessage();
 

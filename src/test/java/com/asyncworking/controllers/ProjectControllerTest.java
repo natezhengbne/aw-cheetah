@@ -2,6 +2,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.services.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -100,6 +101,37 @@ public class ProjectControllerTest {
                 MockMvcRequestBuilders.get("/project")
                         .param("companyId", String.valueOf(companyId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfDisplayProjectInfoSuccessful() throws Exception {
+        Long companyId = 1L;
+        List<String> projectUserNames = Arrays.asList("+", "-", "*");
+        ProjectInfoDto projectInfoDto = ProjectInfoDto.builder()
+                .id(1L)
+                .name("SSS")
+                .projectUserNames(projectUserNames)
+                .build();
+        when(projectService.fetchProjectInfoByProjectId(1L)).thenReturn(projectInfoDto);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/projectinfo")
+                        .param("projectId", String.valueOf(companyId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfUpdateProjectInfoSuccessful() throws Exception {
+        ProjectModificationDto projectModificationDto = ProjectModificationDto.builder()
+                .projectId(1L)
+                .name("aw-3")
+                .description("desc")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/project/profile")
+                .content(objectMapper.writeValueAsString(projectModificationDto))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 }

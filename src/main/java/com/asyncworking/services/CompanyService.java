@@ -85,7 +85,7 @@ public class CompanyService {
 
 	private UserEntity fetchUserEntityByEmail(String email) {
 		return userRepository.findUserEntityByEmail(email)
-				.orElseThrow(() -> new UserNotFoundException("Can not found user by email:" + email));
+				.orElseThrow(() -> new UserNotFoundException("Can not find user by email:" + email));
 	}
 
 	private Company createCompany(String company, Long userId) {
@@ -116,7 +116,7 @@ public class CompanyService {
 	private Company fetchCompanyById(Long companyId) {
 		return companyRepository
 				.findById(companyId)
-				.orElseThrow(() -> new CompanyNotFoundException("Can not found company with Id:" + companyId));
+				.orElseThrow(() -> new CompanyNotFoundException("Can not find company with Id:" + companyId));
 	}
 
 	@Transactional
@@ -129,14 +129,14 @@ public class CompanyService {
 				OffsetDateTime.now(UTC));
 
 		if (res == 0) {
-			throw new CompanyNotFoundException("Can not found company with Id:" + company.getId());
+			throw new CompanyNotFoundException("Can not find company with Id:" + company.getId());
 		}
 	}
 
 	public CompanyInfoDto findCompanyById(Long id) {
 		Optional<Company> foundCompany = companyRepository.findById(id);
 		if (foundCompany.isEmpty()) {
-			throw new CompanyNotFoundException("Can not found company by id:" + id);
+			throw new CompanyNotFoundException("Can not find company by id:" + id);
 		}
 		return companyMapper.mapEntityToDto(foundCompany.get());
 	}
@@ -145,7 +145,7 @@ public class CompanyService {
 		log.info("company ID: {}", id);
 		List<IEmployeeInfo> employees = userRepository.findAllEmployeeByCompanyId(id);
 		if (employees.isEmpty()) {
-			throw new EmployeeNotFoundException("Can not found employee by company id:" + id);
+			throw new EmployeeNotFoundException("Can not find employee by company id:" + id);
 		}
 		List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
 		for (IEmployeeInfo iEmployeeInfo: employees) {

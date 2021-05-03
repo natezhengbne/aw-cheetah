@@ -10,13 +10,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -45,7 +44,6 @@ public class ProjectRepositoryTest extends DBHelper {
                 .build();
         Project returnedProject = projectRepository.save(mockProject);
         assertEquals(mockProject.getName(), returnedProject.getName());
-
     }
 
     @Test
@@ -74,7 +72,6 @@ public class ProjectRepositoryTest extends DBHelper {
     @Test
     public void shouldReturnEmptyDueToGivenCompanyIdWithoutProjects() {
         saveMockData();
-
         List<Long> returnedProjectIds = projectRepository.findProjectIdsByCompanyId(0L);
         assertTrue(returnedProjectIds.isEmpty());
     }
@@ -98,6 +95,47 @@ public class ProjectRepositoryTest extends DBHelper {
         saveMockData();
         List<String> returnedNames = projectRepository.findNamesByProjectId(0L);
         assertTrue(returnedNames.isEmpty());
+    }
+
+    @Test
+    public void shouldGet1AndModifyProjectInfoSuccessfully() {
+        Project mockProject = Project.builder()
+                .name("AWProject")
+                .isDeleted(false)
+                .isPrivate(false)
+                .leaderId(1L)
+                .companyId(1L)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        projectRepository.save(mockProject);
+        int count = projectRepository.updateProjectInfo(mockProject.getId(),
+                "AW-new-project",
+                "Gaming",
+                OffsetDateTime.now(UTC));
+        assertEquals(1, count);
+    }
+
+    @Test
+    public void shouldReturnProjectSuccessfullyGivenProjectId() {
+        Project mockProject = Project.builder()
+                .name("AWProject")
+                .isDeleted(false)
+                .isPrivate(false)
+                .leaderId(1L)
+                .companyId(1L)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        projectRepository.save(mockProject);
+        Optional<Project> project = projectRepository.findProjectByProjectId(mockProject.getId());
+        assertEquals("AWProject", project.get().getName());
+    }
+
+    @Test
+    public void shouldReturnEmptyDueToWrongProjectId() {
+        Optional<Project> project = projectRepository.findProjectByProjectId(0L);
+        assertTrue(project.isEmpty());
     }
 
     private void saveMockData() {
