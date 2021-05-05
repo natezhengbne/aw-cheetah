@@ -29,7 +29,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/invitations/register", "/resend", "/verify",
                         "/companies", "/companies/company-info", "/companies/{companyId}",
                         "/companies/{companyId}/profile", "/companies/{companyId}/employees",
-                        "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info",
+                        "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info", "/projects/{projectid}/members",
                         "/projects/{projectId}/todolists", "/projects/{projectId}/todolists/{todolistId}/todoitems",
                         "/projects/{projectId}/todolists/{todolistId}",
                         "/projects/{projectId}/todoitems/{todoitemId}",

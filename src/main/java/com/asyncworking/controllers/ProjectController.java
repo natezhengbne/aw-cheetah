@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -44,6 +45,13 @@ public class ProjectController {
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);
         return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/projects/{id}/members")
+    public ResponseEntity getMembersByProjectId(@PathVariable Long id) {
+        log.info("Project ID: {}", id);
+        List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(id);
+        return ResponseEntity.ok(members);
     }
 }
 

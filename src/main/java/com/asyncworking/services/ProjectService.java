@@ -1,12 +1,15 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.*;
+import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,8 @@ public class ProjectService {
     private final ProjectUserRepository projectUserRepository;
 
     private final ProjectMapper projectMapper;
+
+    private final EmployeeMapper employeeMapper;
 
     public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
         if (projectRepository.findProjectByProjectId(projectId).isEmpty()) {
@@ -116,5 +121,18 @@ public class ProjectService {
         if (res == 0) {
             throw new ProjectNotFoundException("Can not find project with Id:" + projectModificationDto.getProjectId());
         }
+    }
+
+    public List<EmployeeGetDto> findAllMembersByProjectId(Long id) {
+        log.info("Project ID: {}", id);
+        List<IEmployeeInfo> employees = projectUserRepository.findAllMembersByProjectId(id);
+        if (employees.isEmpty()) {
+            throw new EmployeeNotFoundException("Can not find employee by project id:" + id);
+        }
+        List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
+        for (IEmployeeInfo iEmployeeInfo: employees) {
+            employeeGetDtoList.add(employeeMapper.mapEntityToDto(iEmployeeInfo));
+        }
+        return employeeGetDtoList;
     }
 }
