@@ -53,5 +53,14 @@ public class ProjectController {
         List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(id);
         return ResponseEntity.ok(members);
     }
+
+    //TODO unit test
+    @PostMapping("/projects/{projectId}/members/")
+    public ResponseEntity<?> createMembersByProjectIdAndUserId(@PathVariable Long projectId,
+                                                               @RequestParam("userID") @NotNull Long userId) {
+       log.info("projectID: {}, userID: {}", projectId, userId);
+       projectService.createProjectUser(userId, projectId);
+       return ResponseEntity.ok("success");
+    }
 }
 

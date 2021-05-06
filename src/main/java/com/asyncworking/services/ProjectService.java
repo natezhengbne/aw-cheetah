@@ -135,4 +135,16 @@ public class ProjectService {
         }
         return employeeGetDtoList;
     }
+
+    private Project fetchProjectById(Long projectId) {
+        //TODO orElseThrow
+        return projectRepository.findProjectByProjectId(projectId).get();
+    }
+    public void createProjectUser(Long projectId, Long userId) {
+        UserEntity projectUserEntity = fetchUserEntityById(userId);
+        Project project = fetchProjectById(projectId);
+        ProjectUserId projectUserId = new ProjectUserId(userId, projectId);
+        ProjectUser newProjectUser = createProjectUser(projectUserId, projectUserEntity, project);
+        projectUserRepository.save(newProjectUser);
+    }
 }

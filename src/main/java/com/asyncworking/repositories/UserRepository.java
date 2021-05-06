@@ -49,11 +49,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<IEmployeeInfo> findAllEmployeeByCompanyId(@Param("id") Long id);
 
     @Query(nativeQuery = true,
-            value = "select u.name, u.email, cu.title \n" +
-                    "from project_user pu, user_info u, company_user cu \n" +
-                    "where pu.user_id = u.id \n" +
-                    "and cu.user_id = u.id" +
-                    "and pu.project_id = :id" +
+            value = "select u.name, u.email, cu.title " +
+                    "from project_user pu, user_info u, company_user cu " +
+                    "where pu.user_id = u.id " +
+                    "and cu.user_id = u.id " +
+                    "and pu.project_id = :id " +
                     "and u.status = 'ACTIVATED' " +
                     "order by u.name")
     List<IEmployeeInfo> findAllMembersByProjectId(@Param("id") Long id);
