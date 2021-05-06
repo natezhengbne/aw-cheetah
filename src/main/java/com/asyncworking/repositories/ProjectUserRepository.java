@@ -14,13 +14,4 @@ import java.util.List;
 @Repository
 @EnableJpaRepositories
 public interface ProjectUserRepository extends JpaRepository<ProjectUser, ProjectUserId> {
-
-    @Query(nativeQuery = true,
-            value = "select u.name, u.email \n" +
-                    "from project_user pu, user_info u \n" +
-                    "where pu.user_id = u.id \n" +
-                    "and pu.project_id = :id" +
-                    "and u.status = 'ACTIVATED' " +
-                    "order by u.name")
-    List<IEmployeeInfo> findAllMembersByProjectId(@Param("id") Long id);
 }

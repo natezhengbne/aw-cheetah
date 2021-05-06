@@ -125,12 +125,12 @@ public class ProjectService {
 
     public List<EmployeeGetDto> findAllMembersByProjectId(Long id) {
         log.info("Project ID: {}", id);
-        List<IEmployeeInfo> employees = projectUserRepository.findAllMembersByProjectId(id);
-        if (employees.isEmpty()) {
-            throw new EmployeeNotFoundException("Can not find employee by project id:" + id);
+        List<IEmployeeInfo> members = userRepository.findAllMembersByProjectId(id);
+        if (members.isEmpty()) {
+            throw new EmployeeNotFoundException("Can not find member by project id:" + id);
         }
         List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
-        for (IEmployeeInfo iEmployeeInfo: employees) {
+        for (IEmployeeInfo iEmployeeInfo: members) {
             employeeGetDtoList.add(employeeMapper.mapEntityToDto(iEmployeeInfo));
         }
         return employeeGetDtoList;
