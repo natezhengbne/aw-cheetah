@@ -33,6 +33,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             "select ui.name from user_info ui, company_user cu " +
                     "where ui.id = cu.user_id " +
                     "and cu.company_id = :id " +
-                    "order by ui.name")
+                    "and ui.status = 'ACTIVATED' " +
+                    "order by ui.name"+
+                    "LIMIT 6")
     List<String> findNameById(@Param("id") Long id);
 }

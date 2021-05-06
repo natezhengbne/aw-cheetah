@@ -51,11 +51,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("select e from Employee e join fetch e.userEntity u where u.email = :email")
     List<Employee> findEmployeesByEmail(@Param("email") String email);
 
-    @Query(nativeQuery = true, value =
-            "select ui.name from user_info ui, company_user cu " +
-                    "where ui.id = cu.user_id " +
-                    "and cu.company_id = :id " +
-                    "order by ui.name")
-    List<String> findNameById(@Param("id") Long id);
-
 }
