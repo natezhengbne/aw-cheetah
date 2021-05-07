@@ -58,6 +58,19 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     "order by u.name")
     List<IEmployeeInfo> findAllMembersByProjectId(@Param("id") Long id);
 
+    @Query(nativeQuery = true,
+            value = "SELECT u.name, u.email, userinfo.title FROM (\n" +
+                    "    SELECT * FROM awcheetah.company_user cu \n" +
+                    "\t\tWHERE cu.user_id NOT IN (\n" +
+                    "\t\t\tSELECT projectu.user_id FROM (\n" +
+                    "\t\t\t\tSELECT * FROM awcheetah.project_user pu \n" +
+                    "\t\t\t\t\tWHERE pu.project_id = :projectId) AS projectu) \n" +
+                    "    AND cu.company_id = :companyId) AS userinfo \n" +
+                    "LEFT JOIN awcheetah.user_info u ON u.id = userinfo.user_id AND u.status = 'ACTIVATED'\n" +
+                    "ORDER BY u.name;")
+    List<IEmployeeInfo> findNonMembersEmployeesByCompanyAndProjectId(@Param("companyId") Long companyId,
+                                                                    @Param("projectId") Long projectId);
+
     @Query("select e from Employee e join fetch e.userEntity u where u.email = :email")
     List<Employee> findEmployeesByEmail(@Param("email") String email);
 

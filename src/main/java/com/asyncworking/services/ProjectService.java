@@ -123,11 +123,11 @@ public class ProjectService {
         }
     }
 
-    public List<EmployeeGetDto> findAllMembersByProjectId(Long id) {
-        log.info("Project ID: {}", id);
-        List<IEmployeeInfo> members = userRepository.findAllMembersByProjectId(id);
+    public List<EmployeeGetDto> findAllMembersByProjectId(Long projectId) {
+        log.info("Project ID: {}", projectId);
+        List<IEmployeeInfo> members = userRepository.findAllMembersByProjectId(projectId);
         if (members.isEmpty()) {
-            throw new EmployeeNotFoundException("Can not find member by project id:" + id);
+            throw new EmployeeNotFoundException("Can not find member by project id:" + projectId);
         }
         List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
         for (IEmployeeInfo iEmployeeInfo: members) {
@@ -140,6 +140,7 @@ public class ProjectService {
         //TODO orElseThrow
         return projectRepository.findProjectByProjectId(projectId).get();
     }
+
     public void createProjectUser(Long projectId, Long userId) {
         UserEntity projectUserEntity = fetchUserEntityById(userId);
         Project project = fetchProjectById(projectId);

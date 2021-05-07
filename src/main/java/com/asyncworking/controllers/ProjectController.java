@@ -47,10 +47,10 @@ public class ProjectController {
         return ResponseEntity.ok("success");
     }
 
-    @GetMapping("/projects/{id}/members")
-    public ResponseEntity getMembersByProjectId(@PathVariable Long id) {
-        log.info("Project ID: {}", id);
-        List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(id);
+    @GetMapping("/projects/{projectId}/members")
+    public ResponseEntity getMembersByProjectId(@PathVariable Long projectId) {
+        log.info("Project ID: {}", projectId);
+        List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(projectId);
         return ResponseEntity.ok(members);
     }
 

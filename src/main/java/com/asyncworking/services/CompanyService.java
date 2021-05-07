@@ -153,4 +153,18 @@ public class CompanyService {
 		}
 		return employeeGetDtoList;
 	}
+
+	public List<EmployeeGetDto> findNonMemberEmployees(Long companyId, Long projectId) {
+		log.info("Project ID: {}", projectId);
+		log.info("Company ID: {}", companyId);
+		List<IEmployeeInfo> employees = userRepository.findNonMembersEmployeesByCompanyAndProjectId(companyId, projectId);
+		if (employees.isEmpty()) {
+			throw new EmployeeNotFoundException("Can not find employee by company id:" + companyId);
+		}
+		List<EmployeeGetDto> nonMemberEmployeesList = new ArrayList<>();
+		for (IEmployeeInfo iEmployeeInfo: employees) {
+			nonMemberEmployeesList.add(employeeMapper.mapEntityToDto(iEmployeeInfo));
+		}
+		return nonMemberEmployeesList;
+	}
 }
