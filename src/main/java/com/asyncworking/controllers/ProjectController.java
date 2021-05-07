@@ -57,8 +57,8 @@ public class ProjectController {
     //TODO unit test
     @PostMapping("/projects/{projectId}/members")
     public ResponseEntity<?> createMembersByProjectIdAndUserId(@PathVariable Long projectId,
-                                                               @RequestParam("userID") @NotNull List<Long> userIds) {
-       log.info("projectID: {}, userID: {}", projectId, userIds);
+                                                               @RequestParam("userIds") @NotNull List<Long> userIds) {
+       log.info("projectID: {}, userIds: {}", projectId, userIds);
        projectService.createProjectUser(projectId, userIds);
        return ResponseEntity.ok("success");
     }
