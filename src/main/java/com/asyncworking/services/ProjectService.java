@@ -141,11 +141,14 @@ public class ProjectService {
         return projectRepository.findProjectByProjectId(projectId).get();
     }
 
-    public void createProjectUser(Long projectId, Long userId) {
-        UserEntity projectUserEntity = fetchUserEntityById(userId);
+    public void createProjectUser(Long projectId, List<Long> userIds) {
+
         Project project = fetchProjectById(projectId);
-        ProjectUserId projectUserId = new ProjectUserId(userId, projectId);
-        ProjectUser newProjectUser = createProjectUser(projectUserId, projectUserEntity, project);
-        projectUserRepository.save(newProjectUser);
+        for (Long userId: userIds) {
+            ProjectUserId projectUserId = new ProjectUserId(userId, projectId);
+            UserEntity projectUserEntity = fetchUserEntityById(userId);
+            ProjectUser newProjectUser = createProjectUser(projectUserId, projectUserEntity, project);
+            projectUserRepository.save(newProjectUser);
+        }
     }
 }
