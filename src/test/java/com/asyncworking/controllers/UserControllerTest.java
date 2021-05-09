@@ -38,8 +38,6 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    @MockBean
-    private CompanyService companyService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -154,7 +152,7 @@ class UserControllerTest {
         String name = "user1";
         String email = "user1@gmail.com";
 
-        mockMvc.perform(get("/invitation")
+        mockMvc.perform(get("/invitations/companies")
                 .param("companyId", String.valueOf(companyId))
                 .param("title", title)
                 .param("name", name)

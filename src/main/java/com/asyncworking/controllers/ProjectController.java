@@ -13,33 +13,34 @@ import javax.validation.constraints.NotNull;
 
 @Slf4j
 @RestController
+@RequestMapping("/projects")
 @RequiredArgsConstructor
 @Validated
 public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping("/project")
-    public ResponseEntity<?> projectCreate(@Valid @RequestBody ProjectDto projectDto){
+    @PostMapping
+    public ResponseEntity createProject(@Valid @RequestBody ProjectDto projectDto){
         return ResponseEntity.ok(projectService.createProjectAndProjectUser(projectDto));
     }
 
-    @GetMapping("/project")
-    public ResponseEntity<?> fetchAllProjectInfoList(@RequestParam("companyId")
+    @GetMapping("/{companyId}")
+    public ResponseEntity getProjectList(@PathVariable("companyId")
                                                 @NotNull Long companyId) {
         return ResponseEntity.ok(projectService.fetchProjectInfoListByCompanyId(companyId));
     }
 
-    @GetMapping("/projectinfo")
-    public ResponseEntity<?> projectInfoDisplay(@RequestParam("projectId") @NotNull Long projectId) {
+    @GetMapping("/{projectId}/project-info")
+    public ResponseEntity getProjectInfo(@PathVariable("projectId") @NotNull Long projectId) {
         log.info("projectId: {}", projectId);
         ProjectInfoDto projectInfoDto = projectService.fetchProjectInfoByProjectId(projectId);
         return ResponseEntity.ok(projectInfoDto);
     }
 
 
-    @PutMapping("/project/profile")
-    public ResponseEntity<?> updateProjectInfo(@Valid
+    @PutMapping("/{projectId}/project-info")
+    public ResponseEntity updateProjectProfile(@Valid @PathVariable("projectId") Long projectId,
                                                       @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);
         return ResponseEntity.ok("success");

@@ -50,7 +50,7 @@ public class CompanyControllerTest {
                 .name("AW")
                 .userTitle("VI")
                 .build();
-        mockMvc.perform(post("/company")
+        mockMvc.perform(post("/companies")
                 .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -69,7 +69,7 @@ public class CompanyControllerTest {
         when(companyService.getCompanyInfoDto(email)).thenReturn(companyInfoDto);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/companyinfo")
+                MockMvcRequestBuilders.get("/companies/company-info")
                         .param("email", email)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
@@ -83,7 +83,7 @@ public class CompanyControllerTest {
                 .name("")
                 .build();
 
-        mockMvc.perform(post("/company")
+        mockMvc.perform(post("/companies")
                 .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -97,8 +97,7 @@ public class CompanyControllerTest {
                 .description("desc")
                 .build();
         when(companyService.fetchCompanyProfileById(1L)).thenReturn(companyModificationDto);
-        mockMvc.perform(get("/company/profile")
-                .param("companyId", "1"))
+        mockMvc.perform(get("/companies/1/profile"))
                 .andExpect(status().isOk());
     }
 
@@ -110,7 +109,7 @@ public class CompanyControllerTest {
                 .description("desc")
                 .build();
 
-        mockMvc.perform(post("/company")
+        mockMvc.perform(get("/companies/1/profile")
                 .content(objectMapper.writeValueAsString(companyModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -125,7 +124,7 @@ public class CompanyControllerTest {
                 .build();
         when(companyService.findCompanyById(1L)).thenReturn(companyInfoDto);
 
-        mockMvc.perform(get("/company/1"))
+        mockMvc.perform(get("/companies/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andExpect(jsonPath("$.name").value("Apple"))
@@ -137,7 +136,7 @@ public class CompanyControllerTest {
         CompanyNotFoundException error =  new CompanyNotFoundException("Can not found company by id: 1");
         when(companyService.findCompanyById(1L)).thenThrow(error);
 
-        String errorMsg = mockMvc.perform(get("/company/1"))
+        String errorMsg = mockMvc.perform(get("/companies/1"))
                 .andExpect(status().isNotFound())
                 .andReturn().getResolvedException().getMessage();
 
@@ -166,7 +165,7 @@ public class CompanyControllerTest {
 
         when(companyService.findAllEmployeeByCompanyId(1L)).thenReturn(employees);
 
-        mockMvc.perform(get("/employee/1"))
+        mockMvc.perform(get("/companies/1/employees"))
                 .andExpect(status().isOk());
     }
 
@@ -175,7 +174,7 @@ public class CompanyControllerTest {
         EmployeeNotFoundException error =  new EmployeeNotFoundException("Can not found employee by company id: 1");
         when(companyService.findAllEmployeeByCompanyId(1L)).thenThrow(error);
 
-        String errorMsg = mockMvc.perform(get("/employee/1"))
+        String errorMsg = mockMvc.perform(get("/companies/1/employees"))
                 .andExpect(status().isNotFound())
                 .andReturn().getResolvedException().getMessage();
 

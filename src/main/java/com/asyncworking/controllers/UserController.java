@@ -21,23 +21,40 @@ import java.net.URISyntaxException;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
-
-    @GetMapping("/signup")
-    public ResponseEntity<String> validateEmail(@RequestParam(value = "email") String email) {
-        if (userService.ifEmailExists(email)) {
-            return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>("Email does not exist", HttpStatus.OK);
-    }
 
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody AccountDto accountDto) {
         log.info(accountDto.getEmail());
         UserInfoDto userInfoDto = userService.login(
-            accountDto.getEmail().toLowerCase(),
-            accountDto.getPassword());
+                accountDto.getEmail().toLowerCase(),
+                accountDto.getPassword());
         return ResponseEntity.ok(userInfoDto);
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity verifyStatus(@RequestParam(value = "email") String email) {
+        log.info("email: {}", email);
+        if (userService.ifUnverified(email)) {
+            return new ResponseEntity<>("Unverified user", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+        return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/company")
+    public ResponseEntity verifyCompany(@RequestParam(value = "email") String email) {
+        log.info(email);
+        if (userService.ifCompanyExits(email)){
+            return ResponseEntity.ok(userService.fetchCompanyId(email));
+        }
+        return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/signup")
+    public ResponseEntity<String> verifyEmailExists(@RequestParam(value = "email") String email) {
+        if (userService.ifEmailExists(email)) {
+            return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>("Email does not exist", HttpStatus.OK);
     }
 
     @PostMapping("/signup")
@@ -47,8 +64,8 @@ public class UserController {
         return ResponseEntity.ok("success");
     }
 
-    @GetMapping("/invitation")
-    public  ResponseEntity createInvitationLink(@RequestParam(value = "companyId") Long companyId,
+    @GetMapping("/invitations/companies")
+    public  ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
                                                 @RequestParam(value = "title") String title,
                                                 @RequestParam(value = "name") String name,
                                                 @RequestParam(value = "email") String email){
@@ -70,7 +87,7 @@ public class UserController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity verifyAccountAndActiveUser(@RequestParam(value = "code") String code) throws URISyntaxException {
+    public ResponseEntity verifyActiveUser(@RequestParam(value = "code") String code) throws URISyntaxException {
         log.info(code);
         boolean isVerified = userService.isAccountActivated(code);
         if (isVerified) {
@@ -79,21 +96,7 @@ public class UserController {
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
-    @GetMapping("/company")
-    public ResponseEntity companyCheck(@RequestParam(value = "email") String email) {
-        log.info(email);
-        if (userService.ifCompanyExits(email)){
-            return ResponseEntity.ok(userService.fetchCompanyId(email));
-        }
-        return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
-    }
 
-    @GetMapping("/login")
-    public ResponseEntity statusCheck(@RequestParam(value = "email") String email) {
-        log.info("email: {}", email);
-        if (userService.ifUnverified(email)) {
-            return new ResponseEntity<>("Unverified user", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
-        }
-        return ResponseEntity.ok("success");
-    }
+
+
 }
