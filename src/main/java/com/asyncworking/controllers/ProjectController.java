@@ -55,7 +55,7 @@ public class ProjectController {
     }
 
     //TODO unit test
-    @PostMapping("/projects/{projectId}/members/")
+    @PostMapping("/projects/{projectId}/members")
     public ResponseEntity<?> createMembersByProjectIdAndUserId(@PathVariable Long projectId,
                                                                @RequestParam("userID") @NotNull List<Long> userIds) {
        log.info("projectID: {}, userID: {}", projectId, userIds);
