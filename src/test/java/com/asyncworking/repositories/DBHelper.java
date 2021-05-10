@@ -1,6 +1,5 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.models.TodoBoard;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class DBHelper {

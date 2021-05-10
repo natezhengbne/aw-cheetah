@@ -22,6 +22,9 @@ import static org.mockito.Mockito.when;
 @Transactional
 @ActiveProfiles("test")
 public class ProjectRepositoryTest extends DBHelper {
+
+    Project mockProject;
+
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -48,18 +51,9 @@ public class ProjectRepositoryTest extends DBHelper {
 
     @Test
     public void shouldGetIProjectInfoSuccessfullyGivenProjectId() {
-        Project mockIDProject = Project.builder()
-                .name("IDProject")
-                .isDeleted(false)
-                .isPrivate(false)
-                .leaderId(1L)
-                .companyId(1L)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-        projectRepository.save(mockIDProject);
-        Optional<IProjectInfo> returnedIProjectInfo = projectRepository.findProjectInfoByProjectId(mockIDProject.getId());
-        assertEquals(mockIDProject.getName(), returnedIProjectInfo.get().getName());
+        saveMockData();
+        Optional<IProjectInfo> returnedIProjectInfo = projectRepository.findProjectInfoByProjectId(mockProject.getId());
+        assertEquals(mockProject.getName(), returnedIProjectInfo.get().getName());
     }
 
     @Test
@@ -86,7 +80,7 @@ public class ProjectRepositoryTest extends DBHelper {
     @Test
     public void shouldFindNamesByProjectId() {
         saveMockData();
-        List<String> returnedNames = projectRepository.findNamesByProjectId(1L);
+        List<String> returnedNames = projectRepository.findNamesByProjectId(mockProject.getId());
         assertNotNull(returnedNames);
     }
 
@@ -99,16 +93,7 @@ public class ProjectRepositoryTest extends DBHelper {
 
     @Test
     public void shouldGet1AndModifyProjectInfoSuccessfully() {
-        Project mockProject = Project.builder()
-                .name("AWProject")
-                .isDeleted(false)
-                .isPrivate(false)
-                .leaderId(1L)
-                .companyId(1L)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-        projectRepository.save(mockProject);
+        saveMockData();
         int count = projectRepository.updateProjectInfo(mockProject.getId(),
                 "AW-new-project",
                 "Gaming",
@@ -118,28 +103,20 @@ public class ProjectRepositoryTest extends DBHelper {
 
     @Test
     public void shouldReturnProjectSuccessfullyGivenProjectId() {
-        Project mockProject = Project.builder()
-                .name("AWProject")
-                .isDeleted(false)
-                .isPrivate(false)
-                .leaderId(1L)
-                .companyId(1L)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-        projectRepository.save(mockProject);
+        saveMockData();
         Optional<Project> project = projectRepository.findProjectByProjectId(mockProject.getId());
         assertEquals("AWProject", project.get().getName());
     }
 
     @Test
     public void shouldReturnEmptyDueToWrongProjectId() {
+        saveMockData();
         Optional<Project> project = projectRepository.findProjectByProjectId(0L);
         assertTrue(project.isEmpty());
     }
 
     private void saveMockData() {
-        Project mockProject = Project.builder()
+        mockProject = Project.builder()
                 .name("AWProject")
                 .isDeleted(false)
                 .isPrivate(false)
@@ -172,7 +149,6 @@ public class ProjectRepositoryTest extends DBHelper {
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
-
 
         userRepository.save(mockUser);
         projectRepository.save(mockProject);
