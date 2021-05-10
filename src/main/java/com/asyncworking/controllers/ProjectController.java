@@ -47,7 +47,7 @@ public class ProjectController {
         return ResponseEntity.ok("success");
     }
 
-    @GetMapping("/projects/{projectId}/members")
+    @GetMapping("/{projectId}/members")
     public ResponseEntity getMembersByProjectId(@PathVariable Long projectId) {
         log.info("Project ID: {}", projectId);
         List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(projectId);
@@ -55,7 +55,7 @@ public class ProjectController {
     }
 
     //TODO unit test
-    @PostMapping("/projects/{projectId}/members")
+    @PostMapping("/{projectId}/members")
     public ResponseEntity<?> createMembersByProjectIdAndUserId(@PathVariable Long projectId,
                                                                @RequestParam("userIds") @NotNull List<Long> userIds) {
        log.info("projectID: {}, userIds: {}", projectId, userIds);

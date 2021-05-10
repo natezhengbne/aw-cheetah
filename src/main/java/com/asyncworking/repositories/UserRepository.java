@@ -59,7 +59,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<IEmployeeInfo> findAllMembersByProjectId(@Param("id") Long id);
 
     @Query(nativeQuery = true,
-            value = "SELECT u.name, u.email, userinfo.title FROM (\n" +
+            value = "SELECT u.id, u.name, u.email, userinfo.title FROM (\n" +
                     "    SELECT * FROM awcheetah.company_user cu \n" +
                     "\t\tWHERE cu.user_id NOT IN (\n" +
                     "\t\t\tSELECT projectu.user_id FROM (\n" +

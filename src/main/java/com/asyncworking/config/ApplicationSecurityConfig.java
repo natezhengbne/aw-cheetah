@@ -28,7 +28,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login", "/company", "/signup", "/invitations/companies",
                         "/invitations/register", "/resend", "/verify",
                         "/companies", "/companies/company-info", "/companies/{companyId}",
-                        "/companies/{companyId}/profile", "/companies/{companyId}/employees",
+                        "/companies/{companyId}/profile", "/companies/{companyId}/employees", "/companies/{companyId}/nonmembers",
                         "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info", "/projects/{projectid}/members",
                         "/projects/{projectId}/todolists", "/projects/{projectId}/todolists/{todolistId}/todoitems",
                         "/projects/{projectId}/todolists/{todolistId}",

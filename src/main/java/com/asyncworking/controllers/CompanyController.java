@@ -58,7 +58,7 @@ public class CompanyController {
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/companies/{companyId}/nonmembers")
+    @GetMapping("/{companyId}/nonmembers")
     public ResponseEntity getNonMemberEmployees(@PathVariable Long companyId,
                                                 @RequestParam("projectId") @NotNull Long projectId) {
         log.info("Project ID: {}", projectId);
