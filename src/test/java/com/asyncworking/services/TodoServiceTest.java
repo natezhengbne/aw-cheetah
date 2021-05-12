@@ -7,6 +7,7 @@ import com.asyncworking.models.TodoBoard;
 import com.asyncworking.models.TodoList;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoBoardRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
 import org.junit.jupiter.api.Assertions;
@@ -37,8 +38,10 @@ public class TodoServiceTest {
     private TodoBoardRepository todoBoardRepository;
 
     @Mock
-    private ProjectRepository projectRepository;
+    private TodoItemRepository todoItemRepository;
 
+    @Mock
+    private ProjectRepository projectRepository;
 
     private TodoService todoService;
 
@@ -50,6 +53,7 @@ public class TodoServiceTest {
         todoService = new TodoService(
                 todoListRepository,
                 todoBoardRepository,
+                todoItemRepository,
                 projectRepository,
                 todoMapper
         );
@@ -142,7 +146,6 @@ public class TodoServiceTest {
         List<TodoListDto> ret = todoService.findTodoListsByProjectId(2L);
         Assertions.assertTrue(ret.isEmpty());
     }
-
 }
 
 

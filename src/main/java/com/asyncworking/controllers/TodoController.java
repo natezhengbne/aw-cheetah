@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoBoardDto;
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,12 @@ public class TodoController {
     @PostMapping("/{projectId}/todo-list")
     public ResponseEntity<Long> todoListCreate(@Valid @PathVariable("projectId") Long projectId, @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
+    }
+
+    @PostMapping("/{projectid}/todolist/{todolistid}/todoitem")
+    public ResponseEntity<Long> createTodoItem(@Valid @PathVariable("todoListId") Long todolistid,
+                                               @RequestBody TodoItemPostDto todoItemPostDto) {
+        return ResponseEntity.ok(todoService.createTodoItem(todoItemPostDto));
     }
 
     @GetMapping("/{projectId}/todo-lists")

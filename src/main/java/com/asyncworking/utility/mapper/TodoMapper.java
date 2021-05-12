@@ -2,8 +2,13 @@ package com.asyncworking.utility.mapper;
 
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
+import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
 import org.springframework.stereotype.Component;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 
 @Component
@@ -17,5 +22,4 @@ public class TodoMapper {
                 .docURL(todoList.getDocURL())
                 .build();
     }
-
 }

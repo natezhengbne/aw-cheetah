@@ -2,13 +2,16 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoBoardDto;
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoBoardNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoBoard;
+import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoBoardRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class TodoService {
     private final TodoListRepository todoListRepository;
 
     private final TodoBoardRepository todoBoardRepository;
+
+    private final TodoItemRepository todoItemRepository;
 
     private final ProjectRepository projectRepository;
 
@@ -92,4 +97,32 @@ public class TodoService {
         return todoListDtoS;
     }
 
+    @Transactional
+    public Long createTodoItem(TodoItemPostDto todoItemPostDto) {
+        TodoItem newTodoItem = buildTodoItem(todoItemPostDto, getTodoItemById(todoItemPostDto.getTodoListId()));
+        log.info("create a item with id " + newTodoItem.getTodoItemId());
+        todoItemRepository.save(newTodoItem);
+        return newTodoItem.getTodoItemId();
+    }
+
+    private TodoItem buildTodoItem(TodoItemPostDto todoItemPostDto, TodoList todoList) {
+        return TodoItem.builder()
+                .eventDocUrl(todoItemPostDto.getEventDocUrl())
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProjectId())
+                .content(todoItemPostDto.getContent())
+                .docUrl(todoList.getDocURL())
+                .description(todoItemPostDto.getDescription())
+                .completed(Boolean.TRUE)
+                .dueDate(todoItemPostDto.getDueDate())
+                .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
+                .build();
+    }
+
+    private TodoList getTodoItemById(Long todoItemId) {
+        return todoListRepository
+                .findById(todoItemId)
+                .orElseThrow(() -> new ProjectNotFoundException("Cannot find todoItem by id:" + todoItemId));
+    }
 }
