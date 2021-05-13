@@ -2,9 +2,6 @@ package com.asyncworking.models;
 
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -20,22 +17,19 @@ public class TodoList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "company_id", nullable = false)
+    private Long companyId;
+
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JoinColumn(
-            name = "todo_board_id",
+            name = "project_id",
             referencedColumnName = "id",
             nullable = false
     )
-    TodoBoard todoBoard;
-
-    @Column(name = "company_id", nullable = false)
-    private Long companyId;
-
-    @Column(name = "project_id", nullable = false)
-    private Long projectId;
+    Project project;
 
     @Column(name = "todo_list_title", nullable = false)
     private String todoListTitle;
