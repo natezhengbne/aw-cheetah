@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -23,6 +22,8 @@ import static org.mockito.Mockito.when;
 @Transactional
 @ActiveProfiles("test")
 public class CompanyRepositoryTest extends DBHelper {
+
+    Company mockCompany;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -49,16 +50,6 @@ public class CompanyRepositoryTest extends DBHelper {
     @Test
     public void shouldReturn1BecauseOfSuccessfulModification() {
         saveMockData();
-        UserEntity savedUser = userRepository.findByEmail("a@asyncworking.com").get();
-        Company mockCompany = Company.builder()
-                .name("AW")
-                .adminId(savedUser.getId())
-                .employees(new HashSet<>())
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-        companyRepository.save(mockCompany);
-
         int count = companyRepository.updateCompanyProfileById(mockCompany.getId(),
                 "Async Working",
                 "Startup company",
@@ -76,10 +67,11 @@ public class CompanyRepositoryTest extends DBHelper {
     }
 
     @Test
-    public void shouldGetEmployeeListSuccessfullyGivenEmail() {
+    public void shouldGetEmployeeListSuccessfullyByGivenCompanyId() {
         saveMockData();
-        List<String> employeeList = companyRepository.findNameById(1L);
+        List<String> employeeList = companyRepository.findNameById(mockCompany.getId());
         List<String> mockList = new ArrayList<>();
+        mockList.add("Lengary");
         assertEquals(mockList, employeeList);
     }
 
@@ -95,7 +87,7 @@ public class CompanyRepositoryTest extends DBHelper {
             .build();
         userRepository.save(mockUser);
 
-        Company mockCompany = Company.builder()
+         mockCompany = Company.builder()
             .name("Lengary")
             .description("description")
             .website("www.website.com")

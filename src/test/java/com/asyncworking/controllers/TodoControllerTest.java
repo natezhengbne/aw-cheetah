@@ -42,7 +42,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoBoard(todoBoardDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("/project/todoBoard")
+        mockMvc.perform(post("/projects/1/todo-board")
                 .content(objectMapper.writeValueAsString(todoBoardDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -58,7 +58,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoList(todoListDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("/project/todoBoard/todoList")
+        mockMvc.perform(post("/projects/3/todo-list")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -73,10 +73,10 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoList(todoListDto))
                 .thenThrow(new TodoBoardNotFoundException(""));
-        mockMvc.perform(post("/project/todoBoard/todoList")
+        mockMvc.perform(post("/projects/2/todo-list")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
 
@@ -84,7 +84,7 @@ class TodoControllerTest {
     public void returnTodoListDtoLists() throws Exception {
         when(todoService.findTodoListsByProjectId(1L))
                 .thenReturn(new ArrayList<>());
-        mockMvc.perform(get("/project/todoBoard/todoLists/1"))
+        mockMvc.perform(get("/projects/1/todo-lists"))
                 .andExpect(status().isOk());
     }
 

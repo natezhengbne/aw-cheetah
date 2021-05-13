@@ -8,35 +8,32 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
 @Controller
+@RequestMapping("/projects")
 @RequiredArgsConstructor
 public class TodoController {
 
     private final TodoService todoService;
 
-    @PostMapping("/project/todoBoard")
-    public ResponseEntity<Long> todoBoardCreate(@Valid @RequestBody TodoBoardDto todoBoardDto) {
+    @PostMapping("/{projectId}/todo-board")
+    public ResponseEntity<Long> todoBoardCreate(@Valid @PathVariable("projectId") Long projectId, @RequestBody TodoBoardDto todoBoardDto) {
         return ResponseEntity.ok(todoService.createTodoBoard(todoBoardDto));
     }
 
-    @PostMapping("/project/todoBoard/todoList")
-    public ResponseEntity<Long> todoListCreate(@Valid @RequestBody TodoListDto todoListDto) {
+    @PostMapping("/{projectId}/todo-list")
+    public ResponseEntity<Long> todoListCreate(@Valid @PathVariable("projectId") Long projectId, @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
-    @GetMapping("/project/todoBoard/todoLists/{projectId}")
-    public ResponseEntity<List<TodoListDto>> allTodoLists(@PathVariable Long projectId) {
+    @GetMapping("/{projectId}/todo-lists")
+    public ResponseEntity<List<TodoListDto>> allTodoLists(@PathVariable("projectId") Long projectId) {
         log.info("ProjectId: " + projectId);
         return ResponseEntity.ok(todoService.findTodoListsByProjectId(projectId));
     }
-
 }

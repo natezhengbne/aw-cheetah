@@ -43,7 +43,7 @@ public class ProjectControllerTest {
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/project")
+        mockMvc.perform(post("/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -56,7 +56,7 @@ public class ProjectControllerTest {
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/project")
+        mockMvc.perform(post("/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -68,7 +68,7 @@ public class ProjectControllerTest {
                 .name("")
                 .ownerId(1L)
                 .build();
-        mockMvc.perform(post("/project")
+        mockMvc.perform(post("/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -80,7 +80,7 @@ public class ProjectControllerTest {
                 .name("")
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/project")
+        mockMvc.perform(post("/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -98,8 +98,7 @@ public class ProjectControllerTest {
         when(projectService.fetchProjectInfoListByCompanyId(companyId)).thenReturn(Arrays.asList(projectInfoDto));
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/project")
-                        .param("companyId", String.valueOf(companyId))
+                MockMvcRequestBuilders.get("/projects/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
@@ -115,8 +114,7 @@ public class ProjectControllerTest {
                 .build();
         when(projectService.fetchProjectInfoByProjectId(1L)).thenReturn(projectInfoDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/projectinfo")
-                        .param("projectId", String.valueOf(companyId))
+                MockMvcRequestBuilders.get("/projects/1/project-info")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
@@ -129,7 +127,7 @@ public class ProjectControllerTest {
                 .description("desc")
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/project/profile")
+        mockMvc.perform(MockMvcRequestBuilders.put("/projects/1/project-info")
                 .content(objectMapper.writeValueAsString(projectModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
