@@ -27,24 +27,16 @@ public class Message {
             fetch = FetchType.LAZY
     )
     @JoinColumn(
-            name = "message_board_id",
+            name = "project_id",
             referencedColumnName = "id",
             nullable = false
     )
-    MessageBoard messageBoard;
+    Project project;
 
-    @OneToMany(
-            mappedBy = "messageBoard",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
-    private Set<Message> messages;
 
     @Column(name = "company_id", nullable = false)
     private Long companyId;
 
-    @Column(name = "project_id", nullable = false)
-    private Long projectId;
 
     @Column(name = "poster_user_id")
     private Long projectUserId;

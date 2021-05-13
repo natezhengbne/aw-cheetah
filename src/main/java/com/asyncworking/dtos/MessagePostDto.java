@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 public class MessagePostDto {
     private Long id;
 
-//    @NotNull(message = "message board dId cannot be null")
-//    private Long messageBoardId;
-
     @NotNull(message = "companyId cannot be null")
     private Long companyId;
 
@@ -30,4 +27,6 @@ public class MessagePostDto {
     private Category category;
 
     private String docURL;
+
+
 }
