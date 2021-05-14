@@ -19,9 +19,6 @@ public abstract class DBHelper {
 	protected ProjectRepository projectRepository;
 
 	@Autowired
-	protected TodoBoardRepository todoBoardRepository;
-
-	@Autowired
 	protected TodoListRepository todoListRepository;
 
 	@Autowired
@@ -42,9 +39,6 @@ public abstract class DBHelper {
 
 		projectRepository.deleteAll();
 		projectRepository.flush();
-
-		todoBoardRepository.deleteAll();
-		todoBoardRepository.flush();
 
 		todoListRepository.deleteAll();
 		todoListRepository.flush();

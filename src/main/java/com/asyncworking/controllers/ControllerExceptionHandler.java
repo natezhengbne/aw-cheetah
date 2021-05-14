@@ -58,15 +58,14 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {TodoBoardNotFoundException.class})
-    public ResponseEntity<ErrorDto> handleTodoBoardNotFoundException(TodoBoardNotFoundException e) {
-        log.info("TodoBoard is not found.", e);
+    @ExceptionHandler(value = {TodoListNotFoundException.class})
+    public  ResponseEntity<ErrorDto> handleTodoListNotFoundException(TodoListNotFoundException e){
+        log.info("TodoList is not found.", e);
         List<String> details = new ArrayList<>();
         details.add(e.getLocalizedMessage());
-        ErrorDto error = new ErrorDto("TodoBoard not found", details);
+        ErrorDto error = new ErrorDto("TodoList not found", details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorDto> handleArgumentNotValid(MethodArgumentNotValidException e) {
         List<String> details = new ArrayList<>();
