@@ -1,21 +1,13 @@
 package com.asyncworking.models;
 
-import com.asyncworking.dtos.todoitem.TodoItemPostDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Table(name = "todo_item")
 public class TodoItem {
 
@@ -33,14 +25,11 @@ public class TodoItem {
     @Column(name = "project_id", nullable = false)
     private Long projectId;
 
-    @Column(name = "todo_list_id", nullable = false)  //how to get it?
-    private String todoListId;
-
     @Column(name = "event_doc_url")
     private String eventDocUrl;
 
     @Column(name = "content")
-    private String content;
+    private String notes;
 
     @Column(name = "doc_url")
     private String docUrl;

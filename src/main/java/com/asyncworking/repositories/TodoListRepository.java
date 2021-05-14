@@ -17,6 +17,8 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
             "select *\n" +
                     "from todo_list\n" +
                     "where project_id = :projectId\n" +
-                    "order by created_time desc")
-    List<TodoList> findTodoListsByProjectIdOrderByCreatedTime(@Param("projectId") Long projectId);
+                    "order by created_time desc" +
+                    " limit :quantity")
+    List<TodoList> findTodoListsByProjectIdOrderByCreatedTime(@Param("projectId") Long projectId, @Param("quantity") Integer quantity);
+
 }

@@ -68,4 +68,17 @@ public class Project {
         projectUsers.remove(projectUser);
     }
 
+    @OneToMany(mappedBy = "project",
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TodoList> todoLists;
+
+    public void addTodoList(TodoList todoList) {
+        todoLists.add(todoList);
+    }
+
+    public void removeTodoList(TodoList todoList) {
+        todoLists.remove(todoList);
+    }
+
+
 }

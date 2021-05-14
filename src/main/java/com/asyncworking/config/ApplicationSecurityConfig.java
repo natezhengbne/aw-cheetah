@@ -18,50 +18,50 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private final ApplicationUserService myUserDetailsService;
+    private final ApplicationUserService myUserDetailsService;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable()
-				.authorizeRequests()
-				.antMatchers("/login", "/company", "/signup", "/invitations/companies",
-						"/invitations/register", "/resend", "/verify",
-						"/companies", "/companies/company-info", "/companies/{companyId}",
-						"/companies/{companyId}/profile", "/companies/{companyId}/employees",
-						"/projects", "/projects/{companyId}", "/projects/{projectId}/project-info",
-						"/projects/{projectId}/todo-board", "/projects/{projectId}/todo-list",
-						"/projects/{projectId}/todo-lists"
-				)
-				.permitAll()
-				.antMatchers("/", "index", "/css/*", "/actuator/*")
-				.permitAll()
-				.anyRequest()
-				.authenticated();
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/login", "/company", "/signup", "/invitations/companies",
+                        "/invitations/register", "/resend", "/verify",
+                        "/companies", "/companies/company-info", "/companies/{companyId}",
+                        "/companies/{companyId}/profile", "/companies/{companyId}/employees",
+                        "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info",
+                        "/projects/todolists/{todolistid}", "/todolist", "/projects/{projectid}/todolists"
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(daoAuthenticationProvider());
-	}
+                )
+                .permitAll()
+                .antMatchers("/", "index", "/css/*", "/actuator/*")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
+    }
 
-	@Bean
-	public DaoAuthenticationProvider daoAuthenticationProvider() {
-		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setPasswordEncoder(passwordEncoder());
-		provider.setUserDetailsService(myUserDetailsService);
-		return provider;
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
 
-	@Override
-	@Bean
-	protected AuthenticationManager authenticationManager() throws Exception {
-		return super.authenticationManager();
-	}
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(myUserDetailsService);
+        return provider;
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(10);
-	}
+    @Override
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 }
 

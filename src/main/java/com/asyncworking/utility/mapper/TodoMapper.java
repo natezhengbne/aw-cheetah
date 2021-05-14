@@ -5,21 +5,17 @@ import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.stereotype.Component;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 
 @Component
-public class TodoMapper {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface TodoMapper {
 
-    public TodoListDto mapEntityToTodoListDto(TodoList todoList){
-        return TodoListDto.builder()
-                .id(todoList.getId())
-                .todoListTitle(todoList.getTodoListTitle())
-                .details(todoList.getDetails())
-                .docURL(todoList.getDocURL())
-                .build();
-    }
+    TodoListDto fromEntity(TodoList todoList);
+
+    TodoItem toEntity(TodoItemPostDto todoItemPostDto);
+
 }
