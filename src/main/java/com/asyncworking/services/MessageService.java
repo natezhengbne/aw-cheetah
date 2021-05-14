@@ -26,11 +26,10 @@ public class MessageService {
 
     private final ProjectRepository projectRepository;
 
-
     private final MessageRepository messageRepository;
 
-    @Transactional
 
+    @Transactional
     public MessageGetDto createMessage(MessagePostDto messagePostDto) {
         Message message = messageMapper.toEntity(messagePostDto);
         message.setProject(fetchProjectById(messagePostDto.getProjectId()));

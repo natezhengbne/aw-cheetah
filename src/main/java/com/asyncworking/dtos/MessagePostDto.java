@@ -1,14 +1,19 @@
 package com.asyncworking.dtos;
 
 import com.asyncworking.models.Category;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 public class MessagePostDto {
-    private Long id;
 
     @NotNull(message = "companyId cannot be null")
     private Long companyId;
