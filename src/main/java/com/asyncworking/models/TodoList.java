@@ -4,6 +4,7 @@ package com.asyncworking.models;
 import lombok.*;
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -29,7 +30,10 @@ public class TodoList {
             referencedColumnName = "id",
             nullable = false
     )
-    Project project;
+    private Project project;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "todoList")
+    private Set<TodoItem> todoItems;
 
     @Column(name = "todo_list_title", nullable = false)
     private String todoListTitle;

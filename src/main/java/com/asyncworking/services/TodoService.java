@@ -16,9 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -36,7 +38,6 @@ public class TodoService {
     private final ProjectRepository projectRepository;
 
     private final TodoMapper todoMapper;
-
 
     @Transactional
     public Long createTodoList(TodoListDto todoListDto) {
@@ -79,12 +80,43 @@ public class TodoService {
     @Transactional
     public Long createTodoItem(@Valid TodoItemPostDto todoItemPostDto) {
         TodoItem todoItem = todoMapper.toEntity(todoItemPostDto);
-        todoItem.setTodoList(todoListRepository.findById(todoItemPostDto.getTodoListId()).get());
-        todoItem.setCompanyId(todoListRepository.findById(todoItemPostDto.getTodoListId()).get().getCompanyId());
+        TodoList todoList = todoListRepository.findById(todoItemPostDto.getTodoListId())
+                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoItemPostDto.getTodoListId()));
+        todoItem.setTodoList(todoList);
+        todoItem.setCompanyId(todoList.getCompanyId());
+        todoItem.setProjectId(todoList.getProject().getId());
         todoItem.setCompleted(Boolean.FALSE);
-        todoItemRepository.save(todoItem);
+        todoItem.setCreatedTime(OffsetDateTime.now(UTC));
+        todoItem.setUpdatedTime(OffsetDateTime.now(UTC));
+//        TodoItem todoItem = buildTodoItem(todoItemPostDto, fetchTodoListById(todoItemPostDto.getTodoListId()));
+//        log.info("todoItem sss:" + todoItem);
+//        todoItemRepository.save(todoItem);
+//        TodoItem todoItem = buildTodoItem(todoItemPostDto, todoListRepository.findById(todoItemPostDto.getTodoListId()).get());
         log.info("create a item with id " + todoItem.getTodoItemId());
-        return todoItem.getTodoItemId();
+        TodoItem savedTodoItem = todoItemRepository.save(todoItem);
+        return savedTodoItem.getTodoItemId();
     }
 
+//    private TodoItem buildTodoItem(TodoItemPostDto todoItemPostDto, TodoList todoList){
+//        return TodoItem.builder()
+//                .todoList(todoList)
+//                .companyId(todoList.getCompanyId())
+//                .projectId(todoList.getProject().getId())
+//                .completed(Boolean.FALSE)
+//                .createdTime(OffsetDateTime.now(UTC))
+//                .updatedTime(OffsetDateTime.now(UTC))
+//                .build();
+//    }
+
+//    public List<TodoListDto> getTodoListAndTodoItem(Long todoListId, Integer quantity) {
+//        return todoListRepository.findTodoItemAndList(todoListId, quantity).stream()
+//                .map(todoMapper::fromEntity)
+//                .collect(Collectors.toList());
+//    }
+
+//    private TodoList fetchTodoListById(Long todoListId) {
+//        return todoListRepository
+//                .findById(todoListId)
+//                .orElseThrow(() -> new ProjectNotFoundException("Cannot find todoList by id:" + todoListId));
+//    }
 }
