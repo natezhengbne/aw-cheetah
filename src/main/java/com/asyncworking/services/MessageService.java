@@ -30,7 +30,7 @@ public class MessageService {
 
 
     @Transactional
-    public MessageGetDto createMessage(MessagePostDto messagePostDto) {
+    public Long createMessage(MessagePostDto messagePostDto) {
         Message message = messageMapper.toEntity(messagePostDto);
         message.setProject(fetchProjectById(messagePostDto.getProjectId()));
         message.setCreatedTime(OffsetDateTime.now(ZoneOffset.UTC));
@@ -39,13 +39,17 @@ public class MessageService {
 
         log.info("create a new message : " + messagePostDto.getMessageTitle());
         Message savedMessage = messageRepository.save(message);
-        return messageMapper.fromEntity(savedMessage);
+        return savedMessage.getId();
     }
+
+
     private Project fetchProjectById(Long projectId) {
         return projectRepository
                 .findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id: " + projectId));
     }
+
+
     public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
         return messageRepository.findMessageByProjectId(projectId).stream()
                 .map(message -> messageMapper.fromEntity(message))

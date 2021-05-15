@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.Category;
 import com.asyncworking.models.Message;
 import com.asyncworking.models.Project;
@@ -17,8 +18,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,10 +37,14 @@ public class MessageServiceTest {
     @Mock
     private ProjectRepository projectRepository;
 
-    private MessageService messageService;
-
     @Autowired
     private MessageMapper messageMapper;
+
+    private MessageService messageService;
+
+    private MessagePostDto messagePostDto;
+
+    private Project mockProject;
 
     @BeforeEach
     public void setUp() {
@@ -44,17 +53,8 @@ public class MessageServiceTest {
                 projectRepository,
                 messageRepository
         );
-    }
 
-    @Test
-    @Transactional
-    public void createMessageSuccess() {
-        Project mockProject = Project.builder()
-                .id(2L)
-                .name("omega")
-                .build();
-
-        MessagePostDto messagePostDto = MessagePostDto.builder()
+        messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
                 .projectId(2L)
                 .projectUserId(3L)
@@ -63,6 +63,15 @@ public class MessageServiceTest {
                 .category(Category.ANNOUNCEMENT)
                 .build();
 
+        mockProject = Project.builder()
+                .id(2L)
+                .name("omega")
+                .build();
+    }
+
+    @Test
+    @Transactional
+    public void returnCorrectMessageGetDto() {
         Message mockReturnMessage = Message.builder()
                 .id(5L)
                 .project(mockProject)
@@ -71,17 +80,55 @@ public class MessageServiceTest {
                 .messageTitle("first message")
                 .content("first message content")
                 .category(Category.ANNOUNCEMENT)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(projectRepository.findById(2L)).thenReturn(Optional.of(mockProject));
-        MessageGetDto messageGetDto = messageService.createMessage(messagePostDto);
+        Long messageId = messageService.createMessage(messagePostDto);
 
-        assertEquals(messageGetDto.getMessageTitle(), "first message");
-        assertEquals(messageGetDto.getContent(), "first message content");
-        assertEquals(messageGetDto.getCategory(), Category.ANNOUNCEMENT);
-        assertEquals(messageGetDto.getId(), 5L);
-
+        assertEquals(messageId, 5L);
     }
+
+    @Test
+    public void throwProjectNotFoundExceptionWhenProjectIdIsNotExist() {
+        when(projectRepository.findById(3L))
+                .thenThrow(new ProjectNotFoundException("Cannot find project by id:2"));
+        assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(messagePostDto));
+    }
+
+    @Test
+    public void returnRequiredQuantityOfMessageGetDtoList () {
+        List<Message> mockReturnMessageList = new ArrayList<>();
+        mockReturnMessageList.add(Message.builder()
+                .id(5L)
+                .project(mockProject)
+                .companyId(1L)
+                .projectUserId(3L)
+                .messageTitle("first message")
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build());
+        mockReturnMessageList.add(Message.builder()
+                .id(6L)
+                .project(mockProject)
+                .companyId(1L)
+                .projectUserId(3L)
+                .messageTitle("second message")
+                .content("second message content")
+                .category(Category.ANNOUNCEMENT)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build());
+
+        when(messageRepository.findMessageByProjectId(3L)).thenReturn(mockReturnMessageList);
+        List<MessageGetDto> mockMessageGetDtoList = messageService.findMessageListByProjectId(3L);
+        assertEquals(2, mockMessageGetDtoList.size());
+    }
+
+
 
 }

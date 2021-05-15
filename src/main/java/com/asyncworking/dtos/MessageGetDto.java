@@ -15,8 +15,14 @@ import javax.validation.constraints.NotNull;
 public class MessageGetDto {
     private Long id;
 
+    @NotNull(message = "companyId cannot be null")
+    private Long companyId;
+
     @NotNull(message = "message must have a title")
     private String messageTitle;
+
+    @NotNull(message = "projectId cannot be null")
+    private Long projectId;
 
     private String content;
 

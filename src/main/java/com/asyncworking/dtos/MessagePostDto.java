@@ -21,9 +21,6 @@ public class MessagePostDto {
     @NotNull(message = "projectId cannot be null")
     private Long projectId;
 
-    @NotNull(message = "project user Id cannot be null")
-    private Long projectUserId;
-
     @NotNull(message = "message must have a title")
     private String messageTitle;
 
