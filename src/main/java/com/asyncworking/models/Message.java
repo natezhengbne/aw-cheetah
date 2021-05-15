@@ -39,7 +39,7 @@ public class Message {
 
 
     @Column(name = "poster_user_id")
-    private Long projectUserId;
+    private Long posterUserId;
 
     @Column
     @Enumerated(EnumType.STRING)

@@ -16,9 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.ZoneOffset.UTC;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,11 +46,26 @@ public class MessageControllerTest {
                 .companyId(1L)
                 .projectId(2L)
                 .messageTitle("first message")
+                .posterUserId(3L)
                 .content("first message content")
                 .category(Category.ANNOUNCEMENT)
+                .docURL("https:www.adc.com")
                 .build();
 
-        when(messageService.createMessage(messagePostDto)).thenReturn(1L);
+        MessageGetDto mockMessageGetDto = MessageGetDto.builder()
+                .id(3L)
+                .companyId(1L)
+                .messageTitle("first message")
+                .projectId(2L)
+                .posterUserId(3L)
+                .posterUser("FL")
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .postTime(OffsetDateTime.now(UTC))
+                .docURL("https:www.adc.com")
+                .build();
+
+        when(messageService.createMessage(messagePostDto)).thenReturn(mockMessageGetDto);
         mockMvc.perform(post("/message")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -60,23 +77,30 @@ public class MessageControllerTest {
     public void getMessageListSuccess() throws Exception {
         List<MessageGetDto> messageGetDtoList = new ArrayList<>();
         messageGetDtoList.add(MessageGetDto.builder()
-            .id(1L)
-            .companyId(3L)
-            .projectId(4L)
-            .messageTitle("first message title")
-            .content("first message")
-            .category(Category.ANNOUNCEMENT)
-            .docURL("https:www.adc.com")
-            .build());
+                .id(3L)
+                .companyId(1L)
+                .messageTitle("first message")
+                .projectId(4L)
+                .posterUserId(3L)
+                .posterUser("FL")
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .postTime(OffsetDateTime.now(UTC))
+                .docURL("https:www.adc.com")
+                .build());
+
 
         messageGetDtoList.add(MessageGetDto.builder()
-                .id(2L)
+                .id(6L)
                 .companyId(3L)
                 .projectId(4L)
                 .messageTitle("second message title")
                 .content("second message")
+                .posterUserId(4L)
+                .posterUser("FengLan")
                 .category(Category.ANNOUNCEMENT)
                 .docURL("https:www.adc.com")
+                .postTime(OffsetDateTime.now(UTC))
                 .build());
 
         when(messageService.findMessageListByProjectId(4L)).thenReturn(messageGetDtoList);
@@ -101,10 +125,12 @@ public class MessageControllerTest {
     public void throwNotFoundProjectExceptionWhenThisProjectNotExist() throws Exception {
         MessagePostDto messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
-                .projectId(4L)
+                .projectId(2L)
                 .messageTitle("first message")
+                .posterUserId(3L)
                 .content("first message content")
                 .category(Category.ANNOUNCEMENT)
+                .docURL("https:www.adc.com")
                 .build();
         when(messageService.createMessage(messagePostDto))
                 .thenThrow(new ProjectNotFoundException("this project not exist"));

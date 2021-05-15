@@ -24,6 +24,9 @@ public class MessagePostDto {
     @NotNull(message = "message must have a title")
     private String messageTitle;
 
+    @NotNull(message = "posterUserId cannot be null")
+    private Long posterUserId;
+
     private String content;
 
     private Category category;

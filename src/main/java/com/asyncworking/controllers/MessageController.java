@@ -26,7 +26,7 @@ public class MessageController {
     }
 
     @PostMapping("/message")
-    public ResponseEntity<Long>  createMessage (@Valid @RequestBody MessagePostDto messagePostDto) {
+    public ResponseEntity<MessageGetDto>  createMessage (@Valid @RequestBody MessagePostDto messagePostDto) {
         return ResponseEntity.ok(messageService.createMessage(messagePostDto));
     }
 
