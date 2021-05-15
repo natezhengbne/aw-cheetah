@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.Category;
 import com.asyncworking.services.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,7 +43,6 @@ public class MessageControllerTest {
         MessagePostDto messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
                 .projectId(2L)
-                .projectUserId(3L)
                 .messageTitle("first message")
                 .content("first message content")
                 .category(Category.ANNOUNCEMENT)
@@ -78,8 +79,39 @@ public class MessageControllerTest {
                 .docURL("https:www.adc.com")
                 .build());
 
-        when(messageService.findMessageListByProjectId())
+        when(messageService.findMessageListByProjectId(4L)).thenReturn(messageGetDtoList);
+        mockMvc.perform(get("/projects/4/messageList"))
+                .andExpect(status().isOk());
     }
 
+    @Test
+    public void createMessageFailWhenNotNullVariableAreNull() throws Exception {
+        MessagePostDto messagePostDto = MessagePostDto.builder()
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .build();
+
+        mockMvc.perform(post("/message")
+                .content(objectMapper.writeValueAsString(messagePostDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void throwNotFoundProjectExceptionWhenThisProjectNotExist() throws Exception {
+        MessagePostDto messagePostDto = MessagePostDto.builder()
+                .companyId(1L)
+                .projectId(4L)
+                .messageTitle("first message")
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .build();
+        when(messageService.createMessage(messagePostDto))
+                .thenThrow(new ProjectNotFoundException("this project not exist"));
+        mockMvc.perform(post("/message")
+                .content(objectMapper.writeValueAsString(messagePostDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
 }

@@ -57,7 +57,6 @@ public class MessageServiceTest {
         messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
                 .projectId(2L)
-                .projectUserId(3L)
                 .messageTitle("first message")
                 .content("first message content")
                 .category(Category.ANNOUNCEMENT)
