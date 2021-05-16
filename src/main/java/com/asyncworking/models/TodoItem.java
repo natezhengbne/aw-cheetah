@@ -8,8 +8,6 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Data
-//@Getter
-//@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +19,7 @@ public class TodoItem {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "todo_list_id", nullable = false)
+    @JoinColumn(name = "todo_list_id", referencedColumnName = "id", nullable = false)
     private TodoList todoList;
 
     @Column(name = "company_id", nullable = false)

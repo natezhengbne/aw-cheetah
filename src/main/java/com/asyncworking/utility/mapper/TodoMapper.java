@@ -16,6 +16,5 @@ public interface TodoMapper {
 
     TodoListDto fromEntity(TodoList todoList);
 
-//    TodoItem toEntity(TodoItemPostDto todoItemPostDto);
-
+    TodoItem toEntity(TodoItemPostDto todoItemPostDto);
 }
