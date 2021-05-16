@@ -79,34 +79,33 @@ public class TodoService {
 
     @Transactional
     public Long createTodoItem(@Valid TodoItemPostDto todoItemPostDto) {
-        TodoItem todoItem = todoMapper.toEntity(todoItemPostDto);
-        TodoList todoList = todoListRepository.findById(todoItemPostDto.getTodoListId())
-                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoItemPostDto.getTodoListId()));
-        todoItem.setTodoList(todoList);
-        todoItem.setCompanyId(todoList.getCompanyId());
-        todoItem.setProjectId(todoList.getProject().getId());
-        todoItem.setCompleted(Boolean.FALSE);
-        todoItem.setCreatedTime(OffsetDateTime.now(UTC));
-        todoItem.setUpdatedTime(OffsetDateTime.now(UTC));
-//        TodoItem todoItem = buildTodoItem(todoItemPostDto, fetchTodoListById(todoItemPostDto.getTodoListId()));
-//        log.info("todoItem sss:" + todoItem);
-//        todoItemRepository.save(todoItem);
-//        TodoItem todoItem = buildTodoItem(todoItemPostDto, todoListRepository.findById(todoItemPostDto.getTodoListId()).get());
-        log.info("create a item with id " + todoItem.getTodoItemId());
+//        TodoItem todoItem = todoMapper.toEntity(todoItemPostDto);
+//        TodoList todoList = todoListRepository.findById(todoItemPostDto.getTodoListId())
+//                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoItemPostDto.getTodoListId()));
+//        todoItem.setTodoList(todoList);
+//        todoItem.setCompanyId(todoList.getCompanyId());
+//        todoItem.setProjectId(todoList.getProject().getId());
+//        todoItem.setCompleted(Boolean.FALSE);
+//        todoItem.setCreatedTime(OffsetDateTime.now(UTC));
+//        todoItem.setUpdatedTime(OffsetDateTime.now(UTC));
+
+        TodoItem todoItem = buildTodoItem(todoItemPostDto, fetchTodoListById(todoItemPostDto.getTodoListId()));
+
         TodoItem savedTodoItem = todoItemRepository.save(todoItem);
+        log.info("create a item with id " + savedTodoItem.getTodoItemId());
         return savedTodoItem.getTodoItemId();
     }
 
-//    private TodoItem buildTodoItem(TodoItemPostDto todoItemPostDto, TodoList todoList){
-//        return TodoItem.builder()
-//                .todoList(todoList)
-//                .companyId(todoList.getCompanyId())
-//                .projectId(todoList.getProject().getId())
-//                .completed(Boolean.FALSE)
-//                .createdTime(OffsetDateTime.now(UTC))
-//                .updatedTime(OffsetDateTime.now(UTC))
-//                .build();
-//    }
+    private TodoItem buildTodoItem(TodoItemPostDto todoItemPostDto, TodoList todoList){
+        return TodoItem.builder()
+                .todoList(todoList)
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProject().getId())
+                .completed(Boolean.FALSE)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+    }
 
 //    public List<TodoListDto> getTodoListAndTodoItem(Long todoListId, Integer quantity) {
 //        return todoListRepository.findTodoItemAndList(todoListId, quantity).stream()
@@ -114,9 +113,9 @@ public class TodoService {
 //                .collect(Collectors.toList());
 //    }
 
-//    private TodoList fetchTodoListById(Long todoListId) {
-//        return todoListRepository
-//                .findById(todoListId)
-//                .orElseThrow(() -> new ProjectNotFoundException("Cannot find todoList by id:" + todoListId));
-//    }
+    private TodoList fetchTodoListById(Long todoListId) {
+        return todoListRepository
+                .findById(todoListId)
+                .orElseThrow(() -> new ProjectNotFoundException("Cannot find todoList by id:" + todoListId));
+    }
 }

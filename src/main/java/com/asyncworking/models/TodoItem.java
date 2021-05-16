@@ -1,9 +1,6 @@
 package com.asyncworking.models;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,7 +8,11 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Data
+//@Getter
+//@Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "todo_item")
 public class TodoItem {
 
@@ -20,7 +21,6 @@ public class TodoItem {
     private Long todoItemId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude @ToString.Exclude
     @JoinColumn(name = "todo_list_id", nullable = false)
     private TodoList todoList;
 

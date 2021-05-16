@@ -25,7 +25,7 @@ public class TodoController {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
-    @PostMapping("/projects/{projectid}/todolist/{todolistid}/todoitem")
+    @PostMapping("/projects/{projectid}/todolists/{todolistid}/todoitem")
     public ResponseEntity<Long> createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
         return ResponseEntity.ok(todoService.createTodoItem(todoItemPostDto));
     }
