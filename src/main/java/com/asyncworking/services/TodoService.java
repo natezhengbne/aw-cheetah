@@ -16,11 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -92,8 +90,8 @@ public class TodoService {
         TodoItem todoItem = buildTodoItem(todoItemPostDto, fetchTodoListById(todoItemPostDto.getTodoListId()));
 
         TodoItem savedTodoItem = todoItemRepository.save(todoItem);
-        log.info("create a item with id " + savedTodoItem.getTodoItemId());
-        return savedTodoItem.getTodoItemId();
+        log.info("create a item with id " + savedTodoItem.getId());
+        return savedTodoItem.getId();
     }
 
     private TodoItem buildTodoItem(TodoItemPostDto todoItemPostDto, TodoList todoList){

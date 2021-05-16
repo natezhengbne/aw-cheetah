@@ -18,7 +18,7 @@ public class TodoItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long todoItemId;
+    private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_list_id", nullable = false)

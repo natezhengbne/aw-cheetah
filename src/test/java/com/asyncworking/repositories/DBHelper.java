@@ -21,7 +21,16 @@ public abstract class DBHelper {
 	@Autowired
 	protected TodoListRepository todoListRepository;
 
+	@Autowired
+	protected TodoItemRepository todoItemRepository;
+
 	protected void clearDb() {
+		todoItemRepository.deleteAll();
+		todoItemRepository.flush();
+
+		todoListRepository.deleteAll();
+		todoListRepository.flush();
+
 		employeeRepository.deleteAll();
 		employeeRepository.flush();
 
@@ -36,9 +45,5 @@ public abstract class DBHelper {
 
 		projectRepository.deleteAll();
 		projectRepository.flush();
-
-		todoListRepository.deleteAll();
-		todoListRepository.flush();
-
 	}
 }
