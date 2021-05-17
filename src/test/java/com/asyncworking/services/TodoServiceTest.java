@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
@@ -10,6 +11,7 @@ import com.asyncworking.models.TodoList;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
+import com.asyncworking.utility.mapper.TodoItemMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,19 +38,22 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class TodoServiceTest {
 
-    @Mock
+    @Autowired
     private TodoListRepository todoListRepository;
 
-    @Mock
+    @Autowired
     private ProjectRepository projectRepository;
 
-    @Mock
+    @Autowired
     private TodoItemRepository todoItemRepository;
 
     private TodoService todoService;
 
     @Autowired
     private TodoMapper todoMapper;
+
+    @Autowired
+    private TodoItemMapper todoItemMapper;
 
     private TodoListDto mockTodoListDto;
 
@@ -58,6 +63,8 @@ public class TodoServiceTest {
 
     private TodoItemPostDto mockTodoItemPostDto;
 
+
+
     @BeforeEach
     public void setup() {
 
@@ -65,7 +72,8 @@ public class TodoServiceTest {
                 todoListRepository,
                 todoItemRepository,
                 projectRepository,
-                todoMapper);
+                todoMapper,
+                todoItemMapper);
 
         mockTodoListDto = TodoListDto.builder()
                 .projectId(1L)
@@ -84,14 +92,15 @@ public class TodoServiceTest {
 
         mockTodoItemPostDto = TodoItemPostDto.builder()
                 .todoListId(1L)
-                .notes("Ali Baba and the 30 Thieves")
+                .notes("todo item mock post dto test")
+                .description("todo item post dto description test")
                 .build();
 
         mockTodoList = TodoList.builder()
                 .companyId(1L)
                 .project(project)
                 .todoListTitle("TestTodoList")
-                .details("Ali Baba and the Forty Thieves")
+                .details("todo list details test")
                 .docURL("https://www.entity.com")
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
@@ -182,4 +191,56 @@ public class TodoServiceTest {
         verify(todoItemRepository).save(todoItemCaptor.capture());
         assertEquals(mockTodoList, todoItemCaptor.getValue().getTodoList());
     }
+
+    @Test
+    public void givenTodoListId_shouldReturnListOfTodoItems_thenOk() {
+        Project savedProject = projectRepository.save(buildProject("AWProject"));
+        TodoList savedTodoList = todoListRepository.save(buildTodoList(savedProject, "first"));
+        TodoItem todoItem1 = todoItemRepository.save(buildTodoItem(savedTodoList, "test1", "des1"));
+        TodoItem todoItem2 = todoItemRepository.save(buildTodoItem(savedTodoList, "test2", "des2"));
+
+        List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(savedTodoList.getId());
+        assertEquals(2, todoItemGetDtos.size());
+        assertEquals("test1", todoItemGetDtos.get(0).getNotes());
+        assertEquals("des1", todoItemGetDtos.get(0).getDescription());
+        assertEquals("test2", todoItemGetDtos.get(1).getNotes());
+        assertEquals("des2", todoItemGetDtos.get(1).getDescription());
+    }
+
+
+    private Project buildProject(String name) {
+        return Project.builder()
+                .name(name)
+                .isDeleted(false)
+                .isPrivate(false)
+                .leaderId(1L)
+                .companyId(1L)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+    }
+
+    private TodoList buildTodoList(Project project, String title) {
+        return TodoList.builder()
+                .companyId(project.getCompanyId())
+                .project(project)
+                .todoListTitle(title)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+    }
+
+    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
+        return TodoItem.builder()
+                .todoList(todoList)
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProject().getId())
+                .notes(notes)
+                .description(description)
+                .completed(Boolean.FALSE)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+    }
+
 }

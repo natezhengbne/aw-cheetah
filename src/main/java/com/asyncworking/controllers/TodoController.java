@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,11 @@ public class TodoController {
     public ResponseEntity<TodoListDto> todoListFind(@PathVariable Long todolistid) {
         log.info("todolistId:" + todolistid);
         return ResponseEntity.ok(todoService.findTodoListById(todolistid));
+    }
+
+    @GetMapping("/projects/{projectid}/todolists/{todolistid}")
+    public ResponseEntity<List<TodoItemGetDto>> getTodoItemsUnderList(@PathVariable Long todolistid) {
+        log.info("find todo item under todolist id: " + todolistid);
+        return ResponseEntity.ok(todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todolistid));
     }
 }
