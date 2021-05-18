@@ -11,6 +11,6 @@ public interface IMessageInfo {
     String getContent();
     Category getCategory();
     String getDocURL();
-//    OffsetDateTime getPostTime();
+    OffsetDateTime getPostTime();
 
 }

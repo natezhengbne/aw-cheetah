@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 public class IMessageInfoImpl implements IMessageInfo{
     @Id
     @Type(type = "long")
-    private Long Id;
+    private Long id;
     private String messageTitle;
     private Long posterUserId;
     private String posterUser;
@@ -27,7 +27,7 @@ public class IMessageInfoImpl implements IMessageInfo{
 
     @Override
     public Long getId() {
-        return Id;
+        return id;
     };
     @Override
     public String getMessageTitle() {
