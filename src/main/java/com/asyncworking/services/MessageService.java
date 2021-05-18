@@ -5,6 +5,7 @@ import com.asyncworking.dtos.MessagePostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
+import com.asyncworking.repositories.IMessageRepository;
 import com.asyncworking.repositories.MessageRepository;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -30,6 +31,8 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
+    private final IMessageRepository iMessageRepository;
+
     private final UserRepository userRepository;
 
 
@@ -46,7 +49,6 @@ public class MessageService {
         Message savedMessage = messageRepository.save(message);
         MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage);
         messageGetDto.setPosterUser(this.findUsernameByUserId(messagePostDto.getPosterUserId()));
-        messageGetDto.setProjectId(messagePostDto.getProjectId());
         return messageGetDto;
     }
 
@@ -59,20 +61,21 @@ public class MessageService {
 
     private String findUsernameByUserId(Long userId) {
         return userRepository
-                .findNameById(userId)
-                .orElseThrow(() -> new UserNotFoundException("cannot find user by id " + userId));
+                .findUserEntityById(userId)
+                .orElseThrow(() -> new UserNotFoundException("cannot find user by id " + userId))
+                .getName();
 
     }
 
     public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
-        List<MessageGetDto> messageGetDtoList = messageRepository.findMessageByProjectId(projectId).stream()
+        List<MessageGetDto> messageGetDtoList = iMessageRepository.findMessageAndUserNameByProjectId(projectId).stream()
                 .map(message -> messageMapper.fromEntity(message))
                 .collect(Collectors.toList());
+//        List<MessageGetDto> messageGetDtoList = messageRepository.findMessageByProjectId(projectId).stream()
+//                .map(message -> messageMapper.fromEntity(message))
+//                .collect(Collectors.toList());
 
-        messageGetDtoList.forEach(messageGetDto -> {messageGetDto
-                .setPosterUser(this.findUsernameByUserId(messageGetDto.getPosterUserId()));
-                messageGetDto.setProjectId(projectId);
-        });
+
 
         return messageGetDtoList;
     }

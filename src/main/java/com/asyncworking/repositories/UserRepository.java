@@ -51,5 +51,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("select e from Employee e join fetch e.userEntity u where u.email = :email")
     List<Employee> findEmployeesByEmail(@Param("email") String email);
 
-    Optional<String> findNameById(long userId);
 }

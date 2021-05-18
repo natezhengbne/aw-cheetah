@@ -26,7 +26,7 @@ logging:
   level:
     com.asyncworking: debug
 
-url: https://www.asyncworking.com
+url: http://localhost:3000
 
 
 jwt:

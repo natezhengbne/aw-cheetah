@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -16,11 +17,7 @@ import java.time.OffsetDateTime;
 public class MessageGetDto {
     private Long id;
 
-    private Long companyId;
-
     private String messageTitle;
-
-    private Long projectId;
 
     private Long posterUserId;
 
