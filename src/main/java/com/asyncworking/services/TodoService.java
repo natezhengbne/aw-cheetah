@@ -11,7 +11,6 @@ import com.asyncworking.models.TodoList;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
-import com.asyncworking.utility.mapper.TodoItemMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +37,6 @@ public class TodoService {
     private final ProjectRepository projectRepository;
 
     private final TodoMapper todoMapper;
-
-    private final TodoItemMapper todoItemMapper;
 
     @Transactional
     public Long createTodoList(TodoListDto todoListDto) {
@@ -68,20 +65,33 @@ public class TodoService {
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id:" + projectId));
     }
 
+//    public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
+//        return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
+//                .map(todoMapper::fromEntity)
+//                .collect(Collectors.toList());
+//    }
+
     public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
         return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
-                .map(todoMapper::fromEntity)
+                .map(todoList -> mapTodoListDtoFromEntity(todoList, findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId())))
                 .collect(Collectors.toList());
     }
 
+
+//    public TodoListDto findTodoListById(Long id) {
+//        return todoMapper.fromEntity(todoListRepository.findById(id)
+//                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + id)));
+//    }
+
     public TodoListDto findTodoListById(Long id) {
-        return todoMapper.fromEntity(todoListRepository.findById(id)
-                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + id)));
+        TodoList todoList = todoListRepository.findById(id)
+                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + id));
+        return mapTodoListDtoFromEntity(todoList, findTodoItemsByTodoListIdOrderByCreatedTime(id));
     }
 
     @Transactional
     public Long createTodoItem(@Valid TodoItemPostDto todoItemPostDto) {
-        TodoItem todoItem = todoItemMapper.toEntity(todoItemPostDto);
+        TodoItem todoItem = todoMapper.toEntity(todoItemPostDto);
         TodoList todoList = todoListRepository.findById(todoItemPostDto.getTodoListId())
                 .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoItemPostDto.getTodoListId()));
         todoItem.setTodoList(todoList);
@@ -95,19 +105,20 @@ public class TodoService {
         return todoItem.getId();
     }
 
-    public TodoListDto getTodoListWithTodoItemInfo(Long todoListId) {
-        if (!todoListRepository.existsById(todoListId)) {
-            throw new TodoListNotFoundException("Cannot find todoList by id: " + todoListId);
-        }
-        TodoListDto returnedTodoListDto = TodoListDto.builder()
-                .todoItemGetDto(findTodoItemsByTodoListIdOrderByCreatedTime(todoListId))
-                .build();
-        return returnedTodoListDto;
-    }
-
     public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
         return todoItemRepository.findTodoItemListByTodoListIdOrderByCreatedTime(todoListId).stream()
-                .map(todoItemMapper::fromEntity)
+                .map(todoMapper::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    private TodoListDto mapTodoListDtoFromEntity(TodoList todoList, List<TodoItemGetDto> todoItemGetDtos) {
+        return TodoListDto.builder()
+                .id(todoList.getId())
+                .projectId(todoList.getProject().getId())
+                .todoListTitle(todoList.getTodoListTitle())
+                .details(todoList.getDetails())
+                .docURL(todoList.getDocURL())
+                .todoItemGetDtos(findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId()))
+                .build();
     }
 }

@@ -16,4 +16,8 @@ import org.springframework.stereotype.Component;
 public interface TodoMapper {
 
     TodoListDto fromEntity(TodoList todoList);
+
+    TodoItem toEntity(TodoItemPostDto todoItemPostDto);
+
+    TodoItemGetDto fromEntity(TodoItem todoItem);
 }

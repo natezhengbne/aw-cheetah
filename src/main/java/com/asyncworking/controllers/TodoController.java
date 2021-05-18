@@ -42,10 +42,4 @@ public class TodoController {
         log.info("todolistId:" + todolistid);
         return ResponseEntity.ok(todoService.findTodoListById(todolistid));
     }
-
-    @GetMapping("/projects/{projectid}/todolists/{todolistid}")
-    public ResponseEntity<List<TodoItemGetDto>> getTodoItemsUnderList(@PathVariable Long todolistid) {
-        log.info("find todo item under todolist id: " + todolistid);
-        return ResponseEntity.ok(todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todolistid));
-    }
 }

@@ -9,7 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 public class TodoItemGetDto {
 
-    private String notes;
+    private Long id;
 
     private String description;
+
+    private String notes;
 }
