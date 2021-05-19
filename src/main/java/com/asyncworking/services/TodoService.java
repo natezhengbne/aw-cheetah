@@ -73,7 +73,7 @@ public class TodoService {
 
     public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
         return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
-                .map(todoList -> mapTodoListDtoFromEntity(todoList, findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId())))
+                .map(todoList -> mapTodoListDtoFromEntity(todoList))
                 .collect(Collectors.toList());
     }
 
@@ -86,7 +86,7 @@ public class TodoService {
     public TodoListDto findTodoListById(Long id) {
         TodoList todoList = todoListRepository.findById(id)
                 .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + id));
-        return mapTodoListDtoFromEntity(todoList, findTodoItemsByTodoListIdOrderByCreatedTime(id));
+        return mapTodoListDtoFromEntity(todoList);
     }
 
     @Transactional
@@ -101,7 +101,7 @@ public class TodoService {
         todoItem.setCreatedTime(OffsetDateTime.now(UTC));
         todoItem.setUpdatedTime(OffsetDateTime.now(UTC));
         todoItemRepository.save(todoItem);
-        log.info("create a item with id " + todoItem.getId());
+        log.info("created a item with id " + todoItem.getId());
         return todoItem.getId();
     }
 
@@ -111,7 +111,7 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    private TodoListDto mapTodoListDtoFromEntity(TodoList todoList, List<TodoItemGetDto> todoItemGetDtos) {
+    private TodoListDto mapTodoListDtoFromEntity(TodoList todoList) {
         return TodoListDto.builder()
                 .id(todoList.getId())
                 .projectId(todoList.getProject().getId())

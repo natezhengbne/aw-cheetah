@@ -16,7 +16,7 @@ import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 class TodoItemRepositoryTest extends DBHelper {
 
 	@BeforeEach
