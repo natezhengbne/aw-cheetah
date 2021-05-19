@@ -92,8 +92,8 @@ public class TodoService {
     @Transactional
     public Long createTodoItem(@Valid TodoItemPostDto todoItemPostDto) {
         TodoItem todoItem = todoMapper.toEntity(todoItemPostDto);
-        TodoList todoList = todoListRepository.findById(todoItemPostDto.getTodoListId())
-                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoItemPostDto.getTodoListId()));
+        TodoList todoList = todoListRepository.findById(todoItemPostDto.getTodolistId())
+                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoItemPostDto.getTodolistId()));
         todoItem.setTodoList(todoList);
         todoItem.setCompanyId(todoList.getCompanyId());
         todoItem.setProjectId(todoList.getProject().getId());

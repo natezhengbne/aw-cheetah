@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Data
 public class TodoItemPostDto {
     @NotNull(message = "TodoListId cannot be null")
-    private Long todoListId;
+    private Long todolistId;
 
     @NotNull(message = "content cannot be null")
     private String notes;
