@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
@@ -16,7 +17,7 @@ import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @SpringBootTest
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 class TodoItemRepositoryTest extends DBHelper {
 
 	@BeforeEach
@@ -25,19 +26,18 @@ class TodoItemRepositoryTest extends DBHelper {
 	}
 
 	@Test
+	@Rollback
 	public void giveTodoItemRepository_whenSavedAndRetrievesTodoItem_thenOk() {
 		Project savedProject = projectRepository.save(buildProject("AWProject"));
 		TodoList savedTodoList = todoListRepository.save(buildTodoList(savedProject, "first"));
-		TodoItem savedTodoItem = todoItemRepository.save(buildTodoItem(savedTodoList, "testnotes",
+		TodoItem savedTodoItem = todoItemRepository.save(buildTodoItem(savedTodoList, "test notes",
 				"test description"));
 
 		Assertions.assertNotNull(savedTodoItem);
 		Assertions.assertNotNull(savedTodoItem.getId());
-		Assertions.assertEquals("testnotes", savedTodoItem.getNotes());
+		Assertions.assertEquals("test notes", savedTodoItem.getNotes());
 		Assertions.assertEquals("test description", savedTodoItem.getDescription());
 	}
-
-
 
 	private Project buildProject(String name) {
 		return Project.builder()

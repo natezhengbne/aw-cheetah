@@ -16,8 +16,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -102,26 +105,20 @@ class TodoControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void createTodoItemSuccess() throws Exception {
-//        TodoListDto todoListDto = TodoListDto.builder()
-//                .id(1L)
-//                .projectId(1L)
-//                .todoListTitle("test_todo_list")
-//                .build();
-//        when(todoService.createTodoList(todoListDto))
-//                .thenReturn(1L);
-//        TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
-//                .todoListId(1L)
-//                .content("todo item content test")
-//                .build();
-//        when(todoService.createTodoItem(todoItemPostDto))
-//                .thenReturn(1L);
-//        mockMvc.perform(post("/todolist/1/todoitem")
-//                .content(objectMapper.writeValueAsString(todoItemPostDto))
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//    }
-
+    @Test
+    @Rollback
+    public void todoItemCreateSuccess() throws Exception {
+        TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
+                .todolistId(1L)
+                .notes("test1")
+                .description("test des1")
+                .build();
+        when(todoService.createTodoItem(todoItemPostDto))
+                .thenReturn(1L);
+        mockMvc.perform(post("/projects/1/todolists/1/todoitem")
+                .content(objectMapper.writeValueAsString(todoItemPostDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
 

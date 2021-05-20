@@ -33,7 +33,7 @@ public class TodoList {
     )
     private Project project;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "todoList")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "todoList", cascade = CascadeType.ALL)
     private Set<TodoItem> todoItems;
 
     @Column(name = "todo_list_title", nullable = false)

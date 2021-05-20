@@ -56,6 +56,10 @@ public class TodoServiceTest {
 
     private TodoList todoList;
 
+    private TodoItem todoItem1;
+
+    private TodoItem todoItem2;
+
     @BeforeEach
     public void setup() {
         todoService = new TodoService(
@@ -87,6 +91,10 @@ public class TodoServiceTest {
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
+
+        todoItem1 = buildTodoItem(todoList, "test1", "des1");
+        todoItem2 = buildTodoItem(todoList, "test2", "des2");
+
     }
 
     @Test
