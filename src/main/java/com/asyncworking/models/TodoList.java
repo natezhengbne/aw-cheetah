@@ -23,7 +23,6 @@ public class TodoList {
     private Long companyId;
 
     @ManyToOne(
-//            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JoinColumn(
