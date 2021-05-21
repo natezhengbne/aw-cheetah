@@ -176,7 +176,7 @@ public class TodoServiceTest {
         List<TodoItem> todoItems = new ArrayList<>();
         todoItems.add(buildTodoItem(todoList, "test1", "des1"));
         todoItems.add(buildTodoItem(todoList, "test2", "des2"));
-        when(todoItemRepository.findTodoItemListByTodoListIdOrderByCreatedTime(any()))
+        when(todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(any()))
                 .thenReturn(todoItems);
 
         List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId());
