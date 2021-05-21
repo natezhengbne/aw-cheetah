@@ -69,16 +69,18 @@ public class MessageService {
 
     public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
         List<MessageGetDto> messageGetDtoList = messageRepository.findMessageAndUserNameByProjectId(projectId).stream()
-                .map(message -> messageMapper.fromEntity(message))
+                .map(message -> mapImessageInfoToMessageGetDto(message))
                 .collect(Collectors.toList());
-//        List<MessageGetDto> messageGetDtoList = messageRepository.findMessageByProjectId(projectId).stream()
-//                .map(message -> messageMapper.fromEntity(message))
-//                .collect(Collectors.toList());
-
-
 
         return messageGetDtoList;
     }
 
+    public MessageGetDto mapImessageInfoToMessageGetDto(IMessageInfo iMessageInfo) {
+        return MessageGetDto.builder()
+                .posterUserId(iMessageInfo.getPosterUserId())
+//                .postTime(iMessageInfo.getPostTime())
+                .messageTitle(iMessageInfo.getMessageTitle())
+                .build();
+    }
 
 }

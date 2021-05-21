@@ -1,11 +1,14 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.Project;
+import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
 import com.asyncworking.repositories.ProjectRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +42,9 @@ public class TodoServiceTest {
     @Mock
     private ProjectRepository projectRepository;
 
+    @Mock
+    private TodoItemRepository todoItemRepository;
+
     private TodoService todoService;
 
     @Autowired
@@ -48,11 +54,17 @@ public class TodoServiceTest {
 
     private Project project;
 
+    private TodoList todoList;
+
+    private TodoItem todoItem1;
+
+    private TodoItem todoItem2;
+
     @BeforeEach
     public void setup() {
-
         todoService = new TodoService(
                 todoListRepository,
+                todoItemRepository,
                 projectRepository,
                 todoMapper);
 
@@ -70,6 +82,19 @@ public class TodoServiceTest {
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
+
+        todoList = TodoList.builder()
+                .id(1L)
+                .companyId(project.getCompanyId())
+                .project(project)
+                .todoListTitle("todolist title")
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+
+        todoItem1 = buildTodoItem(todoList, "test1", "des1");
+        todoItem2 = buildTodoItem(todoList, "test2", "des2");
+
     }
 
     @Test
@@ -144,5 +169,34 @@ public class TodoServiceTest {
         when(todoListRepository.findById(2L))
                 .thenThrow(new TodoListNotFoundException("Cannot find todoList by id: 2"));
         assertThrows(TodoListNotFoundException.class, () -> todoService.findTodoListById(2L));
+    }
+
+    @Test
+    public void givenTodoListId_shouldReturnListOfTodoItems_thenOk() {
+        List<TodoItem> todoItems = new ArrayList<>();
+        todoItems.add(buildTodoItem(todoList, "test1", "des1"));
+        todoItems.add(buildTodoItem(todoList, "test2", "des2"));
+        when(todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(any()))
+                .thenReturn(todoItems);
+
+        List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId());
+        assertEquals(2, todoItemGetDtos.size());
+        assertEquals("test1", todoItemGetDtos.get(0).getNotes());
+        assertEquals("des1", todoItemGetDtos.get(0).getDescription());
+        assertEquals("test2", todoItemGetDtos.get(1).getNotes());
+        assertEquals("des2", todoItemGetDtos.get(1).getDescription());
+    }
+
+    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
+        return TodoItem.builder()
+                .todoList(todoList)
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProject().getId())
+                .notes(notes)
+                .description(description)
+                .completed(Boolean.FALSE)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
     }
 }

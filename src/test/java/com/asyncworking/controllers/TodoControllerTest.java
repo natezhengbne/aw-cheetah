@@ -1,20 +1,31 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
+import com.asyncworking.models.Project;
+import com.asyncworking.models.TodoItem;
+import com.asyncworking.models.TodoList;
 import com.asyncworking.services.TodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
+import static java.time.ZoneOffset.UTC;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,6 +44,9 @@ class TodoControllerTest {
 
     @MockBean
     TodoService todoService;
+
+    @Mock
+    private Project mockProject;
 
 
     @Test
@@ -91,5 +105,20 @@ class TodoControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @Rollback
+    public void todoItemCreateSuccess() throws Exception {
+        TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
+                .todolistId(1L)
+                .notes("test1")
+                .description("test des1")
+                .build();
+        when(todoService.createTodoItem(todoItemPostDto))
+                .thenReturn(1L);
+        mockMvc.perform(post("/projects/1/todolists/1/todoitems")
+                .content(objectMapper.writeValueAsString(todoItemPostDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
 

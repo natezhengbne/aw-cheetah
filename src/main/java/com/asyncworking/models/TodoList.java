@@ -4,6 +4,7 @@ package com.asyncworking.models;
 import lombok.*;
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -11,6 +12,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "todo_list")
+@ToString(exclude = "todoItems")
 public class TodoList {
 
     @Id
@@ -21,7 +23,6 @@ public class TodoList {
     private Long companyId;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JoinColumn(
@@ -29,7 +30,10 @@ public class TodoList {
             referencedColumnName = "id",
             nullable = false
     )
-    Project project;
+    private Project project;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "todoList", cascade = CascadeType.ALL)
+    private Set<TodoItem> todoItems;
 
     @Column(name = "todo_list_title", nullable = false)
     private String todoListTitle;
