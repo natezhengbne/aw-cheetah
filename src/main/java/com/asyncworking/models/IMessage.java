@@ -26,5 +26,4 @@ public class IMessage {
     String docURL;
     OffsetDateTime postTime;
 
-
 }

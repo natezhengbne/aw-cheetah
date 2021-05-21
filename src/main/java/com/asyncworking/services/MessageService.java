@@ -31,7 +31,7 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
-    private final IMessageRepository iMessageRepository;
+//    private final IMessageRepository iMessageRepository;
 
     private final UserRepository userRepository;
 
@@ -68,7 +68,7 @@ public class MessageService {
     }
 
     public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
-        List<MessageGetDto> messageGetDtoList = iMessageRepository.findMessageAndUserNameByProjectId(projectId).stream()
+        List<MessageGetDto> messageGetDtoList = messageRepository.findMessageAndUserNameByProjectId(projectId).stream()
                 .map(message -> messageMapper.fromEntity(message))
                 .collect(Collectors.toList());
 //        List<MessageGetDto> messageGetDtoList = messageRepository.findMessageByProjectId(projectId).stream()
