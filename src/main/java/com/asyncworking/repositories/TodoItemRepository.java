@@ -12,5 +12,11 @@ import java.util.List;
 @Repository
 @EnableJpaRepositories
 public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
+
+    /**
+     * Get todoitems under certain todolist id and order by created time.
+     * @param todoListId
+     * @return List of TodoItem info
+     */
     List<TodoItem> findByTodoListIdOrderByCreatedTimeDesc(@Param("todoListId") Long todoListId);
 }
