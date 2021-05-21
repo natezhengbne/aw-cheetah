@@ -115,7 +115,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoItem(todoItemPostDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("/projects/1/todolists/1/todoitem")
+        mockMvc.perform(post("/projects/1/todolists/1/todoitems")
                 .content(objectMapper.writeValueAsString(todoItemPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
