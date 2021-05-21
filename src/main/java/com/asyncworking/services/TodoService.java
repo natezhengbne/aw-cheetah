@@ -65,23 +65,11 @@ public class TodoService {
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id:" + projectId));
     }
 
-//    public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
-//        return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
-//                .map(todoMapper::fromEntity)
-//                .collect(Collectors.toList());
-//    }
-
     public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
         return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
                 .map(todoList -> mapTodoListDtoFromEntity(todoList))
                 .collect(Collectors.toList());
     }
-
-
-//    public TodoListDto findTodoListById(Long id) {
-//        return todoMapper.fromEntity(todoListRepository.findById(id)
-//                .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + id)));
-//    }
 
     public TodoListDto findTodoListById(Long id) {
         TodoList todoList = todoListRepository.findById(id)

@@ -18,11 +18,5 @@ public class TodoItemPostDto {
 
     @Size(max = 512, message = "description can not be more than 512 characters! ")
     private String description;
-
-//    private String eventDocUrl;
-
-//    private Boolean completed;
-
-//    private LocalDate dueDate;
 }
 
