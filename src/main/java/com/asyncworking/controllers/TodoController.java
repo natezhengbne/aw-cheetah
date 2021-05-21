@@ -1,6 +1,8 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemGetDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,11 @@ public class TodoController {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
+    @PostMapping("/projects/{projectid}/todolists/{todolistid}/todoitems")
+    public ResponseEntity<Long> createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
+        return ResponseEntity.ok(todoService.createTodoItem(todoItemPostDto));
+    }
+
     @GetMapping("/projects/{projectid}/todolists")
     public ResponseEntity<List<TodoListDto>> requiredNumberTodoLists(@PathVariable Long projectid,
                                                                      @RequestParam("quantity") @NotNull Integer quantity) {
@@ -36,4 +43,3 @@ public class TodoController {
         return ResponseEntity.ok(todoService.findTodoListById(todolistid));
     }
 }
-
