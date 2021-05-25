@@ -3,14 +3,9 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
-import com.asyncworking.models.Project;
-import com.asyncworking.models.TodoItem;
-import com.asyncworking.models.TodoList;
 import com.asyncworking.services.TodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,13 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.time.OffsetDateTime;
+
 import java.util.ArrayList;
 
-import static java.time.ZoneOffset.UTC;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,10 +37,6 @@ class TodoControllerTest {
     @MockBean
     TodoService todoService;
 
-    @Mock
-    private Project mockProject;
-
-
     @Test
     public void todoListCreateSuccess() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
@@ -58,7 +46,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoList(todoListDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("/todolist")
+        mockMvc.perform(post("/projects/1/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -69,7 +57,7 @@ class TodoControllerTest {
         TodoListDto todoListDto = TodoListDto.builder()
                 .projectId(2L)
                 .build();
-        mockMvc.perform(post("/todolist")
+        mockMvc.perform(post("/projects/1/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -93,7 +81,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.findTodoListById(1L))
                 .thenReturn(mockTodoListDto);
-        mockMvc.perform(get("/projects/todolists/1"))
+        mockMvc.perform(get("/projects/1/todolists/1"))
                 .andExpect(status().isOk());
     }
 
@@ -101,7 +89,7 @@ class TodoControllerTest {
     public void throwNotFoundTodoListExceptionWhenTodoListIdIsNotExist() throws Exception {
         when(todoService.findTodoListById(2L))
                 .thenThrow(new TodoListNotFoundException(""));
-        mockMvc.perform(get("/projects/todolists/2"))
+        mockMvc.perform(get("/projects/1/todolists/2"))
                 .andExpect(status().isNotFound());
     }
 
