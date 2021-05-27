@@ -5,7 +5,6 @@ import com.asyncworking.dtos.MessagePostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
-import com.asyncworking.repositories.IMessageRepository;
 import com.asyncworking.repositories.MessageRepository;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -14,11 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +28,6 @@ public class MessageService {
     private final ProjectRepository projectRepository;
 
     private final MessageRepository messageRepository;
-
-//    private final IMessageRepository iMessageRepository;
 
     private final UserRepository userRepository;
 
@@ -68,19 +64,35 @@ public class MessageService {
     }
 
     public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
-        List<MessageGetDto> messageGetDtoList = messageRepository.findMessageAndUserNameByProjectId(projectId).stream()
-                .map(message -> mapImessageInfoToMessageGetDto(message))
-                .collect(Collectors.toList());
+        List<MessageGetDto> messageGetDtoList = new ArrayList<>();
+        List<Message> messageList = messageRepository.findByProjectId(projectId);
+        List<UserEntity> userEntityList = this.findUserEntityByMessageList(messageList);
+        MessageGetDto messageGetDto = null;
+        for (Message m : messageList){
+            for (UserEntity u :userEntityList) {
+                if (m.getPosterUserId() == u.getId()) {
+                    messageGetDto = messageMapper.fromEntity(m);
+                    messageGetDto.setPosterUser(u.getName());
+                }
+            }
+            if (messageGetDto == null){
+                throw new UserNotFoundException("cannot find user by id " + m.getPosterUserId());
+            }
+            messageGetDtoList.add(messageGetDto);
+            messageGetDto = null;
+        }
 
         return messageGetDtoList;
     }
 
-    public MessageGetDto mapImessageInfoToMessageGetDto(IMessageInfo iMessageInfo) {
-        return MessageGetDto.builder()
-                .posterUserId(iMessageInfo.getPosterUserId())
-//                .postTime(iMessageInfo.getPostTime())
-                .messageTitle(iMessageInfo.getMessageTitle())
-                .build();
+
+    public List<UserEntity> findUserEntityByMessageList(List<Message> messageList) {
+        List<Long> userId = new ArrayList<>();
+        messageList.stream().forEach(message -> userId.add(message.getPosterUserId()));
+        return userRepository.findByIdIn(userId)
+                .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + userId.toString()));
     }
+
+
 
 }

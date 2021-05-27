@@ -15,5 +15,4 @@ public interface MessageMapper {
 
     MessageGetDto fromEntity(Message message);
 
-    MessageGetDto fromEntity(IMessageInfo iMessageInfo);
 }
