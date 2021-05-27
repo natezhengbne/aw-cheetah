@@ -23,7 +23,6 @@ public class Message {
     private Long id;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JoinColumn(

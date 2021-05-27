@@ -58,7 +58,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoList(todoListDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("/todolist")
+        mockMvc.perform(post("/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -69,7 +69,7 @@ class TodoControllerTest {
         TodoListDto todoListDto = TodoListDto.builder()
                 .projectId(2L)
                 .build();
-        mockMvc.perform(post("/todolist")
+        mockMvc.perform(post("/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
