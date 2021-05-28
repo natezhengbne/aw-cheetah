@@ -79,7 +79,7 @@ public class MessageRepositoryTest extends DBHelper{
     public void shouldReturnMessageListGivenAnProjectId() {
         messageRepository.save(mockFirstMessage);
         messageRepository.save(mockSecondMessage);
-        List<Message> messageList = messageRepository.findByProjectId(1L);
+        List<Message> messageList = messageRepository.findByProjectId(mockProject.getId());
         assertEquals(2, messageList.size());
     }
 
