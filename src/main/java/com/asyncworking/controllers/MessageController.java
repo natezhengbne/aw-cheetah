@@ -30,4 +30,10 @@ public class MessageController {
         return ResponseEntity.ok(messageService.createMessage(messagePostDto));
     }
 
+    @GetMapping("/messages/{messageId}")
+    public ResponseEntity<MessageGetDto> getMessages (@PathVariable Long messageId) {
+        log.info("get messageId " + messageId);
+        return ResponseEntity.ok(messageService.findMessageById(messageId));
+    }
+
 }

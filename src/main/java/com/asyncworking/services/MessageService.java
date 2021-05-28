@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
@@ -93,6 +94,10 @@ public class MessageService {
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + userId.toString()));
     }
 
-
-
-}
+    public MessageGetDto findMessageById(Long id) {
+        MessageGetDto messageGetDto = messageMapper.fromEntity(messageRepository.findById(id)
+                .orElseThrow(() -> new MessageNotFoundException("cannot find message by id " + id)));
+        messageGetDto.setPosterUser(this.findUsernameByUserId(messageGetDto.getPosterUserId()));
+        return messageGetDto;
+    }
+ }

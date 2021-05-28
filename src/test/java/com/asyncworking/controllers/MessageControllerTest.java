@@ -98,7 +98,7 @@ public class MessageControllerTest {
                 .build());
 
         when(messageService.findMessageListByProjectId(1L)).thenReturn(messageGetDtoList);
-        mockMvc.perform(get("/projects/4/messageLists"))
+        mockMvc.perform(get("/projects/1/messageLists"))
                 .andExpect(status().isOk());
     }
 
@@ -134,4 +134,21 @@ public class MessageControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    public void getMessagesSuccess() throws Exception {
+        MessageGetDto messageGetDto = MessageGetDto.builder()
+                .id(1L)
+                .messageTitle("first message")
+                .posterUserId(1L)
+                .posterUser("FL")
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .postTime(OffsetDateTime.now(UTC))
+                .docURL("https:www.adc.com")
+                .build();
+
+        when(messageService.findMessageById(1L)).thenReturn(messageGetDto);
+        mockMvc.perform(get("/messages/1"))
+                .andExpect(status().isOk());
+    }
 }

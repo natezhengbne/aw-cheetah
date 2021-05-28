@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
@@ -15,11 +16,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import javax.transaction.Transactional;
-
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -122,7 +119,7 @@ public class MessageServiceTest {
                 .docURL("abc.com")
                 .build();
         mockMessage3 = Message.builder()
-                .id(2L)
+                .id(3L)
                 .project(mockProject)
                 .posterUserId(2L)
                 .messageTitle("second message")
@@ -135,7 +132,6 @@ public class MessageServiceTest {
 
 
     @Test
-    @Transactional
     public void shouldReturnMessageGetDtoGivenCorrectMessagePostDto() {
 
         Message mockReturnMessage = Message.builder()
@@ -149,7 +145,7 @@ public class MessageServiceTest {
                 .createdTime(currentTime)
                 .postTime(currentTime)
                 .updatedTime(currentTime)
-                .docURL("https:www.adc.com")
+                .docURL("https:www.abc.com")
                 .build();
 
         MessageGetDto mockMessageGetDto = MessageGetDto.builder()
@@ -160,7 +156,7 @@ public class MessageServiceTest {
                 .content("first message content")
                 .category(Category.ANNOUNCEMENT)
                 .postTime(currentTime)
-                .docURL("https:www.adc.com")
+                .docURL("https:www.abc.com")
                 .build();
 
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
@@ -210,6 +206,30 @@ public class MessageServiceTest {
         when(messageRepository.findByProjectId(1L)).thenReturn(List.of(mockMessage1, mockMessage2, mockMessage3));
         when(userRepository.findByIdIn(List.of(1L, 1L, 2L))).thenReturn(Optional.of(List.of(mockUserEntity1)));
         assertThrows(UserNotFoundException.class, () ->messageService.findMessageListByProjectId(1L));
+    }
+
+    @Test
+    public void shouldReturnMessageGetDtoWhenGivenId() {
+        this.mockMessage();
+        MessageGetDto mockMessageGetDto = MessageGetDto.builder()
+                .id(1L)
+                .messageTitle("first message")
+                .posterUserId(1L)
+                .posterUser("testName1")
+                .content("first message content")
+                .category(Category.ANNOUNCEMENT)
+                .postTime(currentTime)
+                .docURL("abc.com")
+                .build();
+        when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage1));
+        when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
+        assertEquals(messageService.findMessageById(1L), mockMessageGetDto);
+    }
+
+    @Test
+    public void shouldThrowMessageNotFoundExceptionWhenGivenIdNotExists() {
+        when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
+        assertThrows(MessageNotFoundException.class, () ->messageService.findMessageById(1L));
     }
 
 }

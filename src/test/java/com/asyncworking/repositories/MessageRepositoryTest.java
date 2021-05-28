@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,6 +81,14 @@ public class MessageRepositoryTest extends DBHelper{
         messageRepository.save(mockSecondMessage);
         List<Message> messageList = messageRepository.findByProjectId(1L);
         assertEquals(2, messageList.size());
+    }
+
+    @Test
+    public void shouldReturnMessageGivenAnMessageId() {
+        Message savedMockFirstMessage = messageRepository.save(mockFirstMessage);
+        Message savedMockSecondMessage = messageRepository.save(mockSecondMessage);
+        assertEquals(savedMockFirstMessage.getMessageTitle(),
+                messageRepository.findById(savedMockFirstMessage.getId()).get().getMessageTitle());
     }
 
 

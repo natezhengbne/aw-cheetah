@@ -32,7 +32,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info",
                         "/projects/todolists/{todolistid}", "/todolist", "/projects/{projectid}/todolists",
                         "/projects/{projectid}/todolists/{todolistid}/todoitems",
-                        "/projects/{projectId}/messageLists", "/messages"
+                        "/projects/{projectId}/messageLists", "/messages", "/messages/{messageId}"
 
                 )
                 .permitAll()
