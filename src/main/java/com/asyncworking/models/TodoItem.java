@@ -31,7 +31,7 @@ public class TodoItem {
     @Column(name = "event_doc_url")
     private String eventDocUrl;
 
-    @Column(name = "content")
+    @Column(name = "notes")
     private String notes;
 
     @Column(name = "doc_url")
