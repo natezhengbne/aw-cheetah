@@ -94,7 +94,7 @@ public class TodoService {
     }
 
     public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
-        return todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(todoListId).stream()
+        return todoItemRepository.findByTodoListIdOrderByCreatedTime(todoListId).stream()
                 .map(todoMapper::fromEntity)
                 .collect(Collectors.toList());
     }

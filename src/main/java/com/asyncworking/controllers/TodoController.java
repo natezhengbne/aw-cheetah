@@ -1,7 +1,6 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
@@ -16,29 +15,31 @@ import java.util.List;
 
 @Slf4j
 @Controller
+@RequestMapping("/projects/{projectid}/todolists")
 @RequiredArgsConstructor
 public class TodoController {
 
     private final TodoService todoService;
 
-    @PostMapping("/todolist")
-    public ResponseEntity<Long> todoListCreate(@Valid @RequestBody TodoListDto todoListDto) {
+    @PostMapping
+    public ResponseEntity<Long> createTodoList(@Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
-    @PostMapping("/projects/{projectid}/todolists/{todolistid}/todoitems")
-    public ResponseEntity<Long> createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
-        return ResponseEntity.ok(todoService.createTodoItem(todoItemPostDto));
+    @PostMapping("/{todolistid}/todoitems")
+    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
+        todoService.createTodoItem(todoItemPostDto);
+        return ResponseEntity.ok("create todo item success");
     }
 
-    @GetMapping("/projects/{projectid}/todolists")
-    public ResponseEntity<List<TodoListDto>> requiredNumberTodoLists(@PathVariable Long projectid,
+    @GetMapping
+    public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long projectid,
                                                                      @RequestParam("quantity") @NotNull Integer quantity) {
         return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByProjectId(projectid, quantity));
     }
 
-    @GetMapping("/projects/todolists/{todolistid}")
-    public ResponseEntity<TodoListDto> todoListFind(@PathVariable Long todolistid) {
+    @GetMapping("/{todolistid}")
+    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long todolistid) {
         log.info("todolistId:" + todolistid);
         return ResponseEntity.ok(todoService.findTodoListById(todolistid));
     }
