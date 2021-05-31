@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.Project;
@@ -52,6 +53,8 @@ public class TodoServiceTest {
 
     private TodoListDto mockTodoListDto;
 
+    private TodoItemPostDto mockTodoItemPostDto;
+
     private Project project;
 
     private TodoList todoList;
@@ -71,6 +74,12 @@ public class TodoServiceTest {
         mockTodoListDto = TodoListDto.builder()
                 .projectId(1L)
                 .todoListTitle("FirstTodoList")
+                .build();
+
+        mockTodoItemPostDto = TodoItemPostDto.builder()
+                .todolistId(1L)
+                .description("todo item post dto description test")
+                .notes("todo item post dto notes test")
                 .build();
 
         project = Project.builder()
@@ -187,6 +196,16 @@ public class TodoServiceTest {
         assertEquals("des2", todoItemGetDtos.get(1).getDescription());
     }
 
+    @Test
+    public void givenTodoLitemPostDto_shouldReturnTodoItemId_thenOk() {
+        when(todoListRepository.findById(1L))
+                .thenReturn(Optional.of(todoList));
+        ArgumentCaptor<TodoItem> todoItemCaptor = ArgumentCaptor.forClass(TodoItem.class);
+        todoService.createTodoItem(mockTodoItemPostDto);
+        verify(todoItemRepository).save(todoItemCaptor.capture());
+        assertEquals(todoList, todoItemCaptor.getValue().getTodoList());
+    }
+
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
         return TodoItem.builder()
                 .todoList(todoList)
@@ -199,4 +218,6 @@ public class TodoServiceTest {
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
     }
+
+
 }
