@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.Category;
 import com.asyncworking.services.MessageService;
@@ -116,7 +117,7 @@ public class MessageControllerTest {
     }
 
     @Test
-    public void throwNotFoundProjectExceptionWhenThisProjectNotExist() throws Exception {
+    public void throwProjectNotFoundExceptionWhenThisProjectNotExist() throws Exception {
         MessagePostDto messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
                 .projectId(1L)
@@ -150,5 +151,12 @@ public class MessageControllerTest {
         when(messageService.findMessageById(1L)).thenReturn(messageGetDto);
         mockMvc.perform(get("/messages/1"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void throwMessageNotFoundExceptionWhenMessageIdNotExist() throws Exception {
+        when(messageService.findMessageById(1L)).thenThrow(new MessageNotFoundException("this message not exist"));
+        mockMvc.perform(get("/messages/1"))
+                .andExpect(status().isNotFound());
     }
 }
