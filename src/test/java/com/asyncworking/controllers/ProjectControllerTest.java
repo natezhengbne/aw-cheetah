@@ -50,9 +50,9 @@ public class ProjectControllerTest {
     }
 
     @Test
-    public void throwBadRequestWhenProjectNameIsNull() throws Exception {
+    public void throwBadRequestWhenProjectNameIsEmpty() throws Exception {
         ProjectDto projectDto = ProjectDto.builder()
-                .name("")
+                .name("  ")
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
@@ -131,5 +131,18 @@ public class ProjectControllerTest {
                 .content(objectMapper.writeValueAsString(projectModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+    @Test
+    public void throwBadRequestIfUpdateProjectNameIsEmpty() throws Exception {
+        ProjectModificationDto projectModificationDto = ProjectModificationDto.builder()
+                .projectId(1L)
+                .name("   ")
+                .description("desc")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/projects/1/project-info")
+                .content(objectMapper.writeValueAsString(projectModificationDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
