@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,17 +13,16 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Validated
 public class ProjectDto {
 
-    @NotEmpty(message = "Project name can not be empty")
+    @NotBlank(message = "Project name can not be blank")
     @Size(max = 128, message = "Project name can not be more than 128 characters! ")
     private String name;
 
-    @NotNull(message = "OwnerId can not be empty")
+    @NotNull(message = "ownerId can not be null")
     private Long ownerId;
 
-    @NotNull(message = "companyId can not be empty")
+    @NotNull(message = "companyId can not be null")
     private Long companyId;
 
 }

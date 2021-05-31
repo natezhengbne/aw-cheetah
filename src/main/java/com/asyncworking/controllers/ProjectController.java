@@ -40,8 +40,8 @@ public class ProjectController {
 
 
     @PutMapping("/{projectId}/project-info")
-    public ResponseEntity updateProjectProfile(@Valid @PathVariable("projectId") Long projectId,
-                                                      @RequestBody ProjectModificationDto projectModificationDto) {
+    public ResponseEntity updateProjectProfile(@PathVariable("projectId") Long projectId,
+                                               @Valid @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);
         return ResponseEntity.ok("success");
     }
