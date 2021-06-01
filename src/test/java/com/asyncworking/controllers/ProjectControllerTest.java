@@ -145,4 +145,18 @@ public class ProjectControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturnOkIfGetMembersByProjectId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/projects/1/members")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfCreateMembersByProjectIdAndUserId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/projects/1/members")
+                .param("userIds", "1,2"))
+                .andExpect(status().isOk());
+    }
 }

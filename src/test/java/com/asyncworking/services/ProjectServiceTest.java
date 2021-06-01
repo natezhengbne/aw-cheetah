@@ -3,6 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.*;
@@ -26,8 +27,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -167,6 +167,18 @@ public class ProjectServiceTest {
                 new EmployeeNotFoundException("Can not find member by project id: 1L")
         );
         assertThrows(EmployeeNotFoundException.class, () -> projectService.findAllMembersByProjectId(1L));
+    }
+
+    @Test
+    @Transactional
+    public void shouldUpdateProjectInfoSuccess() {
+        ProjectModificationDto mockProjectModificationDto = ProjectModificationDto.builder()
+                .projectId(1L)
+                .name("name1")
+                .description("mock dto for test")
+                .build();
+        projectService.updateProjectInfo(mockProjectModificationDto);
+        verify(projectRepository).updateProjectInfo(any(), any(), any(), any());
     }
 
     @Test
