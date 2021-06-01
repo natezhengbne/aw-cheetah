@@ -76,7 +76,7 @@ public class UserService {
     }
 
     public String generateVerifyLink(String email) {
-        String verifyLink = frontEndUrlConfig.getFrontEndUrlDevelop() + "/verifylink/verify?code=" + this.generateJws(email);
+        String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
@@ -93,7 +93,7 @@ public class UserService {
     }
 
     public String generateInvitationLink(Long companyId, String email, String name, String title) {
-        String invitationLink = frontEndUrlConfig.getFrontEndUrlDevelop()
+        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
                 + "/invitations/register?code=" + this.encodeInvitation(companyId, email, name, title);
         log.info("invitationLink: " + invitationLink);
         return invitationLink;
@@ -162,5 +162,10 @@ public class UserService {
 
     public boolean ifUnverified(String email) {
         return userRepository.findUnverifiedStatusByEmail(email).isPresent();
+    }
+
+    public UserEntity fetchUserEntityById(Long userId) {
+        return userRepository.findUserEntityById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Can not find user by userId:" + userId));
     }
 }

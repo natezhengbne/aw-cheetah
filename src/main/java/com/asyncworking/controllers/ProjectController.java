@@ -54,12 +54,11 @@ public class ProjectController {
         return ResponseEntity.ok(members);
     }
 
-    //TODO unit test
     @PostMapping("/{projectId}/members")
     public ResponseEntity<?> createMembersByProjectIdAndUserId(@PathVariable Long projectId,
                                                                @RequestParam("userIds") @NotNull List<Long> userIds) {
        log.info("projectID: {}, userIds: {}", projectId, userIds);
-       projectService.createProjectUser(projectId, userIds);
+       projectService.createProjectUsers(projectId, userIds);
        return ResponseEntity.ok("success");
     }
 }
