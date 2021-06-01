@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "message" (
     "poster_user_id" BIGSERIAL,
     "category" VARCHAR(255),
     "message_title" VARCHAR(255) NOT NULL,
-    "doc_url" VARCHAR(255) NOT NULL,
+    "doc_url" VARCHAR(512),
     "content" VARCHAR(10000),
     "post_time" TIMESTAMP WITH TIME ZONE,
     "created_time" TIMESTAMP WITH TIME ZONE NOT NULL,
