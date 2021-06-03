@@ -17,7 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +51,7 @@ public class MessageService {
         messageGetDto.setPosterUser(this.findUsernameByUserId(messagePostDto.getPosterUserId()));
         return messageGetDto;
     }
-
+//
 
     private Project fetchProjectById(Long projectId) {
         return projectRepository
@@ -68,20 +71,17 @@ public class MessageService {
         List<MessageGetDto> messageGetDtoList = new ArrayList<>();
         List<Message> messageList = messageRepository.findByProjectId(projectId);
         List<UserEntity> userEntityList = this.findUserEntityByMessageList(messageList);
+        Map<Long, String> userIdNameMap = userEntityList.stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getName));
         MessageGetDto messageGetDto = null;
-        for (Message m : messageList){
-            for (UserEntity u :userEntityList) {
-                if (m.getPosterUserId().equals(u.getId())) {
-                    messageGetDto = messageMapper.fromEntity(m);
-                    messageGetDto.setPosterUser(u.getName());
-                }
-            }
-            if (messageGetDto == null){
+        for (Message m : messageList) {
+            if (!userIdNameMap.containsKey(m.getPosterUserId())) {
                 throw new UserNotFoundException("cannot find user by id " + m.getPosterUserId());
             }
+            messageGetDto = messageMapper.fromEntity(m);
+            messageGetDto.setPosterUser(userIdNameMap.get(m.getPosterUserId()));
             messageGetDtoList.add(messageGetDto);
-            messageGetDto = null;
         }
+
 
         return messageGetDtoList;
     }
@@ -89,7 +89,7 @@ public class MessageService {
 
     public List<UserEntity> findUserEntityByMessageList(List<Message> messageList) {
         List<Long> userId = new ArrayList<>();
-        messageList.forEach(message -> userId.add(message.getPosterUserId()));
+        messageList.stream().forEach(message -> userId.add(message.getPosterUserId()));
         return userRepository.findByIdIn(userId)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + userId.toString()));
     }
