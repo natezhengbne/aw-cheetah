@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.services.TodoService;
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 import java.util.ArrayList;
@@ -63,7 +65,6 @@ class TodoControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void returnTodoListDtoLists() throws Exception {
         when(todoService.findRequiredNumberTodoListsByProjectId(1L, 0))
@@ -106,6 +107,17 @@ class TodoControllerTest {
         mockMvc.perform(post("/projects/1/todolists/1/todoitems")
                 .content(objectMapper.writeValueAsString(todoItemPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfGetTodoItemPageInfoSuccessful() throws Exception {
+        TodoItemPageDto todoItemPageDto = TodoItemPageDto.builder().build();
+        when(todoService.fetchTodoItemPageInfoByIds(1L, 1L))
+                .thenReturn(todoItemPageDto);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/projects/1/todoitems/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 }

@@ -2,7 +2,9 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
+import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
+import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
@@ -26,8 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -174,8 +175,8 @@ public class TodoServiceTest {
     @Test
     public void givenTodoListId_shouldReturnListOfTodoItems_thenOk() {
         List<TodoItem> todoItems = new ArrayList<>();
-        todoItems.add(buildTodoItem(todoList, "test1", "des1"));
-        todoItems.add(buildTodoItem(todoList, "test2", "des2"));
+        todoItems.add(todoItem1);
+        todoItems.add(todoItem2);
         when(todoItemRepository.findByTodoListIdOrderByCreatedTime(any()))
                 .thenReturn(todoItems);
 
@@ -199,4 +200,31 @@ public class TodoServiceTest {
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
     }
+
+    @Test
+    public void shouldReturnTodoItemPageDtoByGivenTodoitemIdAndProjectId() {
+        when(todoItemRepository.findById(any()))
+                .thenReturn(Optional.of(todoItem1));
+        when(projectRepository.findById(any()))
+                .thenReturn(Optional.of(project));
+
+        TodoItemPageDto returnedTodoItemPageDto = todoService.
+                fetchTodoItemPageInfoByIds(project.getId(), todoItem1.getId());
+        assertEquals(project.getName(), returnedTodoItemPageDto.getParentProjectName());
+    }
+
+    @Test
+    public void throwTodoItemNotFoundExceptionWhenTodoitemIdIsNotExist() {
+        when(todoItemRepository.findById(any()))
+                .thenReturn(Optional.empty());
+        Exception exception = assertThrows(TodoItemNotFoundException.class,
+                () -> todoService.fetchTodoItemPageInfoByIds(2L, 2L));
+
+        String expectedMessage = "Cannot find TodoItem by id: 2";
+
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
 }
