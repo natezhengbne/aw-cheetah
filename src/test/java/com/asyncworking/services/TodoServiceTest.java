@@ -210,7 +210,7 @@ public class TodoServiceTest {
 
         TodoItemPageDto returnedTodoItemPageDto = todoService.
                 fetchTodoItemPageInfoByIds(project.getId(), todoItem1.getId());
-        assertEquals(project.getName(), returnedTodoItemPageDto.getParentProjectName());
+        assertEquals(project.getName(), returnedTodoItemPageDto.getProjectName());
     }
 
     @Test
