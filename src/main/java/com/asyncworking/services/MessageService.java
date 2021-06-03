@@ -71,7 +71,7 @@ public class MessageService {
         MessageGetDto messageGetDto = null;
         for (Message m : messageList){
             for (UserEntity u :userEntityList) {
-                if (m.getPosterUserId() == u.getId()) {
+                if (m.getPosterUserId().equals(u.getId())) {
                     messageGetDto = messageMapper.fromEntity(m);
                     messageGetDto.setPosterUser(u.getName());
                 }
@@ -89,7 +89,7 @@ public class MessageService {
 
     public List<UserEntity> findUserEntityByMessageList(List<Message> messageList) {
         List<Long> userId = new ArrayList<>();
-        messageList.stream().forEach(message -> userId.add(message.getPosterUserId()));
+        messageList.forEach(message -> userId.add(message.getPosterUserId()));
         return userRepository.findByIdIn(userId)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + userId.toString()));
     }

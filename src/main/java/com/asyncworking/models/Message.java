@@ -32,10 +32,8 @@ public class Message {
     )
     Project project;
 
-
     @Column(name = "company_id", nullable = false)
     private Long companyId;
-
 
     @Column(name = "poster_user_id")
     private Long posterUserId;
@@ -61,5 +59,4 @@ public class Message {
 
     @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
-
 }

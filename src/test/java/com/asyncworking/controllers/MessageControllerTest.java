@@ -1,6 +1,5 @@
 package com.asyncworking.controllers;
 
-
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
 import com.asyncworking.exceptions.MessageNotFoundException;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +63,7 @@ public class MessageControllerTest {
                 .build();
 
         when(messageService.createMessage(messagePostDto)).thenReturn(mockMessageGetDto);
-        mockMvc.perform(post("/messages")
+        mockMvc.perform(post("/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -110,7 +108,7 @@ public class MessageControllerTest {
                 .category(Category.ANNOUNCEMENT)
                 .build();
 
-        mockMvc.perform(post("/messages")
+        mockMvc.perform(post("/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -129,7 +127,7 @@ public class MessageControllerTest {
                 .build();
         when(messageService.createMessage(messagePostDto))
                 .thenThrow(new ProjectNotFoundException("this project not exist"));
-        mockMvc.perform(post("/messages")
+        mockMvc.perform(post("/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -149,14 +147,14 @@ public class MessageControllerTest {
                 .build();
 
         when(messageService.findMessageById(1L)).thenReturn(messageGetDto);
-        mockMvc.perform(get("/messages/1"))
+        mockMvc.perform(get("/projects/1/messages/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void throwMessageNotFoundExceptionWhenMessageIdNotExist() throws Exception {
         when(messageService.findMessageById(1L)).thenThrow(new MessageNotFoundException("this message not exist"));
-        mockMvc.perform(get("/messages/1"))
+        mockMvc.perform(get("/projects/1/messages/1"))
                 .andExpect(status().isNotFound());
     }
 }
