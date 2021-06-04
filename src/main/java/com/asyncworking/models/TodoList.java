@@ -42,7 +42,7 @@ public class TodoList {
     private String details;
 
     @Column(name = "doc_url")
-    private String docURL;
+    private String docUrl;
 
     @Column(name = "created_time", nullable = false)
     private OffsetDateTime createdTime;

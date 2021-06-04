@@ -80,7 +80,7 @@ class TodoControllerTest {
                 .projectId(1L)
                 .todoListTitle("ha")
                 .build();
-        when(todoService.findTodoListById(1L))
+        when(todoService.fetchSingleTodoList(1L))
                 .thenReturn(mockTodoListDto);
         mockMvc.perform(get("/projects/1/todolists/1"))
                 .andExpect(status().isOk());
@@ -88,7 +88,7 @@ class TodoControllerTest {
 
     @Test
     public void throwNotFoundTodoListExceptionWhenTodoListIdIsNotExist() throws Exception {
-        when(todoService.findTodoListById(2L))
+        when(todoService.fetchSingleTodoList(2L))
                 .thenThrow(new TodoListNotFoundException(""));
         mockMvc.perform(get("/projects/1/todolists/2"))
                 .andExpect(status().isNotFound());

@@ -31,7 +31,7 @@ public class TodoListDto {
     @Size(max = 2048, message = "Details can not be more than 2048 characters! ")
     private String details;
 
-    private String docURL;
+    private String docUrl;
 
     List<TodoItemGetDto> todoItemGetDtos;
 }

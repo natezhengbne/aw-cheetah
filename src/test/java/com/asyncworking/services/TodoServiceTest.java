@@ -162,14 +162,14 @@ public class TodoServiceTest {
                 .build();
 
         when(todoListRepository.findById(any())).thenReturn(Optional.of(mockTodoList));
-        assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.findTodoListById(mockTodoList.getId()).getTodoListTitle());
+        assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.fetchSingleTodoList(mockTodoList.getId()).getTodoListTitle());
     }
 
     @Test
     public void throwTodoListNotFoundExceptionWhenIdIsNotExist() {
         when(todoListRepository.findById(2L))
                 .thenThrow(new TodoListNotFoundException("Cannot find todoList by id: 2"));
-        assertThrows(TodoListNotFoundException.class, () -> todoService.findTodoListById(2L));
+        assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(2L));
     }
 
     @Test

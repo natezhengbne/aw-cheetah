@@ -34,21 +34,20 @@ public class TodoController {
     }
 
     @GetMapping("/todolists/{todolistId}")
-    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long todolistId, @PathVariable Long projectId) {
+    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long todolistId) {
         log.info("todolistId:" + todolistId);
-        return ResponseEntity.ok(todoService.findTodoListById(todolistId));
+        return ResponseEntity.ok(todoService.fetchSingleTodoList(todolistId));
     }
 
 
     @PostMapping("/todolists/{todolistId}/todoitems")
-    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto, @PathVariable Long projectId) {
+    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
         todoService.createTodoItem(todoItemPostDto);
         return ResponseEntity.ok("create todo item success");
     }
 
     @GetMapping("/todoitems/{todoitemId}")
-    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long projectId,
-                                                                               @PathVariable Long todoitemId) {
+    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long projectId, @PathVariable Long todoitemId) {
         log.info("todoitemId:" + todoitemId);
         return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(projectId, todoitemId));
     }
