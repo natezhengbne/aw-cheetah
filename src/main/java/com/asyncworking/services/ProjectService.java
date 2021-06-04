@@ -51,11 +51,9 @@ public class ProjectService {
         }
 
     public List<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
-        return Optional.of(
-                projectRepository.findProjectsByCompanyId(companyId).stream()
+        return projectRepository.findProjectsByCompanyId(companyId).stream()
                         .map(projectMapper::mapProjectToProjectInfoDto)
-                        .collect(Collectors.toList()))
-                .orElseThrow(() -> new ProjectNotFoundException("Can not find project by companyId:" + companyId));
+                        .collect(Collectors.toList());
     }
 
     @Transactional

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -157,14 +158,9 @@ public class CompanyService {
 	public List<EmployeeGetDto> findNonMemberEmployees(Long companyId, Long projectId) {
 		log.info("Project ID: {}", projectId);
 		log.info("Company ID: {}", companyId);
-		List<IEmployeeInfo> employees = userRepository.findNonMembersEmployeesByCompanyAndProjectId(companyId, projectId);
-		if (employees.isEmpty()) {
-			throw new EmployeeNotFoundException("Can not find employee by company id:" + companyId);
-		}
-		List<EmployeeGetDto> nonMemberEmployeesList = new ArrayList<>();
-		for (IEmployeeInfo iEmployeeInfo: employees) {
-			nonMemberEmployeesList.add(employeeMapper.mapEntityToDto(iEmployeeInfo));
-		}
-		return nonMemberEmployeesList;
+		//how to verify the projectId and companyId if they are both invalid the result is always empty arrays
+		return userRepository.findNonMembersEmployeesByCompanyAndProjectId(companyId, projectId).stream()
+				.map(employeeMapper::mapEntityToDto)
+				.collect(Collectors.toList());
 	}
 }
