@@ -16,6 +16,8 @@ public class TodoItemPostDto {
     @NotNull(message = "content cannot be null")
     private String notes;
 
+    private String originNotes;
+
     @Size(max = 512, message = "description can not be more than 512 characters! ")
     private String description;
 }
