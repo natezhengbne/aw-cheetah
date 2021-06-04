@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
@@ -169,5 +170,23 @@ public class CompanyServiceTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void shouldReturnAvailableEmployeesByCompanyIdAndProjectId() {
+        EmployeeGetDto mockEmployeeGetDto = EmployeeGetDto.builder()
+                .title("dev")
+                .name("name1")
+                .email("1@gmail.com")
+                .build();
+        IEmployeeInfo mockIEmployeeInfo = IEmployeeInfoImpl.builder()
+                .name("name1")
+                .title("dev")
+                .email("1@gmail.com")
+                .build();
+        when(userRepository.findAvailableEmployeesByCompanyAndProjectId(1L, 1L))
+                .thenReturn(List.of(mockIEmployeeInfo));
+        List<EmployeeGetDto> result = companyService.findAvailableEmployees(1L, 1L);
+        assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
     }
 }
