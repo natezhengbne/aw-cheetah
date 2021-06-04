@@ -201,7 +201,7 @@ public class ProjectServiceTest {
         when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
         when(userRepository.findAllById(any())).thenReturn(userEntities);
         ArgumentCaptor<List<ProjectUser>> projectUsersCaptor = ArgumentCaptor.forClass(List.class);
-        projectService.createProjectUsers(mockProject.getId(), ids);
+        projectService.addProjectUsers(mockProject.getId(), ids);
         verify(projectUserRepository).saveAll(projectUsersCaptor.capture());
         assertEquals(mockUserEntity1.getId(), projectUsersCaptor.getValue().get(0).getUserEntity().getId());
     }

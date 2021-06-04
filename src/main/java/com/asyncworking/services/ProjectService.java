@@ -63,12 +63,12 @@ public class ProjectService {
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
 
         projectRepository.save(newProject);
-        ProjectUser newProjectUser = createProjectUsers(selectedUserEntity, newProject);
+        ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
         return newProject.getId();
     }
 
-    private ProjectUser createProjectUsers(UserEntity userEntity, Project project) {
+    private ProjectUser addProjectUsers(UserEntity userEntity, Project project) {
         return ProjectUser.builder()
                 .id(new ProjectUserId(userEntity.getId(), project.getId()))
                 .attended(true)
@@ -98,11 +98,11 @@ public class ProjectService {
     }
 
     @Transactional
-    public void createProjectUsers(Long projectId, List<Long> userIds) {
+    public void addProjectUsers(Long projectId, List<Long> userIds) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
         List <ProjectUser> projectUsers = userRepository.findAllById(userIds).stream()
-                .map(user -> createProjectUsers(user, project))
+                .map(user -> addProjectUsers(user, project))
                 .collect(Collectors.toList());
         projectUserRepository.saveAll(projectUsers);
     }

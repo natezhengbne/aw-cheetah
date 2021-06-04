@@ -58,12 +58,12 @@ public class CompanyController {
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/{companyId}/nonmembers")
-    public ResponseEntity getNonMemberEmployees(@PathVariable Long companyId,
+    @GetMapping("/{companyId}/available-employees")
+    public ResponseEntity getAvailableEmployees(@PathVariable Long companyId,
                                                 @RequestParam("projectId") @NotNull Long projectId) {
         log.info("Project ID: {}", projectId);
         log.info("Company ID: {}", companyId);
-        List<EmployeeGetDto> employees = companyService.findNonMemberEmployees(companyId, projectId);
+        List<EmployeeGetDto> employees = companyService.findAvailableEmployees(companyId, projectId);
         return ResponseEntity.ok(employees);
     }
 }

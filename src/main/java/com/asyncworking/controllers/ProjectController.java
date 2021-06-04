@@ -55,10 +55,10 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/members")
-    public ResponseEntity<?> createMembersByProjectIdAndUserId(@PathVariable Long projectId,
-                                                               @RequestParam("userIds") @NotNull List<Long> userIds) {
+    public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,
+                                                            @RequestParam("userIds") @NotNull List<Long> userIds) {
        log.info("projectID: {}, userIds: {}", projectId, userIds);
-       projectService.createProjectUsers(projectId, userIds);
+       projectService.addProjectUsers(projectId, userIds);
        return ResponseEntity.ok("success");
     }
 }

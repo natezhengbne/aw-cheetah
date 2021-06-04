@@ -155,11 +155,11 @@ public class CompanyService {
 		return employeeGetDtoList;
 	}
 
-	public List<EmployeeGetDto> findNonMemberEmployees(Long companyId, Long projectId) {
+	public List<EmployeeGetDto> findAvailableEmployees(Long companyId, Long projectId) {
 		log.info("Project ID: {}", projectId);
 		log.info("Company ID: {}", companyId);
 		//how to verify the projectId and companyId if they are both invalid the result is always empty arrays
-		return userRepository.findNonMembersEmployeesByCompanyAndProjectId(companyId, projectId).stream()
+		return userRepository.findAvailableEmployeesByCompanyAndProjectId(companyId, projectId).stream()
 				.map(employeeMapper::mapEntityToDto)
 				.collect(Collectors.toList());
 	}

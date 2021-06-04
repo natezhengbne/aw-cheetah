@@ -65,7 +65,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     "AND cu.company_id = :companyId) AS userinfo " +
                     "LEFT JOIN awcheetah.user_info u ON u.id = userinfo.user_id AND u.status = 'ACTIVATED' " +
                     "ORDER BY u.name;")
-    List<IEmployeeInfo> findNonMembersEmployeesByCompanyAndProjectId(@Param("companyId") Long companyId,
+    List<IEmployeeInfo> findAvailableEmployeesByCompanyAndProjectId(@Param("companyId") Long companyId,
                                                                     @Param("projectId") Long projectId);
 
     @Query("select e from Employee e join fetch e.userEntity u where u.email = :email")
