@@ -89,12 +89,9 @@ public class ProjectService {
     }
 
     public List<EmployeeGetDto> findAllMembersByProjectId(Long projectId) {
-        return Optional.of(
-                userRepository.findAllMembersByProjectId(projectId).stream()
+        return userRepository.findAllMembersByProjectId(projectId).stream()
                         .map(employeeMapper::mapEntityToDto)
-                        .collect(Collectors.toList()))
-                .orElseThrow(()-> new EmployeeNotFoundException("Can not find member by project id:" + projectId));
-
+                        .collect(Collectors.toList());
     }
 
     @Transactional
