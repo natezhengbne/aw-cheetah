@@ -12,13 +12,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Component
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TodoMapper {
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "companyId", source = "project.companyId")
     @Mapping(target = "project", source = "project")
@@ -29,27 +29,35 @@ public interface TodoMapper {
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
     TodoList toTodoListEntity(TodoListDto todoListDto, Project project);
 
-    @Mapping(target = "projectId", expression = "java(getProjectId(todoList))")
+    @Mapping(target = "projectId", expression = "java(getProject(todoList).getId())")
     @Mapping(target = "todoItemGetDtos", source = "todoItemGetDtoList")
     TodoListDto fromTodoListEntity(TodoList todoList, List<TodoItemGetDto> todoItemGetDtoList);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "todoList", source = "todoList")
     @Mapping(target = "companyId", source = "todoList.companyId")
-    @Mapping(target = "projectId", expression = "java(getProjectId(todoList))")
+    @Mapping(target = "projectId", expression = "java(getProject(todoList).getId())")
     @Mapping(target = "completed", expression = "java(Boolean.FALSE)")
     @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
     TodoItem toTodoItemEntity(TodoItemPostDto todoItemPostDto, TodoList todoList);
 
+    @Mapping(target = "todoItemId", source = "id")
     TodoItemGetDto fromTodoItemEntity(TodoItem todoItem);
 
-    default Long getTodoListId(TodoItem todoItem) {
-        return todoItem.getTodoList().getId();
+    @Mapping(target = "todoListId", expression = "java(getTodoList(todoItem).getId())")
+    @Mapping(target = "todoListTitle", expression = "java(getTodoList(todoItem).getTodoListTitle())")
+    @Mapping(target = "projectId", expression = "java(project.getId())")
+    @Mapping(target = "projectName", expression = "java(project.getName())")
+    @Mapping(target = "todoItemGetDto", expression = "java(fromTodoItemEntity(todoItem))")
+    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project);
+
+    default TodoList getTodoList(@NotNull TodoItem todoItem) {
+        return todoItem.getTodoList();
     }
 
-    default Long getProjectId(TodoList todoList) {
-        return todoList.getProject().getId();
+    default Project getProject(@NotNull TodoList todoList) {
+        return todoList.getProject();
     }
 
     default OffsetDateTime getCurrentTime() {

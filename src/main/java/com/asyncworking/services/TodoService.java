@@ -69,15 +69,9 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long projectId, Long todoItemId) {
-        TodoItem todoItem = findTodoItemById(todoItemId);
-        return TodoItemPageDto.builder()
-                .projectId(projectId)
-                .projectName(findProjectById(projectId).getName())
-                .todoListId(todoItem.getTodoList().getId())
-                .todoListTitle(todoItem.getTodoList().getTodoListTitle())
-                .todoItemGetDto(todoMapper.fromTodoItemEntity(todoItem))
-                .build();
+    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long todoItemId) {
+        return todoMapper.fromTodoItemToTodoItemPageDto(findTodoItemById(todoItemId),
+                findProjectById(findTodoItemById(todoItemId).getProjectId()));
     }
 
     private Project findProjectById(Long projectId) {

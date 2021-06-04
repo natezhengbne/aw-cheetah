@@ -209,7 +209,7 @@ public class TodoServiceTest {
                 .thenReturn(Optional.of(project));
 
         TodoItemPageDto returnedTodoItemPageDto = todoService.
-                fetchTodoItemPageInfoByIds(project.getId(), todoItem1.getId());
+                fetchTodoItemPageInfoByIds(todoItem1.getId());
         assertEquals(project.getName(), returnedTodoItemPageDto.getProjectName());
     }
 
@@ -218,7 +218,7 @@ public class TodoServiceTest {
         when(todoItemRepository.findById(any()))
                 .thenReturn(Optional.empty());
         Exception exception = assertThrows(TodoItemNotFoundException.class,
-                () -> todoService.fetchTodoItemPageInfoByIds(2L, 2L));
+                () -> todoService.fetchTodoItemPageInfoByIds(2L));
 
         String expectedMessage = "Cannot find TodoItem by id: 2";
 
