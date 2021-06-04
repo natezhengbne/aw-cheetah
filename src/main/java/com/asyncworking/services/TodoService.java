@@ -55,6 +55,7 @@ public class TodoService {
                 .project(project)
                 .todoListTitle(todoListDto.getTodoListTitle())
                 .details(todoListDto.getDetails())
+                .originDetails(todoListDto.getOriginDetails())
                 .docURL(todoListDto.getDocURL())
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
@@ -95,6 +96,7 @@ public class TodoService {
         return todoItem.getId();
     }
 
+
     public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
         return todoItemRepository.findByTodoListIdOrderByCreatedTime(todoListId).stream()
                 .map(todoMapper::fromEntity)
@@ -107,6 +109,7 @@ public class TodoService {
                 .projectId(todoList.getProject().getId())
                 .todoListTitle(todoList.getTodoListTitle())
                 .details(todoList.getDetails())
+                .originDetails(todoList.getOriginDetails())
                 .docURL(todoList.getDocURL())
                 .todoItemGetDtos(findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId()))
                 .build();
