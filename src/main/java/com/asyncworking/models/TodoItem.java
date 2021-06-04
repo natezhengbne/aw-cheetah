@@ -34,6 +34,9 @@ public class TodoItem {
     @Column(name = "notes")
     private String notes;
 
+    @Column(name = "origin_notes")
+    private String originNotes;
+
     @Column(name = "doc_url")
     private String docUrl;
 

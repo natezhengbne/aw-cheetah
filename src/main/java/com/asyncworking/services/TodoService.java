@@ -1,9 +1,11 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
+import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
@@ -53,6 +55,7 @@ public class TodoService {
                 .project(project)
                 .todoListTitle(todoListDto.getTodoListTitle())
                 .details(todoListDto.getDetails())
+                .originDetails(todoListDto.getOriginDetails())
                 .docURL(todoListDto.getDocURL())
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
@@ -67,7 +70,7 @@ public class TodoService {
 
     public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
         return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
-                .map(todoList -> mapTodoListDtoFromEntity(todoList))
+                .map(this::mapTodoListDtoFromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -93,6 +96,7 @@ public class TodoService {
         return todoItem.getId();
     }
 
+
     public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
         return todoItemRepository.findByTodoListIdOrderByCreatedTime(todoListId).stream()
                 .map(todoMapper::fromEntity)
@@ -105,8 +109,26 @@ public class TodoService {
                 .projectId(todoList.getProject().getId())
                 .todoListTitle(todoList.getTodoListTitle())
                 .details(todoList.getDetails())
+                .originDetails(todoList.getOriginDetails())
                 .docURL(todoList.getDocURL())
                 .todoItemGetDtos(findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId()))
                 .build();
+    }
+
+    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long projectId, Long todoItemId) {
+        TodoItem todoItem = fetchTodoItemById(todoItemId);
+        return TodoItemPageDto.builder()
+                .projectId(projectId)
+                .projectName(fetchProjectById(projectId).getName())
+                .todoListId(todoItem.getTodoList().getId())
+                .todoListTitle(todoItem.getTodoList().getTodoListTitle())
+                .todoItemGetDto(todoMapper.fromEntity(todoItem))
+                .build();
+    }
+
+    private TodoItem fetchTodoItemById(Long todoItemId) {
+        return todoItemRepository
+                .findById(todoItemId)
+                .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
     }
 }

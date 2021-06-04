@@ -94,8 +94,4 @@ public class UserController {
         }
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
-
-
-
-
 }

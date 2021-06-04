@@ -41,6 +41,9 @@ public class TodoList {
     @Column(name = "todo_list_details")
     private String details;
 
+    @Column(name = "origin_notes")
+    private String originDetails;
+
     @Column(name = "doc_url")
     private String docURL;
 
