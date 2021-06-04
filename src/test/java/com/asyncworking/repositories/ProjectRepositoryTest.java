@@ -50,7 +50,7 @@ public class ProjectRepositoryTest extends DBHelper {
     }
 
     @Test
-    public void shouldGetIProjectInfoSuccessfullyGivenProjectId() {
+    public void shouldGetProjectSuccessfullyGivenProjectId() {
         saveMockData();
         Project mockIDProject = Project.builder()
                 .name("IDProject")
