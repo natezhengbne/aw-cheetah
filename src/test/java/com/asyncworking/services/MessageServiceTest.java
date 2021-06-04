@@ -2,10 +2,12 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
+import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.MessageRepository;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -37,6 +39,9 @@ public class MessageServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private CompanyRepository companyRepository;
+
     @Autowired
     private MessageMapper messageMapper;
 
@@ -64,7 +69,8 @@ public class MessageServiceTest {
                 messageMapper,
                 projectRepository,
                 messageRepository,
-                userRepository
+                userRepository,
+                companyRepository
         );
 
         messagePostDto = MessagePostDto.builder()
@@ -158,7 +164,8 @@ public class MessageServiceTest {
                 .postTime(currentTime)
                 .docURL("https:www.abc.com")
                 .build();
-
+        when(companyRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.existsById(1L)).thenReturn(true);
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
@@ -168,9 +175,26 @@ public class MessageServiceTest {
 
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenGivenMessagePostDtoWhichProjectIdIsNotExist() {
-        when(projectRepository.findById(3L))
-                .thenThrow(new ProjectNotFoundException("Cannot find project by id:2"));
+        when(companyRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(projectRepository.findById(1L))
+                .thenThrow(new ProjectNotFoundException("Cannot find project by id:1"));
+
         assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(messagePostDto));
+    }
+
+    @Test
+    public void shouldThrowCompanyNotFoundExceptionWhenGivenMessagePostDtoWhichCompanyIdIsNotExist() {
+        when(companyRepository.existsById(1L)).thenReturn(false);
+        when(userRepository.existsById(1L)).thenReturn(true);
+        assertThrows(CompanyNotFoundException.class, () -> messageService.createMessage(messagePostDto));
+    }
+
+    @Test
+    public void shouldThrowUserNotFoundExceptionWhenGivenMessagePostDtoWhichUserIdIsNotExist() {
+        when(companyRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.existsById(1L)).thenReturn(false);
+        assertThrows(UserNotFoundException.class, () -> messageService.createMessage(messagePostDto));
     }
 
     @Test
@@ -200,13 +224,7 @@ public class MessageServiceTest {
         assertEquals(3, mockMessageGetDtoList.size());
     }
 
-    @Test
-    public void shouldThrowUserNotFoundExceptionWhenGivenProjectIdWhichMessagePosterUserIdNotFetchListOfUserEntity() {
-        this.mockMessage();
-        when(messageRepository.findByProjectId(1L)).thenReturn(List.of(mockMessage1, mockMessage2, mockMessage3));
-        when(userRepository.findByIdIn(List.of(1L, 1L, 2L))).thenReturn(Optional.of(List.of(mockUserEntity1)));
-        assertThrows(UserNotFoundException.class, () ->messageService.findMessageListByProjectId(1L));
-    }
+
 
     @Test
     public void shouldReturnMessageGetDtoWhenGivenId() {

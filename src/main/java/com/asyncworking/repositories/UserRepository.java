@@ -53,5 +53,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<List<UserEntity>> findByIdIn(List<Long> id);
 
-
+    boolean existsById(Long id);
 }

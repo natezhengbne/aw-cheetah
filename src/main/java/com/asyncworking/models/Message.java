@@ -35,7 +35,7 @@ public class Message {
     @Column(name = "company_id", nullable = false)
     private Long companyId;
 
-    @Column(name = "poster_user_id")
+    @Column(name = "poster_user_id", nullable = false)
     private Long posterUserId;
 
     @Column
