@@ -20,9 +20,9 @@ import java.util.List;
 public class MessageController {
     private final MessageService messageService;
 
-    @GetMapping("/messageLists")
+    @GetMapping("/messages")
     public ResponseEntity<List<MessageGetDto>> getMessageList (@PathVariable Long projectId) {
-        log.info("get projectId " + projectId + " :messageList");
+        log.info("get projectId " + projectId + " :messages");
         return ResponseEntity.ok(messageService.findMessageListByProjectId(projectId));
     }
 

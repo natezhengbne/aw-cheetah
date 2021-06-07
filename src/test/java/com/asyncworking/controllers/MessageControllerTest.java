@@ -97,7 +97,7 @@ public class MessageControllerTest {
                 .build());
 
         when(messageService.findMessageListByProjectId(1L)).thenReturn(messageGetDtoList);
-        mockMvc.perform(get("/projects/1/messageLists"))
+        mockMvc.perform(get("/projects/1/messages"))
                 .andExpect(status().isOk());
     }
 
