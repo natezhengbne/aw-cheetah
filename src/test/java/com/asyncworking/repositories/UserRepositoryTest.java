@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -181,5 +182,31 @@ public class UserRepositoryTest extends DBHelper {
         userRepository.save(mockUser);
         Optional<UserEntity> returnedUserEntity = userRepository.findUserEntityById(mockUser.getId());
         assertEquals("testpass", returnedUserEntity.get().getPassword().trim());
+    }
+    @Test
+    public void shouldReturnUserEntityListGivenIDList() {
+        UserEntity mockUser1 = UserEntity.builder()
+                .name("new")
+                .email("new@asyncworking.com")
+                .title("BA")
+                .status(Status.ACTIVATED)
+                .password(passwordEncoder.encode("len123"))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        UserEntity mockUser2 = UserEntity.builder()
+                .id(3L)
+                .email("skykk0128@gmail.com")
+                .name("Steven")
+                .password("password")
+                .status(Status.UNVERIFIED)
+                .title("Developer")
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        UserEntity savedMockUser1 = userRepository.save(mockUser1);
+        UserEntity savedMockUser2 = userRepository.save(mockUser2);
+        Optional<List<UserEntity>> userEntityList = userRepository.findByIdIn(List.of(savedMockUser1.getId(), savedMockUser2.getId()));
+        assertEquals(2, userEntityList.get().size());
     }
 }

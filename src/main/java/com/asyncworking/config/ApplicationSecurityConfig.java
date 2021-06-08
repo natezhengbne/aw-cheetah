@@ -30,8 +30,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/companies", "/companies/company-info", "/companies/{companyId}",
                         "/companies/{companyId}/profile", "/companies/{companyId}/employees",
                         "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info",
-                        "/projects/{projectid}/todolists", "/projects/{projectid}/todolists/{todolistid}/todoitems",
-                        "/projects/{projectid}/todolists", "/projects/{projectid}/todolists/{todolistid}"
+                        "/projects/{projectId}/todolists", "/projects/{projectId}/todolists/{todolistId}/todoitems",
+                        "/projects/{projectId}/todolists/{todolistId}",
+                        "/projects/{projectId}/todoitems/{todoitemId}",
+                        "/projects/{projectId}/messages",
+                        "/projects/{projectId}/messages/{messageId}"
                 )
                 .permitAll()
                 .antMatchers("/", "index", "/css/*", "/actuator/*")

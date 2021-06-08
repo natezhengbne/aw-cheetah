@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
@@ -15,32 +16,40 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/projects/{projectid}/todolists")
+@RequestMapping("/projects/{projectId}")
 @RequiredArgsConstructor
 public class TodoController {
 
     private final TodoService todoService;
 
-    @PostMapping
+    @PostMapping("/todolists")
     public ResponseEntity<Long> createTodoList(@Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
-    @PostMapping("/{todolistid}/todoitems")
-    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
+    @GetMapping("/todolists")
+    public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long projectId,
+                                                                     @RequestParam("quantity") @NotNull Integer quantity) {
+        return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByProjectId(projectId, quantity));
+    }
+
+    @GetMapping("/todolists/{todolistId}")
+    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long todolistId, @PathVariable Long projectId) {
+        log.info("todolistId:" + todolistId);
+        return ResponseEntity.ok(todoService.findTodoListById(todolistId));
+    }
+
+
+    @PostMapping("/todolists/{todolistId}/todoitems")
+    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto, @PathVariable Long projectId) {
         todoService.createTodoItem(todoItemPostDto);
         return ResponseEntity.ok("create todo item success");
     }
 
-    @GetMapping
-    public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long projectid,
-                                                                     @RequestParam("quantity") @NotNull Integer quantity) {
-        return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByProjectId(projectid, quantity));
-    }
-
-    @GetMapping("/{todolistid}")
-    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long todolistid) {
-        log.info("todolistId:" + todolistid);
-        return ResponseEntity.ok(todoService.findTodoListById(todolistid));
+    @GetMapping("/todoitems/{todoitemId}")
+    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long projectId,
+                                                                               @PathVariable Long todoitemId) {
+        log.info("todoitemId:" + todoitemId);
+        return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(projectId, todoitemId));
     }
 }
