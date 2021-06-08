@@ -19,6 +19,7 @@ phases:
       - pwd
       - ls -al
       - docker images
+      - docker info
       - docker-compose up -d
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:latest .
