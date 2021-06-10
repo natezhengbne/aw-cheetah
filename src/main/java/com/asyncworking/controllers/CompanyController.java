@@ -38,8 +38,8 @@ public class CompanyController {
     }
 
     @PutMapping("/{companyId}/profile")
-    public ResponseEntity updateCompanyProfile(@Valid @PathVariable("companyId") Long companyId,
-                                                   @RequestBody CompanyModificationDto companyModificationDto) {
+    public ResponseEntity updateCompanyProfile(@PathVariable("companyId") Long companyId,
+                                               @Valid @RequestBody CompanyModificationDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);
         return ResponseEntity.ok("success");
     }

@@ -9,6 +9,7 @@ import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,9 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -133,7 +134,7 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldReturnNotFoundIfCompanyNotExist() throws Exception {
-        CompanyNotFoundException error =  new CompanyNotFoundException("Can not found company by id: 1");
+        CompanyNotFoundException error = new CompanyNotFoundException("Can not found company by id: 1");
         when(companyService.findCompanyById(1L)).thenThrow(error);
 
         String errorMsg = mockMvc.perform(get("/companies/1"))
@@ -145,7 +146,7 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void shouldGetEmployeeGivenCompanyId() throws Exception{
+    public void shouldGetEmployeeGivenCompanyId() throws Exception {
         EmployeeGetDto mockEmployee1 = EmployeeGetDto.builder()
                 .email("xxx@gmail.com")
                 .name("lydia")
@@ -171,7 +172,7 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldReturnNotFoundIfNoEmployees() throws Exception {
-        EmployeeNotFoundException error =  new EmployeeNotFoundException("Can not found employee by company id: 1");
+        EmployeeNotFoundException error = new EmployeeNotFoundException("Can not found employee by company id: 1");
         when(companyService.findAllEmployeeByCompanyId(1L)).thenThrow(error);
 
         String errorMsg = mockMvc.perform(get("/companies/1/employees"))
@@ -179,5 +180,36 @@ public class CompanyControllerTest {
                 .andReturn().getResolvedException().getMessage();
 
         assertEquals("Can not found employee by company id: 1", errorMsg);
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenDescriptionOverSize() throws Exception {
+        String text = "This sentence has 32 characters.";
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+                .companyId(1L)
+                .adminEmail("aaa@qq.com")
+                .name("AW")
+                .userTitle("VI")
+                .description(text.repeat(33))
+                .build();
+        mockMvc.perform(put("/companies/1/profile")
+                .content(objectMapper.writeValueAsString(companyModificationDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenNameIsBlank() throws Exception {
+        CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
+                .companyId(1L)
+                .adminEmail("aaa@qq.com")
+                .name("")
+                .userTitle("VI")
+                .description("aa")
+                .build();
+        mockMvc.perform(put("/companies/1/profile")
+                .content(objectMapper.writeValueAsString(companyModificationDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
