@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -24,11 +25,11 @@ public class TodoListDto {
     @NotNull(message = "projectId cannot be null")
     private Long projectId;
 
-    @Size(max = 255, message = "Todo List Title can not be more than 255 characters! ")
-    @NotNull(message = "todoList must have a title")
+    @NotBlank(message = "todoList must have a title")
+    @Size(max = 255, message = "Todo List Title can not be more than 255 characters!")
     private String todoListTitle;
 
-    @Size(max = 2048, message = "Details can not be more than 2048 characters! ")
+    @Size(max = 2048, message = "Details can not be more than 2048 characters!")
     private String details;
 
     private String originDetails;

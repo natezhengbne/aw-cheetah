@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 public class ProjectDto {
 
     @NotBlank(message = "Project name can not be blank")
-    @Size(max = 128, message = "Project name can not be more than 128 characters! ")
+    @Size(max = 128, message = "Project name can not be more than 128 characters!")
     private String name;
 
     @NotNull(message = "ownerId can not be null")

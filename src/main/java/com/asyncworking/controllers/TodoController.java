@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,12 +19,14 @@ import java.util.List;
 @Controller
 @RequestMapping("/projects/{projectId}")
 @RequiredArgsConstructor
+@Validated
 public class TodoController {
 
     private final TodoService todoService;
 
     @PostMapping("/todolists")
-    public ResponseEntity<Long> createTodoList(@Valid @RequestBody TodoListDto todoListDto) {
+    public ResponseEntity<Long> createTodoList(@PathVariable("projectId") Long projectId,
+                                               @Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
@@ -41,7 +44,8 @@ public class TodoController {
 
 
     @PostMapping("/todolists/{todolistId}/todoitems")
-    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto, @PathVariable Long projectId) {
+    public ResponseEntity createTodoItem(@PathVariable Long todolistId, @PathVariable Long projectId,
+                                         @Valid @RequestBody TodoItemPostDto todoItemPostDto){
         todoService.createTodoItem(todoItemPostDto);
         return ResponseEntity.ok("create todo item success");
     }
