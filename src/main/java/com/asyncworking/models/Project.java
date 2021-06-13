@@ -60,6 +60,13 @@ public class Project {
             cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProjectUser> projectUsers;
 
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    private Set<Message> messageSet;
+
     public void addProjectUser(ProjectUser projectUser) {
         projectUsers.add(projectUser);
     }

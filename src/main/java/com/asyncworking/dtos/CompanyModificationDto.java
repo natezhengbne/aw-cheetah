@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
@@ -18,7 +17,7 @@ public class CompanyModificationDto {
 
     private Long companyId;
 
-    @NotEmpty(message = "Company name can not be empty")
+    @NotBlank(message = "Company name can not be blank")
     @Size(max = 128, message = "Company name can not be more than 128 characters! ")
     private String name;
 
