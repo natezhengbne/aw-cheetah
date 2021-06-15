@@ -16,6 +16,7 @@ import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,13 +47,13 @@ public class TodoService {
     }
 
     public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
-        return todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(projectId, quantity).stream()
-                .map(todoList -> todoMapper.fromTodoListEntity(todoList, findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId())))
+        return todoListRepository.findTodolistWithTodoItems(projectId, PageRequest.of(0, quantity)).stream()
+                .map(todoList -> todoMapper.fromTodoListEntity(todoList, todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems())))
                 .collect(Collectors.toList());
     }
 
     public TodoListDto fetchSingleTodoList(Long id) {
-        return todoMapper.fromTodoListEntity(findTodoListById(id),  findTodoItemsByTodoListIdOrderByCreatedTime(id));
+        return todoMapper.fromTodoListEntity(findTodoListById(id), findTodoItemsByTodoListIdOrderByCreatedTime(id));
     }
 
     @Transactional
@@ -64,10 +65,11 @@ public class TodoService {
     }
 
     public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
-        return todoItemRepository.findByTodoListIdOrderByCreatedTime(todoListId).stream()
+        return todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(todoListId).stream()
                 .map(todoMapper::fromTodoItemEntity)
                 .collect(Collectors.toList());
     }
+
 
     public TodoItemPageDto fetchTodoItemPageInfoByIds(Long todoItemId) {
         return todoMapper.fromTodoItemToTodoItemPageDto(findTodoItemById(todoItemId),

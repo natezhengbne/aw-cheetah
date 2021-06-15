@@ -1,14 +1,16 @@
 package com.asyncworking.models;
 
-
 import lombok.*;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.List;
+import java.util.Objects;
 
 @Builder
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "todo_list")
@@ -33,7 +35,8 @@ public class TodoList {
     private Project project;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "todoList", cascade = CascadeType.ALL)
-    private Set<TodoItem> todoItems;
+    @OrderBy("createdTime DESC")
+    private List<TodoItem> todoItems;
 
     @Column(name = "todo_list_title", nullable = false)
     private String todoListTitle;

@@ -29,7 +29,7 @@ public class TodoController {
 
     @GetMapping("/todolists")
     public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long projectId,
-                                                                     @RequestParam("quantity") @NotNull Integer quantity) {
+                                                            @NotNull @RequestParam("quantity") Integer quantity) {
         return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByProjectId(projectId, quantity));
     }
 

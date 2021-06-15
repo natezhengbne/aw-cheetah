@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static java.time.ZoneOffset.UTC;
+
 @Component
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TodoMapper {
@@ -52,6 +54,8 @@ public interface TodoMapper {
     @Mapping(target = "todoItemGetDto", expression = "java(fromTodoItemEntity(todoItem))")
     TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project);
 
+    List<TodoItemGetDto> todoItemsToTodoItemGetDtos(List<TodoItem> todoItems);
+
     default TodoList getTodoList(@NotNull TodoItem todoItem) {
         return todoItem.getTodoList();
     }
@@ -61,7 +65,7 @@ public interface TodoMapper {
     }
 
     default OffsetDateTime getCurrentTime() {
-        return OffsetDateTime.now();
+        return OffsetDateTime.now(UTC);
     }
 }
 
