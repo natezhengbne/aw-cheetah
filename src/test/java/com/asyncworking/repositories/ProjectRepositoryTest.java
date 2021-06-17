@@ -88,20 +88,6 @@ public class ProjectRepositoryTest extends DBHelper {
     }
 
     @Test
-    public void shouldFindNamesByProjectId() {
-        saveMockData();
-        List<String> returnedNames = projectRepository.findNamesByProjectId(mockProject.getId());
-        assertNotNull(returnedNames);
-    }
-
-    @Test
-    public void shouldReturnEmptyDueToProjectIdWithoutProjectUserNames() {
-        saveMockData();
-        List<String> returnedNames = projectRepository.findNamesByProjectId(0L);
-        assertTrue(returnedNames.isEmpty());
-    }
-
-    @Test
     public void shouldGet1AndModifyProjectInfoSuccessfully() {
         saveMockData();
         int count = projectRepository.updateProjectInfo(mockProject.getId(),
