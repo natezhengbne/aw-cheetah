@@ -13,5 +13,4 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findByProjectId(Long projectId);
-    Optional<Message> findById(Long id);
 }

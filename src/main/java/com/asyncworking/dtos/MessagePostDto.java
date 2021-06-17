@@ -32,4 +32,6 @@ public class MessagePostDto {
     private Category category;
 
     private String docURL;
+
+    private String noteOrigins;
 }
