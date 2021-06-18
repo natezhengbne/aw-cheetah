@@ -1,9 +1,6 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyInfoDto;
-import com.asyncworking.dtos.CompanyModificationDto;
-import com.asyncworking.dtos.EmployeeGetDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
@@ -155,12 +152,12 @@ public class CompanyService {
 		return employeeGetDtoList;
 	}
 
-	public List<EmployeeGetDto> findAvailableEmployees(Long companyId, Long projectId) {
+	public List<AvailableEmployeesGetDto> findAvailableEmployees(Long companyId, Long projectId) {
 		log.info("Project ID: {}", projectId);
 		log.info("Company ID: {}", companyId);
 		//how to verify the projectId and companyId if they are both invalid the result is always empty arrays
 		return userRepository.findAvailableEmployeesByCompanyAndProjectId(companyId, projectId).stream()
-				.map(employeeMapper::mapEntityToDto)
+				.map(employeeMapper::mapAvailableEmployeesEntityToDto)
 				.collect(Collectors.toList());
 	}
 }

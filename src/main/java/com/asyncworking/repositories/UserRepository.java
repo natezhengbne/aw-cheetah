@@ -1,6 +1,7 @@
 package com.asyncworking.repositories;
 
 import com.asyncworking.models.Employee;
+import com.asyncworking.models.IAvailableEmployeeInfo;
 import com.asyncworking.models.IEmployeeInfo;
 import com.asyncworking.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -65,8 +66,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     "AND cu.company_id = :companyId) AS userinfo " +
                     "LEFT JOIN awcheetah.user_info u ON u.id = userinfo.user_id AND u.status = 'ACTIVATED' " +
                     "ORDER BY u.name;")
-    List<IEmployeeInfo> findAvailableEmployeesByCompanyAndProjectId(@Param("companyId") Long companyId,
-                                                                    @Param("projectId") Long projectId);
+    List<IAvailableEmployeeInfo> findAvailableEmployeesByCompanyAndProjectId(@Param("companyId") Long companyId,
+                                                                             @Param("projectId") Long projectId);
 
     @Query("select e from Employee e join fetch e.userEntity u where u.email = :email")
     List<Employee> findEmployeesByEmail(@Param("email") String email);

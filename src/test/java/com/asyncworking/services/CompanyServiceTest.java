@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.AvailableEmployeesGetDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.EmployeeGetDto;
@@ -174,19 +175,21 @@ public class CompanyServiceTest {
 
     @Test
     public void shouldReturnAvailableEmployeesByCompanyIdAndProjectId() {
-        EmployeeGetDto mockEmployeeGetDto = EmployeeGetDto.builder()
-                .title("dev")
+        AvailableEmployeesGetDto mockEmployeeGetDto = AvailableEmployeesGetDto.builder()
+                .id(1L)
                 .name("name1")
                 .email("1@gmail.com")
+                .title("dev")
                 .build();
-        IEmployeeInfo mockIEmployeeInfo = IEmployeeInfoImpl.builder()
+        IAvailableEmployeeInfo mockIEmployeeInfo = IAvailableEmployeeInfoImpl.builder()
+                .id(1L)
                 .name("name1")
                 .title("dev")
                 .email("1@gmail.com")
                 .build();
         when(userRepository.findAvailableEmployeesByCompanyAndProjectId(1L, 1L))
                 .thenReturn(List.of(mockIEmployeeInfo));
-        List<EmployeeGetDto> result = companyService.findAvailableEmployees(1L, 1L);
+        List<AvailableEmployeesGetDto> result = companyService.findAvailableEmployees(1L, 1L);
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
     }
 }

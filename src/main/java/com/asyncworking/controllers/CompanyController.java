@@ -63,7 +63,7 @@ public class CompanyController {
                                                 @RequestParam("projectId") @NotNull Long projectId) {
         log.info("Project ID: {}", projectId);
         log.info("Company ID: {}", companyId);
-        List<EmployeeGetDto> employees = companyService.findAvailableEmployees(companyId, projectId);
+        List<AvailableEmployeesGetDto> employees = companyService.findAvailableEmployees(companyId, projectId);
         return ResponseEntity.ok(employees);
     }
 }
