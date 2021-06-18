@@ -47,6 +47,7 @@ public class MessageControllerTest {
                 .messageTitle("first message")
                 .posterUserId(1L)
                 .content("first message content")
+                .originNotes("<p>list rich editor</p>")
                 .category(Category.ANNOUNCEMENT)
                 .docURL("https:www.adc.com")
                 .build();
@@ -57,6 +58,7 @@ public class MessageControllerTest {
                 .posterUserId(1L)
                 .posterUser("FL")
                 .content("first message content")
+                .originNotes("<p>list rich editor</p>")
                 .category(Category.ANNOUNCEMENT)
                 .postTime(OffsetDateTime.now(UTC))
                 .docURL("https:www.adc.com")
@@ -79,6 +81,7 @@ public class MessageControllerTest {
                 .posterUserId(1L)
                 .posterUser("FL")
                 .content("first message content")
+                .originNotes("<p>list rich editor</p>")
                 .category(Category.ANNOUNCEMENT)
                 .postTime(OffsetDateTime.now(UTC))
                 .docURL("https:www.adc.com")
@@ -89,6 +92,7 @@ public class MessageControllerTest {
                 .id(1L)
                 .messageTitle("second message title")
                 .content("second message")
+                .originNotes("<p>list rich editor</p>")
                 .posterUserId(1L)
                 .posterUser("FL")
                 .category(Category.ANNOUNCEMENT)
@@ -105,6 +109,7 @@ public class MessageControllerTest {
     public void createMessageFailWhenNotNullVariableAreNull() throws Exception {
         MessagePostDto messagePostDto = MessagePostDto.builder()
                 .content("first message content")
+                .originNotes("<p>list rich editor</p>")
                 .category(Category.ANNOUNCEMENT)
                 .build();
 
@@ -122,6 +127,7 @@ public class MessageControllerTest {
                 .messageTitle("first message")
                 .posterUserId(1L)
                 .content("first message content")
+                .originNotes("<p>list rich editor</p>")
                 .category(Category.ANNOUNCEMENT)
                 .docURL("https:www.adc.com")
                 .build();
@@ -141,6 +147,7 @@ public class MessageControllerTest {
                 .posterUserId(1L)
                 .posterUser("FL")
                 .content("first message content")
+                .originNotes("<p>list rich editor</p>")
                 .category(Category.ANNOUNCEMENT)
                 .postTime(OffsetDateTime.now(UTC))
                 .docURL("https:www.adc.com")

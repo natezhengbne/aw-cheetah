@@ -31,5 +31,5 @@ public class MessageGetDto {
 
     private OffsetDateTime postTime;
 
-    private String noteOrigins;
+    private String originNotes;
 }

@@ -33,5 +33,5 @@ public class MessagePostDto {
 
     private String docURL;
 
-    private String noteOrigins;
+    private String originNotes;
 }
