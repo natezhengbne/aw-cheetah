@@ -16,18 +16,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TodoItemPostDto {
-    @NotNull(message = "TodoListId cannot be null")
+    @NotNull(message = "TodoListId cannot be null.")
     private Long todolistId;
 
-    @NotBlank(message = "TodoItem description can not be blank")
-    @Size(max = 512, message = "Description can not be more than 512 characters!")
+    @NotBlank(message = "TodoItem description can not be blank.")
+    @Size(max = 512, message = "Description can not be more than 512 characters.")
     private String description;
 
     private String originNotes;
     
     private String notes;
 
-    //TODO(pattern): Add date pattern check
     private LocalDate dueDate;
 }
-

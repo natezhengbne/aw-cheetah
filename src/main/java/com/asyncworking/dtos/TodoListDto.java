@@ -22,14 +22,14 @@ public class TodoListDto {
 
     private Long id;
 
-    @NotNull(message = "projectId cannot be null")
+    @NotNull(message = "projectId cannot be null.")
     private Long projectId;
 
-    @NotBlank(message = "todoList must have a title")
-    @Size(max = 255, message = "Todo List Title can not be more than 255 characters!")
+    @NotBlank(message = "todoList must have a title.")
+    @Size(max = 255, message = "Todo List Title can not be more than 255 characters.")
     private String todoListTitle;
 
-    @Size(max = 2048, message = "Details can not be more than 2048 characters!")
+    @Size(max = 2048, message = "Details can not be more than 2048 characters.")
     private String details;
 
     private String originDetails;
