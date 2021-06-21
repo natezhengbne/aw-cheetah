@@ -47,6 +47,9 @@ public class TodoServiceTest {
     @Mock
     private TodoItemRepository todoItemRepository;
 
+    @Mock
+    private UserService userService;
+
     private TodoService todoService;
 
     @Autowired
@@ -68,6 +71,7 @@ public class TodoServiceTest {
                 todoListRepository,
                 todoItemRepository,
                 projectRepository,
+                userService,
                 todoMapper);
 
         mockTodoListDto = TodoListDto.builder()

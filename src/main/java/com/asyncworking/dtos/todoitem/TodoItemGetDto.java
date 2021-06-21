@@ -3,6 +3,8 @@ package com.asyncworking.dtos.todoitem;
 
 import lombok.*;
 
+import java.time.OffsetDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,4 +16,10 @@ public class TodoItemGetDto {
     private String description;
 
     private String notes;
+
+    private Long projectId;
+
+    private Boolean completed;
+
+    private OffsetDateTime createdTime;
 }

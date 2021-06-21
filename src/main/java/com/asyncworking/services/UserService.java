@@ -163,4 +163,9 @@ public class UserService {
     public boolean ifUnverified(String email) {
         return userRepository.findUnverifiedStatusByEmail(email).isPresent();
     }
+
+    public UserEntity findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
+    }
 }

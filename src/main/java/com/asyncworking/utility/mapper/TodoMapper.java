@@ -7,6 +7,7 @@ import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
+import com.asyncworking.models.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -52,7 +53,8 @@ public interface TodoMapper {
     @Mapping(target = "projectId", expression = "java(project.getId())")
     @Mapping(target = "projectName", expression = "java(project.getName())")
     @Mapping(target = "todoItemGetDto", expression = "java(fromTodoItemEntity(todoItem))")
-    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project);
+    @Mapping(target = "createdUserName", expression = "java(userEntity.getName())")
+    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project, UserEntity userEntity);
 
     List<TodoItemGetDto> todoItemsToTodoItemGetDtos(List<TodoItem> todoItems);
 

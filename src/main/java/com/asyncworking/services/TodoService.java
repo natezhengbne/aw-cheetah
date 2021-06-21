@@ -35,6 +35,8 @@ public class TodoService {
 
     private final ProjectRepository projectRepository;
 
+    private final UserService userService;
+
     private final TodoMapper todoMapper;
 
     @Transactional
@@ -58,10 +60,19 @@ public class TodoService {
 
     @Transactional
     public Long createTodoItem(@Valid TodoItemPostDto todoItemPostDto) {
-        TodoItem todoItem = todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListById(todoItemPostDto.getTodolistId()));
+        TodoItem savedTodoItem = todoItemRepository.save(
+                todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListById(todoItemPostDto.getTodolistId())));
+        log.info("created a item with id " + savedTodoItem.getId());
+        return savedTodoItem.getId();
+    }
+
+    @Transactional
+    public Boolean changeTodoItemCompleted(Long id) {
+        TodoItem todoItem = findTodoItemById(id);
+        log.info("todoItem origin completed status: " + todoItem.getCompleted());
+        todoItem.setCompleted(!todoItem.getCompleted());
         todoItemRepository.save(todoItem);
-        log.info("created a item with id " + todoItem.getId());
-        return todoItem.getId();
+        return todoItem.getCompleted();
     }
 
     public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
@@ -72,8 +83,10 @@ public class TodoService {
 
 
     public TodoItemPageDto fetchTodoItemPageInfoByIds(Long todoItemId) {
-        return todoMapper.fromTodoItemToTodoItemPageDto(findTodoItemById(todoItemId),
-                findProjectById(findTodoItemById(todoItemId).getProjectId()));
+        TodoItem todoItem = findTodoItemById(todoItemId);
+        return todoMapper.fromTodoItemToTodoItemPageDto(todoItem,
+                findProjectById(todoItem.getProjectId()),
+                userService.findUserById(todoItem.getCreatedUserId()));
     }
 
     private Project findProjectById(Long projectId) {

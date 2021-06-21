@@ -18,6 +18,9 @@ public class TodoItemPostDto {
 
     private String originNotes;
 
+    @NotNull(message = "created user id is required")
+    private Long createdUserId;
+
     @Size(max = 512, message = "description can not be more than 512 characters! ")
     private String description;
 }

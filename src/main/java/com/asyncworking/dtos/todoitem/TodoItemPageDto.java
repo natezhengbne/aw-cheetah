@@ -16,4 +16,6 @@ public class TodoItemPageDto {
     private String projectName;
 
     private TodoItemGetDto todoItemGetDto;
+
+    private String createdUserName;
 }
