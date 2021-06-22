@@ -57,8 +57,15 @@ public class Project {
     private OffsetDateTime updatedTime;
 
     @OneToMany(mappedBy = "project",
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+            cascade = CascadeType.ALL)
     private Set<ProjectUser> projectUsers;
+
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    private Set<Message> messageSet;
 
     public void addProjectUser(ProjectUser projectUser) {
         projectUsers.add(projectUser);

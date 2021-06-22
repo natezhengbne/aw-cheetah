@@ -50,45 +50,41 @@ public class ProjectRepositoryTest extends DBHelper {
     }
 
     @Test
-    public void shouldGetIProjectInfoSuccessfullyGivenProjectId() {
+    public void shouldGetProjectSuccessfullyGivenProjectId() {
         saveMockData();
-        Optional<IProjectInfo> returnedIProjectInfo = projectRepository.findProjectInfoByProjectId(mockProject.getId());
-        assertEquals(mockProject.getName(), returnedIProjectInfo.get().getName());
+        Project mockIDProject = Project.builder()
+                .name("IDProject")
+                .isDeleted(false)
+                .isPrivate(false)
+                .leaderId(1L)
+                .companyId(1L)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        projectRepository.save(mockIDProject);
+        Optional<Project> returnedIProjectInfo = projectRepository.findById(mockIDProject.getId());
+        assertEquals(mockIDProject.getName(), returnedIProjectInfo.get().getName());
     }
 
     @Test
-    public void shouldGetProjectIdsSuccessfullyGivenCompanyId() {
+    public void shouldGetProjectSuccessfullyGivenCompanyId() {
         saveMockData();
-        List<Long> returnedProjectIds = projectRepository.findProjectIdsByCompanyId(1L);
+        List<Project> returnedProjectIds = projectRepository.findProjectsByCompanyId(1L);
         assertNotNull(returnedProjectIds);
     }
 
     @Test
     public void shouldReturnEmptyDueToGivenCompanyIdWithoutProjects() {
         saveMockData();
-        List<Long> returnedProjectIds = projectRepository.findProjectIdsByCompanyId(0L);
-        assertTrue(returnedProjectIds.isEmpty());
+        List<Project> returnedProjects = projectRepository.findProjectsByCompanyId(0L);
+        assertTrue(returnedProjects.isEmpty());
     }
 
     @Test
     public void shouldReturnEmptyDueToGivenProjectIdWithoutIProjectInfo() {
         saveMockData();
-        Optional<IProjectInfo> returnedIProjectInfo  = projectRepository.findProjectInfoByProjectId(0L);
+        Optional<Project> returnedIProjectInfo  = projectRepository.findById(0L);
         assertTrue(returnedIProjectInfo.isEmpty());
-    }
-
-    @Test
-    public void shouldFindNamesByProjectId() {
-        saveMockData();
-        List<String> returnedNames = projectRepository.findNamesByProjectId(mockProject.getId());
-        assertNotNull(returnedNames);
-    }
-
-    @Test
-    public void shouldReturnEmptyDueToProjectIdWithoutProjectUserNames() {
-        saveMockData();
-        List<String> returnedNames = projectRepository.findNamesByProjectId(0L);
-        assertTrue(returnedNames.isEmpty());
     }
 
     @Test
@@ -104,14 +100,24 @@ public class ProjectRepositoryTest extends DBHelper {
     @Test
     public void shouldReturnProjectSuccessfullyGivenProjectId() {
         saveMockData();
-        Optional<Project> project = projectRepository.findProjectByProjectId(mockProject.getId());
+        Project mockProject = Project.builder()
+                .name("AWProject")
+                .isDeleted(false)
+                .isPrivate(false)
+                .leaderId(1L)
+                .companyId(1L)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        projectRepository.save(mockProject);
+        Optional<Project> project = projectRepository.findById(mockProject.getId());
         assertEquals("AWProject", project.get().getName());
     }
 
     @Test
     public void shouldReturnEmptyDueToWrongProjectId() {
         saveMockData();
-        Optional<Project> project = projectRepository.findProjectByProjectId(0L);
+        Optional<Project> project = projectRepository.findById(0L);
         assertTrue(project.isEmpty());
     }
 

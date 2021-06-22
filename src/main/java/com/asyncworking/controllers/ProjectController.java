@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -44,6 +45,21 @@ public class ProjectController {
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);
         return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/{projectId}/members")
+    public ResponseEntity getMembersByProjectId(@PathVariable Long projectId) {
+        log.info("Project ID: {}", projectId);
+        List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(projectId);
+        return ResponseEntity.ok(members);
+    }
+
+    @PostMapping("/{projectId}/members")
+    public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,
+                                                            @RequestParam("userIds") @NotNull List<Long> userIds) {
+       log.info("projectID: {}, userIds: {}", projectId, userIds);
+       projectService.addProjectUsers(projectId, userIds);
+       return ResponseEntity.ok("success");
     }
 }
 

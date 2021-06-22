@@ -1,7 +1,11 @@
 package com.asyncworking.dtos.todoitem;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.*;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -14,4 +18,6 @@ public class TodoItemGetDto {
     private String description;
 
     private String notes;
+
+    private LocalDate dueDate;
 }
