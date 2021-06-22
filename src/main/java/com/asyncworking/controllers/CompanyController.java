@@ -57,4 +57,13 @@ public class CompanyController {
         List<EmployeeGetDto> employees = companyService.findAllEmployeeByCompanyId(companyId);
         return ResponseEntity.ok(employees);
     }
+
+    @GetMapping("/{companyId}/available-employees")
+    public ResponseEntity getAvailableEmployees(@PathVariable Long companyId,
+                                                @RequestParam("projectId") @NotNull Long projectId) {
+        log.info("Project ID: {}", projectId);
+        log.info("Company ID: {}", companyId);
+        List<AvailableEmployeesGetDto> employees = companyService.findAvailableEmployees(companyId, projectId);
+        return ResponseEntity.ok(employees);
+    }
 }
