@@ -15,16 +15,16 @@ import javax.validation.constraints.NotNull;
 
 public class MessagePostDto {
 
-    @NotNull(message = "companyId cannot be null")
+    @NotNull(message = "companyId cannot be null.")
     private Long companyId;
 
-    @NotNull(message = "projectId cannot be null")
+    @NotNull(message = "projectId cannot be null.")
     private Long projectId;
 
-    @NotNull(message = "message must have a title")
+    @NotNull(message = "Message must have a title.")
     private String messageTitle;
 
-    @NotNull(message = "posterUserId cannot be null")
+    @NotNull(message = "posterUserId cannot be null.")
     private Long posterUserId;
 
     private String content;

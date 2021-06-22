@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -105,6 +106,7 @@ class TodoControllerTest {
                 .todolistId(1L)
                 .notes("test1")
                 .description("test des1")
+                .dueDate(LocalDate.of(2017, 10, 21))
                 .build();
         when(todoService.createTodoItem(todoItemPostDto))
                 .thenReturn(1L);

@@ -212,4 +212,11 @@ public class CompanyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturnEmployeesByCompanyIdAndProjectId() throws Exception {
+        mockMvc.perform(get("/companies/1/available-employees")
+                .param("projectId", String.valueOf(1L)))
+                .andExpect(status().isOk());
+    }
 }

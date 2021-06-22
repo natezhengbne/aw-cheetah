@@ -7,23 +7,27 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "project")
-public class IProjectInfoImpl implements IProjectInfo {
+public class IAvailableEmployeeInfoImpl implements IAvailableEmployeeInfo {
     @Id
     @Type(type = "long")
-    private Long projectId;
+    private Long id;
+    private String email;
     private String name;
-    private String description;
+    private String title;
 
     @Override
     public Long getId() {
-        return projectId;
+        return id;
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
     }
 
     @Override
@@ -32,8 +36,7 @@ public class IProjectInfoImpl implements IProjectInfo {
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public String getTitle() {
+        return title;
     }
-
 }
