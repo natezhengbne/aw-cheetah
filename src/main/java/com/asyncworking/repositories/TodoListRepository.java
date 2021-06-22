@@ -1,6 +1,7 @@
 package com.asyncworking.repositories;
 
 import com.asyncworking.models.TodoList;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -20,4 +21,7 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
                     "order by created_time desc" +
                     " limit :quantity")
     List<TodoList> findTodoListsByProjectIdOrderByCreatedTime(@Param("projectId") Long projectId, @Param("quantity") Integer quantity);
+
+    @Query(value = "select tl from TodoList tl left join fetch tl.todoItems where tl.project.id=:projectId order by tl.createdTime desc")
+    List<TodoList> findTodolistWithTodoItems(@Param("projectId") Long projectId, Pageable pageable);
 }

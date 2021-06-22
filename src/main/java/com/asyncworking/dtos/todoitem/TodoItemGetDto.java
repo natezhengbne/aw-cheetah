@@ -1,11 +1,9 @@
 package com.asyncworking.dtos.todoitem;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import lombok.*;
+
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -19,5 +17,9 @@ public class TodoItemGetDto {
 
     private String notes;
 
-    private LocalDate dueDate;
+    private Long projectId;
+
+    private Boolean completed;
+
+    private OffsetDateTime createdTime;
 }

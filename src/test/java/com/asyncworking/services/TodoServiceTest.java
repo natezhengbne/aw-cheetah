@@ -13,6 +13,7 @@ import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,12 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Slf4j
 public class TodoServiceTest {
 
     @Mock
@@ -45,6 +46,9 @@ public class TodoServiceTest {
 
     @Mock
     private TodoItemRepository todoItemRepository;
+
+    @Mock
+    private UserService userService;
 
     private TodoService todoService;
 
@@ -67,6 +71,7 @@ public class TodoServiceTest {
                 todoListRepository,
                 todoItemRepository,
                 projectRepository,
+                userService,
                 todoMapper);
 
         mockTodoListDto = TodoListDto.builder()
@@ -80,8 +85,8 @@ public class TodoServiceTest {
                 .isPrivate(false)
                 .leaderId(1L)
                 .companyId(1L)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
 
         todoList = TodoList.builder()
@@ -89,8 +94,8 @@ public class TodoServiceTest {
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("todolist title")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
 
         todoItem1 = buildTodoItem(todoList, "test1", "des1");
@@ -124,24 +129,24 @@ public class TodoServiceTest {
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("first")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build());
         todoLists.add(TodoList.builder()
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("second")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build());
         todoLists.add(TodoList.builder()
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("third")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build());
-        when(todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(any(), any()))
+        when(todoListRepository.findTodolistWithTodoItems(any(), any()))
                 .thenReturn(todoLists);
         List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByProjectId(project.getId(), quantity);
         assertEquals(quantity, todoListDtos.size());
@@ -157,8 +162,8 @@ public class TodoServiceTest {
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("FirstTodoList")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
 
         when(todoListRepository.findById(any())).thenReturn(Optional.of(mockTodoList));
@@ -177,7 +182,7 @@ public class TodoServiceTest {
         List<TodoItem> todoItems = new ArrayList<>();
         todoItems.add(todoItem1);
         todoItems.add(todoItem2);
-        when(todoItemRepository.findByTodoListIdOrderByCreatedTime(any()))
+        when(todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(any()))
                 .thenReturn(todoItems);
 
         List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId());
@@ -196,8 +201,8 @@ public class TodoServiceTest {
                 .notes(notes)
                 .description(description)
                 .completed(Boolean.FALSE)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
     }
 

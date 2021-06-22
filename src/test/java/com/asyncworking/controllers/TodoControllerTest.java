@@ -4,8 +4,10 @@ import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
+import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.TodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,15 +17,17 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -121,6 +125,21 @@ class TodoControllerTest {
                 MockMvcRequestBuilders.get("/projects/1/todoitems/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOppositeStatusAfterChangeTodoItemCompleted() throws Exception {
+        TodoItem todoItem = TodoItem.builder()
+                .id(1L)
+                .projectId(1L)
+                .completed(true)
+                .build();
+        when(todoService.changeTodoItemCompleted(todoItem.getId()))
+                .thenReturn(!todoItem.getCompleted());
+        mockMvc.perform(put("/projects/1/todoitems/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
     }
 }
 

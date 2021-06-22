@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class TodoController {
 
     @GetMapping("/todolists")
     public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long projectId,
-                                                                     @RequestParam("quantity") @NotNull Integer quantity) {
+                                                            @NotNull @RequestParam("quantity") Integer quantity) {
         return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByProjectId(projectId, quantity));
     }
 
@@ -51,5 +52,10 @@ public class TodoController {
     public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long todoitemId) {
         log.info("todoitemId:" + todoitemId);
         return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(todoitemId));
+    }
+
+    @PutMapping("/todoitems/{todoitemId}")
+    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long todoitemId){
+        return ResponseEntity.ok(todoService.changeTodoItemCompleted(todoitemId));
     }
 }

@@ -22,6 +22,9 @@ public class TodoItem {
     @JoinColumn(name = "todo_list_id", referencedColumnName = "id", nullable = false)
     private TodoList todoList;
 
+    @Column(name = "user_id")
+    private Long createdUserId;
+
     @Column(name = "company_id", nullable = false)
     private Long companyId;
 
