@@ -59,13 +59,13 @@ public class ProjectServiceTest {
     @BeforeEach()
     public void setup() {
         projectService = new ProjectService(
-                        userRepository,
-                        projectRepository,
-                        projectUserRepository,
-                        projectMapper,
-                        employeeMapper,
-                        userService
-                );
+                userRepository,
+                projectRepository,
+                projectUserRepository,
+                projectMapper,
+                employeeMapper,
+                userService
+        );
 
 
         mockProject = Project.builder()
@@ -93,7 +93,7 @@ public class ProjectServiceTest {
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenProjectIdIsNotExist() {
         when(projectRepository.findById(1L)).thenThrow(
-                 new ProjectNotFoundException("Can not find project by projectId: 1L"));
+                new ProjectNotFoundException("Can not find project by projectId: 1L"));
         assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoByProjectId(1L));
     }
 
@@ -126,7 +126,7 @@ public class ProjectServiceTest {
                 .email("lengarykkk@asyncworking.com")
                 .name("kkk").build();
 
-        when(userService.fetchUserEntityById(projectDto.getOwnerId()))
+        when(userService.findUserById(projectDto.getOwnerId()))
                 .thenReturn(mockReturnedUserEntity);
         when(projectMapper.mapProjectDtoToProject(projectDto))
                 .thenReturn(mockProject);

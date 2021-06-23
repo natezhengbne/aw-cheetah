@@ -24,8 +24,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping("/todolists")
-    public ResponseEntity<Long> createTodoList(@PathVariable("projectId") Long projectId,
-                                               @Valid @RequestBody TodoListDto todoListDto) {
+    public ResponseEntity<Long> createTodoList(@Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
 
@@ -43,7 +42,7 @@ public class TodoController {
 
 
     @PostMapping("/todolists/{todolistId}/todoitems")
-    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto){
+    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
         todoService.createTodoItem(todoItemPostDto);
         return ResponseEntity.ok("create todo item success");
     }

@@ -48,18 +48,18 @@ public class ProjectService {
         return projectRepository.findById(projectId)
                 .map(projectMapper::mapProjectToProjectInfoDto)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
-        }
+    }
 
     public List<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
         return projectRepository.findProjectsByCompanyId(companyId).stream()
-                        .map(projectMapper::mapProjectToProjectInfoDto)
-                        .collect(Collectors.toList());
+                .map(projectMapper::mapProjectToProjectInfoDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public Long createProjectAndProjectUser(ProjectDto projectDto) {
 
-        UserEntity selectedUserEntity = userService.fetchUserEntityById(projectDto.getOwnerId());
+        UserEntity selectedUserEntity = userService.findUserById(projectDto.getOwnerId());
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
 
         projectRepository.save(newProject);
@@ -90,15 +90,15 @@ public class ProjectService {
 
     public List<EmployeeGetDto> findAllMembersByProjectId(Long projectId) {
         return userRepository.findAllMembersByProjectId(projectId).stream()
-                        .map(employeeMapper::mapEntityToDto)
-                        .collect(Collectors.toList());
+                .map(employeeMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public void addProjectUsers(Long projectId, List<Long> userIds) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
-        List <ProjectUser> projectUsers = userRepository.findAllById(userIds).stream()
+        List<ProjectUser> projectUsers = userRepository.findAllById(userIds).stream()
                 .map(user -> addProjectUsers(user, project))
                 .collect(Collectors.toList());
         projectUserRepository.saveAll(projectUsers);
