@@ -9,6 +9,7 @@ import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
@@ -20,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
@@ -56,6 +58,8 @@ public class TodoServiceTest {
     private TodoMapper todoMapper;
 
     private TodoListDto mockTodoListDto;
+
+    private UserEntity userEntity;
 
     private Project project;
 
@@ -193,25 +197,14 @@ public class TodoServiceTest {
         assertEquals("des2", todoItemGetDtos.get(1).getDescription());
     }
 
-    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
-        return TodoItem.builder()
-                .todoList(todoList)
-                .companyId(todoList.getCompanyId())
-                .projectId(todoList.getProject().getId())
-                .notes(notes)
-                .description(description)
-                .completed(Boolean.FALSE)
-                .createdTime(now(UTC))
-                .updatedTime(now(UTC))
-                .build();
-    }
-
     @Test
-    public void shouldReturnTodoItemPageDtoByGivenTodoitemIdAndProjectId() {
+    public void shouldReturnTodoItemPageDtoByGivenTodoitemId() {
         when(todoItemRepository.findById(any()))
                 .thenReturn(Optional.of(todoItem1));
         when(projectRepository.findById(any()))
                 .thenReturn(Optional.of(project));
+        when(userService.findUserById(any()))
+                .thenReturn(buildUser());
 
         TodoItemPageDto returnedTodoItemPageDto = todoService.
                 fetchTodoItemPageInfoByIds(todoItem1.getId());
@@ -230,6 +223,25 @@ public class TodoServiceTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
+        return TodoItem.builder()
+                .todoList(todoList)
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProject().getId())
+                .notes(notes)
+                .description(description)
+                .completed(Boolean.FALSE)
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .build();
+    }
+
+    private UserEntity buildUser() {
+        return userEntity.builder()
+                .name("test user")
+                .build();
     }
 
 }
