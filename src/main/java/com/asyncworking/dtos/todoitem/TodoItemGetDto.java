@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Data
@@ -25,5 +24,5 @@ public class TodoItemGetDto {
 
     private OffsetDateTime createdTime;
 
-    private LocalDate dueDate;
+    private OffsetDateTime dueDate;
 }
