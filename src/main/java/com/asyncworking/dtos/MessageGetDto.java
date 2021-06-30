@@ -30,4 +30,6 @@ public class MessageGetDto {
     private String docURL;
 
     private OffsetDateTime postTime;
+
+    private String originNotes;
 }

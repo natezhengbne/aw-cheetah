@@ -48,7 +48,7 @@ public class Message {
     @Column(name = "doc_url")
     private String docURL;
 
-    @Column
+    @Column(name = "content")
     private String content;
 
     @Column(name = "post_time")
@@ -59,4 +59,7 @@ public class Message {
 
     @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
+
+    @Column(name = "origin_notes")
+    private String originNotes;
 }
