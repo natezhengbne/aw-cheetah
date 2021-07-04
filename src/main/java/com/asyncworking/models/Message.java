@@ -30,7 +30,7 @@ public class Message {
             referencedColumnName = "id",
             nullable = false
     )
-    Project project;
+    private Project project;
 
     @Column(name = "company_id", nullable = false)
     private Long companyId;
@@ -38,9 +38,9 @@ public class Message {
     @Column(name = "poster_user_id", nullable = false)
     private Long posterUserId;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private MessageCategory messageCategory;
 
     @Column(name = "message_title", nullable = false)
     private String messageTitle;

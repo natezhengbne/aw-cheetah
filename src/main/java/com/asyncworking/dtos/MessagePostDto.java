@@ -1,6 +1,6 @@
 package com.asyncworking.dtos;
 
-import com.asyncworking.models.Category;
+import com.asyncworking.models.MessageCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class MessagePostDto {
 
     private String content;
 
-    private Category category;
+    private Long messageCategoryId;
 
     private String docURL;
 

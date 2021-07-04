@@ -7,10 +7,12 @@ import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.*;
+import com.asyncworking.repositories.MessageCategoryRepository;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
+import com.asyncworking.utility.mapper.MessageMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +52,9 @@ public class ProjectServiceTest {
     private ProjectService projectService;
 
     @Mock
+    MessageCategoryService messageCategoryService;
+
+    @Mock
     private UserService userService;
 
     private Project mockProject;
@@ -59,14 +64,14 @@ public class ProjectServiceTest {
     @BeforeEach()
     public void setup() {
         projectService = new ProjectService(
-                        userRepository,
-                        projectRepository,
-                        projectUserRepository,
-                        projectMapper,
-                        employeeMapper,
-                        userService
-                );
-
+                userRepository,
+                projectRepository,
+                projectUserRepository,
+                projectMapper,
+                employeeMapper,
+                userService,
+                messageCategoryService
+        );
 
         mockProject = Project.builder()
                 .id(2L)
@@ -93,7 +98,7 @@ public class ProjectServiceTest {
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenProjectIdIsNotExist() {
         when(projectRepository.findById(1L)).thenThrow(
-                 new ProjectNotFoundException("Can not find project by projectId: 1L"));
+                new ProjectNotFoundException("Can not find project by projectId: 1L"));
         assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoByProjectId(1L));
     }
 

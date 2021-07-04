@@ -67,6 +67,16 @@ public class Project {
     )
     private Set<Message> messageSet;
 
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    private Set<MessageCategory> messageCategorySet;
+    @OneToMany(mappedBy = "project",
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TodoList> todoLists;
+
     public void addProjectUser(ProjectUser projectUser) {
         projectUsers.add(projectUser);
     }
@@ -75,10 +85,6 @@ public class Project {
         projectUsers.remove(projectUser);
     }
 
-    @OneToMany(mappedBy = "project",
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TodoList> todoLists;
-
     public void addTodoList(TodoList todoList) {
         todoLists.add(todoList);
     }
@@ -86,6 +92,4 @@ public class Project {
     public void removeTodoList(TodoList todoList) {
         todoLists.remove(todoList);
     }
-
-
 }

@@ -2,20 +2,15 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
-import com.asyncworking.exceptions.CompanyNotFoundException;
-import com.asyncworking.exceptions.MessageNotFoundException;
-import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.exceptions.UserNotFoundException;
+import com.asyncworking.exceptions.*;
 import com.asyncworking.models.*;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.MessageRepository;
-import com.asyncworking.repositories.ProjectRepository;
-import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.*;
 import com.asyncworking.utility.mapper.MessageMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,24 +30,37 @@ public class MessageService {
 
     private final CompanyRepository companyRepository;
 
+    private final MessageCategoryRepository messageCategoryRepository;
 
     @Transactional
     public MessageGetDto createMessage(MessagePostDto messagePostDto) {
         verifyMessagePostDto(messagePostDto);
-        Message message = messageMapper.toEntity(messagePostDto,
-                fetchProjectById(messagePostDto.getProjectId()));
-        Message savedMessage = messageRepository.save(message);
-        log.info("create a new message : " + messagePostDto.getMessageTitle());
-        MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage, findUsernameByUserId(messagePostDto.getPosterUserId()));
-        return messageGetDto;
+        if (messagePostDto.getMessageCategoryId() != null) {
+            Message message = messageMapper.toEntity(messagePostDto,
+                    fetchProjectById(messagePostDto.getProjectId()),
+                    fetchMessageCategoryById(messagePostDto.getMessageCategoryId()));
+            Message savedMessage = messageRepository.save(message);
+            log.info("create a new message : " + messagePostDto.getMessageTitle());
+            MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage,
+                    findUsernameByUserId(messagePostDto.getPosterUserId()));
+            return messageGetDto;
+        } else {
+            Message message = messageMapper.toEntity(messagePostDto,
+                    fetchProjectById(messagePostDto.getProjectId()));
+            Message savedMessage = messageRepository.save(message);
+            log.info("create a new message : " + messagePostDto.getMessageTitle());
+            MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage,
+                    findUsernameByUserId(messagePostDto.getPosterUserId()));
+            return messageGetDto;
+        }
     }
 
-    public void verifyMessagePostDto(MessagePostDto messagePostDto){
+    public void verifyMessagePostDto(MessagePostDto messagePostDto) {
         if (!companyRepository.existsById(messagePostDto.getCompanyId())) {
             throw new CompanyNotFoundException("Cannot find company by id:" + messagePostDto.getCompanyId());
         }
         if (!userRepository.existsById(messagePostDto.getPosterUserId())) {
-               throw new UserNotFoundException("Cannot find user by id: " + messagePostDto.getPosterUserId());
+            throw new UserNotFoundException("Cannot find user by id: " + messagePostDto.getPosterUserId());
         }
     }
 
@@ -69,7 +77,6 @@ public class MessageService {
                 .getName();
     }
 
-
     public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
         List<Message> messageList = messageRepository.findByProjectId(projectId);
         List<UserEntity> userEntityList = findUserEntityByMessageList(messageList);
@@ -81,7 +88,11 @@ public class MessageService {
                         collect(Collectors.toList());
     }
 
-
+    private MessageCategory fetchMessageCategoryById(Long messageCategoryId) {
+        return messageCategoryRepository
+                .findById(messageCategoryId)
+                .orElseThrow(() -> new MessageCategoryNotFoundException("Cannot find message category by id: " + messageCategoryId));
+    }
 
     public List<UserEntity> findUserEntityByMessageList(List<Message> messageList) {
         List<Long> userIds = messageList.stream()
@@ -95,4 +106,4 @@ public class MessageService {
                 .map(m -> messageMapper.fromEntity(m, findUsernameByUserId(m.getPosterUserId())))
                 .orElseThrow(() -> new MessageNotFoundException("cannot find message by id " + id));
     }
- }
+}

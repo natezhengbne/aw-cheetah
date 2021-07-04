@@ -28,13 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProjectControllerTest {
 
     @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private ProjectService projectService;
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @Test
     public void testProjectCreateSuccess() throws Exception {
@@ -132,6 +132,7 @@ public class ProjectControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void throwBadRequestIfUpdateProjectNameIsEmpty() throws Exception {
         ProjectModificationDto projectModificationDto = ProjectModificationDto.builder()

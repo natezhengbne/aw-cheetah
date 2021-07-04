@@ -1,14 +1,11 @@
 package com.asyncworking.dtos;
 
-import com.asyncworking.models.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +22,11 @@ public class MessageGetDto {
 
     private String content;
 
-    private Category category;
+    private Long messageCategoryId;
+
+    private String messageCategoryName;
+
+    private String messageCategoryEmoji;
 
     private String docURL;
 
