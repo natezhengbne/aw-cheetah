@@ -50,6 +50,9 @@ public class ProjectServiceTest {
     private ProjectService projectService;
 
     @Mock
+    private MessageCategoryService messageCategoryService;
+
+    @Mock
     private UserService userService;
 
     private Project mockProject;
@@ -59,13 +62,14 @@ public class ProjectServiceTest {
     @BeforeEach()
     public void setup() {
         projectService = new ProjectService(
-                userRepository,
-                projectRepository,
-                projectUserRepository,
-                projectMapper,
-                employeeMapper,
-                userService
-        );
+                        userRepository,
+                        projectRepository,
+                        projectUserRepository,
+                        projectMapper,
+                        employeeMapper,
+                        userService,
+                        messageCategoryService
+                );
 
 
         mockProject = Project.builder()

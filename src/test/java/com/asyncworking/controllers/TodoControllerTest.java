@@ -3,6 +3,8 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
+import com.asyncworking.dtos.todoitem.TodoItemPutDto;
+import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.TodoService;
@@ -138,10 +140,24 @@ class TodoControllerTest {
                 .build();
         when(todoService.changeTodoItemCompleted(todoItem.getId()))
                 .thenReturn(!todoItem.getCompleted());
-        mockMvc.perform(put("/projects/1/todoitems/1")
+        mockMvc.perform(put("/projects/1/todoitems/1/completed")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("false"));
+    }
+
+    @Test
+    public void updateTodoItemSuccess() throws Exception {
+        TodoItemPutDto todoItemPut = TodoItemPutDto.builder()
+                .description("title")
+                .notes("notes/n")
+                .originNotes("<div>notes</div>")
+                .build();
+        mockMvc.perform(put("/projects/1/todoitems/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(todoItemPut)))
+                .andExpect(status().isOk());
+
     }
 }
 

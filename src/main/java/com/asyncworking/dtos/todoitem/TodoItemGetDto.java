@@ -18,6 +18,8 @@ public class TodoItemGetDto {
 
     private String notes;
 
+    private String originNotes;
+
     private Long projectId;
 
     private Boolean completed;

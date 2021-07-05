@@ -6,10 +6,8 @@ import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.models.Project;
-import com.asyncworking.models.ProjectUser;
-import com.asyncworking.models.ProjectUserId;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
+import com.asyncworking.repositories.MessageCategoryRepository;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -44,6 +42,8 @@ public class ProjectService {
 
     private final UserService userService;
 
+    private final MessageCategoryService messageCategoryService;
+
     public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
         return projectRepository.findById(projectId)
                 .map(projectMapper::mapProjectToProjectInfoDto)
@@ -61,11 +61,24 @@ public class ProjectService {
 
         UserEntity selectedUserEntity = userService.findUserById(projectDto.getOwnerId());
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
-
         projectRepository.save(newProject);
+        this.createDefaultMessageCategories(newProject);
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
         return newProject.getId();
+    }
+
+    public void createDefaultMessageCategories(Project project) {
+        messageCategoryService.createDefaultMessageCategory(project,
+                "Announcement", "📢");
+        messageCategoryService.createDefaultMessageCategory(project,
+                "FYI", "✨");
+        messageCategoryService.createDefaultMessageCategory(project,
+                "Heartbeat", "❤️");
+        messageCategoryService.createDefaultMessageCategory(project,
+                "Pitch", "💡");
+        messageCategoryService.createDefaultMessageCategory(project,
+                "Question", "👋");
     }
 
     private ProjectUser addProjectUsers(UserEntity userEntity, Project project) {

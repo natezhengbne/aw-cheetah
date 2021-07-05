@@ -6,7 +6,8 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class TodoItem {
     @JoinColumn(name = "todo_list_id", referencedColumnName = "id", nullable = false)
     private TodoList todoList;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long createdUserId;
 
     @Column(name = "company_id", nullable = false)

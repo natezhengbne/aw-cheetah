@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
+import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,14 @@ public class TodoController {
     }
 
     @PutMapping("/todoitems/{todoitemId}")
-    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long todoitemId){
+    public ResponseEntity<String> updateTodoItem(@PathVariable Long todoitemId,
+                                                 @RequestBody TodoItemPutDto todoItemPutDto) {
+        todoService.updateTodoItemDetails(todoitemId, todoItemPutDto);
+        return ResponseEntity.ok("update success");
+    }
+
+    @PutMapping("/todoitems/{todoitemId}/completed")
+    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.changeTodoItemCompleted(todoitemId));
     }
 }

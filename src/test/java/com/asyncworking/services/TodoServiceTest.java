@@ -3,6 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
+import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
@@ -24,6 +25,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -205,7 +208,10 @@ public class TodoServiceTest {
                 .thenReturn(Optional.of(project));
         when(userService.findUserById(any()))
                 .thenReturn(buildUser());
-
+        when(userService.findUserById(any()))
+                .thenReturn(UserEntity.builder()
+                        .name("lalal")
+                        .build());
         TodoItemPageDto returnedTodoItemPageDto = todoService.
                 fetchTodoItemPageInfoByIds(todoItem1.getId());
         assertEquals(project.getName(), returnedTodoItemPageDto.getProjectName());
@@ -223,6 +229,19 @@ public class TodoServiceTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void throwTodoItemNotFoundExceptionWhenTodoItemNotExist() {
+        TodoItemPutDto todoItemPut = TodoItemPutDto.builder()
+                .description("title")
+                .notes("notes/n")
+                .originNotes("<div>notes</div>")
+                .dueDate(OffsetDateTime.now(UTC))
+                .build();
+        when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getNotes(),
+                todoItemPut.getOriginNotes(), todoItemPut.getDueDate())).thenReturn(0);
+        assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, todoItemPut));
     }
 
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {

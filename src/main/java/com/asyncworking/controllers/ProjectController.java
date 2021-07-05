@@ -1,6 +1,9 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.EmployeeGetDto;
+import com.asyncworking.dtos.ProjectDto;
+import com.asyncworking.dtos.ProjectInfoDto;
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +25,13 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity createProject(@Valid @RequestBody ProjectDto projectDto){
+    public ResponseEntity createProject(@Valid @RequestBody ProjectDto projectDto) {
         return ResponseEntity.ok(projectService.createProjectAndProjectUser(projectDto));
     }
 
     @GetMapping("/{companyId}")
     public ResponseEntity getProjectList(@PathVariable("companyId")
-                                                @NotNull Long companyId) {
+                                         @NotNull Long companyId) {
         return ResponseEntity.ok(projectService.fetchProjectInfoListByCompanyId(companyId));
     }
 
@@ -38,7 +41,6 @@ public class ProjectController {
         ProjectInfoDto projectInfoDto = projectService.fetchProjectInfoByProjectId(projectId);
         return ResponseEntity.ok(projectInfoDto);
     }
-
 
     @PutMapping("/{projectId}/project-info")
     public ResponseEntity updateProjectProfile(@PathVariable("projectId") Long projectId,
@@ -57,9 +59,9 @@ public class ProjectController {
     @PostMapping("/{projectId}/members")
     public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,
                                                             @RequestParam("userIds") @NotNull List<Long> userIds) {
-       log.info("projectID: {}, userIds: {}", projectId, userIds);
-       projectService.addProjectUsers(projectId, userIds);
-       return ResponseEntity.ok("success");
+        log.info("projectID: {}, userIds: {}", projectId, userIds);
+        projectService.addProjectUsers(projectId, userIds);
+        return ResponseEntity.ok("success");
     }
 }
 

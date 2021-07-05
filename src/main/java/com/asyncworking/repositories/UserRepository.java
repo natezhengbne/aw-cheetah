@@ -38,12 +38,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findEmploymentByEmail(@Param("email") String email);
 
     @Query(nativeQuery = true,
-        value = "select u.name, u.email, cu.title \n" +
-                "from company_user cu, user_info u \n" +
-                "where cu.user_id = u.id \n" +
-                "and cu.company_id = :id " +
-                "and u.status = 'ACTIVATED' " +
-                "order by u.name")
+            value = "select u.name, u.email, cu.title \n" +
+                    "from company_user cu, user_info u \n" +
+                    "where cu.user_id = u.id \n" +
+                    "and cu.company_id = :id " +
+                    "and u.status = 'ACTIVATED' " +
+                    "order by u.name")
     List<IEmployeeInfo> findAllEmployeeByCompanyId(@Param("id") Long id);
 
     @Query(nativeQuery = true,

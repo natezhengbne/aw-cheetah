@@ -4,7 +4,6 @@ import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
 import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.models.Category;
 import com.asyncworking.services.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class MessageControllerTest {
 
+    @MockBean
+    MessageService messageService;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    MessageService messageService;
 
     @Test
     public void createMessageSuccess() throws Exception {
@@ -47,7 +47,8 @@ public class MessageControllerTest {
                 .messageTitle("first message")
                 .posterUserId(1L)
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .docURL("https:www.adc.com")
                 .build();
 
@@ -57,7 +58,8 @@ public class MessageControllerTest {
                 .posterUserId(1L)
                 .posterUser("FL")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .postTime(OffsetDateTime.now(UTC))
                 .docURL("https:www.adc.com")
                 .build();
@@ -69,7 +71,6 @@ public class MessageControllerTest {
                 .andExpect(status().isOk());
     }
 
-
     @Test
     public void getMessageListSuccess() throws Exception {
         List<MessageGetDto> messageGetDtoList = new ArrayList<>();
@@ -79,19 +80,20 @@ public class MessageControllerTest {
                 .posterUserId(1L)
                 .posterUser("FL")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .postTime(OffsetDateTime.now(UTC))
                 .docURL("https:www.adc.com")
                 .build());
-
 
         messageGetDtoList.add(MessageGetDto.builder()
                 .id(1L)
                 .messageTitle("second message title")
                 .content("second message")
+                .originNotes("<p>list rich editor</p>")
                 .posterUserId(1L)
                 .posterUser("FL")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
                 .docURL("https:www.adc.com")
                 .postTime(OffsetDateTime.now(UTC))
                 .build());
@@ -104,8 +106,8 @@ public class MessageControllerTest {
     @Test
     public void createMessageFailWhenNotNullVariableAreNull() throws Exception {
         MessagePostDto messagePostDto = MessagePostDto.builder()
-                .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .build();
 
         mockMvc.perform(post("/projects/1/messages")
@@ -122,7 +124,8 @@ public class MessageControllerTest {
                 .messageTitle("first message")
                 .posterUserId(1L)
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .docURL("https:www.adc.com")
                 .build();
         when(messageService.createMessage(messagePostDto))
@@ -141,7 +144,8 @@ public class MessageControllerTest {
                 .posterUserId(1L)
                 .posterUser("FL")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .postTime(OffsetDateTime.now(UTC))
                 .docURL("https:www.adc.com")
                 .build();

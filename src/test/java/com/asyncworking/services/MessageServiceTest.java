@@ -6,11 +6,11 @@ import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
-import com.asyncworking.models.*;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.MessageRepository;
-import com.asyncworking.repositories.ProjectRepository;
-import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.models.Message;
+import com.asyncworking.models.MessageCategory;
+import com.asyncworking.models.Project;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.*;
 import com.asyncworking.utility.mapper.MessageMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +18,15 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -41,6 +42,9 @@ public class MessageServiceTest {
 
     @Mock
     private CompanyRepository companyRepository;
+
+    @Mock
+    private MessageCategoryRepository messageCategoryRepository;
 
     @Autowired
     private MessageMapper messageMapper;
@@ -63,6 +67,10 @@ public class MessageServiceTest {
 
     private Message mockMessage3;
 
+    private MessageCategory mockFirstMessageCategory;
+
+    private MessageCategory mockSecondMessageCategory;
+
     @BeforeEach
     public void setUp() {
         messageService = new MessageService(
@@ -70,8 +78,27 @@ public class MessageServiceTest {
                 projectRepository,
                 messageRepository,
                 userRepository,
-                companyRepository
+                companyRepository,
+                messageCategoryRepository
         );
+        mockProject = Project.builder()
+                .id(1L)
+                .name("project1")
+                .build();
+
+        mockFirstMessageCategory = MessageCategory.builder()
+                .id(1L)
+                .project(mockProject)
+                .categoryName("firstCategory")
+                .emoji("👋")
+                .build();
+
+        mockSecondMessageCategory = MessageCategory.builder()
+                .id(2L)
+                .project(mockProject)
+                .categoryName("secondCategory")
+                .emoji("😊")
+                .build();
 
         messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
@@ -79,13 +106,9 @@ public class MessageServiceTest {
                 .messageTitle("first message")
                 .posterUserId(1L)
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .originNotes("<p>list rich editor</p>")
                 .docURL("https:www.adc.com")
-                .build();
-
-        mockProject = Project.builder()
-                .id(1L)
-                .name("project1")
                 .build();
 
         currentTime = OffsetDateTime.now(UTC);
@@ -99,7 +122,6 @@ public class MessageServiceTest {
                 .id(2L)
                 .name("testName2")
                 .build();
-
     }
 
     public void mockMessage() {
@@ -110,36 +132,39 @@ public class MessageServiceTest {
                 .posterUserId(1L)
                 .messageTitle("first message")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategory(mockFirstMessageCategory)
+                .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
                 .build();
+
         mockMessage2 = Message.builder()
                 .id(2L)
                 .project(mockProject)
                 .posterUserId(1L)
                 .messageTitle("second message")
                 .content("second message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategory(mockSecondMessageCategory)
+                .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
                 .build();
+
         mockMessage3 = Message.builder()
                 .id(3L)
                 .project(mockProject)
                 .posterUserId(2L)
                 .messageTitle("second message")
                 .content("second message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategory(null)
+                .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
                 .build();
     }
 
-
     @Test
     public void shouldReturnMessageGetDtoGivenCorrectMessagePostDto() {
-
         Message mockReturnMessage = Message.builder()
                 .id(1L)
                 .project(mockProject)
@@ -147,7 +172,8 @@ public class MessageServiceTest {
                 .posterUserId(1L)
                 .messageTitle("first message")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategory(mockFirstMessageCategory)
+                .originNotes("<p>list rich editor</p>")
                 .createdTime(currentTime)
                 .postTime(currentTime)
                 .updatedTime(currentTime)
@@ -160,17 +186,71 @@ public class MessageServiceTest {
                 .posterUserId(1L)
                 .posterUser("testName1")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .messageCategoryName("firstCategory")
+                .messageCategoryEmoji("👋")
+                .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("https:www.abc.com")
                 .build();
+
+        when(companyRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(messageCategoryRepository.existsById(1L)).thenReturn(true);
+        when(messageRepository.save(any())).thenReturn(mockReturnMessage);
+        when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
+        when(messageCategoryRepository.findById(1L)).thenReturn(Optional.of(mockFirstMessageCategory));
+
+        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto));
+    }
+
+    @Test
+    public void shouldReturnMessageGetDtoGivenCorrectMessagePostDtoWithNullCategoryId() {
+        Message mockReturnMessage = Message.builder()
+                .id(1L)
+                .project(mockProject)
+                .companyId(1L)
+                .posterUserId(1L)
+                .messageTitle("first message")
+                .content("first message content")
+                .messageCategory(null)
+                .createdTime(currentTime)
+                .postTime(currentTime)
+                .updatedTime(currentTime)
+                .docURL("https:www.abc.com")
+                .build();
+
+        MessageGetDto mockMessageGetDto = MessageGetDto.builder()
+                .id(1L)
+                .messageTitle("first message")
+                .posterUserId(1L)
+                .posterUser("testName1")
+                .content("first message content")
+                .messageCategoryId(null)
+                .messageCategoryName(null)
+                .messageCategoryEmoji(null)
+                .postTime(currentTime)
+                .docURL("https:www.abc.com")
+                .build();
+
+        MessagePostDto messagePostDto1 = MessagePostDto.builder()
+                .companyId(1L)
+                .projectId(1L)
+                .messageTitle("first message")
+                .posterUserId(1L)
+                .content("first message content")
+                .messageCategoryId(null)
+                .docURL("https:www.adc.com")
+                .build();
+
         when(companyRepository.existsById(1L)).thenReturn(true);
         when(userRepository.existsById(1L)).thenReturn(true);
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
 
-        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto));
+        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto1));
     }
 
     @Test
@@ -215,7 +295,7 @@ public class MessageServiceTest {
     }
 
     @Test
-    public void shouldReturnListOfMessageGetDtoListWhenGivenCorrectProjectId () {
+    public void shouldReturnListOfMessageGetDtoListWhenGivenCorrectProjectId() {
         this.mockMessage();
         when(messageRepository.findByProjectId(1L)).thenReturn(List.of(mockMessage1, mockMessage2, mockMessage3));
         when(userRepository.findByIdIn(List.of(1L, 1L, 2L))).thenReturn(Optional.of(List.of(mockUserEntity1, mockUserEntity2)));
@@ -223,8 +303,6 @@ public class MessageServiceTest {
         assertNotNull(mockMessageGetDtoList);
         assertEquals(3, mockMessageGetDtoList.size());
     }
-
-
 
     @Test
     public void shouldReturnMessageGetDtoWhenGivenId() {
@@ -235,7 +313,10 @@ public class MessageServiceTest {
                 .posterUserId(1L)
                 .posterUser("testName1")
                 .content("first message content")
-                .category(Category.ANNOUNCEMENT)
+                .messageCategoryId(1L)
+                .messageCategoryName("firstCategory")
+                .messageCategoryEmoji("👋")
+                .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
                 .build();
@@ -245,9 +326,40 @@ public class MessageServiceTest {
     }
 
     @Test
+    public void shouldReturnMessageGetDtoWhenGivenIdWithCategoryIsNull() {
+        this.mockMessage();
+        Message mockMessage = Message.builder()
+                .id(1L)
+                .project(mockProject)
+                .posterUserId(1L)
+                .messageTitle("first message")
+                .content("first message content")
+                .messageCategory(null)
+                .postTime(currentTime)
+                .docURL("abc.com")
+                .build();
+
+        MessageGetDto mockMessageGetDto = MessageGetDto.builder()
+                .id(1L)
+                .messageTitle("first message")
+                .posterUserId(1L)
+                .posterUser("testName1")
+                .content("first message content")
+                .messageCategoryId(null)
+                .messageCategoryName(null)
+                .messageCategoryEmoji(null)
+                .postTime(currentTime)
+                .docURL("abc.com")
+                .build();
+        when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage));
+        when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
+        assertEquals(messageService.findMessageById(1L), mockMessageGetDto);
+    }
+
+    @Test
     public void shouldThrowMessageNotFoundExceptionWhenGivenIdNotExists() {
         when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
-        assertThrows(MessageNotFoundException.class, () ->messageService.findMessageById(1L));
+        assertThrows(MessageNotFoundException.class, () -> messageService.findMessageById(1L));
     }
 
 }

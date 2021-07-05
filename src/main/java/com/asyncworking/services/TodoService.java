@@ -4,6 +4,7 @@ import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
+import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
@@ -87,6 +88,18 @@ public class TodoService {
         return todoMapper.fromTodoItemToTodoItemPageDto(todoItem,
                 findProjectById(todoItem.getProjectId()),
                 userService.findUserById(todoItem.getCreatedUserId()));
+    }
+
+    @Transactional
+    public void updateTodoItemDetails(Long todoItemId, TodoItemPutDto todoItemPutDto) {
+        int res = todoItemRepository.updateTodoItem(todoItemId,
+                todoItemPutDto.getDescription(),
+                todoItemPutDto.getNotes(),
+                todoItemPutDto.getOriginNotes(),
+                todoItemPutDto.getDueDate());
+        if (res != 1) {
+            throw new TodoItemNotFoundException("There is no todoItem id is " + todoItemId);
+        }
     }
 
     private Project findProjectById(Long projectId) {

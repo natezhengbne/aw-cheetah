@@ -36,7 +36,6 @@ public class UserService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-
     public UserInfoDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
 

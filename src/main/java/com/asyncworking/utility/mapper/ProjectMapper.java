@@ -26,7 +26,7 @@ public class ProjectMapper {
                 .build();
     }
 
-    public ProjectInfoDto mapProjectToProjectInfoDto (Project project) {
+    public ProjectInfoDto mapProjectToProjectInfoDto(Project project) {
         return ProjectInfoDto.builder()
                 .id(project.getId())
                 .name(project.getName())

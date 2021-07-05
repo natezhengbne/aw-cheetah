@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CompanyMapper {
     public CompanyInfoDto mapEntityToDto(Company company) {
-       return CompanyInfoDto.builder()
+        return CompanyInfoDto.builder()
                 .id(company.getId())
                 .name(company.getName())
                 .description(company.getDescription())

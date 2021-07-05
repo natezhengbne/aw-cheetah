@@ -30,7 +30,7 @@ public class Message {
             referencedColumnName = "id",
             nullable = false
     )
-    Project project;
+    private Project project;
 
     @Column(name = "company_id", nullable = false)
     private Long companyId;
@@ -38,9 +38,9 @@ public class Message {
     @Column(name = "poster_user_id", nullable = false)
     private Long posterUserId;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private MessageCategory messageCategory;
 
     @Column(name = "message_title", nullable = false)
     private String messageTitle;
@@ -48,7 +48,7 @@ public class Message {
     @Column(name = "doc_url")
     private String docURL;
 
-    @Column
+    @Column(name = "content")
     private String content;
 
     @Column(name = "post_time")
@@ -59,4 +59,7 @@ public class Message {
 
     @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
+
+    @Column(name = "origin_notes")
+    private String originNotes;
 }
