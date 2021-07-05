@@ -1,0 +1,2 @@
+ALTER TABLE "todo_item" ADD "user_id" BIGINT;
+ALTER TABLE todo_item ALTER COLUMN due_date TYPE TIMESTAMP WITH TIME ZONE;
