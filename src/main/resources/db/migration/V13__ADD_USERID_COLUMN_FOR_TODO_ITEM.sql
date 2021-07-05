@@ -1,1 +1,0 @@
-ALTER TABLE "todo_item" ADD "user_id" BIGINT;
