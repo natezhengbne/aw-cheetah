@@ -59,7 +59,7 @@ public class ProjectService {
     @Transactional
     public Long createProjectAndProjectUser(ProjectDto projectDto) {
 
-        UserEntity selectedUserEntity = userService.fetchUserEntityById(projectDto.getOwnerId());
+        UserEntity selectedUserEntity = userService.findUserById(projectDto.getOwnerId());
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
         this.createDefaultMessageCategories(newProject);

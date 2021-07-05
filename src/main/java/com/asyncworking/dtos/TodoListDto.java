@@ -34,7 +34,7 @@ public class TodoListDto {
 
     private String originDetails;
 
-    private String docURL;
+    private String docUrl;
 
     List<TodoItemGetDto> todoItemGetDtos;
 }

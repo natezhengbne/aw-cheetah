@@ -3,22 +3,26 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
+import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +40,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Slf4j
 public class TodoServiceTest {
 
     @Mock
@@ -46,12 +52,17 @@ public class TodoServiceTest {
     @Mock
     private TodoItemRepository todoItemRepository;
 
+    @Mock
+    private UserService userService;
+
     private TodoService todoService;
 
     @Autowired
     private TodoMapper todoMapper;
 
     private TodoListDto mockTodoListDto;
+
+    private UserEntity userEntity;
 
     private Project project;
 
@@ -67,6 +78,7 @@ public class TodoServiceTest {
                 todoListRepository,
                 todoItemRepository,
                 projectRepository,
+                userService,
                 todoMapper);
 
         mockTodoListDto = TodoListDto.builder()
@@ -80,8 +92,8 @@ public class TodoServiceTest {
                 .isPrivate(false)
                 .leaderId(1L)
                 .companyId(1L)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
 
         todoList = TodoList.builder()
@@ -89,8 +101,8 @@ public class TodoServiceTest {
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("todolist title")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
 
         todoItem1 = buildTodoItem(todoList, "test1", "des1");
@@ -124,24 +136,24 @@ public class TodoServiceTest {
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("first")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build());
         todoLists.add(TodoList.builder()
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("second")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build());
         todoLists.add(TodoList.builder()
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("third")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build());
-        when(todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(any(), any()))
+        when(todoListRepository.findTodolistWithTodoItems(any(), any()))
                 .thenReturn(todoLists);
         List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByProjectId(project.getId(), quantity);
         assertEquals(quantity, todoListDtos.size());
@@ -157,19 +169,19 @@ public class TodoServiceTest {
                 .companyId(project.getCompanyId())
                 .project(project)
                 .todoListTitle("FirstTodoList")
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
                 .build();
 
         when(todoListRepository.findById(any())).thenReturn(Optional.of(mockTodoList));
-        assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.findTodoListById(mockTodoList.getId()).getTodoListTitle());
+        assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.fetchSingleTodoList(mockTodoList.getId()).getTodoListTitle());
     }
 
     @Test
     public void throwTodoListNotFoundExceptionWhenIdIsNotExist() {
         when(todoListRepository.findById(2L))
                 .thenThrow(new TodoListNotFoundException("Cannot find todoList by id: 2"));
-        assertThrows(TodoListNotFoundException.class, () -> todoService.findTodoListById(2L));
+        assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(2L));
     }
 
     @Test
@@ -177,7 +189,7 @@ public class TodoServiceTest {
         List<TodoItem> todoItems = new ArrayList<>();
         todoItems.add(todoItem1);
         todoItems.add(todoItem2);
-        when(todoItemRepository.findByTodoListIdOrderByCreatedTime(any()))
+        when(todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(any()))
                 .thenReturn(todoItems);
 
         List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId());
@@ -188,28 +200,20 @@ public class TodoServiceTest {
         assertEquals("des2", todoItemGetDtos.get(1).getDescription());
     }
 
-    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
-        return TodoItem.builder()
-                .todoList(todoList)
-                .companyId(todoList.getCompanyId())
-                .projectId(todoList.getProject().getId())
-                .notes(notes)
-                .description(description)
-                .completed(Boolean.FALSE)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-    }
-
     @Test
-    public void shouldReturnTodoItemPageDtoByGivenTodoitemIdAndProjectId() {
+    public void shouldReturnTodoItemPageDtoByGivenTodoitemId() {
         when(todoItemRepository.findById(any()))
                 .thenReturn(Optional.of(todoItem1));
         when(projectRepository.findById(any()))
                 .thenReturn(Optional.of(project));
-
+        when(userService.findUserById(any()))
+                .thenReturn(buildUser());
+        when(userService.findUserById(any()))
+                .thenReturn(UserEntity.builder()
+                        .name("lalal")
+                        .build());
         TodoItemPageDto returnedTodoItemPageDto = todoService.
-                fetchTodoItemPageInfoByIds(project.getId(), todoItem1.getId());
+                fetchTodoItemPageInfoByIds(todoItem1.getId());
         assertEquals(project.getName(), returnedTodoItemPageDto.getProjectName());
     }
 
@@ -218,13 +222,45 @@ public class TodoServiceTest {
         when(todoItemRepository.findById(any()))
                 .thenReturn(Optional.empty());
         Exception exception = assertThrows(TodoItemNotFoundException.class,
-                () -> todoService.fetchTodoItemPageInfoByIds(2L, 2L));
+                () -> todoService.fetchTodoItemPageInfoByIds(2L));
 
         String expectedMessage = "Cannot find TodoItem by id: 2";
 
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void throwTodoItemNotFoundExceptionWhenTodoItemNotExist() {
+        TodoItemPutDto todoItemPut = TodoItemPutDto.builder()
+                .description("title")
+                .notes("notes/n")
+                .originNotes("<div>notes</div>")
+                .dueDate(OffsetDateTime.now(UTC))
+                .build();
+        when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getNotes(),
+                todoItemPut.getOriginNotes(), todoItemPut.getDueDate())).thenReturn(0);
+        assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, todoItemPut));
+    }
+
+    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
+        return TodoItem.builder()
+                .todoList(todoList)
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProject().getId())
+                .notes(notes)
+                .description(description)
+                .completed(Boolean.FALSE)
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .build();
+    }
+
+    private UserEntity buildUser() {
+        return userEntity.builder()
+                .name("test user")
+                .build();
     }
 
 }

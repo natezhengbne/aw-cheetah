@@ -163,8 +163,8 @@ public class UserService {
         return userRepository.findUnverifiedStatusByEmail(email).isPresent();
     }
 
-    public UserEntity fetchUserEntityById(Long userId) {
-        return userRepository.findUserEntityById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Can not find user by userId:" + userId));
+    public UserEntity findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
     }
 }

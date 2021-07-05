@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 
 @Data
@@ -23,9 +23,13 @@ public class TodoItemPostDto {
     @Size(max = 512, message = "Description can not be more than 512 characters.")
     private String description;
 
-    private String originNotes;
-    
+    @NotNull(message = "content cannot be null")
     private String notes;
 
-    private LocalDate dueDate;
+    private String originNotes;
+
+    @NotNull(message = "created user id is required")
+    private Long createdUserId;
+
+    private OffsetDateTime dueDate;
 }

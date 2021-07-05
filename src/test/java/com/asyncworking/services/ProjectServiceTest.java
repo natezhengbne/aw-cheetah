@@ -7,12 +7,10 @@ import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.*;
-import com.asyncworking.repositories.MessageCategoryRepository;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
-import com.asyncworking.utility.mapper.MessageMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +50,7 @@ public class ProjectServiceTest {
     private ProjectService projectService;
 
     @Mock
-    MessageCategoryService messageCategoryService;
+    private MessageCategoryService messageCategoryService;
 
     @Mock
     private UserService userService;
@@ -64,14 +62,15 @@ public class ProjectServiceTest {
     @BeforeEach()
     public void setup() {
         projectService = new ProjectService(
-                userRepository,
-                projectRepository,
-                projectUserRepository,
-                projectMapper,
-                employeeMapper,
-                userService,
-                messageCategoryService
-        );
+                        userRepository,
+                        projectRepository,
+                        projectUserRepository,
+                        projectMapper,
+                        employeeMapper,
+                        userService,
+                        messageCategoryService
+                );
+
 
         mockProject = Project.builder()
                 .id(2L)
@@ -131,7 +130,7 @@ public class ProjectServiceTest {
                 .email("lengarykkk@asyncworking.com")
                 .name("kkk").build();
 
-        when(userService.fetchUserEntityById(projectDto.getOwnerId()))
+        when(userService.findUserById(projectDto.getOwnerId()))
                 .thenReturn(mockReturnedUserEntity);
         when(projectMapper.mapProjectDtoToProject(projectDto))
                 .thenReturn(mockProject);

@@ -3,11 +3,11 @@ package com.asyncworking.models;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +21,9 @@ public class TodoItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_list_id", referencedColumnName = "id", nullable = false)
     private TodoList todoList;
+
+    @Column(name = "user_id", nullable = false)
+    private Long createdUserId;
 
     @Column(name = "company_id", nullable = false)
     private Long companyId;
@@ -44,7 +47,7 @@ public class TodoItem {
     private String description;
 
     @Column(name = "due_date")
-    private LocalDate dueDate;
+    private OffsetDateTime dueDate;
 
     @Column(name = "completed")
     private Boolean completed;
