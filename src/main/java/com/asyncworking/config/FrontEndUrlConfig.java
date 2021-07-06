@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 @Configuration
 public class FrontEndUrlConfig {
 
-    @Value("http://localhost:3000")
+    @Value("${url}")
     private String frontEndUrl;
 }
