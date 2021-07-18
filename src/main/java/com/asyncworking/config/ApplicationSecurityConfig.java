@@ -1,7 +1,10 @@
 package com.asyncworking.config;
 
 import com.asyncworking.auth.ApplicationUserService;
+import com.asyncworking.jwt.JwtConfig;
+import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.crypto.SecretKey;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -20,10 +25,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ApplicationUserService myUserDetailsService;
 
+
+    private final SecretKey secretKey;
+    private final JwtConfig jwtConfig;
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtConfig, secretKey))
                 .authorizeRequests()
                 .antMatchers("/login", "/company", "/signup", "/invitations/companies",
                         "/invitations/register", "/invitations/info", "/resend", "/verify",
