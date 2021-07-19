@@ -4,6 +4,7 @@ import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -54,11 +55,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(authResult.getName());
         String name = foundUserEntity.get().getName();
         Long id = foundUserEntity.get().getId();
-        UserInfoDto userInfoDto = UserInfoDto.builder()
-                .id(id)
-                .email(authResult.getName())
-                .name(name)
-                .build();
 
         String jwtToken = Jwts.builder()
                 .setSubject(authResult.getName())
@@ -68,12 +64,21 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .signWith(secretKey)
                 .compact();
 
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .id(id)
+                .email(authResult.getName())
+                .name(name)
+                .accessToken(jwtToken)
+                .build();
+
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST");
+        String userInfoDtoString = new Gson().toJson(userInfoDto);
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(jwtToken);
+        out.print(userInfoDtoString);
         out.flush();
+
     }
 }
