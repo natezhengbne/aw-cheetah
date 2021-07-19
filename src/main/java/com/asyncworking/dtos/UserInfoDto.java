@@ -25,4 +25,6 @@ public class UserInfoDto {
 
     @Size(max = 128, message = "Title can not be more than 128 characters.")
     private String title;
+
+    private String accessToken;
 }
