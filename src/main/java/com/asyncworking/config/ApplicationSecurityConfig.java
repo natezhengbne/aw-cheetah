@@ -3,6 +3,7 @@ package com.asyncworking.config;
 import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.jwt.JwtConfig;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
+import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,13 +29,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
+    private final UserRepository userRepository;
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository))
                 .authorizeRequests()
                 .antMatchers("/login", "/company", "/signup", "/invitations/companies",
                         "/invitations/register", "/resend", "/verify",
