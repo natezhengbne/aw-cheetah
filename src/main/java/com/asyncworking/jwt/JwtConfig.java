@@ -16,10 +16,6 @@ public class JwtConfig {
 
     private String secretKey;
 
-    public String getAuthorizationHeader() {
-        return HttpHeaders.AUTHORIZATION;
-    }
-
     @Bean
     public SecretKey secretKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
