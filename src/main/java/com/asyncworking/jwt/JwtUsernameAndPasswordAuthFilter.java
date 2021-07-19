@@ -1,5 +1,8 @@
 package com.asyncworking.jwt;
 
+import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +16,17 @@ import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
+    private final UserRepository userRepository;
 
     @Override
     @SneakyThrows
@@ -43,9 +48,18 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) {
-
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.SECOND,10000);
+
+        Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(authResult.getName());
+        String name = foundUserEntity.get().getName();
+        Long id = foundUserEntity.get().getId();
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .id(id)
+                .email(authResult.getName())
+                .name(name)
+                .build();
+
         String jwtToken = Jwts.builder()
                 .setSubject(authResult.getName())
 //                .claim("authorities", authResult.getAuthorities())
@@ -54,6 +68,12 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .signWith(secretKey)
                 .compact();
 
-        response.addHeader(jwtConfig.getAuthorizationHeader(), "Bearer " + jwtToken);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST");
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        out.print(jwtToken);
+        out.flush();
     }
 }
