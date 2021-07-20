@@ -63,4 +63,11 @@ public class UserEntity {
             cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProjectUser> projectUsers;
 
+    @ManyToMany
+    @JoinTable(name = "user_role",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
+
+
 }
