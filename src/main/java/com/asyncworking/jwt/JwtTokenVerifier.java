@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,6 +17,7 @@ import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +51,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         var authorities = (List<Map<String, String>>) body.get("authorities");
         Set<SimpleGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(map -> new SimpleGrantedAuthority(map.get("authority")))
+                .map(map -> new SimpleGrantedAuthority(map.get("role")))
                 .collect(Collectors.toSet());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
