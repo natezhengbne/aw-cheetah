@@ -29,7 +29,7 @@ public class ApplicationUserService implements UserDetailsService {
 
         log.info(foundUser.toString());
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("role:fake");
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("edit message");
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(authority);
 

@@ -44,22 +44,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login", "/company", "/signup", "/invitations/companies",
-                        "/invitations/register", "/invitations/info", "/resend", "/verify",
-                        "/companies", "/companies/company-info", "/companies/{companyId}",
-                        "/companies/{companyId}/profile", "/companies/{companyId}/employees",
-                        "/companies/{companyId}/available-employees",
-                        "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info", "/projects/{projectid}/members",
-                        "/projects/{projectId}/todolists", "/projects/{projectId}/todolists/{todolistId}/todoitems",
-                        "/projects/{projectId}/todolists/{todolistId}",
-                        "/projects/{projectId}/todoitems/{todoitemId}",
-                        "/projects/{projectId}/todoitems/{todoitemId}",
-                        "/projects/{projectId}/todoitems/{todoitemId}/completed",
-                        "/projects/{projectId}/messages",
-                        "/projects/{projectId}/messages/{messageId}",
-                        "/projects/{projectId}/message-categories"
-                )
-                .permitAll()
+//                .antMatchers("/login", "/company", "/signup", "/invitations/companies",
+//                        "/invitations/register", "/resend", "/verify",
+//                        "/companies", "/companies/company-info", "/companies/{companyId}",
+//                        "/companies/{companyId}/profile", "/companies/{companyId}/employees",
+//                        "/companies/{companyId}/available-employees",
+//                        "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info", "/projects/{projectid}/members",
+//                        "/projects/{projectId}/todolists", "/projects/{projectId}/todolists/{todolistId}/todoitems",
+//                        "/projects/{projectId}/todolists/{todolistId}",
+//                        "/projects/{projectId}/todoitems/{todoitemId}",
+//                        "/projects/{projectId}/todoitems/{todoitemId}",
+//                        "/projects/{projectId}/todoitems/{todoitemId}/completed",
+//                        "/projects/{projectId}/messages",
+//                        "/projects/{projectId}/messages/{messageId}",
+//                        "/projects/{projectId}/message-categories"
+//                )
+//                .permitAll()
                 .antMatchers("/", "index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()
@@ -80,10 +80,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    @Bean
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -42,28 +42,28 @@ public class UserService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public UserInfoDto login(String email, String password) {
-        Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
-
-        if (foundUserEntity.isEmpty()) {
-            throw new UserNotFoundException("user not found");
-        }
-
-        String name = foundUserEntity.get().getName();
-        log.debug(name);
-
-        Long id = foundUserEntity.get().getId();
-
-        UserInfoDto userInfoDto = UserInfoDto.builder()
-                .id(id)
-                .email(email)
-                .name(name)
-                .build();
-        Authentication authenticate = this.authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        log.info(String.valueOf(authenticate));
-        return userInfoDto;
-    }
+//    public UserInfoDto login(String email, String password) {
+//        Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
+//
+//        if (foundUserEntity.isEmpty()) {
+//            throw new UserNotFoundException("user not found");
+//        }
+//
+//        String name = foundUserEntity.get().getName();
+//        log.debug(name);
+//
+//        Long id = foundUserEntity.get().getId();
+//
+//        UserInfoDto userInfoDto = UserInfoDto.builder()
+//                .id(id)
+//                .email(email)
+//                .name(name)
+//                .build();
+//        Authentication authenticate = this.authenticationManager
+//                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
+//        log.info(String.valueOf(authenticate));
+//        return userInfoDto;
+//    }
 
     public boolean ifEmailExists(String email) {
         return userRepository.findByEmail(email).isPresent();

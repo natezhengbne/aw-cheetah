@@ -18,6 +18,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -49,8 +50,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) {
-        Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.SECOND,10000);
 
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(authResult.getName());
         String name = foundUserEntity.get().getName();
@@ -58,9 +57,9 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
 
         String jwtToken = Jwts.builder()
                 .setSubject(authResult.getName())
-//                .claim("authorities", authResult.getAuthorities())
+                .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
-                .setExpiration(instance.getTime())
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
                 .compact();
 
