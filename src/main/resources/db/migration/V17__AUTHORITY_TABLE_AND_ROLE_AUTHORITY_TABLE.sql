@@ -14,13 +14,13 @@ INSERT INTO "authority" ("name") VALUES
 ('edit to-do item'),
 ('edit message');
 
-CREATE TABLE IF NOT EXISTS "authority_role" (
+CREATE TABLE IF NOT EXISTS "role_authority" (
     "role_id" BIGSERIAL NOT NULL REFERENCES "role"(id),
     "authority_id" BIGSERIAL NOT NULL REFERENCES "authority"(id),
     UNIQUE (role_id, authority_id)
 );
 
-INSERT INTO "authority_role" VALUES
+INSERT INTO "role_authority" VALUES
 (1,1),
 (1,2),
 (1,3),
