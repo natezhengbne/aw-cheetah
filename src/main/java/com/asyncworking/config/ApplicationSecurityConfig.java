@@ -2,9 +2,11 @@ package com.asyncworking.config;
 
 import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.jwt.JwtConfig;
+import com.asyncworking.jwt.JwtTokenVerifier;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,11 +35,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserRepository userRepository;
 
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @SneakyThrows
+    protected void configure(HttpSecurity http){
         http
                 .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository))
+                .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/login", "/company", "/signup", "/invitations/companies",
                         "/invitations/register", "/resend", "/verify",
@@ -61,7 +67,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    @SneakyThrows
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -73,7 +80,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    @Override
     @Bean
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
