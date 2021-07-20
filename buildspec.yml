@@ -6,7 +6,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - IMAGE_REPO_NAME=async-working
-      - REPOSITORY_URI=245866473499.dkr.ecr.ap-southeast-2.amazonaws.com/async-working
+      - REPOSITORY_URI=public.ecr.aws/t4w6r5w9/async-working
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - pwd
