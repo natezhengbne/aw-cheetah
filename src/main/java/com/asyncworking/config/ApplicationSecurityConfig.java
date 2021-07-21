@@ -7,10 +7,8 @@ import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -54,22 +52,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-//                .antMatchers("/login", "/company", "/signup", "/invitations/companies",
-//                        "/invitations/register", "/resend", "/verify",
-//                        "/companies", "/companies/company-info", "/companies/{companyId}",
-//                        "/companies/{companyId}/profile", "/companies/{companyId}/employees",
-//                        "/companies/{companyId}/available-employees",
-//                        "/projects", "/projects/{companyId}", "/projects/{projectId}/project-info", "/projects/{projectid}/members",
-//                        "/projects/{projectId}/todolists", "/projects/{projectId}/todolists/{todolistId}/todoitems",
-//                        "/projects/{projectId}/todolists/{todolistId}",
-//                        "/projects/{projectId}/todoitems/{todoitemId}",
-//                        "/projects/{projectId}/todoitems/{todoitemId}",
-//                        "/projects/{projectId}/todoitems/{todoitemId}/completed",
-//                        "/projects/{projectId}/messages",
-//                        "/projects/{projectId}/messages/{messageId}",
-//                        "/projects/{projectId}/message-categories"
-//                )
-//                .permitAll()
+
                 .antMatchers("/","/resend","/signup","index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()
