@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
@@ -19,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
@@ -69,9 +69,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .name(name)
                 .accessToken(jwtToken)
                 .build();
-
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "POST");
+        
         String userInfoDtoString = new Gson().toJson(userInfoDto);
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
@@ -79,5 +77,18 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
         out.print(userInfoDtoString);
         out.flush();
 
+    }
+
+    @Override
+    @SneakyThrows
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) {
+        String message = "Wrong Password";
+        PrintWriter out = response.getWriter();
+        response.setStatus(401);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        out.print(message);
+        out.flush();
     }
 }
