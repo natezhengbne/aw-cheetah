@@ -70,7 +70,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                        "/projects/{projectId}/message-categories"
 //                )
 //                .permitAll()
-                .antMatchers("/", "index", "/css/*", "/actuator/*")
+                .antMatchers("/","/resend", "index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()
                 .authenticated();
