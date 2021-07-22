@@ -1,8 +1,8 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -163,16 +163,29 @@ class UserControllerTest {
 
     @Test
     public void shouldCreateNewUserViaInvitationsRegisterSuccessfully() throws Exception {
-        AccountDto accountDto = AccountDto.builder()
+        InvitedAccountPostDto accountDto = InvitedAccountPostDto.builder()
                 .name("Steven S Wang")
                 .email("skykk0128@gmail.com")
                 .password("password12345")
                 .title("Dev")
+                .companyId(1L)
                 .build();
 
         mockMvc.perform(post("/invitations/register")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldDecodeAndGetUserInfoSuccessfully() throws Exception {
+        String code = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFue" +
+                "UlkIjoxLCJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsI" +
+                "nRpdGxlIjoiZGV2ZWxvcGVyIn0.FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU";
+
+        mockMvc.perform(get("/invitations/info")
+                .param("code", code)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 

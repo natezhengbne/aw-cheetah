@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeGetDto {
-    public Long id;
+public class ExternalEmployeeDto {
 
-    public String name;
+    public Long companyId;
 
     public String email;
+
+    public String name;
 
     public String title;
 }

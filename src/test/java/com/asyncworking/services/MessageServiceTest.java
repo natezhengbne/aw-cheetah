@@ -125,7 +125,6 @@ public class MessageServiceTest {
     }
 
     public void mockMessage() {
-
         mockMessage1 = Message.builder()
                 .id(1L)
                 .project(mockProject)
@@ -136,6 +135,7 @@ public class MessageServiceTest {
                 .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
+                .subscribersIds("1L,2L")
                 .build();
 
         mockMessage2 = Message.builder()
@@ -148,6 +148,7 @@ public class MessageServiceTest {
                 .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
+                .subscribersIds("1L,2L")
                 .build();
 
         mockMessage3 = Message.builder()
@@ -160,6 +161,7 @@ public class MessageServiceTest {
                 .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
+                .subscribersIds("1L,2L")
                 .build();
     }
 
@@ -177,6 +179,7 @@ public class MessageServiceTest {
                 .createdTime(currentTime)
                 .postTime(currentTime)
                 .updatedTime(currentTime)
+                .subscribersIds("1L,2L")
                 .docURL("https:www.abc.com")
                 .build();
 
@@ -192,6 +195,7 @@ public class MessageServiceTest {
                 .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("https:www.abc.com")
+                .subscribersIds("1L,2L")
                 .build();
 
         when(companyRepository.existsById(1L)).thenReturn(true);
@@ -219,6 +223,7 @@ public class MessageServiceTest {
                 .postTime(currentTime)
                 .updatedTime(currentTime)
                 .docURL("https:www.abc.com")
+                .subscribersIds("1L,2L")
                 .build();
 
         MessageGetDto mockMessageGetDto = MessageGetDto.builder()
@@ -232,6 +237,7 @@ public class MessageServiceTest {
                 .messageCategoryEmoji(null)
                 .postTime(currentTime)
                 .docURL("https:www.abc.com")
+                .subscribersIds("1L,2L")
                 .build();
 
         MessagePostDto messagePostDto1 = MessagePostDto.builder()
@@ -241,6 +247,7 @@ public class MessageServiceTest {
                 .posterUserId(1L)
                 .content("first message content")
                 .messageCategoryId(null)
+                .subscribersIds("1L,2L")
                 .docURL("https:www.adc.com")
                 .build();
 
@@ -319,6 +326,7 @@ public class MessageServiceTest {
                 .originNotes("<p>list rich editor</p>")
                 .postTime(currentTime)
                 .docURL("abc.com")
+                .subscribersIds("1L,2L")
                 .build();
         when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage1));
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
@@ -337,6 +345,7 @@ public class MessageServiceTest {
                 .messageCategory(null)
                 .postTime(currentTime)
                 .docURL("abc.com")
+                .subscribersIds("1L,2L")
                 .build();
 
         MessageGetDto mockMessageGetDto = MessageGetDto.builder()
@@ -350,6 +359,7 @@ public class MessageServiceTest {
                 .messageCategoryEmoji(null)
                 .postTime(currentTime)
                 .docURL("abc.com")
+                .subscribersIds("1L,2L")
                 .build();
         when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage));
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));

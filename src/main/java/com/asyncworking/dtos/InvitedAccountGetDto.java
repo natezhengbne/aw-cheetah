@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeGetDto {
-    public Long id;
+public class InvitedAccountGetDto {
 
-    public String name;
+    private Long id;
 
-    public String email;
+    private String name;
 
-    public String title;
+    private String email;
 }

@@ -1,6 +1,5 @@
 package com.asyncworking.dtos;
 
-import com.asyncworking.models.MessageCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,4 +33,6 @@ public class MessagePostDto {
     private String docURL;
 
     private String originNotes;
+
+    private String subscribersIds;
 }
