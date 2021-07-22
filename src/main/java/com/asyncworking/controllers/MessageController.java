@@ -6,6 +6,7 @@ import com.asyncworking.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class MessageController {
     }
 
     @PostMapping("/messages")
+    @PreAuthorize("hasAuthority('edit message')")
     public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long projectId, @Valid @RequestBody MessagePostDto messagePostDto) {
         return ResponseEntity.ok(messageService.createMessage(messagePostDto));
     }
