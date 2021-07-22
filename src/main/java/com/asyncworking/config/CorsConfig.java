@@ -10,10 +10,11 @@ public class CorsConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOrigins(
+				.allowedOrigins(/*
 						"http://localhost:3000",
 						"http://www.asyncworking.com",
-						"https://www.asyncworking.com"
+						"https://www.asyncworking.com"*/
+						"*"
 				)
 				.allowedMethods("GET", "POST", "PUT", "OPTIONS", "HEAD");
 	}

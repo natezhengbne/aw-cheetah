@@ -8,6 +8,8 @@ import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -15,12 +17,16 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -32,9 +38,14 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
+    private final QueueMessagingTemplate queueMessagingTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
+    @Value("${cloud.aws.end-point.uri}")
+    private String endPoint;
 
     public UserInfoDto login(String email, String password) {
         Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
@@ -63,10 +74,10 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndGenerateVerifyLink(AccountDto accountDto) {
+    public void createUserAndSendMessageToSQS(AccountDto accountDto) {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
-        this.generateVerifyLink(accountDto.getEmail());
+        sendMessageToSQS(userEntity);
     }
 
     public void createUserViaInvitationLink(AccountDto accountDto) {
@@ -74,10 +85,32 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public String generateVerifyLink(String email) {
+    public void resendMessageToSQS(String email){
+        sendMessageToSQS(findUnVerifiedUserByEmail(email));
+    }
+
+    private UserEntity findUnVerifiedUserByEmail(String email){
+        return userRepository.findUnverifiedStatusByEmail(email)
+                .orElseThrow(() ->new UserNotFoundException("Cannot find unverified user with email: "+email));
+    }
+    private String generateVerifyLink(String email) {
         String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
+    }
+
+    private void sendMessageToSQS(UserEntity userEntity){
+        Map<String,String> message = new HashMap<>();
+        message.put("userName",userEntity.getName());
+        message.put("email",userEntity.getEmail());
+        message.put("verificationLink",generateVerifyLink(userEntity.getEmail()));
+        String messageStr = "";
+        try {
+            messageStr = objectMapper.writeValueAsString(message);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
+        queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(messageStr).build());
     }
 
     private String generateJws(String email) {
@@ -147,7 +180,7 @@ public class UserService {
         return body.get("email").toString();
     }
 
-    private int activeUser(String email) {
+    public int activeUser(String email) {
         return userRepository.updateStatusByEmail(email, Status.ACTIVATED);
     }
 
@@ -166,5 +199,12 @@ public class UserService {
     public UserEntity findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
+    }
+
+    @Transactional
+    public void updateEmailSent(String email) {
+        if(userRepository.updateVerificationEmailSent(email)!=1){
+            throw new UserNotFoundException("Cannot find user with email: "+email);
+        }
     }
 }

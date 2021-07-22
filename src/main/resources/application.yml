@@ -32,3 +32,16 @@ url: https://www.asyncworking.com
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
 
+cloud:
+  aws:
+    region:
+      static: ap-southeast-2
+      auto: false
+    stack:
+      auto: false
+    credentials:
+      access-key: AKIAYJZSMLQCAMSE23MO
+      secret-key: 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
+    end-point:
+      uri: https://sqs.ap-southeast-2.amazonaws.com/570799447044/DemoQueue
+

@@ -31,6 +31,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findUserEntityById(@Param("id") Long id);
 
     @Modifying
+    @Query("update UserEntity u set u.isEmailSent = true where u.email =:email")
+    int updateVerificationEmailSent(@Param("email") String email);
+
+    @Modifying
     @Query("update UserEntity u set u.status = :status where u.email = :email")
     int updateStatusByEmail(@Param("email") String email, @Param("status") Enum status);
 
@@ -75,4 +79,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<List<UserEntity>> findByIdIn(List<Long> id);
 
     boolean existsById(Long id);
+
+
 }
