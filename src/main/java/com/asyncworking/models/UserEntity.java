@@ -48,7 +48,8 @@ public class UserEntity {
     private OffsetDateTime updatedTime;
 
     @OneToMany(mappedBy = "userEntity",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     private Set<Employee> employees;
 
     public void addEmployee(Employee employee) {
@@ -60,10 +61,10 @@ public class UserEntity {
     }
 
     @OneToMany(mappedBy = "userEntity",
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+            cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ProjectUser> projectUsers;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))

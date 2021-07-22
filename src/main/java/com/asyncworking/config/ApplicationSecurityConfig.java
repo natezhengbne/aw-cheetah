@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,6 +26,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -42,7 +45,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(request -> {
             var cors = new CorsConfiguration();
             cors.setAllowedOrigins(List.of("http://localhost:3000", "http://www.asyncworking.com", "https://www.asyncworking.com"));
-            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
         })
@@ -52,7 +55,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-
+                .antMatchers("/companies/{companyId}/**").access("@guard.checkCompanyId(authentication,#companyId)")
+                .antMatchers(HttpMethod.GET, "/{companyId}/projects/{projectId}/**").access("@guard.checkProjectIdGetMethod(authentication, #companyId, #projectId)")
+                .antMatchers("/{companyId}/projects/{projectId}/**").access("@guard.checkProjectIdOtherMethods(authentication, #companyId, #projectId)")
                 .antMatchers("/", "/resend", "/signup", "index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()

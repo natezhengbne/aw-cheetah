@@ -7,7 +7,7 @@ import com.asyncworking.models.ProjectUser;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class Guard {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
@@ -29,15 +30,6 @@ public class Guard {
                 .collect(Collectors.toSet());
 
         return companyIds.contains(companyId);
-    }
-
-    @SneakyThrows
-    public boolean checkProjectIdGetMethod(Authentication authentication, Long projectId) {
-        if (projectRepository.findById(projectId).get().getIsPrivate()) {
-            return true;
-        }
-
-        return checkProjectId(authentication, projectId);
     }
 
     public boolean checkProjectId(Authentication authentication, Long projectId) {
@@ -56,6 +48,28 @@ public class Guard {
                 .collect(Collectors.toSet());
 
         return projectIds.contains(projectId);
+    }
+
+    public boolean checkProjectIdGetMethod(Authentication authentication, Long companyId, Long projectId) {
+        if (!checkCompanyId(authentication, companyId)) {
+            log.info("User does not belong to this company!");
+            return false;
+        }
+
+        if (projectRepository.findById(projectId).get().getIsPrivate()) {
+            return true;
+        }
+
+        return checkProjectId(authentication, projectId);
+    }
+
+    public boolean checkProjectIdOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+        if (!checkCompanyId(authentication, companyId)) {
+            log.info("User does not belong to this company!");
+            return false;
+        }
+
+        return checkProjectId(authentication, projectId);
     }
 
 }
