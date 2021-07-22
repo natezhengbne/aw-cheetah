@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,6 +42,7 @@ public class MessageControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser(authorities = {"edit message"})
     public void createMessageSuccess() throws Exception {
         MessagePostDto messagePostDto = MessagePostDto.builder()
                 .companyId(1L)
@@ -118,6 +120,7 @@ public class MessageControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"edit message"})
     public void throwProjectNotFoundExceptionWhenThisProjectNotExist() throws Exception {
         MessagePostDto messagePostDto = MessagePostDto.builder()
                 .companyId(1L)

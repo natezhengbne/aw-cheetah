@@ -60,6 +60,6 @@ public class ApplicationUserServiceTest {
         UserDetails userDetails = applicationUserService.loadUserByUsername("a@asyncworking.com");
         assertEquals("a@asyncworking.com", userDetails.getUsername());
         assertEquals("testpass", userDetails.getPassword());
-        assertFalse(userDetails.getAuthorities().stream().findFirst().isEmpty());
+        assertTrue(userDetails.getAuthorities().stream().findFirst().isEmpty());
     }
 }
