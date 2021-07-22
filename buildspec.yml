@@ -1,10 +1,16 @@
 version: 0.2
 
+env: 
+  parameter-store: 
+    DOCKERHUB_USER: 'AW_DOCKERHUB_USERNAME'
+    DOCKERHUB_PW: 'AW_DOCKERHUB_PW'
+
 phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      #- $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 245866473499.dkr.ecr.ap-southeast-2.amazonaws.com
       - IMAGE_REPO_NAME=async-working
       - REPOSITORY_URI=245866473499.dkr.ecr.ap-southeast-2.amazonaws.com/async-working
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -15,11 +21,12 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - echo $DOCKERHUB_PW | docker login -u $DOCKERHUB_USER --password-stdin
       - uname -a
       - pwd
       - ls -al
       - docker images
-      - docker-compose up -d
+      #- docker-compose up -d
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:latest .
       - docker tag $IMAGE_REPO_NAME:latest $REPOSITORY_URI:$IMAGE_TAG
