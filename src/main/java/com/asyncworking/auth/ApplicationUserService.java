@@ -1,8 +1,11 @@
 package com.asyncworking.auth;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.asyncworking.models.Authority;
+import com.asyncworking.models.Role;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +28,33 @@ public class ApplicationUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        UserEntity foundUser = mapToUserDetails(email);
+        UserEntity user = mapToUserDetails(email);
 
-        log.info(foundUser.toString());
+        Set<Role> roles = user.getRoles();
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("edit message");
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(authority);
+        Set<GrantedAuthority> grantedAuthorities = getGrantedAuthorities(roles);
 
-        log.info(foundUser.getPassword());
-        return new User(foundUser.getEmail(),
-                foundUser.getPassword().replaceAll("\\s+", ""),
-                authorities);
+        return new User(user.getEmail(),
+                user.getPassword().replaceAll("\\s+", ""),
+                grantedAuthorities);
     }
 
     private UserEntity mapToUserDetails (String email) {
         return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(String.format("Username %s not found", email)));
+    }
+
+    private Set<GrantedAuthority> getGrantedAuthorities (Set<Role> roles) {
+        Set<Authority> authorities = new HashSet<>();
+        for (Role role : roles) {
+            authorities.addAll(role.getAuthorities());
+        }
+
+        Set<GrantedAuthority> grantedAuthorities = authorities.stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                .collect(Collectors.toSet());
+        return grantedAuthorities;
     }
 }
 

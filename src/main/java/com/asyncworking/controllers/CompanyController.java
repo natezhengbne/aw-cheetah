@@ -5,6 +5,8 @@ import com.asyncworking.services.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,6 +40,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{companyId}/profile")
+    @PreAuthorize("hasAuthority('edit company discription')")
     public ResponseEntity updateCompanyProfile(@PathVariable("companyId") Long companyId,
                                                @Valid @RequestBody CompanyModificationDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);
