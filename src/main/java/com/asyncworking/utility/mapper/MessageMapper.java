@@ -1,9 +1,6 @@
 package com.asyncworking.utility.mapper;
 
-import com.asyncworking.dtos.MessageCategoryGetDto;
-import com.asyncworking.dtos.MessageCategoryPostDto;
-import com.asyncworking.dtos.MessageGetDto;
-import com.asyncworking.dtos.MessagePostDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.models.Message;
 import com.asyncworking.models.MessageCategory;
 import com.asyncworking.models.Project;
@@ -29,6 +26,7 @@ public class MessageMapper {
                 .docURL(message.getDocURL())
                 .postTime(message.getPostTime())
                 .messageCategoryId((messageCategory == null) ? null : messageCategory.getId())
+                .subscribersIds(message.getSubscribersIds())
                 .build();
     }
 
@@ -45,6 +43,7 @@ public class MessageMapper {
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .postTime(OffsetDateTime.now(UTC))
+                .subscribersIds(messagePostDto.getSubscribersIds())
                 .build();
     }
 
@@ -60,6 +59,7 @@ public class MessageMapper {
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .postTime(OffsetDateTime.now(UTC))
+                .subscribersIds(messagePostDto.getSubscribersIds())
                 .build();
     }
 

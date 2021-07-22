@@ -62,4 +62,7 @@ public class Message {
 
     @Column(name = "origin_notes")
     private String originNotes;
+
+    private String subscribersIds;
 }
+

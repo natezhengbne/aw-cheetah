@@ -150,11 +150,13 @@ public class ProjectServiceTest {
     @Test
     public void shouldReturnAllMembersByProjectId() {
         IEmployeeInfo mockEmployee = IEmployeeInfoImpl.builder()
+                .id(1L)
                 .email("xxx@gmail.com")
                 .name("name1")
                 .title("dev")
                 .build();
         EmployeeGetDto mockEmployeeGetDto = EmployeeGetDto.builder()
+                .id(1L)
                 .name("name1")
                 .email("xxx@gmail.com")
                 .title("dev")

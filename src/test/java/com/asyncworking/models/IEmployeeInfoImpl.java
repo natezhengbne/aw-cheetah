@@ -15,9 +15,15 @@ import javax.persistence.Id;
 public class IEmployeeInfoImpl implements IEmployeeInfo {
     @Id
     @Type(type = "long")
+    private Long id;
     private String email;
     private String name;
     private String title;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
 
     @Override
     public String getEmail() {

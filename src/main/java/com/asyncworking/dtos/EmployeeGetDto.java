@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class EmployeeGetDto {
+    public Long id;
+
     public String name;
 
     public String email;

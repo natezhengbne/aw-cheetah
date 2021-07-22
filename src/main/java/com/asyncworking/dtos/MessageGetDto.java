@@ -33,4 +33,6 @@ public class MessageGetDto {
     private OffsetDateTime postTime;
 
     private String originNotes;
+
+    private String subscribersIds;
 }
