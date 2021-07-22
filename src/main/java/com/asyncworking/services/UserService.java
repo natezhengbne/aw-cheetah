@@ -1,11 +1,12 @@
 package com.asyncworking.services;
 
 import com.asyncworking.config.FrontEndUrlConfig;
-import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.dtos.*;
+import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
@@ -21,7 +22,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
+
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Service
@@ -29,6 +33,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
+    private final EmployeeRepository employeeRepository;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
@@ -69,9 +75,25 @@ public class UserService {
         this.generateVerifyLink(accountDto.getEmail());
     }
 
-    public void createUserViaInvitationLink(AccountDto accountDto) {
-        UserEntity userEntity = userMapper.mapInfoDtoToEntityInvitation(accountDto);
-        userRepository.save(userEntity);
+    public InvitedAccountGetDto createUserViaInvitationLink(InvitedAccountPostDto accountDto) {
+        Company company = companyRepository.findById(accountDto.getCompanyId())
+                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id: " + accountDto.getCompanyId()));
+        UserEntity userEntity = userMapper.mapInvitedDtoToEntityInvitation(accountDto);
+        UserEntity returnedUser = userRepository.save(userEntity);
+        EmployeeId employeeId = EmployeeId.builder()
+                .userId(returnedUser.getId())
+                .companyId(company.getId())
+                .build();
+        Employee employee = Employee.builder()
+                .id(employeeId)
+                .userEntity(returnedUser)
+                .company(company)
+                .title(accountDto.getTitle())
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        employeeRepository.save(employee);
+        return userMapper.mapEntityToInvitedDto(returnedUser);
     }
 
     public String generateVerifyLink(String email) {
@@ -93,7 +115,7 @@ public class UserService {
 
     public String generateInvitationLink(Long companyId, String email, String name, String title) {
         String invitationLink = frontEndUrlConfig.getFrontEndUrl()
-                + "/invitations/register?code=" + this.encodeInvitation(companyId, email, name, title);
+                + "/invitations/info?code=" + this.encodeInvitation(companyId, email, name, title);
         log.info("invitationLink: " + invitationLink);
         return invitationLink;
     }
@@ -111,18 +133,26 @@ public class UserService {
         return invitationJwt;
     }
 
-    private String decodedInvitationLink(String code) {
+    public ExternalEmployeeDto getUserInfo(String code) {
+        ExternalEmployeeDto externalEmployeeDto = decodedInvitationLink(code);
+        log.debug("User Info: " + externalEmployeeDto.toString());
+        return externalEmployeeDto;
+    }
+
+    private ExternalEmployeeDto decodedInvitationLink(String code) {
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .build()
                 .parseClaimsJws(code);
 
         Claims body = jws.getBody();
-
-        return body.get("companyId").toString() +
-                body.get("email").toString() +
-                body.get("name").toString() +
-                body.get("title").toString();
+        ExternalEmployeeDto externalEmployeeDto = ExternalEmployeeDto.builder()
+                .companyId((long) Double.parseDouble(body.get("companyId").toString()))
+                .email(body.get("email").toString())
+                .name(body.get("name").toString())
+                .title(body.get("title").toString())
+                .build();
+        return externalEmployeeDto;
     }
 
     @Transactional

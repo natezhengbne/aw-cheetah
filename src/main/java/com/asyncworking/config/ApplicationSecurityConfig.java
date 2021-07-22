@@ -26,7 +26,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login", "/company", "/signup", "/invitations/companies",
-                        "/invitations/register", "/resend", "/verify",
+                        "/invitations/register", "/invitations/info", "/resend", "/verify",
                         "/companies", "/companies/company-info", "/companies/{companyId}",
                         "/companies/{companyId}/profile", "/companies/{companyId}/employees",
                         "/companies/{companyId}/available-employees",

@@ -2,11 +2,12 @@ package com.asyncworking.services;
 
 import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.ExternalEmployeeDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
-import com.asyncworking.models.IEmployeeInfo;
-import com.asyncworking.models.IEmployeeInfoImpl;
-import com.asyncworking.models.Status;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,12 @@ public class UserServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
+    @Mock
+    private CompanyRepository companyRepository;
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+
     @Autowired
     private UserMapper userMapper;
 
@@ -47,7 +54,13 @@ public class UserServiceTest {
 
     @BeforeEach()
     void setup() {
-        userService = new UserService(userRepository, authenticationManager, userMapper, frontEndUrlConfig);
+        userService = new UserService(
+                userRepository,
+                companyRepository,
+                employeeRepository,
+                authenticationManager,
+                userMapper,
+                frontEndUrlConfig);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
@@ -131,13 +144,26 @@ public class UserServiceTest {
         String siteUrl = frontEndUrlConfig.getFrontEndUrl();
         String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
         assertEquals(
-                siteUrl.concat("/invitations/register?code=")
+                siteUrl.concat("/invitations/info?code=")
                 .concat("eyJhbGciOiJIUzI1NiJ9." +
                         "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
                         "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
                         "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
                 invitationLink
         );
+    }
+
+    @Test
+    public void shouldDecodeInvitationLink() {
+        String code = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFue" +
+                "UlkIjoxLCJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsI" +
+                "nRpdGxlIjoiZGV2ZWxvcGVyIn0.FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU";
+
+        ExternalEmployeeDto externalEmployeeDto = userService.getUserInfo(code);
+        assertEquals("user1", externalEmployeeDto.getName());
+        assertEquals("user1@gmail.com", externalEmployeeDto.getEmail());
+        assertEquals("developer", externalEmployeeDto.getTitle());
+
     }
 
     @Test
@@ -174,18 +200,39 @@ public class UserServiceTest {
 
     @Test
     public void shouldCreateNewUserViaInvitationLink() {
-        AccountDto accountDto = AccountDto.builder()
+        InvitedAccountPostDto accountDto = InvitedAccountPostDto.builder()
                 .name("Steven S Wang")
                 .email("skykk0128@gmail.com")
                 .password("password12345")
                 .title("Dev")
+                .companyId(1L)
+                .build();
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
+                .email("plus@gmail.com")
+                .name("aName")
+                .build();
+        Company company = Company.builder()
+                .id(1L)
+                .name("aw company")
+                .description("aw company description")
+                .website("asyncworking.com")
+                .adminId(1L)
+                .contactNumber("number")
+                .contactEmail("aw@gmail.com")
+                .industry("industry")
                 .build();
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
+        ArgumentCaptor<Employee> captorEmployee = ArgumentCaptor.forClass(Employee.class);
+
+        when(companyRepository.findById(any())).thenReturn(Optional.ofNullable(company));
+        when(userRepository.save(any())).thenReturn(mockReturnedUserEntity);
 
         userService.createUserViaInvitationLink(accountDto);
 
+        verify(employeeRepository).save(captorEmployee.capture());
         verify(userRepository).save(captor.capture());
+
         UserEntity savedUser = captor.getValue();
         assertEquals("skykk0128@gmail.com", savedUser.getEmail());
         assertEquals("Steven S Wang", savedUser.getName());
