@@ -42,19 +42,19 @@ class UserControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Test
-    public void shouldLoginSuccessful() throws Exception {
-        Authentication mocked = Mockito.mock(Authentication.class);
-        when(mocked.isAuthenticated()).thenReturn(true);
-
-        String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len1234567\"}";
-        MvcResult mvcResult = mockMvc.perform(
-                post("/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(inputJson)).andReturn();
-
-        assertEquals(200, mvcResult.getResponse().getStatus());
-    }
+//    @Test
+//    public void shouldLoginSuccessful() throws Exception {
+//        Authentication mocked = Mockito.mock(Authentication.class);
+//        when(mocked.isAuthenticated()).thenReturn(true);
+//
+//        String inputJson = "{\"email\": \"lengary@asyncworking.com\", \"password\":\"len1234567\"}";
+//        MvcResult mvcResult = mockMvc.perform(
+//                post("/login")
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                        .content(inputJson)).andReturn();
+//
+//        assertEquals(200, mvcResult.getResponse().getStatus());
+//    }
 
     @Test
     public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception{
@@ -81,19 +81,19 @@ class UserControllerTest {
     }
 
 
-    @Test
-    public void shouldReturnBadRequestWhenEmailNotValidForLogin() throws Exception {
-        Authentication mocked = Mockito.mock(Authentication.class);
-        when(mocked.isAuthenticated()).thenReturn(true);
-
-        String inputJson = "{\"email\": \"lengaasyncworking.com\", \"password\":\"len1234567\"}";
-        MvcResult mvcResult = mockMvc.perform(
-                post("/login")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(inputJson)).andReturn();
-
-        assertEquals(400, mvcResult.getResponse().getStatus());
-    }
+//    @Test
+//    public void shouldReturnBadRequestWhenEmailNotValidForLogin() throws Exception {
+//        Authentication mocked = Mockito.mock(Authentication.class);
+//        when(mocked.isAuthenticated()).thenReturn(true);
+//
+//        String inputJson = "{\"email\": \"lengaasyncworking.com\", \"password\":\"len1234567\"}";
+//        MvcResult mvcResult = mockMvc.perform(
+//                post("/login")
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                        .content(inputJson)).andReturn();
+//
+//        assertEquals(400, mvcResult.getResponse().getStatus());
+//    }
 
 
     @Test
