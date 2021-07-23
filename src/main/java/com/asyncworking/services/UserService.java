@@ -35,6 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
+
     private final UserMapper userMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
 
