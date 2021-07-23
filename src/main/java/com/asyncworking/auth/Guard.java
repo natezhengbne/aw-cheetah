@@ -38,7 +38,7 @@ public class Guard {
         Set<String> roleNames = roles.stream()
                 .map(role -> role.getName())
                 .collect((Collectors.toSet()));
-        if (roleNames.contains("Company Owner")) {
+        if (roleNames.contains("Company Manager")) {
             return true;
         }
 

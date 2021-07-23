@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS "role" (
 );
 
 INSERT INTO "role" ("name") VALUES
-('Company Owner'),
-('Project Owner'),
+('Company Manager'),
+('Project Manager'),
 ('Project Member');
 
 CREATE TABLE IF NOT EXISTS "user_role" (
