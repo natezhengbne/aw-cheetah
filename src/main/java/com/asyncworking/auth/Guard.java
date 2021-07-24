@@ -23,16 +23,24 @@ public class Guard {
     private final ProjectRepository projectRepository;
 
     public boolean checkCompanyId(Authentication authentication, Long companyId) {
+        if (!checkAuthenticationAnonymous(authentication)){
+            log.info("Anonymous user, access denied");
+            return false;
+        }
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
         Set<Employee> employees = user.get().getEmployees();
         Set<Long> companyIds = employees.stream()
                 .map(employee -> employee.getCompany().getId())
                 .collect(Collectors.toSet());
-
         return companyIds.contains(companyId);
     }
 
     public boolean checkProjectId(Authentication authentication, Long projectId) {
+        if (!checkAuthenticationAnonymous(authentication)){
+            log.info("Anonymous user, access denied");
+            return false;
+        }
+
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
         Set<Role> roles = user.get().getRoles();
         Set<String> roleNames = roles.stream()
@@ -46,11 +54,15 @@ public class Guard {
         Set<Long> projectIds = projectUsers.stream()
                 .map(projectUser -> projectUser.getProject().getId())
                 .collect(Collectors.toSet());
-
         return projectIds.contains(projectId);
     }
 
     public boolean checkProjectIdGetMethod(Authentication authentication, Long companyId, Long projectId) {
+        if (!checkAuthenticationAnonymous(authentication)){
+            log.info("Anonymous user, access denied");
+            return false;
+        }
+
         if (!checkCompanyId(authentication, companyId)) {
             log.info("User does not belong to this company!");
             return false;
@@ -64,12 +76,21 @@ public class Guard {
     }
 
     public boolean checkProjectIdOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+        if (!checkAuthenticationAnonymous(authentication)){
+            log.info("Anonymous user, access denied");
+            return false;
+        }
+
         if (!checkCompanyId(authentication, companyId)) {
             log.info("User does not belong to this company!");
             return false;
         }
 
         return checkProjectId(authentication, projectId);
+    }
+
+    public boolean checkAuthenticationAnonymous (Authentication authentication) {
+       return authentication.getName() == null;
     }
 
 }
