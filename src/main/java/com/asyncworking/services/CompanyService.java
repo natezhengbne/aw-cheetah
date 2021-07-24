@@ -7,6 +7,7 @@ import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.RoleRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
@@ -36,6 +37,8 @@ public class CompanyService {
 
     private final EmployeeRepository employeeRepository;
 
+    private final RoleService roleService;
+
     private final CompanyMapper companyMapper;
 
     private final UserMapper userMapper;
@@ -50,6 +53,8 @@ public class CompanyService {
         Company newCompany = createCompany(companyModificationDto.getName(), selectedUserEntity.getId());
 
         companyRepository.save(newCompany);
+
+        roleService.assignRole(selectedUserEntity, "Company Manager");
 
         Employee newEmployee = createEmployee
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
