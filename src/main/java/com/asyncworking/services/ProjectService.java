@@ -42,6 +42,8 @@ public class ProjectService {
 
     private final UserService userService;
 
+    private final RoleService roleService;
+
     private final MessageCategoryService messageCategoryService;
 
     public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
@@ -60,11 +62,17 @@ public class ProjectService {
     public Long createProjectAndProjectUser(ProjectDto projectDto) {
 
         UserEntity selectedUserEntity = userService.findUserById(projectDto.getOwnerId());
+
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
-        this.createDefaultMessageCategories(newProject);
+
+        roleService.assignRole(selectedUserEntity, "Project Manager");
+
+        createDefaultMessageCategories(newProject);
+
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
+
         return newProject.getId();
     }
 
@@ -115,5 +123,7 @@ public class ProjectService {
                 .map(user -> addProjectUsers(user, project))
                 .collect(Collectors.toList());
         projectUserRepository.saveAll(projectUsers);
+        //assign "Project Member" role to added users
+        userRepository.findAllById(userIds).forEach(user -> roleService.assignRole(user, "Project Member"));
     }
 }

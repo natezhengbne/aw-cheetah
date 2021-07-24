@@ -37,13 +37,13 @@ public class CompanyService {
 
     private final EmployeeRepository employeeRepository;
 
-    private final RoleService roleService;
-
     private final CompanyMapper companyMapper;
 
     private final UserMapper userMapper;
 
     private final EmployeeMapper employeeMapper;
+
+    private final RoleService roleService;
 
     @Transactional
     public Long createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
