@@ -23,10 +23,11 @@ public class Guard {
     private final ProjectRepository projectRepository;
 
     public boolean checkCompanyId(Authentication authentication, Long companyId) {
-        if (!checkAuthenticationAnonymous(authentication)){
+        if (checkAnonymousAuthentication(authentication)){
             log.info("Anonymous user, access denied");
             return false;
         }
+        
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
         Set<Employee> employees = user.get().getEmployees();
         Set<Long> companyIds = employees.stream()
@@ -36,7 +37,7 @@ public class Guard {
     }
 
     public boolean checkProjectId(Authentication authentication, Long projectId) {
-        if (!checkAuthenticationAnonymous(authentication)){
+        if (checkAnonymousAuthentication(authentication)){
             log.info("Anonymous user, access denied");
             return false;
         }
@@ -58,7 +59,7 @@ public class Guard {
     }
 
     public boolean checkProjectIdGetMethod(Authentication authentication, Long companyId, Long projectId) {
-        if (!checkAuthenticationAnonymous(authentication)){
+        if (checkAnonymousAuthentication(authentication)){
             log.info("Anonymous user, access denied");
             return false;
         }
@@ -76,7 +77,7 @@ public class Guard {
     }
 
     public boolean checkProjectIdOtherMethods(Authentication authentication, Long companyId, Long projectId) {
-        if (!checkAuthenticationAnonymous(authentication)){
+        if (checkAnonymousAuthentication(authentication)){
             log.info("Anonymous user, access denied");
             return false;
         }
@@ -89,8 +90,8 @@ public class Guard {
         return checkProjectId(authentication, projectId);
     }
 
-    public boolean checkAuthenticationAnonymous (Authentication authentication) {
-       return authentication.getName() == null;
+    public boolean checkAnonymousAuthentication (Authentication authentication) {
+       return authentication.getPrincipal().equals("anonymousUser");
     }
 
 }
