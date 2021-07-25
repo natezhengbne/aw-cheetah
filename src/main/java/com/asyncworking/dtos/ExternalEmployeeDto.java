@@ -18,4 +18,6 @@ public class ExternalEmployeeDto {
     public String name;
 
     public String title;
+
+    public String companyName;
 }

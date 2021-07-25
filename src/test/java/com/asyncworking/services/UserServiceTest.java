@@ -157,6 +157,17 @@ public class UserServiceTest {
                 "UlkIjoxLCJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsI" +
                 "nRpdGxlIjoiZGV2ZWxvcGVyIn0.FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU";
 
+        Company company = Company.builder()
+                .id(1L)
+                .name("aw company")
+                .description("aw company description")
+                .website("asyncworking.com")
+                .adminId(1L)
+                .contactNumber("number")
+                .contactEmail("aw@gmail.com")
+                .industry("industry")
+                .build();
+        when(companyRepository.findById(1L)).thenReturn(Optional.ofNullable(company));
         ExternalEmployeeDto externalEmployeeDto = userService.getUserInfo(code);
         assertEquals("user1", externalEmployeeDto.getName());
         assertEquals("user1@gmail.com", externalEmployeeDto.getEmail());
