@@ -75,9 +75,14 @@ public class UserService {
         this.generateVerifyLink(accountDto.getEmail());
     }
 
+    private Company getCompanyInfo(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id: " + companyId));
+
+    }
+
     public InvitedAccountGetDto createUserViaInvitationLink(InvitedAccountPostDto accountDto) {
-        Company company = companyRepository.findById(accountDto.getCompanyId())
-                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id: " + accountDto.getCompanyId()));
+        Company company = getCompanyInfo(accountDto.getCompanyId());
         UserEntity userEntity = userMapper.mapInvitedDtoToEntityInvitation(accountDto);
         UserEntity returnedUser = userRepository.save(userEntity);
         EmployeeId employeeId = EmployeeId.builder()
@@ -146,11 +151,14 @@ public class UserService {
                 .parseClaimsJws(code);
 
         Claims body = jws.getBody();
+        Long companyId = (long) Double.parseDouble(body.get("companyId").toString());
+        String companyName = getCompanyInfo(companyId).getName();
         ExternalEmployeeDto externalEmployeeDto = ExternalEmployeeDto.builder()
-                .companyId((long) Double.parseDouble(body.get("companyId").toString()))
+                .companyId(companyId)
                 .email(body.get("email").toString())
                 .name(body.get("name").toString())
                 .title(body.get("title").toString())
+                .companyName(companyName)
                 .build();
         return externalEmployeeDto;
     }
