@@ -32,7 +32,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     private final AuthenticationManager authenticationManager;
     private final SecretKey secretKey;
     private final UserRepository userRepository;
-
+    private final ProjectUserRepository projectUserRepository;
 
     @Override
     @SneakyThrows
@@ -65,9 +65,9 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
                 .compact();
-        List<Long> projectId = foundUserEntity.get().getProjectUsers().stream().map(projectUser -> projectUser.getProject())
-                .map(project -> project.getId()).collect(Collectors.toList());
-//        List<Long> projectId = projectUserRepository.findProjectIdByUserId(foundUserEntity.get().getId());
+//        List<Long> projectId = foundUserEntity.get().getProjectUsers().stream().map(projectUser -> projectUser.getProject())
+//                .map(project -> project.getId()).collect(Collectors.toList());
+        List<Long> projectId = projectUserRepository.findProjectIdByUserId(foundUserEntity.get().getId());
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(id)
                 .email(authResult.getName())
