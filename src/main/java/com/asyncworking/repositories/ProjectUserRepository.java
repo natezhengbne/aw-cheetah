@@ -15,6 +15,6 @@ import java.util.Set;
 @Repository
 @EnableJpaRepositories
 public interface ProjectUserRepository extends JpaRepository<ProjectUser, ProjectUserId> {
-    @Query(nativeQuery = true, value =" select project_id from project_user where user_id = :userId")
+    @Query(nativeQuery = true, value = " select project_id from project_user where user_id = :userId")
     List<Long> findProjectIdByUserId(@Param("userId") Long userId);
 }
