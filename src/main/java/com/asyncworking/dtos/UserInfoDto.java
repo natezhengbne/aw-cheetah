@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,4 +28,6 @@ public class UserInfoDto {
     private String title;
 
     private String accessToken;
+
+    private List<Long> projectId;
 }

@@ -2,6 +2,7 @@ package com.asyncworking.jwt;
 
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -21,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthenticationFilter {
@@ -29,6 +32,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     private final AuthenticationManager authenticationManager;
     private final SecretKey secretKey;
     private final UserRepository userRepository;
+    private final ProjectUserRepository projectUserRepository;
 
     @Override
     @SneakyThrows
@@ -61,12 +65,15 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
                 .compact();
-
+//        List<Long> projectId = foundUserEntity.get().getProjectUsers().stream().map(projectUser -> projectUser.getProject())
+//                .map(project -> project.getId()).collect(Collectors.toList());
+        List<Long> projectId = projectUserRepository.findProjectIdByUserId(foundUserEntity.get().getId());
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(id)
                 .email(authResult.getName())
                 .name(name)
                 .accessToken(jwtToken)
+                .projectId(projectId)
                 .build();
         
         String userInfoDtoString = new Gson().toJson(userInfoDto);

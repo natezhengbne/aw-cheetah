@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.crypto.SecretKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,9 +35,6 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private AuthenticationManager authenticationManager;
 
     @Mock
     private CompanyRepository companyRepository;
@@ -61,6 +59,7 @@ public class UserServiceTest {
                 userMapper,
                 frontEndUrlConfig);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
+        ReflectionTestUtils.setField(userService, "secretKey", "7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\\\//asdf");
     }
 
     @Test

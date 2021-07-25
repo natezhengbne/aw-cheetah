@@ -3,7 +3,9 @@ package com.asyncworking.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.asyncworking.models.ProjectUser;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class ApplicationUserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

@@ -19,10 +19,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -41,6 +48,9 @@ public class UserService {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
+    @Value("${jwt.secretKey}")
+    private String secretKey;
 
 //    public UserInfoDto login(String email, String password) {
 //        Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(email);
@@ -93,8 +103,24 @@ public class UserService {
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         employeeRepository.save(employee);
-        return userMapper.mapEntityToInvitedDto(returnedUser);
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("none");
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(authority);
+        String token = createJwtTokenForInvitationPeople(accountDto.getEmail(), authorities);
+
+        return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
+
+    public String createJwtTokenForInvitationPeople(String email,  List<GrantedAuthority> authorities) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("authorities", authorities)
+                .setIssuedAt(new Date())
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .compact();
+    }
+
 
     public String generateVerifyLink(String email) {
         String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);
