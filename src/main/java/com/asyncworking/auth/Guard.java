@@ -27,7 +27,7 @@ public class Guard {
             log.info("Anonymous user, access denied");
             return false;
         }
-        
+
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
         Set<Employee> employees = user.get().getEmployees();
         Set<Long> companyIds = employees.stream()

@@ -1,5 +1,6 @@
 package com.asyncworking.config;
 
+import com.asyncworking.auth.AccessDeniedExceptionHandler;
 import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.jwt.JwtConfig;
 import com.asyncworking.jwt.JwtTokenVerifier;
@@ -10,6 +11,7 @@ import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -64,7 +66,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/resend", "/signup", "index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and().
+                exceptionHandling().authenticationEntryPoint(new AccessDeniedExceptionHandler());
     }
 
     @Override
