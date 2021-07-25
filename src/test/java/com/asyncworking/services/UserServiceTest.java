@@ -4,7 +4,6 @@ import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
@@ -16,11 +15,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.crypto.SecretKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,10 +98,10 @@ public class UserServiceTest {
         String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
         assertEquals(
                 siteUrl.concat("/invitations/info?code=")
-                .concat("eyJhbGciOiJIUzI1NiJ9." +
-                        "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
-                        "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
-                        "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
+                        .concat("eyJhbGciOiJIUzI1NiJ9." +
+                                "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
+                                "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
+                                "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
                 invitationLink
         );
     }
@@ -248,7 +245,7 @@ public class UserServiceTest {
 
     @Test
     public void getCompanyInfoWhenGivenUserEmail() {
-        Long id  = 1L;
+        Long id = 1L;
         String email = "p@asyncworking.com";
         IEmployeeInfoImpl mockEmployeeInfo = IEmployeeInfoImpl.builder()
                 .email(email)
