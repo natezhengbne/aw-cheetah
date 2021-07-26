@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
+import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -99,6 +100,12 @@ public class UserController {
     public ResponseEntity<String> activateUserAccount(@Valid @RequestBody UserInfoDto userInfoDto) {
         userService.updateEmailSent(userInfoDto.getEmail());
         return ResponseEntity.ok("success");
+    }
+
+    @SqsListener(value = "receive_queue")
+    public void loadMessagesFromQueue(String email) {
+        log.info("from sqs: " + email);
+        userService.updateEmailSent(email);
     }
 
 }
