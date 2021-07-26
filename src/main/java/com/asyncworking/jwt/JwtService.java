@@ -14,6 +14,7 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
+
     private final SecretKey secretKey;
     private final ApplicationUserService applicationUserService;
 
