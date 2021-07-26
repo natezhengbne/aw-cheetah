@@ -5,10 +5,12 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
+import io.awspring.cloud.messaging.config.SimpleMessageListenerContainerFactory;
+import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class AmazonSQSConfig {
@@ -33,5 +35,19 @@ public class AmazonSQSConfig {
                         )
                 )
                 .build();
+    }
+    @Primary
+    @Bean
+    public AmazonSQSAsync amazonSQSAsync(){
+        return buildAmazonSQSAsync();
+    }
+
+    @Bean
+    public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(AmazonSQSAsync amazonSqs) {
+        SimpleMessageListenerContainerFactory factory = new SimpleMessageListenerContainerFactory();
+        factory.setAmazonSqs(amazonSqs);
+        factory.setMaxNumberOfMessages(10);
+        factory.setWaitTimeOut(2);
+        return factory;
     }
 }

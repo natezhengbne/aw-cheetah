@@ -44,4 +44,3 @@ cloud:
       secret-key: QbhbYRMj9mTKm8o9/sY72iJ3O2i5Cxs8QidsRUY6
     end-point:
       uri: https://sqs.ap-southeast-2.amazonaws.com/570799447044/DemoQueue
-
