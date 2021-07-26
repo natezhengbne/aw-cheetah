@@ -30,12 +30,6 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.createProjectAndProjectUser(projectDto));
     }
 
-    @GetMapping("/{companyId}")
-    public ResponseEntity getProjectList(@PathVariable("companyId")
-                                         @NotNull Long companyId) {
-        return ResponseEntity.ok(projectService.fetchProjectInfoListByCompanyId(companyId));
-    }
-
     @GetMapping("/{projectId}/project-info")
     public ResponseEntity getProjectInfo(@PathVariable("projectId") @NotNull Long projectId) {
         log.info("projectId: {}", projectId);

@@ -58,6 +58,15 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
+        List<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
+                .map(projectId -> fetchProjectInfoByProjectId(projectId))
+                .collect(Collectors.toList());
+        List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
+        userProjects.retainAll(companyProjects);
+        return userProjects;
+    }
+
     @Transactional
     public Long createProjectAndProjectUser(ProjectDto projectDto) {
 

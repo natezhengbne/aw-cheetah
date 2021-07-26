@@ -2,11 +2,11 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
 import com.asyncworking.services.CompanyService;
+import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +20,7 @@ import java.util.List;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final ProjectService projectService;
 
     @PostMapping
     public ResponseEntity createCompany(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
@@ -31,6 +32,14 @@ public class CompanyController {
         log.info("email: {}", email);
         CompanyColleagueDto companyColleagueDto = companyService.getCompanyInfoDto(email);
         return ResponseEntity.ok(companyColleagueDto);
+    }
+
+    @GetMapping("/{companyId}/projects")
+    public ResponseEntity getProjectList(@PathVariable("companyId")
+                                         @NotNull Long companyId,
+                                         @RequestParam(value = "userId")
+                                         @NotNull Long userId) {
+        return ResponseEntity.ok(projectService.fetchAvailableProjectInfoList(companyId, userId));
     }
 
     @GetMapping("/{companyId}/profile")
