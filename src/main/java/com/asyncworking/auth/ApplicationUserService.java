@@ -55,6 +55,11 @@ public class ApplicationUserService implements UserDetailsService {
         Set<GrantedAuthority> grantedAuthorities = authorities.stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getName()))
                 .collect(Collectors.toSet());
+
+        for (Role role : roles) {
+           grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
         return grantedAuthorities;
     }
 }
