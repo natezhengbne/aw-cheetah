@@ -55,6 +55,9 @@ public class ProjectServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private RoleService roleService;
+
     private Project mockProject;
 
     private ProjectInfoDto projectInfoDto;
@@ -68,6 +71,7 @@ public class ProjectServiceTest {
                         projectMapper,
                         employeeMapper,
                         userService,
+                        roleService,
                         messageCategoryService
                 );
 

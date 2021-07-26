@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +41,7 @@ class TodoControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser(authorities = {"edit to-do item"})
     public void todoListCreateSuccess() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
                 .id(1L)
@@ -55,6 +57,7 @@ class TodoControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"edit to-do item"})
     public void todoListCreateFailWhenTitleIsNull() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
                 .projectId(2L)
@@ -96,6 +99,7 @@ class TodoControllerTest {
 
     @Test
     @Rollback
+    @WithMockUser(authorities = {"edit to-do item"})
     public void todoItemCreateSuccess() throws Exception {
         TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
                 .todolistId(1L)
@@ -124,6 +128,7 @@ class TodoControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"edit to-do item"})
     public void shouldReturnOppositeStatusAfterChangeTodoItemCompleted() throws Exception {
         TodoItem todoItem = TodoItem.builder()
                 .id(1L)
@@ -139,6 +144,7 @@ class TodoControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"edit to-do item"})
     public void updateTodoItemSuccess() throws Exception {
         TodoItemPutDto todoItemPut = TodoItemPutDto.builder()
                 .description("title")

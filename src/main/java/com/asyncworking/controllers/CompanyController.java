@@ -40,7 +40,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{companyId}/profile")
-    @PreAuthorize("hasAuthority('edit company discription')")
+    @PreAuthorize("hasAuthority('edit company description')")
     public ResponseEntity updateCompanyProfile(@PathVariable("companyId") Long companyId,
                                                @Valid @RequestBody CompanyModificationDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);

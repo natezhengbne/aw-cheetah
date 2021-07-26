@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -120,6 +121,7 @@ public class ProjectControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"edit project description"})
     public void shouldReturnOkIfUpdateProjectInfoSuccessful() throws Exception {
         ProjectModificationDto projectModificationDto = ProjectModificationDto.builder()
                 .projectId(1L)
@@ -155,6 +157,7 @@ public class ProjectControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"add project member"})
     public void shouldReturnOkIfCreateMembersByProjectIdAndUserId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/projects/1/members")
                 .param("userIds", "1,2"))

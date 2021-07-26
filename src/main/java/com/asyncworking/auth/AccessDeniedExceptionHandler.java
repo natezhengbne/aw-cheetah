@@ -21,7 +21,7 @@ public class AccessDeniedExceptionHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException authException) throws IOException, ServletException {
-        httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+        httpServletResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
 
     }
 

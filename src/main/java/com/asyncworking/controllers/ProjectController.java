@@ -8,6 +8,7 @@ import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/project-info")
+    @PreAuthorize("hasAuthority('edit project description')")
     public ResponseEntity updateProjectProfile(@PathVariable("projectId") Long projectId,
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);
@@ -57,6 +59,7 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/members")
+    @PreAuthorize("hasAuthority('add project member')")
     public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,
                                                             @RequestParam("userIds") @NotNull List<Long> userIds) {
         log.info("projectID: {}, userIds: {}", projectId, userIds);

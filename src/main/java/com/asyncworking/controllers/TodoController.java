@@ -8,6 +8,7 @@ import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping("/todolists")
+    @PreAuthorize("hasAuthority('edit to-do item')")
     public ResponseEntity<Long> createTodoList(@Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(todoListDto));
     }
@@ -43,6 +45,7 @@ public class TodoController {
 
 
     @PostMapping("/todolists/{todolistId}/todoitems")
+    @PreAuthorize("hasAuthority('edit to-do item')")
     public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
         todoService.createTodoItem(todoItemPostDto);
         return ResponseEntity.ok("create todo item success");
@@ -55,6 +58,7 @@ public class TodoController {
     }
 
     @PutMapping("/todoitems/{todoitemId}")
+    @PreAuthorize("hasAuthority('edit to-do item')")
     public ResponseEntity<String> updateTodoItem(@PathVariable Long todoitemId,
                                                  @RequestBody TodoItemPutDto todoItemPutDto) {
         todoService.updateTodoItemDetails(todoitemId, todoItemPutDto);
@@ -62,6 +66,7 @@ public class TodoController {
     }
 
     @PutMapping("/todoitems/{todoitemId}/completed")
+    @PreAuthorize("hasAuthority('edit to-do item')")
     public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.changeTodoItemCompleted(todoitemId));
     }
