@@ -20,15 +20,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody AccountDto accountDto) {
-        log.info(accountDto.getEmail());
-        UserInfoDto userInfoDto = userService.login(
-                accountDto.getEmail().toLowerCase(),
-                accountDto.getPassword());
-        return ResponseEntity.ok(userInfoDto);
-    }
-
     @GetMapping("/login")
     public ResponseEntity verifyStatus(@RequestParam(value = "email") String email) {
         log.info("email: {}", email);

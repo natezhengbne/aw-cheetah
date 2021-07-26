@@ -82,11 +82,12 @@ public class UserMapper {
                 .build();
     }
 
-    public InvitedAccountGetDto mapEntityToInvitedDto(UserEntity returnedUser) {
+    public InvitedAccountGetDto mapEntityToInvitedDto(UserEntity returnedUser, String token) {
         return InvitedAccountGetDto.builder()
                 .id(returnedUser.getId())
                 .name(returnedUser.getName())
                 .email(returnedUser.getEmail())
+                .token(token)
                 .build();
     }
 }

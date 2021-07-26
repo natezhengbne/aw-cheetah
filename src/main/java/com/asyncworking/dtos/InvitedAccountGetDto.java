@@ -16,4 +16,6 @@ public class InvitedAccountGetDto {
     private String name;
 
     private String email;
+
+    private String token;
 }

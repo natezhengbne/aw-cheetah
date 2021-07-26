@@ -4,7 +4,6 @@ import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
-import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
@@ -16,7 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -34,9 +32,6 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private AuthenticationManager authenticationManager;
 
     @Mock
     private CompanyRepository companyRepository;
@@ -58,10 +53,10 @@ public class UserServiceTest {
                 userRepository,
                 companyRepository,
                 employeeRepository,
-                authenticationManager,
                 userMapper,
                 frontEndUrlConfig);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
+        ReflectionTestUtils.setField(userService, "secretKey", "7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\\\//asdf");
     }
 
     @Test
@@ -96,48 +91,6 @@ public class UserServiceTest {
         assertFalse(userService.ifUnverified(email));
     }
 
-    @Test
-    public void shouldLoginSuccessfulAndReturnDto() {
-        AccountDto accountDto = AccountDto.builder()
-                .email("plus@gmail.com")
-                .name("aName")
-                .password("password")
-                .build();
-
-        UserEntity mockReturnedUserEntity = UserEntity.builder()
-                .email("plus@gmail.com")
-                .name("aName")
-                .build();
-
-        when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.of(mockReturnedUserEntity));
-
-        UserInfoDto returnedUserInfoDto = userService.login(
-                accountDto.getEmail(), accountDto.getPassword());
-        String testName = returnedUserInfoDto.getName();
-
-        assertEquals(testName, mockReturnedUserEntity.getName());
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenUserIsNotExist() {
-        AccountDto accountDto = AccountDto.builder()
-                .email("plus@gmail.com")
-                .name("aName")
-                .password("password")
-                .build();
-
-        String expectedMessage = "user not found";
-
-        when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(RuntimeException.class,
-            () -> userService.login(accountDto.getEmail(), accountDto.getPassword()));
-
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
-
-    }
 
     @Test
     public void shouldGenerateInvitationLinkGivenDetail() {
@@ -145,10 +98,10 @@ public class UserServiceTest {
         String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
         assertEquals(
                 siteUrl.concat("/invitations/info?code=")
-                .concat("eyJhbGciOiJIUzI1NiJ9." +
-                        "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
-                        "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
-                        "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
+                        .concat("eyJhbGciOiJIUzI1NiJ9." +
+                                "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
+                                "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
+                                "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
                 invitationLink
         );
     }
@@ -292,7 +245,7 @@ public class UserServiceTest {
 
     @Test
     public void getCompanyInfoWhenGivenUserEmail() {
-        Long id  = 1L;
+        Long id = 1L;
         String email = "p@asyncworking.com";
         IEmployeeInfoImpl mockEmployeeInfo = IEmployeeInfoImpl.builder()
                 .email(email)

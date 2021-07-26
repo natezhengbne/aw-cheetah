@@ -26,9 +26,16 @@ logging:
   level:
     com.asyncworking: debug
 
+#production env
 url: https://www.asyncworking.com
+
+#local env
+#url: http://localhost:3000
 
 
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
+  secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
+
+
 
