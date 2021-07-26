@@ -5,6 +5,7 @@ import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.jwt.JwtConfig;
 import com.asyncworking.jwt.JwtTokenVerifier;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
+import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -38,6 +39,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
     private final UserRepository userRepository;
+    private final ProjectUserRepository projectUserRepository;
 
 
     @SneakyThrows
@@ -54,7 +56,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository))
+                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository, projectUserRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/companies/{companyId:[\\d+]}/**").access("@guard.checkCompanyId(authentication, #companyId)")
@@ -63,7 +65,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("@guard.checkProjectIdGetMethod(authentication, #companyId, #projectId)")
                 .antMatchers("/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/**")
                 .access("@guard.checkProjectIdOtherMethods(authentication, #companyId, #projectId)")
-                .antMatchers("/", "/resend", "/signup", "index", "/css/*", "/actuator/*")
+                .antMatchers("/", "/resend", "/signup", "/invitations/**", "/verify", "index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

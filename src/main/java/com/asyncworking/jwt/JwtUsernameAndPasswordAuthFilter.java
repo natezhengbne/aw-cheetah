@@ -2,6 +2,7 @@ package com.asyncworking.jwt;
 
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     private final AuthenticationManager authenticationManager;
     private final SecretKey secretKey;
     private final UserRepository userRepository;
+    private final ProjectUserRepository projectUserRepository;
 
     @Override
     @SneakyThrows
@@ -62,11 +65,13 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .signWith(secretKey)
                 .compact();
 
+        List<Long> projectId = projectUserRepository.findProjectIdByUserId(foundUserEntity.get().getId());
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(id)
                 .email(authResult.getName())
                 .name(name)
                 .accessToken(jwtToken)
+                .projectId(projectId)
                 .build();
         
         String userInfoDtoString = new Gson().toJson(userInfoDto);
@@ -82,7 +87,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     @SneakyThrows
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) {
-        String message = "Wrong Password";
+        String message = "Wrong password or user email";
         PrintWriter out = response.getWriter();
         response.setStatus(401);
         response.setContentType("application/json");
