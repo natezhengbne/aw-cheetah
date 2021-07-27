@@ -31,7 +31,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     private final AuthenticationManager authenticationManager;
     private final SecretKey secretKey;
     private final UserRepository userRepository;
-    private final ProjectUserRepository projectUserRepository;
 
     @Override
     @SneakyThrows
@@ -65,13 +64,11 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .signWith(secretKey)
                 .compact();
 
-        List<Long> projectId = projectUserRepository.findProjectIdByUserId(foundUserEntity.get().getId());
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(id)
                 .email(authResult.getName())
                 .name(name)
                 .accessToken(jwtToken)
-                .projectId(projectId)
                 .build();
         
         String userInfoDtoString = new Gson().toJson(userInfoDto);

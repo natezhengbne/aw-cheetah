@@ -1,10 +1,10 @@
 package com.asyncworking.auth;
 
-import com.asyncworking.models.Employee;
 import com.asyncworking.models.Role;
 import com.asyncworking.models.UserEntity;
-import com.asyncworking.models.ProjectUser;
+import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.ProjectRepository;
+import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 public class Guard {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ProjectUserRepository projectUserRepository;
 
     public boolean checkCompanyId(Authentication authentication, Long companyId) {
         if (checkAnonymousAuthentication(authentication)){
@@ -29,10 +31,7 @@ public class Guard {
         }
 
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
-        Set<Employee> employees = user.get().getEmployees();
-        Set<Long> companyIds = employees.stream()
-                .map(employee -> employee.getCompany().getId())
-                .collect(Collectors.toSet());
+        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(user.get().getId());
         return companyIds.contains(companyId);
     }
 
@@ -51,10 +50,7 @@ public class Guard {
             return true;
         }
 
-        Set<ProjectUser> projectUsers = user.get().getProjectUsers();
-        Set<Long> projectIds = projectUsers.stream()
-                .map(projectUser -> projectUser.getProject().getId())
-                .collect(Collectors.toSet());
+        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(user.get().getId());
         return projectIds.contains(projectId);
     }
 
