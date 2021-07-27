@@ -88,23 +88,6 @@ public class ProjectControllerTest {
     }
 
     @Test
-    public void shouldReturnOkIfGetProjectInfoListSuccessful() throws Exception {
-        Long companyId = 1L;
-        List<String> projectUserNames = Arrays.asList("+", "-", "*");
-        ProjectInfoDto projectInfoDto = ProjectInfoDto.builder()
-                .id(1L)
-                .name("SSS")
-                .projectUserNames(projectUserNames)
-                .build();
-        when(projectService.fetchProjectInfoListByCompanyId(companyId)).thenReturn(Arrays.asList(projectInfoDto));
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/projects/1")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void shouldReturnOkIfDisplayProjectInfoSuccessful() throws Exception {
         Long companyId = 1L;
         List<String> projectUserNames = Arrays.asList("+", "-", "*");
