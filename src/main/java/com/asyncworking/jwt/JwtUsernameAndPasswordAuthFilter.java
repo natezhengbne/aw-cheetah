@@ -84,12 +84,8 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     @SneakyThrows
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) {
-        String message = "Wrong password or user email";
-        PrintWriter out = response.getWriter();
         response.setStatus(401);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        out.print(message);
-        out.flush();
+        response.getWriter().write("Wrong password or user email");
+
     }
 }

@@ -22,14 +22,15 @@ public class AccessDeniedExceptionHandler implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException authException) throws IOException, ServletException {
         httpServletResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+        httpServletResponse.getWriter().write("Authentication Failed Due To Invalid Token");
 
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AccessDeniedException accessDeniedException) throws IOException {
-
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        httpServletResponse.getWriter().write("Access Denied Due To Non-authorization");
 
     }
 
