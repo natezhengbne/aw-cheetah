@@ -44,6 +44,8 @@ public class ProjectService {
 
     private final RoleService roleService;
 
+    private final CompanyService companyService;
+
     private final MessageCategoryService messageCategoryService;
 
     public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
@@ -64,6 +66,10 @@ public class ProjectService {
                 .collect(Collectors.toList());
         List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
+        Long adminId = companyService.fetchCompanyById(companyId).getAdminId();
+        if (adminId == userId) {
+            return companyProjects;
+        }
         return userProjects;
     }
 

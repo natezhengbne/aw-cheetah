@@ -119,7 +119,7 @@ public class CompanyService {
         return userMapper.mapEntityToCompanyProfileDto(company);
     }
 
-    private Company fetchCompanyById(Long companyId) {
+    public Company fetchCompanyById(Long companyId) {
         return companyRepository
                 .findById(companyId)
                 .orElseThrow(() -> new CompanyNotFoundException("Can not find company with Id:" + companyId));
