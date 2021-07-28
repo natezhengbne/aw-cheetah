@@ -27,7 +27,7 @@ public class RoleService {
         userRoleRepository.save(userRole);
     }
 
-    private Role fetchRoleByName(String roleName) {
+    public Role fetchRoleByName(String roleName) {
         return roleRepository
                 .findByName(roleName)
                 .orElseThrow(() -> new RoleNotFoundException(roleName + " does not exist!"));
