@@ -2,10 +2,7 @@ package com.asyncworking.auth;
 
 import com.asyncworking.models.Role;
 import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.EmployeeRepository;
-import com.asyncworking.repositories.ProjectRepository;
-import com.asyncworking.repositories.ProjectUserRepository;
-import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,6 +17,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Guard {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
     private final ProjectRepository projectRepository;
     private final EmployeeRepository employeeRepository;
     private final ProjectUserRepository projectUserRepository;
@@ -42,10 +41,10 @@ public class Guard {
         }
 
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
-        Set<Role> roles = user.get().getRoles();
-        Set<String> roleNames = roles.stream()
-                .map(role -> role.getName())
-                .collect((Collectors.toSet()));
+
+        Set<String> roleNames = userRoleRepository.findRoleIdByUserId(user.get().getId()).stream()
+                .map(roleId -> roleRepository.findById(roleId).get().getName())
+                .collect(Collectors.toSet());
         if (roleNames.contains("Company Manager")) {
             return true;
         }

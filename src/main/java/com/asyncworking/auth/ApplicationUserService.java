@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import com.asyncworking.models.Authority;
 import com.asyncworking.models.Role;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.RoleRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,14 +26,17 @@ import org.springframework.stereotype.Service;
 public class ApplicationUserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         UserEntity user = mapToUserDetails(email);
 
-        Set<Role> roles = user.getRoles();
+        Set<Role> roles = userRoleRepository.findRoleIdByUserId(user.getId()).stream()
+                .map(roleId -> roleRepository.findById(roleId).get())
+                .collect(Collectors.toSet());
 
         Set<GrantedAuthority> grantedAuthorities = getGrantedAuthorities(roles);
 
@@ -48,17 +53,13 @@ public class ApplicationUserService implements UserDetailsService {
 
     private Set<GrantedAuthority> getGrantedAuthorities (Set<Role> roles) {
         Set<Authority> authorities = new HashSet<>();
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (Role role : roles) {
             authorities.addAll(role.getAuthorities());
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 
-        Set<GrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
-                .collect(Collectors.toSet());
-
-        for (Role role : roles) {
-           grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
+        authorities.forEach(authority -> grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName())));
 
         return grantedAuthorities;
     }

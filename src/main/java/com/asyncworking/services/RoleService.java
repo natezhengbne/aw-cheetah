@@ -3,7 +3,10 @@ package com.asyncworking.services;
 import com.asyncworking.exceptions.RoleNotFoundException;
 import com.asyncworking.models.Role;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.UserRole;
+import com.asyncworking.models.UserRoleId;
 import com.asyncworking.repositories.RoleRepository;
+import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +15,16 @@ import org.springframework.stereotype.Service;
 public class RoleService {
 
     private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     public void assignRole(UserEntity user, String roleName) {
         Role role = fetchRoleByName(roleName);
-        user.getRoles().add(role);
+        UserRole userRole= UserRole.builder()
+                .id(new UserRoleId(user.getId(), role.getId()))
+                .userEntity(user)
+                .role(role)
+                .build();
+        userRoleRepository.save(userRole);
     }
 
     private Role fetchRoleByName (String roleName) {

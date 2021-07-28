@@ -2,13 +2,10 @@ package com.asyncworking.models;
 
 import lombok.*;
 import org.hibernate.annotations.Type;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -63,10 +60,8 @@ public class UserEntity {
             cascade = CascadeType.ALL)
     private Set<ProjectUser> projectUsers;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL)
+    private Set<UserRole> userRoles;
 
 }
