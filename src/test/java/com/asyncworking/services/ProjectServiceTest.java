@@ -20,9 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -58,11 +56,14 @@ public class ProjectServiceTest {
     @Mock
     private RoleService roleService;
 
-    @Mock CompanyService companyService;
+    @Mock
+    private CompanyService companyService;
 
     private Project mockProject;
 
     private ProjectInfoDto projectInfoDto;
+
+    private Set<Long> projectId;
 
     @BeforeEach()
     public void setup() {
@@ -91,6 +92,9 @@ public class ProjectServiceTest {
                 .name("AW")
                 .description("Async working application")
                 .build();
+
+        projectId = new HashSet<>();
+        projectId.add(2L);
     }
 
     @Test
@@ -109,11 +113,27 @@ public class ProjectServiceTest {
     }
 
     @Test
-    public void shouldReturnProjectInfoListByProjectId() {
+    public void shouldReturnProjectInfoListByCompanyId() {
         when(projectRepository.findProjectsByCompanyId(any())).thenReturn(List.of(mockProject));
         when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
         assertEquals(projectInfoDto.getName(),
                 projectService.fetchProjectInfoListByCompanyId(mockProject.getCompanyId()).get(0).getName());
+    }
+
+    @Test
+    public void shouldReturnAvailableProjectInfoList() {
+        Company mockReturnedCompany = Company.builder()
+                .adminId(2L)
+                .build();
+        when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
+        when(projectRepository.findProjectsByCompanyId(any())).thenReturn(List.of(mockProject));
+        when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
+        when(projectUserRepository.findProjectIdByUserId(any())).thenReturn(projectId);
+        when(companyService.fetchCompanyById(any())).thenReturn(mockReturnedCompany);
+        assertEquals(projectInfoDto.getName(),
+                projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 2L).get(0).getName());
+        assertEquals(projectInfoDto.getName(),
+                projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 1L).get(0).getName());
     }
 
     @Test
