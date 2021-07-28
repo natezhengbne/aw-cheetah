@@ -2,7 +2,6 @@ package com.asyncworking.jwt;
 
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -70,7 +68,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .name(name)
                 .accessToken(jwtToken)
                 .build();
-        
+
         String userInfoDtoString = new Gson().toJson(userInfoDto);
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");

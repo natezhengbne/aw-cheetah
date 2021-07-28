@@ -24,7 +24,7 @@ public class JwtController {
 
     @SneakyThrows
     @GetMapping
-    public ResponseEntity refreshToken (@RequestHeader("Authorization") String auth) {
+    public ResponseEntity refreshToken(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()

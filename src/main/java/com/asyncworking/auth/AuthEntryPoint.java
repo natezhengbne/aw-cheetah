@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Component
 @ControllerAdvice
-public class AccessDeniedExceptionHandler implements AuthenticationEntryPoint {
+public class AuthEntryPoint implements AuthenticationEntryPoint {
 
 
     @Override

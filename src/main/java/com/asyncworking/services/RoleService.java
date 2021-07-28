@@ -19,7 +19,7 @@ public class RoleService {
 
     public void assignRole(UserEntity user, String roleName) {
         Role role = fetchRoleByName(roleName);
-        UserRole userRole= UserRole.builder()
+        UserRole userRole = UserRole.builder()
                 .id(new UserRoleId(user.getId(), role.getId()))
                 .userEntity(user)
                 .role(role)
@@ -27,9 +27,9 @@ public class RoleService {
         userRoleRepository.save(userRole);
     }
 
-    private Role fetchRoleByName (String roleName) {
-       return roleRepository
-               .findByName(roleName)
-               .orElseThrow(() -> new RoleNotFoundException(roleName + " does not exist!"));
+    private Role fetchRoleByName(String roleName) {
+        return roleRepository
+                .findByName(roleName)
+                .orElseThrow(() -> new RoleNotFoundException(roleName + " does not exist!"));
     }
 }

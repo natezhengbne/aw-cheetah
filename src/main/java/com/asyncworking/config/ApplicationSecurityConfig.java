@@ -1,7 +1,7 @@
 package com.asyncworking.config;
 
-import com.asyncworking.auth.AccessDeniedExceptionHandler;
 import com.asyncworking.auth.ApplicationUserService;
+import com.asyncworking.auth.AuthEntryPoint;
 import com.asyncworking.jwt.JwtTokenVerifier;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
 import com.asyncworking.repositories.UserRepository;
@@ -65,7 +65,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and().
-                exceptionHandling().authenticationEntryPoint(new AccessDeniedExceptionHandler());
+                exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
     }
 
     @Override

@@ -44,7 +44,7 @@ public class CompanyController {
 
     @GetMapping("/{companyId}/profile")
     public ResponseEntity<CompanyModificationDto> fetchCompanyProfile(@PathVariable("companyId")
-                                                                     @NotNull Long companyId) {
+                                                                      @NotNull Long companyId) {
         return ResponseEntity.ok(companyService.fetchCompanyProfileById(companyId));
     }
 

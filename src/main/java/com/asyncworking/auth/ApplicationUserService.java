@@ -45,13 +45,13 @@ public class ApplicationUserService implements UserDetailsService {
                 grantedAuthorities);
     }
 
-    private UserEntity mapToUserDetails (String email) {
+    private UserEntity mapToUserDetails(String email) {
         return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(String.format("Username %s not found", email)));
     }
 
-    private Set<GrantedAuthority> getGrantedAuthorities (Set<Role> roles) {
+    private Set<GrantedAuthority> getGrantedAuthorities(Set<Role> roles) {
         Set<Authority> authorities = new HashSet<>();
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (Role role : roles) {

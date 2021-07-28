@@ -18,7 +18,7 @@ public class JwtService {
     private final SecretKey secretKey;
     private final ApplicationUserService applicationUserService;
 
-    public String generateJwtToken (String email) {
+    public String generateJwtToken(String email) {
         UserDetails user = applicationUserService.loadUserByUsername(email);
         String jwtToken = Jwts.builder()
                 .setSubject(user.getUsername())
