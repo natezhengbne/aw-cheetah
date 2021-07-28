@@ -11,7 +11,7 @@ INSERT INTO "authority" ("name") VALUES
 ('add project'),
 ('add project member'),
 ('edit project description'),
-('edit to-do item'),
+('edit to-do'),
 ('edit message');
 
 CREATE TABLE IF NOT EXISTS "role_authority" (
@@ -32,6 +32,7 @@ INSERT INTO "role_authority" VALUES
 (2,5),
 (2,6),
 (2,7),
+(3,4),
 (3,6),
 (3,7);
 

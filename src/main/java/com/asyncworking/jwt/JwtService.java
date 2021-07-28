@@ -25,7 +25,7 @@ public class JwtService {
     private final SecretKey secretKey;
     private final ApplicationUserService applicationUserService;
 
-    public JwtDto refreshJwtToken (String auth) {
+    public JwtDto refreshJwtToken(String auth) {
         String oldToken = auth.replace("Bearer ", "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
@@ -41,7 +41,7 @@ public class JwtService {
                 .collect(Collectors.toSet());
 
         UserDetails user = applicationUserService.loadUserByUsername(email);
-        if (grantedAuthorities.size()==user.getAuthorities().size()) {
+        if (grantedAuthorities.size() == user.getAuthorities().size()) {
             return JwtDto.builder()
                     .accessToken(oldToken)
                     .message("No need to refresh the jwtToken.")
