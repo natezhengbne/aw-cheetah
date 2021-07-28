@@ -9,14 +9,12 @@ import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -39,8 +37,6 @@ public class UserServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
-    private QueueMessagingTemplate queueMessagingTemplate;
-
     @Autowired
     private UserMapper userMapper;
 
@@ -50,11 +46,11 @@ public class UserServiceTest {
     private FrontEndUrlConfig frontEndUrlConfig;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private EmailService emailService;
 
     @BeforeEach()
     void setup() {
-        userService = new UserService(userRepository, authenticationManager, userMapper, frontEndUrlConfig,queueMessagingTemplate,objectMapper);
+        userService = new UserService(userRepository, authenticationManager, userMapper, frontEndUrlConfig, emailService);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
@@ -125,7 +121,7 @@ public class UserServiceTest {
         when(userRepository.findUserEntityByEmail(any())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class,
-            () -> userService.login(accountDto.getEmail(), accountDto.getPassword()));
+                () -> userService.login(accountDto.getEmail(), accountDto.getPassword()));
 
         String actualMessage = exception.getMessage();
 
@@ -139,15 +135,15 @@ public class UserServiceTest {
         String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
         assertEquals(
                 siteUrl.concat("/invitations/register?code=")
-                .concat("eyJhbGciOiJIUzI1NiJ9." +
-                        "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
-                        "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
-                        "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
+                        .concat("eyJhbGciOiJIUzI1NiJ9." +
+                                "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
+                                "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
+                                "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
                 invitationLink
         );
     }
 
-/*    @Test
+    @Test
     public void shouldGenerateActivationLinkGivenUserEmail() {
         String siteUrl = frontEndUrlConfig.getFrontEndUrl();
         String verifyLink = userService.generateVerifyLink("user0001@test.com");
@@ -158,7 +154,7 @@ public class UserServiceTest {
                         .concat("Lm7JlWoG0lyw2KWYBpnGfmt2HMP6H3vvPeN36gSVGrE"),
                 verifyLink
         );
-    }*/
+    }
 
     @Test
     public void shouldCreateUserAndGenerateActivationLinkGivenProperUserDto() {
@@ -241,7 +237,7 @@ public class UserServiceTest {
 
     @Test
     public void getCompanyInfoWhenGivenUserEmail() {
-        Long id  = 1L;
+        Long id = 1L;
         String email = "p@asyncworking.com";
         IEmployeeInfoImpl mockEmployeeInfo = IEmployeeInfoImpl.builder()
                 .email(email)

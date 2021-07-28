@@ -95,17 +95,4 @@ public class UserController {
         }
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
-
-    @PutMapping("/emailsent")
-    public ResponseEntity<String> activateUserAccount(@Valid @RequestBody UserInfoDto userInfoDto) {
-        userService.updateEmailSent(userInfoDto.getEmail());
-        return ResponseEntity.ok("success");
-    }
-
-    @SqsListener(value = "receive_queue")
-    public void loadMessagesFromQueue(String email) {
-        log.info("from sqs: " + email);
-        userService.updateEmailSent(email);
-    }
-
 }

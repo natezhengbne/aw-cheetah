@@ -21,7 +21,7 @@ public class AmazonSQSConfig {
     private String secretKey;
 
     @Bean
-    public QueueMessagingTemplate queueMessagingTemplate(){
+    public QueueMessagingTemplate queueMessagingTemplate() {
         return new QueueMessagingTemplate(buildAmazonSQSAsync());
     }
 
@@ -31,14 +31,15 @@ public class AmazonSQSConfig {
                 .withRegion(Regions.AP_SOUTHEAST_2)
                 .withCredentials(
                         new AWSStaticCredentialsProvider(
-                                new BasicAWSCredentials(accessKey,secretKey)
+                                new BasicAWSCredentials(accessKey, secretKey)
                         )
                 )
                 .build();
     }
+
     @Primary
     @Bean
-    public AmazonSQSAsync amazonSQSAsync(){
+    public AmazonSQSAsync amazonSQSAsync() {
         return buildAmazonSQSAsync();
     }
 
