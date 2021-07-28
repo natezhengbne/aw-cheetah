@@ -57,7 +57,8 @@ public class UserServiceTest {
                 companyRepository,
                 employeeRepository,
                 userMapper,
-                frontEndUrlConfig);
+                frontEndUrlConfig,
+                emailService);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
         ReflectionTestUtils.setField(userService, "secretKey", "7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\\\//asdf");
     }

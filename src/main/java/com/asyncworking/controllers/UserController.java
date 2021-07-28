@@ -2,7 +2,6 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
 import com.asyncworking.services.UserService;
-import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
