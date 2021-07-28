@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class EmployeeMapper {
     public EmployeeGetDto mapEntityToDto(IEmployeeInfo employeeInfo) {
         return EmployeeGetDto.builder()
+                .id(employeeInfo.getId())
                 .name(employeeInfo.getName())
                 .email(employeeInfo.getEmail())
                 .title(employeeInfo.getTitle())

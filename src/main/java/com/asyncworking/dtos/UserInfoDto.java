@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +26,8 @@ public class UserInfoDto {
 
     @Size(max = 128, message = "Title can not be more than 128 characters.")
     private String title;
+
+    private String accessToken;
+
+    private List<Long> projectId;
 }

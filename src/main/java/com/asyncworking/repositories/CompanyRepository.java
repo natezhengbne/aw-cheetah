@@ -15,6 +15,9 @@ import java.util.List;
 @Repository
 @EnableJpaRepositories
 public interface CompanyRepository extends JpaRepository<Company, Long> {
+
+    Company findCompanyById(@Param("id") Long id);
+
     @Query(nativeQuery = true, value =
             "SELECT c.id, c.name, c.description FROM company c, company_user cu, user_info u WHERE \n" +
                     "c.id = cu.company_id AND \n" +

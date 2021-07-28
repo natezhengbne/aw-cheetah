@@ -2,6 +2,8 @@ package com.asyncworking.utility.mapper;
 
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
+import com.asyncworking.dtos.InvitedAccountGetDto;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
@@ -64,6 +66,28 @@ public class UserMapper {
                 .companyId(company.getId())
                 .name(company.getName())
                 .description(company.getDescription())
+                .build();
+    }
+
+    public UserEntity mapInvitedDtoToEntityInvitation(InvitedAccountPostDto accountDto) {
+        String encodedPassword = passwordEncoder.encode(accountDto.getPassword());
+
+        return UserEntity.builder()
+                .name(accountDto.getName())
+                .email(accountDto.getEmail())
+                .password(encodedPassword)
+                .status(Status.ACTIVATED)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+    }
+
+    public InvitedAccountGetDto mapEntityToInvitedDto(UserEntity returnedUser, String token) {
+        return InvitedAccountGetDto.builder()
+                .id(returnedUser.getId())
+                .name(returnedUser.getName())
+                .email(returnedUser.getEmail())
+                .token(token)
                 .build();
     }
 }

@@ -1,7 +1,6 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.services.UserService;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +20,6 @@ import java.net.URISyntaxException;
 public class UserController {
 
     private final UserService userService;
-
-    @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody AccountDto accountDto) {
-        log.info(accountDto.getEmail());
-        UserInfoDto userInfoDto = userService.login(
-                accountDto.getEmail().toLowerCase(),
-                accountDto.getPassword());
-        return ResponseEntity.ok(userInfoDto);
-    }
 
     @GetMapping("/login")
     public ResponseEntity verifyStatus(@RequestParam(value = "email") String email) {
@@ -65,19 +55,24 @@ public class UserController {
     }
 
     @GetMapping("/invitations/companies")
-    public  ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
-                                                @RequestParam(value = "title") String title,
+    public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
+                                                @RequestParam(value = "email") String email,
                                                 @RequestParam(value = "name") String name,
-                                                @RequestParam(value = "email") String email){
-        return ResponseEntity.ok(userService.generateInvitationLink(companyId, title, name, email));
+                                                @RequestParam(value = "title") String title){
+        return ResponseEntity.ok(userService.generateInvitationLink(companyId, email, name, title));
+    }
+
+    @GetMapping("/invitations/info")
+    public ResponseEntity getInvitationInfo(@RequestParam(value = "code") String code) throws URISyntaxException {
+        log.info("The code is " + code);
+        ExternalEmployeeDto externalEmployeeDto = userService.getUserInfo(code);
+        return ResponseEntity.ok(externalEmployeeDto);
     }
 
     @PostMapping("/invitations/register")
-    public ResponseEntity createInvitationsUser(@Valid @RequestBody AccountDto accountDto) {
-        log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserViaInvitationLink(accountDto);
-
-        return ResponseEntity.ok("success");
+    public ResponseEntity createInvitationsUser(@Valid @RequestBody InvitedAccountPostDto accountDto) {
+        InvitedAccountGetDto user = userService.createUserViaInvitationLink(accountDto);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/resend")

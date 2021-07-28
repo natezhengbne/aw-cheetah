@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -155,7 +158,7 @@ public class CompanyService {
     public List<AvailableEmployeesGetDto> findAvailableEmployees(Long companyId, Long projectId) {
         log.info("Project ID: {}", projectId);
         log.info("Company ID: {}", companyId);
-        //how to verify the projectId and companyId if they are both invalid the result is always empty arrays
+        //how to verify the pinvitations/registerrojectId and companyId if they are both invalid the result is always empty arrays
         return userRepository.findAvailableEmployeesByCompanyAndProjectId(companyId, projectId).stream()
                 .map(employeeMapper::mapAvailableEmployeesEntityToDto)
                 .collect(Collectors.toList());
