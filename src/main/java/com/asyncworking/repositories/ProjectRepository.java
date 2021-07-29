@@ -10,17 +10,21 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @EnableJpaRepositories
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
 
-     List<Project> findProjectsByCompanyId(@Param("companyId") Long companyId);
+    List<Project> findProjectsByCompanyId(@Param("companyId") Long companyId);
+
+    @Query(nativeQuery = true, value = "select id from project where company_id = :companyId")
+    Set<Long> findProjectIdSetByCompanyId(@Param("companyId") Long companyId);
 
     @Modifying
     @Query("update Project p set p.name=:name, p.description=:description, p.updatedTime=:updatedTime where p.id=:id")
-    int updateProjectInfo(@Param("id")Long id,
+    int updateProjectInfo(@Param("id") Long id,
                           @Param("name") String name,
                           @Param("description") String description,
                           @Param("updatedTime") OffsetDateTime updatedTime);

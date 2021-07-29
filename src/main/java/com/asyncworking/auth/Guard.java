@@ -22,6 +22,7 @@ public class Guard {
     private final EmployeeRepository employeeRepository;
     private final ProjectUserRepository projectUserRepository;
 
+    //Check if the user belongs to the company
     public boolean checkCompanyId(Authentication authentication, Long companyId) {
         if (checkAnonymousAuthentication(authentication)) {
             log.info("Anonymous user, access denied");
@@ -33,6 +34,7 @@ public class Guard {
         return companyIds.contains(companyId);
     }
 
+    //Check if the user belongs to the project
     public boolean checkProjectId(Authentication authentication, Long projectId) {
         if (checkAnonymousAuthentication(authentication)) {
             log.info("Anonymous user, access denied");
@@ -55,6 +57,12 @@ public class Guard {
     public boolean checkProjectIdGetMethod(Authentication authentication, Long companyId, Long projectId) {
         if (checkAnonymousAuthentication(authentication)) {
             log.info("Anonymous user, access denied");
+            return false;
+        }
+
+        //Check if the project belongs to the company
+        Set<Long> projectIds = projectRepository.findProjectIdSetByCompanyId(companyId);
+        if(!projectIds.contains(projectId)) {
             return false;
         }
 
