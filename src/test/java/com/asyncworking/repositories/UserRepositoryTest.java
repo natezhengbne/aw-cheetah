@@ -77,7 +77,6 @@ public class UserRepositoryTest extends DBHelper {
     public void shouldFindUserExistByEmail() {
         Optional<UserEntity> returnedActivatedUserEntity = userRepository
                 .findByEmail("a@asyncworking.com");
-        Optional<UserEntity> returnedUnverifiedUserEntity = userRepository.findByEmail("p@asyncworking.com");
         assertEquals("testpass", returnedActivatedUserEntity.get().getPassword().trim());
     }
 
@@ -85,15 +84,14 @@ public class UserRepositoryTest extends DBHelper {
     public void shouldFindUserByEmail() {
         Optional<UserEntity> returnedActivatedUserEntity = userRepository
                 .findByEmail("a@asyncworking.com");
-        Optional<UserEntity> returnedUnverifiedUserEntity = userRepository.findByEmail("p@asyncworking.com");
         assertEquals("testpass", returnedActivatedUserEntity.get().getPassword().trim());
     }
 
     @Test
     public void shouldFindUnverifiedUserExistByEmail() {
-        Optional<UserEntity> activatedUserEntity = userRepository
+        Optional<UserEntity> unverifiedUserEntity = userRepository
                 .findUnverifiedStatusByEmail("p@asyncworking.com");
-        assertEquals("testpass", activatedUserEntity.get().getPassword().trim());
+        assertEquals("testpass", unverifiedUserEntity.get().getPassword().trim());
     }
 
     @Test

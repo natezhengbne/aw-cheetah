@@ -33,7 +33,6 @@ public class ProjectUserRepositoryTest extends DBHelper{
         clearDb();
         when(passwordEncoder.encode("len123")).thenReturn("testpass");
         mockProject1 = Project.builder()
-                .id(1L)
                 .name("newProject")
                 .isDeleted(false)
                 .isPrivate(false)
@@ -44,7 +43,6 @@ public class ProjectUserRepositoryTest extends DBHelper{
                 .build();
 
         mockProject2 = Project.builder()
-                .id(2L)
                 .name("newProject2")
                 .isDeleted(false)
                 .isPrivate(false)
@@ -55,7 +53,6 @@ public class ProjectUserRepositoryTest extends DBHelper{
                 .build();
 
         mockUser = UserEntity.builder()
-                .id(1L)
                 .name("user")
                 .email("a@asyncworking.com")
                 .title("Frontend Developer")
@@ -65,6 +62,14 @@ public class ProjectUserRepositoryTest extends DBHelper{
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
 
+
+        userRepository.save(mockUser);
+        projectRepository.save(mockProject1);
+        projectRepository.save(mockProject2);
+    }
+
+    @Test
+    public void shouldReturnProjectIdSetWhenGivenUserID() {
         mockProjectUser1 = ProjectUser.builder()
                 .id(new ProjectUserId(mockProject1.getId(), mockUser.getId()))
                 .userEntity(mockUser)
@@ -82,11 +87,6 @@ public class ProjectUserRepositoryTest extends DBHelper{
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
-
-    }
-
-    @Test
-    public void shouldReturnProjectIdSetWhenGivenUserID() {
         projectUserRepository.save(mockProjectUser1);
         projectUserRepository.save(mockProjectUser2);
         Set<Long> projectSet = projectUserRepository.findProjectIdByUserId(mockUser.getId());
