@@ -64,8 +64,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest()
                 .authenticated()
-                .and().
-                exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
     }
 
     @Override

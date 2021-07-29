@@ -63,7 +63,7 @@ public class Guard {
             return false;
         }
 
-        if (projectRepository.findById(projectId).get().getIsPrivate()) {
+        if (!projectRepository.findById(projectId).get().getIsPrivate()) {
             return true;
         }
 
