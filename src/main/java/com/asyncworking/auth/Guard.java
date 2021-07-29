@@ -62,7 +62,7 @@ public class Guard {
 
         //Check if the project belongs to the company
         Set<Long> projectIds = projectRepository.findProjectIdSetByCompanyId(companyId);
-        if(!projectIds.contains(projectId)) {
+        if (!projectIds.contains(projectId)) {
             return false;
         }
 
