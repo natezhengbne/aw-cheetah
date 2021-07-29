@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import static java.time.ZoneOffset.UTC;
@@ -45,20 +46,19 @@ public class UserRoleRepositoryTest extends DBHelper {
 
         mockRole1 = Role.builder()
                 .name("Company Manager")
+                .authorities(new HashSet<>())
                 .build();
 
         mockRole2 = Role.builder()
                 .name("Project Manager")
+                .authorities(new HashSet<>())
                 .build();
 
 
         userRepository.save(mockUser);
         roleRepository.save(mockRole1);
         roleRepository.save(mockRole2);
-    }
 
-    @Test
-    public void shouldReturnRoleIdSetGivenUserID() {
         mockUserRole1 = UserRole.builder()
                 .id(new UserRoleId(mockUser.getId(), mockRole1.getId()))
                 .userEntity(mockUser)
@@ -72,7 +72,11 @@ public class UserRoleRepositoryTest extends DBHelper {
                 .build();
         userRoleRepository.save(mockUserRole1);
         userRoleRepository.save(mockUserRole2);
-        Set<Long> roleIdSet = userRoleRepository.findRoleIdByUserId(mockUser.getId());
-        assertEquals(roleIdSet, Set.of(mockRole1.getId(), mockRole2.getId()));
+    }
+
+    @Test
+    public void shouldReturnRoleSetGivenUserID() {
+        Set<Role> roleSet = userRoleRepository.findRoleSetByUserId(mockUser.getId());
+        assertEquals(roleSet, Set.of(mockRole1, mockRole2));
     }
 }

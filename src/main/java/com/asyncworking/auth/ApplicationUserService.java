@@ -2,12 +2,10 @@ package com.asyncworking.auth;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.asyncworking.models.Authority;
 import com.asyncworking.models.Role;
 import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.RoleRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 public class ApplicationUserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
     @Override
@@ -34,9 +31,7 @@ public class ApplicationUserService implements UserDetailsService {
 
         UserEntity user = mapToUserDetails(email);
 
-        Set<Role> roles = userRoleRepository.findRoleIdByUserId(user.getId()).stream()
-                .map(roleId -> roleRepository.findById(roleId).get())
-                .collect(Collectors.toSet());
+        Set<Role> roles = userRoleRepository.findRoleSetByUserId(user.getId());
 
         Set<GrantedAuthority> grantedAuthorities = getGrantedAuthorities(roles);
 

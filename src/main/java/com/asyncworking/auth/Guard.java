@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Guard {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final ProjectRepository projectRepository;
     private final EmployeeRepository employeeRepository;
@@ -43,8 +42,8 @@ public class Guard {
 
         Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
 
-        Set<String> roleNames = userRoleRepository.findRoleIdByUserId(user.get().getId()).stream()
-                .map(roleId -> roleRepository.findById(roleId).get().getName())
+        Set<String> roleNames = userRoleRepository.findRoleSetByUserId(user.get().getId()).stream()
+                .map(role -> role.getName())
                 .collect(Collectors.toSet());
         if (roleNames.contains("Company Manager")) {
             return true;
