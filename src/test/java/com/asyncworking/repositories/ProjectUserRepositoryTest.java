@@ -19,11 +19,12 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 public class ProjectUserRepositoryTest extends DBHelper{
-    private Project mockProject1;
     private UserEntity mockUser;
+    private Project mockProject1;
+    private Project mockProject2;
     private ProjectUser mockProjectUser1;
     private ProjectUser mockProjectUser2;
-    private Project mockProject2;
+
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -69,7 +70,7 @@ public class ProjectUserRepositoryTest extends DBHelper{
     }
 
     @Test
-    public void shouldReturnProjectIdSetWhenGivenUserID() {
+    public void shouldReturnProjectIdSetGivenUserID() {
         mockProjectUser1 = ProjectUser.builder()
                 .id(new ProjectUserId(mockProject1.getId(), mockUser.getId()))
                 .userEntity(mockUser)

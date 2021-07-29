@@ -33,7 +33,8 @@ public abstract class DBHelper {
 	@Autowired
 	protected RoleRepository roleRepository;
 
-	@Autowired UserRoleRepository userRoleRepository;
+	@Autowired
+	protected UserRoleRepository userRoleRepository;
 
 	protected void clearDb() {
 		todoItemRepository.deleteAll();
