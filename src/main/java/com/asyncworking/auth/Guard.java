@@ -83,6 +83,12 @@ public class Guard {
             return false;
         }
 
+        //Check if the project belongs to the company
+        Set<Long> projectIds = projectRepository.findProjectIdSetByCompanyId(companyId);
+        if (!projectIds.contains(projectId)) {
+            return false;
+        }
+
         if (!checkCompanyId(authentication, companyId)) {
             log.info("User does not belong to this company!");
             return false;
