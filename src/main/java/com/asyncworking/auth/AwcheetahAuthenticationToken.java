@@ -15,7 +15,7 @@ public class AwcheetahAuthenticationToken extends UsernamePasswordAuthentication
     private final List<Long> projectIds;
 
     public AwcheetahAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities,
-                                        List<Long> companyIds, List<Long> projectIds ) {
+                                        List<Long> companyIds, List<Long> projectIds) {
         super(principal, credentials, authorities);
         this.companyIds = companyIds;
         this.projectIds = projectIds;
@@ -23,9 +23,9 @@ public class AwcheetahAuthenticationToken extends UsernamePasswordAuthentication
 
     @Override
     public Object getDetails() {
-        Map<String,List<Long>> details =new HashMap();
-        details.put("companyIds",companyIds);
-        details.put("projectIds",projectIds);
+        Map<String, List<Long>> details = new HashMap();
+        details.put("companyIds", companyIds);
+        details.put("projectIds", projectIds);
         return details;
     }
 

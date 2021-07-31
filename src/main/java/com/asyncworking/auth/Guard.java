@@ -16,9 +16,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Guard {
     private final ProjectRepository projectRepository;
-//    private final UserRepository userRepository;
-//    private final EmployeeRepository employeeRepository;
-//    private final ProjectUserRepository projectUserRepository;
+
+    public boolean checkAnonymousAuthentication(Authentication authentication) {
+        return authentication.getPrincipal().equals("anonymousUser");
+    }
 
     //Check if the user belongs to the company
     public boolean checkCompanyId(Authentication authentication, Long companyId) {
@@ -27,10 +28,7 @@ public class Guard {
             return false;
         }
 
-//        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
-//        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(user.get().getId());
-
-        var details = (Map<String,List<Long>>) authentication.getDetails();
+        var details = (Map<String, List<Long>>) authentication.getDetails();
         List<Long> companyIds = details.get("companyIds");
 
         return companyIds.contains(companyId);
@@ -50,11 +48,8 @@ public class Guard {
             return true;
         }
 
-        var details = (Map<String,List<Long>>) authentication.getDetails();
+        var details = (Map<String, List<Long>>) authentication.getDetails();
         List<Long> projectIds = details.get("projectIds");
-
-//        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
-//        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(user.get().getId());
 
         return projectIds.contains(projectId);
     }
@@ -101,10 +96,6 @@ public class Guard {
         }
 
         return checkProjectId(authentication, projectId);
-    }
-
-    public boolean checkAnonymousAuthentication(Authentication authentication) {
-        return authentication.getPrincipal().equals("anonymousUser");
     }
 
 }
