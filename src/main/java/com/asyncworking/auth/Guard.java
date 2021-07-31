@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Guard {
     private final ProjectRepository projectRepository;
+    private final MessageRepository messageRepository;
 
     public boolean checkAnonymousAuthentication(Authentication authentication) {
         return authentication.getPrincipal().equals("anonymousUser");
@@ -54,20 +55,20 @@ public class Guard {
         return projectIds.contains(projectId);
     }
 
-    public boolean checkProjectIdGetMethod(Authentication authentication, Long companyId, Long projectId) {
+    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
         if (checkAnonymousAuthentication(authentication)) {
             log.info("Anonymous user, access denied");
+            return false;
+        }
+
+        if (!checkCompanyId(authentication, companyId)) {
+            log.info("User does not belong to this company!");
             return false;
         }
 
         //Check if the project belongs to the company
         Set<Long> projectIds = projectRepository.findProjectIdSetByCompanyId(companyId);
         if (!projectIds.contains(projectId)) {
-            return false;
-        }
-
-        if (!checkCompanyId(authentication, companyId)) {
-            log.info("User does not belong to this company!");
             return false;
         }
 
@@ -78,9 +79,14 @@ public class Guard {
         return checkProjectId(authentication, projectId);
     }
 
-    public boolean checkProjectIdOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+    public boolean checkProjectAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
         if (checkAnonymousAuthentication(authentication)) {
             log.info("Anonymous user, access denied");
+            return false;
+        }
+
+        if (!checkCompanyId(authentication, companyId)) {
+            log.info("User does not belong to this company!");
             return false;
         }
 
@@ -90,12 +96,46 @@ public class Guard {
             return false;
         }
 
+        return checkProjectId(authentication, projectId);
+    }
+
+    public boolean checkMessageAccessGetMethod(Authentication authentication, Long companyId, Long projectId, Long messageId) {
+        if (checkAnonymousAuthentication(authentication)) {
+            log.info("Anonymous user, access denied");
+            return false;
+        }
+
         if (!checkCompanyId(authentication, companyId)) {
             log.info("User does not belong to this company!");
             return false;
         }
 
+        if (!messageRepository.findIfMessageExists(companyId, projectId, messageId)) {
+            return false;
+        }
+
+        if (!projectRepository.findById(projectId).get().getIsPrivate()) {
+            return true;
+        }
+
         return checkProjectId(authentication, projectId);
     }
 
+    public boolean checkMessageAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, Long messageId) {
+        if (checkAnonymousAuthentication(authentication)) {
+            log.info("Anonymous user, access denied");
+            return false;
+        }
+
+        if (!checkCompanyId(authentication, companyId)) {
+            log.info("User does not belong to this company!");
+            return false;
+        }
+
+        if (!messageRepository.findIfMessageExists(companyId, projectId, messageId)) {
+            return false;
+        }
+
+        return checkProjectId(authentication, projectId);
+    }
 }

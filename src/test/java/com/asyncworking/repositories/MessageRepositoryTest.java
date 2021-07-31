@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -102,5 +102,11 @@ public class MessageRepositoryTest extends DBHelper {
         Message savedMockFirstMessage = messageRepository.save(mockFirstMessage);
         assertEquals(savedMockFirstMessage.getMessageTitle(),
                 messageRepository.findById(savedMockFirstMessage.getId()).get().getMessageTitle());
+    }
+
+    @Test void shouldReturnBooleanGivenIds() {
+        messageRepository.save(mockFirstMessage);
+        assertTrue(messageRepository.findIfMessageExists(1L, mockProject.getId(), mockFirstMessage.getId()));
+        assertFalse(messageRepository.findIfMessageExists(2L, mockProject.getId(), mockFirstMessage.getId()));
     }
 }
