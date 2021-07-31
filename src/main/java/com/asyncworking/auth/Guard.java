@@ -55,7 +55,7 @@ public class Guard {
         return projectIds.contains(projectId);
     }
 
-    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
+    public boolean checkAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
         if (checkAnonymousAuthentication(authentication)) {
             log.info("Anonymous user, access denied");
             return false;
@@ -66,76 +66,60 @@ public class Guard {
             return false;
         }
 
+        if (!projectRepository.findById(projectId).get().getIsPrivate()) {
+            return true;
+        }
+
+        return checkProjectId(authentication, projectId);
+    }
+
+    public boolean checkAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+        if (checkAnonymousAuthentication(authentication)) {
+            log.info("Anonymous user, access denied");
+            return false;
+        }
+
+        if (!checkCompanyId(authentication, companyId)) {
+            log.info("User does not belong to this company!");
+            return false;
+        }
+
+        return checkProjectId(authentication, projectId);
+    }
+
+    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
         //Check if the project belongs to the company
         Set<Long> projectIds = projectRepository.findProjectIdSetByCompanyId(companyId);
         if (!projectIds.contains(projectId)) {
             return false;
         }
 
-        if (!projectRepository.findById(projectId).get().getIsPrivate()) {
-            return true;
-        }
-
-        return checkProjectId(authentication, projectId);
+        return checkAccessGetMethod(authentication, companyId, projectId);
     }
 
     public boolean checkProjectAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
-        if (checkAnonymousAuthentication(authentication)) {
-            log.info("Anonymous user, access denied");
-            return false;
-        }
-
-        if (!checkCompanyId(authentication, companyId)) {
-            log.info("User does not belong to this company!");
-            return false;
-        }
-
         //Check if the project belongs to the company
         Set<Long> projectIds = projectRepository.findProjectIdSetByCompanyId(companyId);
         if (!projectIds.contains(projectId)) {
             return false;
         }
 
-        return checkProjectId(authentication, projectId);
+        return checkAccessOtherMethods(authentication, companyId, projectId);
     }
 
     public boolean checkMessageAccessGetMethod(Authentication authentication, Long companyId, Long projectId, Long messageId) {
-        if (checkAnonymousAuthentication(authentication)) {
-            log.info("Anonymous user, access denied");
-            return false;
-        }
-
-        if (!checkCompanyId(authentication, companyId)) {
-            log.info("User does not belong to this company!");
-            return false;
-        }
-
         if (!messageRepository.findIfMessageExists(companyId, projectId, messageId)) {
             return false;
         }
 
-        if (!projectRepository.findById(projectId).get().getIsPrivate()) {
-            return true;
-        }
-
-        return checkProjectId(authentication, projectId);
+        return checkAccessGetMethod(authentication, companyId, projectId);
     }
 
     public boolean checkMessageAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, Long messageId) {
-        if (checkAnonymousAuthentication(authentication)) {
-            log.info("Anonymous user, access denied");
-            return false;
-        }
-
-        if (!checkCompanyId(authentication, companyId)) {
-            log.info("User does not belong to this company!");
-            return false;
-        }
-
         if (!messageRepository.findIfMessageExists(companyId, projectId, messageId)) {
             return false;
         }
 
-        return checkProjectId(authentication, projectId);
+        return checkAccessOtherMethods(authentication, companyId, projectId);
     }
 }
