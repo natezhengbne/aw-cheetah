@@ -2,6 +2,8 @@ package com.asyncworking.jwt;
 
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -22,6 +24,7 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthenticationFilter {
@@ -29,6 +32,8 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     private final AuthenticationManager authenticationManager;
     private final SecretKey secretKey;
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ProjectUserRepository projectUserRepository;
 
     @Override
     @SneakyThrows
@@ -51,12 +56,16 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                                             FilterChain chain,
                                             Authentication authResult) {
 
-        Optional<UserEntity> foundUserEntity = userRepository.findUserEntityByEmail(authResult.getName());
-        String name = foundUserEntity.get().getName();
-        Long id = foundUserEntity.get().getId();
+        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authResult.getName());
+        String name = user.get().getName();
+        Long id = user.get().getId();
+        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(id);
+        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(id);
         String jwtToken = Jwts.builder()
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
+                .claim("companyIds", companyIds)
+                .claim("projectIds", projectIds)
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)

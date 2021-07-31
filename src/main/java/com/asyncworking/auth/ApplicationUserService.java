@@ -40,7 +40,7 @@ public class ApplicationUserService implements UserDetailsService {
                 grantedAuthorities);
     }
 
-    private UserEntity mapToUserDetails(String email) {
+    public UserEntity mapToUserDetails(String email) {
         return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(String.format("Username %s not found", email)));

@@ -1,13 +1,13 @@
 package com.asyncworking.auth;
 
-import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,11 +15,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class Guard {
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
     private final ProjectRepository projectRepository;
-    private final EmployeeRepository employeeRepository;
-    private final ProjectUserRepository projectUserRepository;
+//    private final UserRepository userRepository;
+//    private final EmployeeRepository employeeRepository;
+//    private final ProjectUserRepository projectUserRepository;
 
     //Check if the user belongs to the company
     public boolean checkCompanyId(Authentication authentication, Long companyId) {
@@ -28,8 +27,12 @@ public class Guard {
             return false;
         }
 
-        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
-        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(user.get().getId());
+//        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
+//        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(user.get().getId());
+
+        var details = (Map<String,List<Long>>) authentication.getDetails();
+        List<Long> companyIds = details.get("companyIds");
+
         return companyIds.contains(companyId);
     }
 
@@ -40,16 +43,19 @@ public class Guard {
             return false;
         }
 
-        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
-
-        Set<String> roleNames = userRoleRepository.findRoleSetByUserId(user.get().getId()).stream()
-                .map(role -> role.getName())
+        Set<String> roleNames = authentication.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.toSet());
         if (roleNames.contains("Company Manager")) {
             return true;
         }
 
-        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(user.get().getId());
+        var details = (Map<String,List<Long>>) authentication.getDetails();
+        List<Long> projectIds = details.get("projectIds");
+
+//        Optional<UserEntity> user = userRepository.findUserEntityByEmail(authentication.getName());
+//        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(user.get().getId());
+
         return projectIds.contains(projectId);
     }
 

@@ -1,6 +1,9 @@
 package com.asyncworking.jwt;
 
 import com.asyncworking.auth.ApplicationUserService;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.ProjectUserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +28,9 @@ public class JwtService {
     private final SecretKey secretKey;
     private final ApplicationUserService applicationUserService;
 
+    private final EmployeeRepository employeeRepository;
+    private final ProjectUserRepository projectUserRepository;
+
     public JwtDto refreshJwtToken(String auth) {
         String oldToken = auth.replace("Bearer ", "");
 
@@ -47,9 +53,14 @@ public class JwtService {
                     .message("No need to refresh the jwtToken.")
                     .build();
         }
+        UserEntity userEntity = applicationUserService.mapToUserDetails(email);
+        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
+        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         String newToken = Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("authorities", user.getAuthorities())
+                .claim("companyIds", companyIds)
+                .claim("projectIds", projectIds)
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
