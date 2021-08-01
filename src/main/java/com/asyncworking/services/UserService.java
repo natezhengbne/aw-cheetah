@@ -40,6 +40,8 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
+    private final EmailService emailService;
+
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -51,10 +53,10 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndGenerateVerifyLink(AccountDto accountDto) {
+    public void createUserAndSendMessageToSQS(AccountDto accountDto) {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
-        this.generateVerifyLink(accountDto.getEmail());
+        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()));
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -99,11 +101,23 @@ public class UserService {
     }
 
 
-    public String generateVerifyLink(String email) {
+    public void resendMessageToSQS(String email) {
+        emailService.sendMessageToSQS(
+                findUnVerifiedUserByEmail(email),
+                generateVerifyLink(email));
+    }
+
+    private UserEntity findUnVerifiedUserByEmail(String email) {
+        return userRepository.findUnverifiedStatusByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
+    }
+
+    String generateVerifyLink(String email) {
         String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
+
 
     private String generateJws(String email) {
         String jws = Jwts.builder()
@@ -183,7 +197,7 @@ public class UserService {
         return body.get("email").toString();
     }
 
-    private int activeUser(String email) {
+    public int activeUser(String email) {
         return userRepository.updateStatusByEmail(email, Status.ACTIVATED);
     }
 
@@ -202,5 +216,12 @@ public class UserService {
     public UserEntity findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
+    }
+
+    @Transactional
+    public void updateEmailSent(String email) {
+        if (userRepository.updateVerificationEmailSent(email) != 1) {
+            throw new UserNotFoundException("Cannot find user with email: " + email);
+        }
     }
 }

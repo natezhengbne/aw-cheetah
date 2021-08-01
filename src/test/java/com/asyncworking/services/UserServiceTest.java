@@ -47,6 +47,9 @@ public class UserServiceTest {
     @Autowired
     private FrontEndUrlConfig frontEndUrlConfig;
 
+    @Autowired
+    private EmailService emailService;
+
     @BeforeEach()
     void setup() {
         userService = new UserService(
@@ -54,7 +57,8 @@ public class UserServiceTest {
                 companyRepository,
                 employeeRepository,
                 userMapper,
-                frontEndUrlConfig);
+                frontEndUrlConfig,
+                emailService);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
         ReflectionTestUtils.setField(userService, "secretKey", "7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\\\//asdf");
     }
@@ -154,7 +158,7 @@ public class UserServiceTest {
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        userService.createUserAndGenerateVerifyLink(accountDto);
+        userService.createUserAndSendMessageToSQS(accountDto);
 
         verify(userRepository).save(captor.capture());
         UserEntity savedUser = captor.getValue();

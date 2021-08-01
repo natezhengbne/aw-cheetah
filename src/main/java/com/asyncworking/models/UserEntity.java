@@ -41,6 +41,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "is_email_sent")
+    private Boolean isEmailSent;
+
     @Column(name = "created_time", nullable = false)
     private OffsetDateTime createdTime;
 

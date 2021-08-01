@@ -49,7 +49,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndGenerateVerifyLink(accountDto);
+        userService.createUserAndSendMessageToSQS(accountDto);
         return ResponseEntity.ok("success");
     }
 
@@ -76,7 +76,7 @@ public class UserController {
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
-        userService.generateVerifyLink(userInfoDto.getEmail());
+        userService.resendMessageToSQS(userInfoDto.getEmail());
         return ResponseEntity.ok("success");
     }
 
