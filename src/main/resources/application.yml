@@ -59,8 +59,8 @@ cloud:
     stack:
       auto: false
     credentials:
-      access-key: ECS_SQS_USER_KEY
-      secret-key: ECS_SQS_USER_ACCESS
+      KeyId: ECS_SQS_USER_KEY
+      AccessKey: ECS_SQS_USER_ACCESS
 
 # env:
 #   parameter-store:
