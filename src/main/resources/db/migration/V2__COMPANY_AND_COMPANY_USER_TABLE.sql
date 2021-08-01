@@ -1,4 +1,4 @@
-CREATE SCHEMA IF not exists "awcheetah";
+CREATE SCHEMA IF not exists "uatawcheetah";
 
 CREATE TABLE IF NOT EXISTS "company" (
 
