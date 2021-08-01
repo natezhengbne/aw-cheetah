@@ -21,9 +21,9 @@ spring:
     show-sql: true
 
 
-esctosqs:
-  ECS_SQS_USER_KEY: AW_ECS_SQS_USER_KEY
-  ECS_SQS_USER_ACCESS: AW_ECS_SQS_USER_ACCESS
+# esctosqs:
+#   ECS_SQS_USER_KEY: AW_ECS_SQS_USER_KEY
+#   ECS_SQS_USER_ACCESS: AW_ECS_SQS_USER_ACCESS
 
 logging:
   pattern:
@@ -59,8 +59,8 @@ cloud:
     stack:
       auto: false
     credentials:
-      access-key: ${env.estosqs.ECS_SQS_USER_KEY}
-      secret-key: ${env.estosqs.ECS_SQS_USER_ACCESS}
+      access-key: ECS_SQS_USER_KEY
+      secret-key: ECS_SQS_USER_ACCESS
 
 # env:
 #   parameter-store:
