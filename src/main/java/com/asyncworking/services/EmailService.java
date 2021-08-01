@@ -21,7 +21,7 @@ public class EmailService {
     private final QueueMessagingTemplate queueMessagingTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${cloud.aws.end-point.uri}")
+    @Value("${cloud.aws.sqs.outgoing-queue.url}")
     private String endPoint;
 
     public void sendMessageToSQS(UserEntity userEntity, String verifyLink) {

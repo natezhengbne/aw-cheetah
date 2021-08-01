@@ -44,10 +44,20 @@ cloud:
     region:
       static: ap-southeast-2
       auto: false
+    sqs:
+      incoming-queue:
+        name: AW_RECEIVE_Q
+        url: https://sqs.ap-southeast-2.amazonaws.com/245866473499/AW_RECEIVE_Q
+      outgoing-queue:
+        name: AWVerificationEmailBasicPP
+        url: https://sqs.ap-southeast-2.amazonaws.com/245866473499/AWVerificationEmailBasicPP
     stack:
       auto: false
     credentials:
-      access-key: AKIAYJZSMLQCAMSE23MO
-      secret-key: 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
-    end-point:
-      uri: https://sqs.ap-southeast-2.amazonaws.com/570799447044/DemoQueue
+      access-key: $ECS_SQS_USER_KEY
+      secret-key: $ECS_SQS_USER_ACCESS
+
+env:
+  parameter-store:
+    ECS_SQS_USER_KEY: "AW_ECS_SQS_USER_KEY"
+    ECS_SQS_USER_ACCESS: "AW_ECS_SQS_USER_ACCESS"

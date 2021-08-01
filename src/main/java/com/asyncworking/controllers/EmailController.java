@@ -13,7 +13,7 @@ public class EmailController {
 
     private final UserService userService;
 
-    @SqsListener(value = "receive_queue")
+    @SqsListener(value = "${cloud.aws.sqs.incoming-queue.name}")
     public void loadMessagesFromQueue(String email) {
         log.info("from sqs: " + email);
         userService.updateEmailSent(email);
