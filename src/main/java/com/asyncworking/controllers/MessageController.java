@@ -28,7 +28,6 @@ public class MessageController {
     }
 
     @PostMapping("/messages")
-    @PreAuthorize("hasAuthority('edit message')")
     public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long projectId, @Valid @RequestBody MessagePostDto messagePostDto) {
         return ResponseEntity.ok(messageService.createMessage(messagePostDto));
     }

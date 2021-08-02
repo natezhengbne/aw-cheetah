@@ -53,7 +53,6 @@ public class ProjectController {
     }
 
     @PostMapping("/{projectId}/members")
-    @PreAuthorize("hasAuthority('add project member')")
     public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,
                                                             @RequestParam("userIds") @NotNull List<Long> userIds) {
         log.info("projectID: {}, userIds: {}", projectId, userIds);
