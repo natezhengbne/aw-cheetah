@@ -10,6 +10,10 @@ import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+
+import static java.time.ZoneOffset.UTC;
+
 @Service
 @RequiredArgsConstructor
 public class RoleService {
@@ -23,6 +27,9 @@ public class RoleService {
                 .id(new UserRoleId(user.getId(), role.getId(), targetId))
                 .userEntity(user)
                 .role(role)
+                .isAuthorized(true)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         userRoleRepository.save(userRole);
     }

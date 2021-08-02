@@ -28,7 +28,6 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -60,13 +59,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         userRepository, employeeRepository, projectUserRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/companies/{companyId:[\\d+]}/**").access("@guard.checkCompanyId(authentication, #companyId)")
+                .antMatchers("/companies/{companyId}/**").access("@guard.checkCompanyId(authentication, #companyId)")
                 .antMatchers("/projects/{projectId:[\\d+]}/**").access("@guard.checkProjectId(authentication, #projectId)")
                 .antMatchers(HttpMethod.GET, "/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/messages/{messageId:[\\d+]}/**")
                 .access("@guard.checkMessageAccessGetMethod(authentication, #companyId, #projectId, #messageId)")
-                .antMatchers( "/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/messages/{messageId:[\\d+]}/**")
+                .antMatchers("/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/messages/{messageId:[\\d+]}/**")
                 .access("@guard.checkMessageAccessOtherMethods(authentication, #companyId, #projectId, #messageId)")
-                .antMatchers(HttpMethod.GET,"/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/**")
+                .antMatchers(HttpMethod.GET, "/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/**")
                 .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")
                 .antMatchers("/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/**")
                 .access("@guard.checkProjectAccessOtherMethods(authentication, #companyId, #projectId)")

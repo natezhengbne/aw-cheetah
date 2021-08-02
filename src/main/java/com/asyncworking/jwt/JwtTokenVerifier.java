@@ -1,5 +1,6 @@
 package com.asyncworking.jwt;
 
+import com.google.gson.internal.LinkedTreeMap;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -47,9 +48,9 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         Claims body = claimsJws.getBody();
         String username = body.getSubject();
 
-        var authorities = (List<Map<String, String>>) body.get("authorities");
-        Set<SimpleGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(map -> new SimpleGrantedAuthority(map.get("role")))
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
+        Set<AwGrantedAuthority> grantedAuthorities = authorities.stream()
+                .map(map -> new AwGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
                 .collect(Collectors.toSet());
 
         //The method body.get("companyIds") returns an list of doubles

@@ -52,9 +52,9 @@ public class CompanyService {
         log.info("selectedUser's email" + selectedUserEntity.getEmail());
         Company newCompany = createCompany(companyModificationDto.getName(), selectedUserEntity.getId());
 
-        companyRepository.save(newCompany);
+        Long targetId = companyRepository.save(newCompany).getId();
 
-//        roleService.assignRole(selectedUserEntity, "Company Manager");
+        roleService.assignRole(selectedUserEntity, "Company Manager", targetId);
 
         Employee newEmployee = createEmployee
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
