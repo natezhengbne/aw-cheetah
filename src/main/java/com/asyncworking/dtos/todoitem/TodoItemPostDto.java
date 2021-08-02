@@ -32,4 +32,6 @@ public class TodoItemPostDto {
     private Long createdUserId;
 
     private OffsetDateTime dueDate;
+
+    private String subscribersIds;
 }

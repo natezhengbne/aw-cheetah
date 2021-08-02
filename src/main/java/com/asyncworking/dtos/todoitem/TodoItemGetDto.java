@@ -27,4 +27,6 @@ public class TodoItemGetDto {
     private OffsetDateTime createdTime;
 
     private OffsetDateTime dueDate;
+
+    private String subscribersIds;
 }
