@@ -54,7 +54,7 @@ public class CompanyService {
 
         companyRepository.save(newCompany);
 
-        roleService.assignRole(selectedUserEntity, "Company Manager");
+//        roleService.assignRole(selectedUserEntity, "Company Manager");
 
         Employee newEmployee = createEmployee
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),

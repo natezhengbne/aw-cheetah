@@ -17,10 +17,10 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
-    public void assignRole(UserEntity user, String roleName) {
+    public void assignRole(UserEntity user, String roleName, Long targetId) {
         Role role = fetchRoleByName(roleName);
         UserRole userRole = UserRole.builder()
-                .id(new UserRoleId(user.getId(), role.getId()))
+                .id(new UserRoleId(user.getId(), role.getId(), targetId))
                 .userEntity(user)
                 .role(role)
                 .build();

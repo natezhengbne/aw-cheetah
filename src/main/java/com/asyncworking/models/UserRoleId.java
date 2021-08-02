@@ -21,6 +21,9 @@ public class UserRoleId implements Serializable {
     @Column(name = "role_id")
     private Long roleId;
 
+    @Column(name = "target_id")
+    private Long targetId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -30,11 +33,12 @@ public class UserRoleId implements Serializable {
             return false;
         }
         UserRoleId that = (UserRoleId) o;
-        return Objects.equals(userId, that.userId) && Objects.equals(roleId, that.roleId);
+        return Objects.equals(userId, that.userId) && Objects.equals(roleId, that.roleId)
+                && Objects.equals(targetId, that.targetId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, roleId);
+        return Objects.hash(userId, roleId, targetId);
     }
 }

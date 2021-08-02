@@ -81,7 +81,7 @@ public class ProjectService {
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
 
-        roleService.assignRole(selectedUserEntity, "Project Manager");
+//        roleService.assignRole(selectedUserEntity, "Project Manager");
 
         createDefaultMessageCategories(newProject);
 
@@ -139,6 +139,6 @@ public class ProjectService {
                 .collect(Collectors.toList());
         projectUserRepository.saveAll(projectUsers);
         //assign "Project Member" role to added users
-        userRepository.findAllById(userIds).forEach(user -> roleService.assignRole(user, "Project Member"));
+//        userRepository.findAllById(userIds).forEach(user -> roleService.assignRole(user, "Project Member"));
     }
 }
