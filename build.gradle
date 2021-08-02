@@ -57,7 +57,7 @@ test {
 }
 
 flyway {
-	url = 'jdbc:postgresql://localhost:5432/postgres?currentSchema=awcheetah'
+	url = 'jdbc:postgresql://localhost:5432/postgres?currentSchema=uatawcheetah'
 	user = 'postgres'
 	password = 'admin'
 	locations = ['classpath:db/migration']
