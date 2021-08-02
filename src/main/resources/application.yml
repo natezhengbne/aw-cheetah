@@ -53,11 +53,7 @@ cloud:
         url: https://sqs.ap-southeast-2.amazonaws.com/245866473499/AWVerificationEmailBasicPP
     stack:
       auto: false
-    credentials:
-      access-key: $ECS_SQS_USER_KEY
-      secret-key: $ECS_SQS_USER_ACCESS
 
-env:
-  parameter-store:
-    ECS_SQS_USER_KEY: "AW_ECS_SQS_USER_KEY"
-    ECS_SQS_USER_ACCESS: "AW_ECS_SQS_USER_ACCESS"
+aws:
+  paramstore:
+    enabled: true
