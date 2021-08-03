@@ -18,12 +18,12 @@ public class AuthPermissionEvaluator implements PermissionEvaluator {
 
         Long targetId = Long.valueOf(targetDomainObject.toString());
 
-        Set<AwcheetahGrantedAuthority> authorities =  authentication.getAuthorities().stream()
+        Set<AwcheetahGrantedAuthority> authorities = authentication.getAuthorities().stream()
                 .map(grantedAuthority -> (AwcheetahGrantedAuthority) grantedAuthority)
                 .collect(Collectors.toSet());
 
         for (AwcheetahGrantedAuthority authority : authorities) {
-            if ( authority.getAuthority().equals(permission.toString())  && authority.getTargetId() == targetId) {
+            if (authority.getAuthority().equals(permission.toString()) && authority.getTargetId() == targetId) {
                 return true;
             }
         }

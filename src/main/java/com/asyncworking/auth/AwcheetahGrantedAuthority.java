@@ -16,6 +16,8 @@ public class AwcheetahGrantedAuthority implements GrantedAuthority {
         return this.role;
     }
 
-    public Long getTargetId() { return this.targetId; }
+    public Long getTargetId() {
+        return this.targetId;
+    }
 
 }

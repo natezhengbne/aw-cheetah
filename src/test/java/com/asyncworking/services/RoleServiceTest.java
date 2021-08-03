@@ -52,13 +52,13 @@ public class RoleServiceTest {
                 .build();
     }
 
-//    @Test
-//    public void shouldAssignRoleGivenRoleNameAndUserEntity() {
-//        when(roleRepository.findByName(any())).thenReturn(Optional.of(mockRole));
-//        ArgumentCaptor<UserRole> userRoleArgumentCaptor = ArgumentCaptor.forClass(UserRole.class);
-//        roleService.assignRole(mockUser, "Company Manager");
-//        verify(userRoleRepository).save(userRoleArgumentCaptor.capture());
-//    }
+    @Test
+    public void shouldAssignRoleGivenRoleNameAndUserEntity() {
+        when(roleRepository.findByName(any())).thenReturn(Optional.of(mockRole));
+        ArgumentCaptor<UserRole> userRoleArgumentCaptor = ArgumentCaptor.forClass(UserRole.class);
+        roleService.assignRole(mockUser, "Company Manager", 1L);
+        verify(userRoleRepository).save(userRoleArgumentCaptor.capture());
+    }
 
     @Test
     public void shouldThrowRoleNotFoundExceptionGivenInvalidRoleName() {

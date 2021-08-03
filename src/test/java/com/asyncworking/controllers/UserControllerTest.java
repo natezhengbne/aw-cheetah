@@ -1,5 +1,7 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.auth.AuthPermissionEvaluator;
+import com.asyncworking.config.SpringSecurityWebAuxTestConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
@@ -12,19 +14,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.net.URI;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = SpringSecurityWebAuxTestConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class UserControllerTest {
@@ -35,6 +40,9 @@ class UserControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private UserService userService;
+    @MockBean
+    private AuthPermissionEvaluator authPermissionEvaluator;
+
 
     @Test
     public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception {
@@ -111,13 +119,14 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"add employee"})
+    @WithUserDetails("company manager")
     public void shouldCreateInvitationLinkSuccessful() throws Exception {
         Long companyId = 1L;
         String title = "developer";
         String name = "user1";
         String email = "user1@gmail.com";
 
+        when(authPermissionEvaluator.hasPermission(any(), any(), any())).thenReturn(true);
         mockMvc.perform(get("/invitations/companies")
                 .param("companyId", String.valueOf(companyId))
                 .param("title", title)

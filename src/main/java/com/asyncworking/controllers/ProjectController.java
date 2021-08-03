@@ -38,7 +38,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/project-info")
-    @PreAuthorize("hasPermission(#projectId, 'Project Manager')")
+//    @PreAuthorize("hasPermission(#projectId, 'Project Manager')")
     public ResponseEntity updateProjectProfile(@PathVariable("projectId") Long projectId,
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);
