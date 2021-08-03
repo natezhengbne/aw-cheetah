@@ -23,7 +23,7 @@ public class AuthPermissionEvaluator implements PermissionEvaluator {
                 .collect(Collectors.toSet());
 
         for (AwcheetahGrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals(permission.toString()) && authority.getTargetId() == targetId) {
+            if (authority.getAuthority().equals(permission.toString()) && authority.getTargetId().equals(targetId)) {
                 return true;
             }
         }

@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/projects/{projectId}")
+@RequestMapping("{companyId}/projects/{projectId}")
 public class MessageController {
     private final MessageService messageService;
 

@@ -138,7 +138,5 @@ public class ProjectService {
                 .map(user -> addProjectUsers(user, project))
                 .collect(Collectors.toList());
         projectUserRepository.saveAll(projectUsers);
-        //assign "Project Member" role to added users
-//        userRepository.findAllById(userIds).forEach(user -> roleService.assignRole(user, "Project Member"));
     }
 }
