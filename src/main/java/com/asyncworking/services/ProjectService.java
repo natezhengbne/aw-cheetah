@@ -81,7 +81,7 @@ public class ProjectService {
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
 
-//        roleService.assignRole(selectedUserEntity, "Project Manager");
+        roleService.assignRole(selectedUserEntity, "Project Manager", newProject.getId());
 
         createDefaultMessageCategories(newProject);
 
