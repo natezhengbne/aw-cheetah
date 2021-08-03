@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/invitations/companies")
-    @PreAuthorize("hasAuthority('add employee')")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
                                                 @RequestParam(value = "email") String email,
                                                 @RequestParam(value = "name") String name,

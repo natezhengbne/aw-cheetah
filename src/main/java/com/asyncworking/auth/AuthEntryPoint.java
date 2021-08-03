@@ -17,7 +17,6 @@ import java.io.IOException;
 @ControllerAdvice
 public class AuthEntryPoint implements AuthenticationEntryPoint {
 
-
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException authException) throws IOException, ServletException {
