@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -88,7 +89,8 @@ public class UserRoleRepositoryTest extends DBHelper {
 
     @Test
     public void shouldReturnUserRoleSetGivenUserEntity() {
-        Set<UserRole> roleSet = userRoleRepository.findByUserEntity(mockUser);
-        assertEquals(roleSet, Set.of(mockUserRole1, mockUserRole2));
+        Set<UserRole> userRoleSet = userRoleRepository.findByUserEntity(mockUser);
+        assertEquals(userRoleSet.stream().map(userRole -> userRole.getId()).collect(Collectors.toSet()),
+                Set.of(mockUserRole2.getId(), mockUserRole1.getId()));
     }
 }

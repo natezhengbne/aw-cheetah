@@ -58,7 +58,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         userRepository, employeeRepository, projectUserRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/companies/{companyId}/**").access("@guard.checkCompanyId(authentication, #companyId)")
+                .antMatchers("/companies/{companyId:[\\d+]}/**").access("@guard.checkCompanyId(authentication, #companyId)")
                 .antMatchers("/projects/{projectId:[\\d+]}/**").access("@guard.checkProjectId(authentication, #projectId)")
                 .antMatchers(HttpMethod.GET, "/{companyId:[\\d+]}/projects/{projectId:[\\d+]}/messages/{messageId:[\\d+]}/**")
                 .access("@guard.checkMessageAccessGetMethod(authentication, #companyId, #projectId, #messageId)")
