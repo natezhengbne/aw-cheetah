@@ -1,5 +1,6 @@
 package com.asyncworking.jwt;
 
+import com.asyncworking.auth.AwcheetahGrantedAuthority;
 import com.google.gson.internal.LinkedTreeMap;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -9,12 +10,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import com.asyncworking.auth.AwcheetahAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
@@ -49,8 +48,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         String username = body.getSubject();
 
         var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
-        Set<AwGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(map -> new AwGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
+        Set<AwcheetahGrantedAuthority> grantedAuthorities = authorities.stream()
+                .map(map -> new AwcheetahGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
                 .collect(Collectors.toSet());
 
         //The method body.get("companyIds") returns an list of doubles

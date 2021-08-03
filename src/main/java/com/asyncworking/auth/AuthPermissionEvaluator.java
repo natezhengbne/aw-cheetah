@@ -1,6 +1,5 @@
 package com.asyncworking.auth;
 
-import com.asyncworking.jwt.AwGrantedAuthority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -19,11 +18,11 @@ public class AuthPermissionEvaluator implements PermissionEvaluator {
 
         Long targetId = Long.valueOf(targetDomainObject.toString());
 
-        Set<AwGrantedAuthority> authorities =  authentication.getAuthorities().stream()
-                .map(grantedAuthority -> (AwGrantedAuthority) grantedAuthority)
+        Set<AwcheetahGrantedAuthority> authorities =  authentication.getAuthorities().stream()
+                .map(grantedAuthority -> (AwcheetahGrantedAuthority) grantedAuthority)
                 .collect(Collectors.toSet());
 
-        for (AwGrantedAuthority authority : authorities) {
+        for (AwcheetahGrantedAuthority authority : authorities) {
             if ( authority.getAuthority().equals(permission.toString())  && authority.getTargetId() == targetId) {
                 return true;
             }
