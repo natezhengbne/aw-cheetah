@@ -10,7 +10,6 @@ import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,9 +33,13 @@ public class ApplicationUserService implements UserDetailsService {
                 .map(userRole -> new AwcheetahGrantedAuthority(userRole.getRole().getName(), userRole.getId().getTargetId()))
                 .collect(Collectors.toSet());
 
-        return new User(user.getEmail(),
+        return new ApplicationUserDetails(user.getEmail(),
                 user.getPassword().replaceAll("\\s+", ""),
-                grantedAuthorities);
+                grantedAuthorities,
+                true,
+                true,
+                true,
+                true);
     }
 
     public UserEntity mapToUserDetails(String email) {

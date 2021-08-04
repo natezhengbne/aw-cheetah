@@ -20,4 +20,27 @@ public class AwcheetahGrantedAuthority implements GrantedAuthority {
         return this.targetId;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof AwcheetahGrantedAuthority) {
+            return this.role.equals(((AwcheetahGrantedAuthority) obj).role)
+                    && this.targetId.equals(((AwcheetahGrantedAuthority) obj).targetId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        String toString = targetId + role;
+        return toString.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        String toString = targetId + role;
+        return toString;
+    }
 }

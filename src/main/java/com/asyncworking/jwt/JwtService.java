@@ -44,12 +44,9 @@ public class JwtService {
         String email = body.getSubject();
 
         var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
-        Set<AwcheetahGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(map -> new AwcheetahGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
-                .collect(Collectors.toSet());
 
         UserDetails user = applicationUserService.loadUserByUsername(email);
-        if (grantedAuthorities.size() == user.getAuthorities().size()) {
+        if (authorities.size() == user.getAuthorities().size()) {
             return JwtDto.builder()
                     .accessToken(oldToken)
                     .message("No need to refresh the jwtToken.")
