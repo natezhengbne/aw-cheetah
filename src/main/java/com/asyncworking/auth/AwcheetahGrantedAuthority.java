@@ -2,6 +2,8 @@ package com.asyncworking.auth;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Objects;
+
 public class AwcheetahGrantedAuthority implements GrantedAuthority {
     private final String role;
     private final Long targetId;
@@ -34,13 +36,11 @@ public class AwcheetahGrantedAuthority implements GrantedAuthority {
 
     @Override
     public int hashCode() {
-        String toString = targetId + role;
-        return toString.hashCode();
+        return Objects.hash(targetId, role);
     }
 
     @Override
     public String toString() {
-        String toString = targetId + role;
-        return toString;
+        return targetId + role;
     }
 }

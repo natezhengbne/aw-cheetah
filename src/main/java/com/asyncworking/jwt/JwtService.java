@@ -38,7 +38,7 @@ public class JwtService {
         UserEntity userEntity = applicationUserService.mapToUserDetails(email);
         Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
-        String jwtToken = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email)
                 .claim("authorities", user.getAuthorities())
                 .claim("companyIds", companyIds)
@@ -47,7 +47,6 @@ public class JwtService {
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
                 .compact();
-        return jwtToken;
     }
 
     public JwtDto refreshJwtToken(String auth) {

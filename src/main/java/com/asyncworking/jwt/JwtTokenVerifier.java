@@ -54,15 +54,15 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         //The method body.get("companyIds") returns an list of doubles
         var doubleCompanyIds =  (List<Double>) body.get("companyIds");
-        //Convert list of doubles to list of longs
-        List<Long> companyIds = doubleCompanyIds.stream().
-                map(doubleCompanyId -> doubleCompanyId.longValue())
-                .collect(Collectors.toList());
+        //Convert list of doubles to set of longs
+        Set<Long> companyIds = doubleCompanyIds.stream().
+                map(Double::longValue)
+                .collect(Collectors.toSet());
 
         var doubleProjectIds =  (List<Double>) body.get("projectIds");
-        List<Long> projectIds = doubleProjectIds.stream().
-                map(doubleProjectId -> doubleProjectId.longValue())
-                .collect(Collectors.toList());
+        Set<Long> projectIds = doubleProjectIds.stream().
+                map(Double::longValue)
+                .collect(Collectors.toSet());
 
         Authentication authentication = new AwcheetahAuthenticationToken(
                 username,

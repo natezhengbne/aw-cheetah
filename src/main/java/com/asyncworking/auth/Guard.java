@@ -7,9 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,8 +29,8 @@ public class Guard {
 
     //Check if the user belongs to the company
     private boolean checkCompanyId(Authentication authentication, Long companyId) {
-        var details = (Map<String, List<Long>>) authentication.getDetails();
-        List<Long> companyIds = details.get("companyIds");
+        var details = (Map<String, Set<Long>>) authentication.getDetails();
+        Set<Long> companyIds = details.get("companyIds");
         if (!companyIds.contains(companyId)) {
             log.info("User does not belong to this company!");
             return false;
@@ -41,8 +40,8 @@ public class Guard {
 
     //Check if the user belongs to the project
     private boolean checkProjectId(Authentication authentication, Long projectId) {
-        var details = (Map<String, List<Long>>) authentication.getDetails();
-        List<Long> projectIds = details.get("projectIds");
+        var details = (Map<String, Set<Long>>) authentication.getDetails();
+        Set<Long> projectIds = details.get("projectIds");
         if (!projectIds.contains(projectId)) {
             log.info("User does not belong to this project!");
             return false;

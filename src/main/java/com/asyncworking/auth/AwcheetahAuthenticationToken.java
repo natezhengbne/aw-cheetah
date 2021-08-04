@@ -5,17 +5,17 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AwcheetahAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
-    private final List<Long> companyIds;
+    private final Set<Long> companyIds;
 
-    private final List<Long> projectIds;
+    private final Set<Long> projectIds;
 
     public AwcheetahAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities,
-                                        List<Long> companyIds, List<Long> projectIds) {
+                                        Set<Long> companyIds, Set<Long> projectIds) {
         super(principal, credentials, authorities);
         this.companyIds = companyIds;
         this.projectIds = projectIds;
@@ -23,7 +23,7 @@ public class AwcheetahAuthenticationToken extends UsernamePasswordAuthentication
 
     @Override
     public Object getDetails() {
-        Map<String, List<Long>> details = new HashMap();
+        Map<String, Set<Long>> details = new HashMap<>();
         details.put("companyIds", companyIds);
         details.put("projectIds", projectIds);
         return details;
