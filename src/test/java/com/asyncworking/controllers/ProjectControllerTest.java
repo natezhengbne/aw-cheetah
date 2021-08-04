@@ -104,7 +104,6 @@ public class ProjectControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"edit project description"})
     public void shouldReturnOkIfUpdateProjectInfoSuccessful() throws Exception {
         ProjectModificationDto projectModificationDto = ProjectModificationDto.builder()
                 .projectId(1L)
@@ -140,7 +139,6 @@ public class ProjectControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"add project member"})
     public void shouldReturnOkIfCreateMembersByProjectIdAndUserId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/projects/1/members")
                 .param("userIds", "1,2"))

@@ -41,7 +41,6 @@ class TodoControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(authorities = {"edit to-do"})
     public void todoListCreateSuccess() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
                 .id(1L)
@@ -57,7 +56,6 @@ class TodoControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"edit to-do"})
     public void todoListCreateFailWhenTitleIsNull() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
                 .projectId(2L)
@@ -99,7 +97,6 @@ class TodoControllerTest {
 
     @Test
     @Rollback
-    @WithMockUser(authorities = {"edit to-do"})
     public void todoItemCreateSuccess() throws Exception {
         TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
                 .todolistId(1L)
@@ -128,7 +125,6 @@ class TodoControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"edit to-do"})
     public void shouldReturnOppositeStatusAfterChangeTodoItemCompleted() throws Exception {
         TodoItem todoItem = TodoItem.builder()
                 .id(1L)
@@ -144,7 +140,6 @@ class TodoControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"edit to-do"})
     public void updateTodoItemSuccess() throws Exception {
         TodoItemPutDto todoItemPut = TodoItemPutDto.builder()
                 .description("title")

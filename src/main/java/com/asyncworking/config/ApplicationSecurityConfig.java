@@ -60,7 +60,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
                 .antMatchers("/projects/{projectId:^[1-9]\\d*$}/**").access("@guard.checkProjectAccess(authentication, #projectId)")
-                .antMatchers(HttpMethod.GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/messages/{messageId:^[1-9]\\d*$}/**")
+                .antMatchers(HttpMethod.GET,
+                        "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/messages/{messageId:^[1-9]\\d*$}/**")
                 .access("@guard.checkMessageAccessGetMethod(authentication, #companyId, #projectId, #messageId)")
                 .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/messages/{messageId:^[1-9]\\d*$}/**")
                 .access("@guard.checkMessageAccessOtherMethods(authentication, #companyId, #projectId, #messageId)")
