@@ -23,8 +23,7 @@ import java.net.URI;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -270,5 +269,38 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void shouldReturnOkIfEmailIsValid() throws Exception {
+        String email = "test@gmail.com";
+        when(userService.ifEmailExists(email)).thenReturn(true);
+        when(userService.ifUnverified(email)).thenReturn(false);
+
+        mockMvc.perform(put("/password")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnErrorIfEmailIsNotExist() throws Exception {
+        String email = "test@gmail.com";
+        when(userService.ifEmailExists(email)).thenReturn(false);
+
+        mockMvc.perform(put("/password")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnErrorIfEmailIsUnactivated() throws Exception {
+        String email = "test@gmail.com";
+        when(userService.ifUnverified(email)).thenReturn(true);
+
+        mockMvc.perform(put("/password")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isConflict());
+    }
 }
 
