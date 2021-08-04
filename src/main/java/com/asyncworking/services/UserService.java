@@ -4,6 +4,7 @@ import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
+import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
@@ -38,14 +39,13 @@ public class UserService {
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
 
+    private final JwtService jwtService;
+
     private final UserMapper userMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
-
-    @Value("${jwt.secretKey}")
-    private String secretKey;
 
     public boolean ifEmailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
@@ -80,24 +80,11 @@ public class UserService {
                 .updatedTime(OffsetDateTime.now(UTC))
                 .build();
         employeeRepository.save(employee);
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("none");
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(authority);
-        String token = createJwtTokenForInvitationPeople(accountDto.getEmail(), authorities);
+
+        String token = jwtService.creatJwtToken(accountDto.getEmail());
 
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
-
-    public String createJwtTokenForInvitationPeople(String email,  List<GrantedAuthority> authorities) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("authorities", authorities)
-                .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
-    }
-
 
     public String generateVerifyLink(String email) {
         String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);

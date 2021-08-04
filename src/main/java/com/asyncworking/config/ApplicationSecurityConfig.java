@@ -2,10 +2,9 @@ package com.asyncworking.config;
 
 import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.auth.AuthEntryPoint;
+import com.asyncworking.jwt.JwtService;
 import com.asyncworking.jwt.JwtTokenVerifier;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
-import com.asyncworking.repositories.EmployeeRepository;
-import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,11 +33,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecretKey secretKey;
 
+    private final JwtService jwtService;
+
     private final UserRepository userRepository;
-
-    private final EmployeeRepository employeeRepository;
-
-    private final ProjectUserRepository projectUserRepository;
 
     @SneakyThrows
     protected void configure(HttpSecurity http) {
@@ -54,8 +51,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey,
-                        userRepository, employeeRepository, projectUserRepository))
+                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtService, userRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
