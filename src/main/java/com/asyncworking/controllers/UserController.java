@@ -89,4 +89,17 @@ public class UserController {
         }
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
+
+    @PutMapping("/password")
+    public ResponseEntity resetPassword(@RequestParam(value = "email") String email) {
+        // Todo: add password rest function
+        if (userService.ifUnverified(email)) {
+            return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
+        }
+
+        if (!userService.ifEmailExists(email) ) {
+            return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
 }
