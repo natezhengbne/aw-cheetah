@@ -1,9 +1,11 @@
 package com.asyncworking.jwt;
 
 import com.asyncworking.auth.ApplicationUserService;
+import com.asyncworking.auth.AwcheetahGrantedAuthority;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
+import com.google.gson.internal.LinkedTreeMap;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -41,9 +43,9 @@ public class JwtService {
         Claims body = claimsJws.getBody();
         String email = body.getSubject();
 
-        var authorities = (List<Map<String, String>>) body.get("authorities");
-        Set<SimpleGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(map -> new SimpleGrantedAuthority(map.get("role")))
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
+        Set<AwcheetahGrantedAuthority> grantedAuthorities = authorities.stream()
+                .map(map -> new AwcheetahGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
                 .collect(Collectors.toSet());
 
         UserDetails user = applicationUserService.loadUserByUsername(email);
