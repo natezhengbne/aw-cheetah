@@ -15,3 +15,5 @@ spring:
 jwt:
   secret: securesecuresecuresecuresecuresecu
   secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
+
+url: https://www.asyncworking.com

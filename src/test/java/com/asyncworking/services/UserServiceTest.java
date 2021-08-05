@@ -9,12 +9,18 @@ import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -27,7 +33,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@Slf4j
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class UserServiceTest {
     @Mock
@@ -39,19 +46,24 @@ public class UserServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
-    @Autowired
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private UserMapper userMapper;
 
     private UserService userService;
 
-    @Autowired
     private FrontEndUrlConfig frontEndUrlConfig;
 
-    @Autowired
+    @Mock
     private EmailService emailService;
+
 
     @BeforeEach()
     void setup() {
+        userMapper = new UserMapper(passwordEncoder);
+        frontEndUrlConfig = new FrontEndUrlConfig();
+        frontEndUrlConfig.setFrontEndUrl("https://www.asyncworking.com");
         userService = new UserService(
                 userRepository,
                 companyRepository,

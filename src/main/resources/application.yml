@@ -54,10 +54,6 @@ cloud:
     stack:
       auto: false
     credentials:
-      access-key: $ECS_SQS_USER_KEY
-      secret-key: $ECS_SQS_USER_ACCESS
+      access-key: AKIAYJZSMLQCAMSE23MO
+      secret-key: QbhbYRMj9mTKm8o9/sY72iJ3O2i5CxQidsR
 
-env:
-  parameter-store:
-    ECS_SQS_USER_KEY: "AW_ECS_SQS_USER_KEY"
-    ECS_SQS_USER_ACCESS: "AW_ECS_SQS_USER_ACCESS"
