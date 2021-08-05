@@ -94,14 +94,24 @@ public class Guard {
                 && projectRepository.findProjectIdSetByCompanyId(companyId).contains(projectId);
     }
 
-    public boolean checkMessageAccessGetMethod(Authentication authentication, Long companyId, Long projectId, Long messageId) {
-        return checkAccessGetMethod(authentication, companyId, projectId)
-                && messageRepository.findIfMessageExists(companyId, projectId, messageId);
+    public boolean checkTypeAccessGetMethod(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
+        switch (type) {
+            case "messages":
+                return checkAccessGetMethod(authentication, companyId, projectId)
+                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
+            default:
+                return false;
+        }
     }
 
-    public boolean checkMessageAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, Long messageId) {
-        return checkAccessOtherMethods(authentication, companyId, projectId)
-                && messageRepository.findIfMessageExists(companyId, projectId, messageId);
+    public boolean checkTypeAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
+        switch (type) {
+            case "messages":
+                return checkAccessOtherMethods(authentication, companyId, projectId)
+                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
+            default:
+                return false;
+        }
     }
 
     //Only for temporary use, will be deleted after APIs updating.

@@ -43,7 +43,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .cors().configurationSource(request -> {
             var cors = new CorsConfiguration();
-            cors.setAllowedOrigins(List.of("http://localhost:3000", "http://www.asyncworking.com", "https://www.asyncworking.com"));
+            cors.setAllowedOrigins(List.of("http://localhost:3000",
+                    "http://www.asyncworking.com",
+                    "https://www.asyncworking.com"));
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
@@ -56,11 +58,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
                 .antMatchers("/projects/{projectId:^[1-9]\\d*$}/**").access("@guard.checkProjectAccess(authentication, #projectId)")
-                .antMatchers(HttpMethod.GET,
-                        "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/messages/{messageId:^[1-9]\\d*$}/**")
-                .access("@guard.checkMessageAccessGetMethod(authentication, #companyId, #projectId, #messageId)")
-                .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/messages/{messageId:^[1-9]\\d*$}/**")
-                .access("@guard.checkMessageAccessOtherMethods(authentication, #companyId, #projectId, #messageId)")
+                .antMatchers(HttpMethod.GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/{type}/{typeId:^[1-9]\\d*$}/**")
+                .access("@guard.checkTypeAccessGetMethod(authentication, #companyId, #projectId, #type, #typeId)")
+                .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/{type}/{typeId:^[1-9]\\d*$}/**")
+                .access("@guard.checkTypeAccessOtherMethods(authentication, #companyId, #projectId, #type, #typeId)")
                 .antMatchers(HttpMethod.GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
                 .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")
                 .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
