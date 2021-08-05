@@ -28,7 +28,7 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
     @ExceptionHandler(value = {AccessDeniedException.class})
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AccessDeniedException accessDeniedException) throws IOException {
-        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
         httpServletResponse.getWriter().write("Access Denied Due To Non-authorization");
 
     }
