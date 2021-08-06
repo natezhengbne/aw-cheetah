@@ -128,6 +128,12 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    public List<EmployeeGetDto> findAllMembersByProjectIdAscByName(Long projectId) {
+        return userRepository.findAllMembersByProjectIdAscByName(projectId).stream()
+                .map(employeeMapper::mapEntityToDto)
+                .collect(Collectors.toList());
+    }
+
     public boolean ifProjectIsPublic(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));

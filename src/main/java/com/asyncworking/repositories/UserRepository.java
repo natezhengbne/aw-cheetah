@@ -57,6 +57,14 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<IEmployeeInfo> findAllMembersByProjectId(@Param("id") Long id);
 
     @Query(nativeQuery = true,
+            value = "select u.id, u.name, u.email\n" +
+                    "from project_user pu, user_info u \n" +
+                    "where pu.user_id = u.id " +
+                    "and pu.project_id = :id " +
+                    "order by u.name")
+    List<IEmployeeInfo> findAllMembersByProjectIdAscByName(@Param("id") Long id);
+
+    @Query(nativeQuery = true,
             value = "SELECT u.id, u.name, u.email, employeeinfo.title FROM ( " +
                     "SELECT * FROM awcheetah.company_user cu " +
                     "WHERE cu.user_id NOT IN ( " +
@@ -75,4 +83,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<List<UserEntity>> findByIdIn(List<Long> id);
 
     boolean existsById(Long id);
+
+
 }
