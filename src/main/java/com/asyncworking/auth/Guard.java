@@ -2,6 +2,7 @@ package com.asyncworking.auth;
 
 import com.asyncworking.models.RoleName;
 import com.asyncworking.repositories.*;
+import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class Guard {
-    private final ProjectRepository projectRepository;
-//    private final MessageRepository messageRepository;
+
+    private final ProjectService projectService;
 
     private boolean ifNotAnonymousAuthentication(Authentication authentication) {
         if (authentication.getPrincipal().equals("anonymousUser")) {
@@ -65,31 +66,36 @@ public class Guard {
                 && ifUserBelongsToCompany(authentication, companyId);
     }
 
-    public boolean checkAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
+    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
         return ifNotAnonymousAuthentication(authentication)
                 && ifUserBelongsToCompany(authentication, companyId)
                 && (ifUserIsCompanyManager(authentication, companyId)
                 || ifUserBelongsToProject(authentication, projectId)
-                || !projectRepository.findById(projectId).get().getIsPrivate());
-
+                || projectService.ifProjectIsPublic(projectId));
     }
 
-    public boolean checkAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+    public boolean checkProjectAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
         return ifNotAnonymousAuthentication(authentication)
                 && ifUserBelongsToCompany(authentication, companyId)
                 && (ifUserIsCompanyManager(authentication, companyId)
                 || ifUserBelongsToProject(authentication, projectId));
     }
 
-    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
-        return checkAccessGetMethod(authentication, companyId, projectId)
-                && projectRepository.findProjectIdSetByCompanyId(companyId).contains(projectId);
-    }
-
-    public boolean checkProjectAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
-        return checkAccessOtherMethods(authentication, companyId, projectId)
-                && projectRepository.findProjectIdSetByCompanyId(companyId).contains(projectId);
-    }
+//    public boolean checkAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
+//        return ifNotAnonymousAuthentication(authentication)
+//                && ifUserBelongsToCompany(authentication, companyId)
+//                && (ifUserIsCompanyManager(authentication, companyId)
+//                || ifUserBelongsToProject(authentication, projectId)
+//                || !projectRepository.findById(projectId).get().getIsPrivate());
+//
+//    }
+//
+//    public boolean checkAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+//        return ifNotAnonymousAuthentication(authentication)
+//                && ifUserBelongsToCompany(authentication, companyId)
+//                && (ifUserIsCompanyManager(authentication, companyId)
+//                || ifUserBelongsToProject(authentication, projectId));
+//    }
 
 //    public boolean checkTypeAccessGetMethod(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
 //        switch (type) {

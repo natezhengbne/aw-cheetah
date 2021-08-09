@@ -127,6 +127,12 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    public boolean ifProjectIsPublic(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
+        return !project.getIsPrivate();
+    }
+
     @Transactional
     public void addProjectUsers(Long projectId, List<Long> userIds) {
         Project project = projectRepository.findById(projectId)
