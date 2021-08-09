@@ -16,10 +16,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Guard {
     private final ProjectRepository projectRepository;
-    private final MessageRepository messageRepository;
+//    private final MessageRepository messageRepository;
 
-    //Return false if the authentication is anonymous authentication
-    private boolean checkAnonymousAuthentication(Authentication authentication) {
+    private boolean ifNotAnonymousAuthentication(Authentication authentication) {
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info("Anonymous user, access denied");
             return false;
@@ -27,8 +26,7 @@ public class Guard {
         return true;
     }
 
-    //Check if the user belongs to the company
-    private boolean checkCompanyId(Authentication authentication, Long companyId) {
+    private boolean ifUserBelongsToCompany(Authentication authentication, Long companyId) {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
         Set<Long> companyIds = details.get("companyIds");
         if (!companyIds.contains(companyId)) {
@@ -38,8 +36,7 @@ public class Guard {
         return true;
     }
 
-    //Check if the user belongs to the project
-    private boolean checkProjectId(Authentication authentication, Long projectId) {
+    private boolean ifUserBelongsToProject(Authentication authentication, Long projectId) {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
         Set<Long> projectIds = details.get("projectIds");
         if (!projectIds.contains(projectId)) {
@@ -49,8 +46,7 @@ public class Guard {
         return true;
     }
 
-    //Check if the user is the Company Manager of given company Id
-    private boolean checkCompanyManager(Authentication authentication, Long companyId) {
+    private boolean ifUserIsCompanyManager(Authentication authentication, Long companyId) {
         Set<AwcheetahGrantedAuthority> authorities = authentication.getAuthorities().stream()
                 .map(grantedAuthority -> (AwcheetahGrantedAuthority) grantedAuthority)
                 .collect(Collectors.toSet());
@@ -64,24 +60,24 @@ public class Guard {
     }
 
     public boolean checkCompanyAccess(Authentication authentication, Long companyId) {
-        return checkAnonymousAuthentication(authentication)
-                && checkCompanyId(authentication, companyId);
+        return ifNotAnonymousAuthentication(authentication)
+                && ifUserBelongsToCompany(authentication, companyId);
     }
 
     public boolean checkAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
-        return checkAnonymousAuthentication(authentication)
-                && checkCompanyId(authentication, companyId)
-                && (checkCompanyManager(authentication, companyId)
-                || checkProjectId(authentication, projectId)
+        return ifNotAnonymousAuthentication(authentication)
+                && ifUserBelongsToCompany(authentication, companyId)
+                && (ifUserIsCompanyManager(authentication, companyId)
+                || ifUserBelongsToProject(authentication, projectId)
                 || !projectRepository.findById(projectId).get().getIsPrivate());
 
     }
 
     public boolean checkAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
-        return checkAnonymousAuthentication(authentication)
-                && checkCompanyId(authentication, companyId)
-                && (checkCompanyManager(authentication, companyId)
-                || checkProjectId(authentication, projectId));
+        return ifNotAnonymousAuthentication(authentication)
+                && ifUserBelongsToCompany(authentication, companyId)
+                && (ifUserIsCompanyManager(authentication, companyId)
+                || ifUserBelongsToProject(authentication, projectId));
     }
 
     public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
@@ -94,35 +90,35 @@ public class Guard {
                 && projectRepository.findProjectIdSetByCompanyId(companyId).contains(projectId);
     }
 
-    public boolean checkTypeAccessGetMethod(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
-        switch (type) {
-            case "messages":
-                return checkAccessGetMethod(authentication, companyId, projectId)
-                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
-            default:
-                return false;
-        }
-    }
-
-    public boolean checkTypeAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
-        switch (type) {
-            case "messages":
-                return checkAccessOtherMethods(authentication, companyId, projectId)
-                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
-            default:
-                return false;
-        }
-    }
+//    public boolean checkTypeAccessGetMethod(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
+//        switch (type) {
+//            case "messages":
+//                return checkAccessGetMethod(authentication, companyId, projectId)
+//                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
+//            default:
+//                return false;
+//        }
+//    }
+//
+//    public boolean checkTypeAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
+//        switch (type) {
+//            case "messages":
+//                return checkAccessOtherMethods(authentication, companyId, projectId)
+//                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
+//            default:
+//                return false;
+//        }
+//    }
 
     //Only for temporary use, will be deleted after APIs updating.
     public boolean checkProjectAccess(Authentication authentication, Long projectId) {
-        if (!checkAnonymousAuthentication(authentication)) {
+        if (!ifNotAnonymousAuthentication(authentication)) {
             return false;
         }
         Set<String> roleNames = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
-        return checkProjectId(authentication, projectId)
+        return ifUserBelongsToProject(authentication, projectId)
                 || roleNames.contains("Company Manager");
     }
 }

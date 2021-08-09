@@ -3,7 +3,7 @@ package com.asyncworking.config;
 import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.auth.AuthEntryPoint;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.jwt.JwtTokenVerifier;
+import com.asyncworking.jwt.JwtTokenVerifyFilter;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,14 +54,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtService, userRepository))
-                .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
+                .addFilterAfter(new JwtTokenVerifyFilter(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
                 .antMatchers("/projects/{projectId:^[1-9]\\d*$}/**").access("@guard.checkProjectAccess(authentication, #projectId)")
-                .antMatchers(HttpMethod.GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/{type}/{typeId:^[1-9]\\d*$}/**")
-                .access("@guard.checkTypeAccessGetMethod(authentication, #companyId, #projectId, #type, #typeId)")
-                .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/{type}/{typeId:^[1-9]\\d*$}/**")
-                .access("@guard.checkTypeAccessOtherMethods(authentication, #companyId, #projectId, #type, #typeId)")
+//                .antMatchers(HttpMethod.GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/{type}/{typeId:^[1-9]\\d*$}/**")
+//                .access("@guard.checkTypeAccessGetMethod(authentication, #companyId, #projectId, #type, #typeId)")
+//                .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/{type}/{typeId:^[1-9]\\d*$}/**")
+//                .access("@guard.checkTypeAccessOtherMethods(authentication, #companyId, #projectId, #type, #typeId)")
                 .antMatchers(HttpMethod.GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
                 .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")
                 .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @Slf4j
-public class JwtTokenVerifier extends OncePerRequestFilter {
+public class JwtTokenVerifyFilter extends OncePerRequestFilter {
 
     private final SecretKey secretKey;
 
@@ -47,22 +47,11 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         Claims body = claimsJws.getBody();
         String username = body.getSubject();
 
-        var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
-        Set<AwcheetahGrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(map -> new AwcheetahGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
-                .collect(Collectors.toSet());
+        Set<AwcheetahGrantedAuthority> grantedAuthorities = getAuthoritiesFromJwtBody(body);
 
-        //The method body.get("companyIds") returns an list of doubles
-        var doubleCompanyIds =  (List<Double>) body.get("companyIds");
-        //Convert list of doubles to set of longs
-        Set<Long> companyIds = doubleCompanyIds.stream().
-                map(Double::longValue)
-                .collect(Collectors.toSet());
+        Set<Long> companyIds = getIdSetFromJwtBody("companyIds", body);
 
-        var doubleProjectIds =  (List<Double>) body.get("projectIds");
-        Set<Long> projectIds = doubleProjectIds.stream().
-                map(Double::longValue)
-                .collect(Collectors.toSet());
+        Set<Long> projectIds = getIdSetFromJwtBody("projectIds", body);
 
         Authentication authentication = new AwcheetahAuthenticationToken(
                 username,
@@ -74,5 +63,19 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
+    }
+
+    private Set<AwcheetahGrantedAuthority> getAuthoritiesFromJwtBody(Claims body) {
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
+        return authorities.stream()
+                .map(map -> new AwcheetahGrantedAuthority(map.get("role").toString(), ((Double) map.get("targetId")).longValue()))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Long> getIdSetFromJwtBody(String idType, Claims body) {
+        var doubleIdSet =  (List<Double>) body.get(idType);
+        return doubleIdSet.stream().
+                map(Double::longValue)
+                .collect(Collectors.toSet());
     }
 }
