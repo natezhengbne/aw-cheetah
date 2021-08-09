@@ -80,42 +80,6 @@ public class Guard {
         return false;
     }
 
-//    public boolean checkAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
-//        return ifNotAnonymousAuthentication(authentication)
-//                && ifUserBelongsToCompany(authentication, companyId)
-//                && (ifUserIsCompanyManager(authentication, companyId)
-//                || ifUserBelongsToProject(authentication, projectId)
-//                || !projectRepository.findById(projectId).get().getIsPrivate());
-//
-//    }
-//
-//    public boolean checkAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
-//        return ifNotAnonymousAuthentication(authentication)
-//                && ifUserBelongsToCompany(authentication, companyId)
-//                && (ifUserIsCompanyManager(authentication, companyId)
-//                || ifUserBelongsToProject(authentication, projectId));
-//    }
-
-//    public boolean checkTypeAccessGetMethod(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
-//        switch (type) {
-//            case "messages":
-//                return checkAccessGetMethod(authentication, companyId, projectId)
-//                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
-//            default:
-//                return false;
-//        }
-//    }
-//
-//    public boolean checkTypeAccessOtherMethods(Authentication authentication, Long companyId, Long projectId, String type, Long typeId) {
-//        switch (type) {
-//            case "messages":
-//                return checkAccessOtherMethods(authentication, companyId, projectId)
-//                        && messageRepository.findIfMessageExists(companyId, projectId, typeId);
-//            default:
-//                return false;
-//        }
-//    }
-
     //Only for temporary use, will be deleted after APIs updating.
     public boolean checkProjectAccess(Authentication authentication, Long projectId) {
         if (!ifNotAnonymousAuthentication(authentication)) {
