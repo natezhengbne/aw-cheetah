@@ -1,6 +1,6 @@
 package com.asyncworking.jwt;
 
-public enum JwtComponent {
+public enum JwtClaims {
 
     AUTHORIZATION("Authorization"),
 
@@ -14,11 +14,11 @@ public enum JwtComponent {
 
     TARGET_ID("targetId"),
 
-    Role("role");
+    ROLE("role");
 
     private final String value;
 
-    JwtComponent(String value) {
+    JwtClaims(String value) {
         this.value = value;
     }
 

@@ -1,6 +1,6 @@
 package com.asyncworking.models;
 
-public enum RoleName {
+public enum RoleNames {
 
     COMPANY_MANAGER("Company Manager"),
 
@@ -8,7 +8,7 @@ public enum RoleName {
 
     private final String value;
 
-    RoleName(String value) {
+    RoleNames(String value) {
         this.value = value;
     }
 

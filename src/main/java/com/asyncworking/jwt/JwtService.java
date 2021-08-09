@@ -1,7 +1,6 @@
 package com.asyncworking.jwt;
 
 import com.asyncworking.auth.ApplicationUserService;
-import com.asyncworking.auth.AwcheetahGrantedAuthority;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmployeeRepository;
@@ -12,7 +11,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +18,7 @@ import javax.crypto.SecretKey;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -44,9 +40,9 @@ public class JwtService {
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         return Jwts.builder()
                 .setSubject(email)
-                .claim(JwtComponent.AUTHORITIES.value(), user.getAuthorities())
-                .claim(JwtComponent.COMPANY_IDS.value(), companyIds)
-                .claim(JwtComponent.PROJECT_IDS.value(), projectIds)
+                .claim(JwtClaims.AUTHORITIES.value(), user.getAuthorities())
+                .claim(JwtClaims.COMPANY_IDS.value(), companyIds)
+                .claim(JwtClaims.PROJECT_IDS.value(), projectIds)
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -54,7 +50,7 @@ public class JwtService {
     }
 
     public JwtDto refreshJwtToken(String auth) {
-        String oldToken = auth.replace(JwtComponent.AUTHORIZATION_TYPE.value(), "");
+        String oldToken = auth.replace(JwtClaims.AUTHORIZATION_TYPE.value(), "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -63,7 +59,7 @@ public class JwtService {
         Claims body = claimsJws.getBody();
         String email = body.getSubject();
 
-        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(JwtComponent.AUTHORITIES.value());
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(JwtClaims.AUTHORITIES.value());
 
         UserDetails user = applicationUserService.loadUserByUsername(email);
         if (authorities.size() == user.getAuthorities().size()) {

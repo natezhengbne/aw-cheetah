@@ -18,7 +18,7 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
-    public void assignRole(UserEntity user, RoleName roleName, Long targetId) {
+    public void assignRole(UserEntity user, RoleNames roleName, Long targetId) {
         Role role = fetchRoleByName(roleName.value());
         UserRole userRole = UserRole.builder()
                 .id(new UserRoleId(user.getId(), role.getId(), targetId))
