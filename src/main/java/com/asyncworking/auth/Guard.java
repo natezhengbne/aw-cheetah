@@ -19,6 +19,26 @@ public class Guard {
 
     private final ProjectService projectService;
 
+    public boolean checkCompanyAccess(Authentication authentication, Long companyId) {
+        return ifNotAnonymousAuthentication(authentication)
+                && ifUserBelongsToCompany(authentication, companyId);
+    }
+
+    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
+        return ifNotAnonymousAuthentication(authentication)
+                && ifUserBelongsToCompany(authentication, companyId)
+                && (ifUserIsCompanyManager(authentication, companyId)
+                || ifUserBelongsToProject(authentication, projectId)
+                || projectService.ifProjectIsPublic(projectId));
+    }
+
+    public boolean checkProjectAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
+        return ifNotAnonymousAuthentication(authentication)
+                && ifUserBelongsToCompany(authentication, companyId)
+                && (ifUserIsCompanyManager(authentication, companyId)
+                || ifUserBelongsToProject(authentication, projectId));
+    }
+
     private boolean ifNotAnonymousAuthentication(Authentication authentication) {
         if (authentication.getPrincipal().equals("anonymousUser")) {
             log.info("Anonymous user, access denied");
@@ -58,26 +78,6 @@ public class Guard {
             }
         }
         return false;
-    }
-
-    public boolean checkCompanyAccess(Authentication authentication, Long companyId) {
-        return ifNotAnonymousAuthentication(authentication)
-                && ifUserBelongsToCompany(authentication, companyId);
-    }
-
-    public boolean checkProjectAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {
-        return ifNotAnonymousAuthentication(authentication)
-                && ifUserBelongsToCompany(authentication, companyId)
-                && (ifUserIsCompanyManager(authentication, companyId)
-                || ifUserBelongsToProject(authentication, projectId)
-                || projectService.ifProjectIsPublic(projectId));
-    }
-
-    public boolean checkProjectAccessOtherMethods(Authentication authentication, Long companyId, Long projectId) {
-        return ifNotAnonymousAuthentication(authentication)
-                && ifUserBelongsToCompany(authentication, companyId)
-                && (ifUserIsCompanyManager(authentication, companyId)
-                || ifUserBelongsToProject(authentication, projectId));
     }
 
 //    public boolean checkAccessGetMethod(Authentication authentication, Long companyId, Long projectId) {

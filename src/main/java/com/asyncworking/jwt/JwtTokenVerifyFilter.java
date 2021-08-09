@@ -49,9 +49,9 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
 
         Set<AwcheetahGrantedAuthority> grantedAuthorities = getAuthoritiesFromJwtBody(body);
 
-        Set<Long> companyIds = getIdSetFromJwtBody(JwtClaims.COMPANY_IDS.value(), body);
+        Set<Long> companyIds = getIdSetFromJwtBody(body, JwtClaims.COMPANY_IDS.value());
 
-        Set<Long> projectIds = getIdSetFromJwtBody(JwtClaims.PROJECT_IDS.value(), body);
+        Set<Long> projectIds = getIdSetFromJwtBody(body, JwtClaims.PROJECT_IDS.value());
 
         Authentication authentication = new AwcheetahAuthenticationToken(
                 username,
@@ -73,7 +73,7 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
                 .collect(Collectors.toSet());
     }
 
-    private Set<Long> getIdSetFromJwtBody(String idType, Claims body) {
+    private Set<Long> getIdSetFromJwtBody(Claims body, String idType) {
         var doubleIdSet =  (List<Double>) body.get(idType);
         return doubleIdSet.stream().
                 map(Double::longValue)

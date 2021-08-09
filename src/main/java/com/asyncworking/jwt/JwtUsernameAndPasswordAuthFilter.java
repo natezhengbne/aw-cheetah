@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 @RequiredArgsConstructor
@@ -27,8 +28,8 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    @Override
     @SneakyThrows
+    @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
         AuthenticationRequest authenticationRequest = new ObjectMapper().readValue(request.getInputStream(), AuthenticationRequest.class);
@@ -45,7 +46,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication authResult) {
+                                            Authentication authResult) throws IOException {
         String email = authResult.getName();
 
         String jwtToken = jwtService.creatJwtToken(email);
@@ -66,16 +67,13 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     }
 
     @Override
-    @SneakyThrows
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) {
+                                              AuthenticationException failed) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("Wrong password or user email");
-
+        setResponseBody(response, "Wrong password or user email");
     }
 
-    @SneakyThrows
-    private void setResponseBody(HttpServletResponse response, String json) {
+    private void setResponseBody(HttpServletResponse response, String json) throws IOException {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
