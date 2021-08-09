@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -55,7 +56,8 @@ public interface TodoMapper {
     @Mapping(target = "projectName", expression = "java(project.getName())")
     @Mapping(target = "todoItemGetDto", expression = "java(fromTodoItemEntity(todoItem))")
     @Mapping(target = "createdUserName", expression = "java(userEntity.getName())")
-    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project, UserEntity userEntity);
+    @Mapping(target = "assignedPeople", expression ="java(assignedPeople)" )
+    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project, UserEntity userEntity, Map<Long, String> assignedPeople);
 
     List<TodoItemGetDto> todoItemsToTodoItemGetDtos(List<TodoItem> todoItems);
 

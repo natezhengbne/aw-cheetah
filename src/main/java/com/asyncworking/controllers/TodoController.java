@@ -50,9 +50,9 @@ public class TodoController {
     }
 
     @GetMapping("/todoitems/{todoitemId}")
-    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long todoitemId) {
+    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long projectId, @PathVariable Long todoitemId) {
         log.info("todoitemId:" + todoitemId);
-        return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(todoitemId));
+        return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(projectId, todoitemId));
     }
 
     @PutMapping("/todoitems/{todoitemId}")

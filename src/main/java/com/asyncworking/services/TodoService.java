@@ -1,20 +1,21 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.TodoItemGetDto;
-import com.asyncworking.dtos.todoitem.TodoItemPageDto;
-import com.asyncworking.dtos.todoitem.TodoItemPostDto;
-import com.asyncworking.dtos.todoitem.TodoItemPutDto;
+import com.asyncworking.dtos.todoitem.*;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
+import com.asyncworking.utility.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +42,10 @@ public class TodoService {
     private final UserService userService;
 
     private final TodoMapper todoMapper;
+
+    private final UserRepository userRepository;
+
+    private final UserMapper userMapper;
 
     @Transactional
     public Long createTodoList(TodoListDto todoListDto) {
@@ -84,11 +90,13 @@ public class TodoService {
     }
 
 
-    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long todoItemId) {
+    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long projectId, Long todoItemId) {
         TodoItem todoItem = findTodoItemById(todoItemId);
+        Map<Long, String> assignedPeopleMap = findAssignedPeopleMap(projectId, todoItemId);
         return todoMapper.fromTodoItemToTodoItemPageDto(todoItem,
                 findProjectById(todoItem.getProjectId()),
-                userService.findUserById(todoItem.getCreatedUserId()));
+                userService.findUserById(todoItem.getCreatedUserId()),
+                assignedPeopleMap);
     }
 
     @Transactional
@@ -120,10 +128,28 @@ public class TodoService {
                 .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
     }
 
-    public List<String> findAssignedPeople(Long projectId, Long todoItemId) {
-        return Arrays.stream(todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId).split(","))
-                .collect(Collectors.toList());
+    public Map<Long, String> findAssignedPeopleMap(Long projectId, Long todoItemId) {
+
+        List<Long> idList= Arrays.asList(todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId)
+                .split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
+                .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
+
+        return  userEntityList.stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getName));
+
+    }
+
+    public List<AssignedPeopleGetDto> findAssignedPeople(Long projectId, Long todoItemId) {
+
+        List<Long> idList=  Arrays.asList(todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId)
+                .split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
+                .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
+        return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
+
 
 
     }
+
+
 }

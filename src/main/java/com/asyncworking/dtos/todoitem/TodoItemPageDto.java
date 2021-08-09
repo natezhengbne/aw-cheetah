@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,4 +24,6 @@ public class TodoItemPageDto {
     private TodoItemGetDto todoItemGetDto;
 
     private String createdUserName;
+
+    private Map<Long, String> assignedPeople;
 }
