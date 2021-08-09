@@ -1,5 +1,6 @@
 package com.asyncworking.auth;
 
+import com.asyncworking.models.RoleName;
 import com.asyncworking.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,7 @@ public class Guard {
                 .collect(Collectors.toSet());
 
         for (AwcheetahGrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals("Company Manager") && authority.getTargetId() == companyId) {
+            if (authority.getAuthority().equals(RoleName.COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId)) {
                 return true;
             }
         }
@@ -119,6 +120,6 @@ public class Guard {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
         return ifUserBelongsToProject(authentication, projectId)
-                || roleNames.contains("Company Manager");
+                || roleNames.contains(RoleName.COMPANY_MANAGER.value());
     }
 }

@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.exceptions.RoleNotFoundException;
 import com.asyncworking.models.Role;
+import com.asyncworking.models.RoleName;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.models.UserRole;
 import com.asyncworking.repositories.RoleRepository;
@@ -44,7 +45,7 @@ public class RoleServiceTest {
 
         mockRole = Role.builder()
                 .id(1L)
-                .name("Company Manager")
+                .name(RoleName.COMPANY_MANAGER.value())
                 .build();
 
         mockUser = UserEntity.builder()
@@ -56,7 +57,7 @@ public class RoleServiceTest {
     public void shouldAssignRoleGivenRoleNameAndUserEntity() {
         when(roleRepository.findByName(any())).thenReturn(Optional.of(mockRole));
         ArgumentCaptor<UserRole> userRoleArgumentCaptor = ArgumentCaptor.forClass(UserRole.class);
-        roleService.assignRole(mockUser, "Company Manager", 1L);
+        roleService.assignRole(mockUser, RoleName.COMPANY_MANAGER.value(), 1L);
         verify(userRoleRepository).save(userRoleArgumentCaptor.capture());
     }
 
