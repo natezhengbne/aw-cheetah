@@ -2,9 +2,11 @@ package com.asyncworking.jwt;
 
 import com.asyncworking.auth.ApplicationUserService;
 import com.asyncworking.auth.AwcheetahGrantedAuthority;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.google.gson.internal.LinkedTreeMap;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -32,10 +34,12 @@ public class JwtService {
 
     private final EmployeeRepository employeeRepository;
     private final ProjectUserRepository projectUserRepository;
+    private final UserRepository userRepository;
 
     public String creatJwtToken(String email) {
         UserDetails user = applicationUserService.loadUserByUsername(email);
-        UserEntity userEntity = applicationUserService.mapToUserDetails(email);
+        UserEntity userEntity = userRepository.findUserEntityByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
         Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         return Jwts.builder()

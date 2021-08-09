@@ -1,6 +1,7 @@
 package com.asyncworking.jwt;
 
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +41,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     }
 
     @Override
-    @SneakyThrows
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
@@ -49,7 +49,8 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
 
         String jwtToken = jwtService.creatJwtToken(email);
 
-        UserEntity user = userRepository.findUserEntityByEmail(email).get();
+        UserEntity user = userRepository.findUserEntityByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
 
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(user.getId())
@@ -58,13 +59,9 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .accessToken(jwtToken)
                 .build();
 
-        String userInfoDtoString = new Gson().toJson(userInfoDto);
-        PrintWriter out = response.getWriter();
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        out.print(userInfoDtoString);
-        out.flush();
+        String userInfoJson = new Gson().toJson(userInfoDto);
 
+        setResponseBody(response, userInfoJson);
     }
 
     @Override
@@ -74,5 +71,15 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
         response.setStatus(401);
         response.getWriter().write("Wrong password or user email");
 
+    }
+
+    @SneakyThrows
+    private void setResponseBody(HttpServletResponse response, String json) {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        out.print(json);
+        out.flush();
+        out.close();
     }
 }

@@ -3,6 +3,7 @@ package com.asyncworking.auth;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.models.UserRole;
 import com.asyncworking.repositories.UserRepository;
@@ -26,7 +27,8 @@ public class ApplicationUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        UserEntity user = mapToUserDetails(email);
+        UserEntity user = userRepository.findUserEntityByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
 
         Set<UserRole> userRoles = userRoleRepository.findByUserEntity(user);
         Set<GrantedAuthority> grantedAuthorities = userRoles.stream()
@@ -42,10 +44,5 @@ public class ApplicationUserService implements UserDetailsService {
                 true);
     }
 
-    public UserEntity mapToUserDetails(String email) {
-        return userRepository.findUserEntityByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("Username %s not found", email)));
-    }
 }
 

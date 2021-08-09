@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final ApplicationUserService myUserDetailsService;
+    private final ApplicationUserService applicationUserService;
 
     private final SecretKey secretKey;
 
@@ -85,7 +85,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(myUserDetailsService);
+        provider.setUserDetailsService(applicationUserService);
         return provider;
     }
 
