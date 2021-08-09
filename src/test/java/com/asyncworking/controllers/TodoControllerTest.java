@@ -49,7 +49,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.createTodoList(todoListDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("companies/1/projects/1/todolists")
+        mockMvc.perform(post("/companies/1/projects/1/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -60,7 +60,7 @@ class TodoControllerTest {
         TodoListDto todoListDto = TodoListDto.builder()
                 .projectId(2L)
                 .build();
-        mockMvc.perform(post("companies/1/projects/1/todolists")
+        mockMvc.perform(post("/companies/1/projects/1/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -70,7 +70,7 @@ class TodoControllerTest {
     public void returnTodoListDtoLists() throws Exception {
         when(todoService.findRequiredNumberTodoListsByCompanyIdAndProjectId(1L, 1L, 0))
                 .thenReturn(new ArrayList<>());
-        mockMvc.perform(get("companies/1/projects/1/todolists")
+        mockMvc.perform(get("/companies/1/projects/1/todolists")
                 .param("quantity", "0"))
                 .andExpect(status().isOk());
     }
@@ -83,7 +83,7 @@ class TodoControllerTest {
                 .build();
         when(todoService.fetchSingleTodoList(1L, 1L, 1L))
                 .thenReturn(mockTodoListDto);
-        mockMvc.perform(get("companies/1/projects/1/todolists/1"))
+        mockMvc.perform(get("/companies/1/projects/1/todolists/1"))
                 .andExpect(status().isOk());
     }
 
@@ -91,7 +91,7 @@ class TodoControllerTest {
     public void throwNotFoundTodoListExceptionWhenTodoListIdIsNotExist() throws Exception {
         when(todoService.fetchSingleTodoList(1L, 1L, 2L))
                 .thenThrow(new TodoListNotFoundException(""));
-        mockMvc.perform(get("companies/1/projects/1/todolists/2"))
+        mockMvc.perform(get("/companies/1/projects/1/todolists/2"))
                 .andExpect(status().isNotFound());
     }
 
@@ -105,9 +105,9 @@ class TodoControllerTest {
                 .createdUserId(1L)
                 .dueDate(OffsetDateTime.now())
                 .build();
-        when(todoService.createTodoItem(todoItemPostDto))
+        when(todoService.createTodoItem(1L, 1L, todoItemPostDto))
                 .thenReturn(1L);
-        mockMvc.perform(post("companies/1/projects/1/todolists/1/todoitems")
+        mockMvc.perform(post("/companies/1/projects/1/todolists/1/todoitems")
                 .content(objectMapper.writeValueAsString(todoItemPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -116,10 +116,10 @@ class TodoControllerTest {
     @Test
     public void shouldReturnOkIfGetTodoItemPageInfoSuccessful() throws Exception {
         TodoItemPageDto todoItemPageDto = TodoItemPageDto.builder().build();
-        when(todoService.fetchTodoItemPageInfoByIds(1L))
+        when(todoService.fetchTodoItemPageInfoByIds(1L, 1L, 1L))
                 .thenReturn(todoItemPageDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("companies/1/projects/1/todoitems/1")
+                MockMvcRequestBuilders.get("/companies/1/projects/1/todoitems/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
@@ -129,11 +129,12 @@ class TodoControllerTest {
         TodoItem todoItem = TodoItem.builder()
                 .id(1L)
                 .projectId(1L)
+                .companyId(1L)
                 .completed(true)
                 .build();
-        when(todoService.changeTodoItemCompleted(todoItem.getId()))
+        when(todoService.changeTodoItemCompleted(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()))
                 .thenReturn(!todoItem.getCompleted());
-        mockMvc.perform(put("companies/1/projects/1/todoitems/1/completed")
+        mockMvc.perform(put("/companies/1/projects/1/todoitems/1/completed")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("false"));
@@ -146,7 +147,7 @@ class TodoControllerTest {
                 .notes("notes/n")
                 .originNotes("<div>notes</div>")
                 .build();
-        mockMvc.perform(put("companies/1/projects/1/todoitems/1")
+        mockMvc.perform(put("/companies/1/projects/1/todoitems/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(todoItemPut)))
                 .andExpect(status().isOk());

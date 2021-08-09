@@ -24,5 +24,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                     "and id = :messageId);")
     Boolean findIfMessageExists(@Param("companyId") Long companyId, @Param("projectId") Long projectId, @Param("messageId") Long messageId);
     List<Message> findByCompanyIdAndProjectId(Long companyId, Long projectId);
-    Optional<Message> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long Id);
+    Optional<Message> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 }

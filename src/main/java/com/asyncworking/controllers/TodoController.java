@@ -45,26 +45,29 @@ public class TodoController {
 
 
     @PostMapping("/todolists/{todolistId}/todoitems")
-    public ResponseEntity createTodoItem(@Valid @RequestBody TodoItemPostDto todoItemPostDto) {
-        todoService.createTodoItem(todoItemPostDto);
+    public ResponseEntity createTodoItem(@PathVariable Long companyId, @PathVariable Long projectId,
+                                         @Valid @RequestBody TodoItemPostDto todoItemPostDto) {
+        todoService.createTodoItem(companyId, projectId, todoItemPostDto);
         return ResponseEntity.ok("create todo item success");
     }
 
     @GetMapping("/todoitems/{todoitemId}")
-    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long todoitemId) {
+    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                               @PathVariable Long todoitemId) {
         log.info("todoitemId:" + todoitemId);
-        return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(todoitemId));
+        return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(companyId, projectId, todoitemId));
     }
 
     @PutMapping("/todoitems/{todoitemId}")
-    public ResponseEntity<String> updateTodoItem(@PathVariable Long todoitemId,
-                                                 @RequestBody TodoItemPutDto todoItemPutDto) {
-        todoService.updateTodoItemDetails(todoitemId, todoItemPutDto);
+    public ResponseEntity<String> updateTodoItem(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                 @PathVariable Long todoitemId, @RequestBody TodoItemPutDto todoItemPutDto) {
+        todoService.updateTodoItemDetails(companyId, projectId, todoitemId, todoItemPutDto);
         return ResponseEntity.ok("update success");
     }
 
     @PutMapping("/todoitems/{todoitemId}/completed")
-    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long todoitemId) {
-        return ResponseEntity.ok(todoService.changeTodoItemCompleted(todoitemId));
+    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                           @PathVariable Long todoitemId) {
+        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId));
     }
 }

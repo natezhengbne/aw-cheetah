@@ -27,12 +27,14 @@ public class MessageController {
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long companyId, @PathVariable Long projectId, @Valid @RequestBody MessagePostDto messagePostDto) {
+    public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                       @Valid @RequestBody MessagePostDto messagePostDto) {
         return ResponseEntity.ok(messageService.createMessage(messagePostDto));
     }
 
     @GetMapping("/messages/{messageId}")
-    public ResponseEntity<MessageGetDto> getMessages(@PathVariable Long companyId, @PathVariable Long projectId, @PathVariable Long messageId) {
+    public ResponseEntity<MessageGetDto> getMessages(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                     @PathVariable Long messageId) {
         log.info("get messageId " + messageId);
         return ResponseEntity.ok(messageService.findMessageByCompanyIdAndProjectIdAndId(companyId, projectId, messageId));
     }
