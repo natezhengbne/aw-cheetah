@@ -11,6 +11,6 @@ import java.util.List;
 @EnableJpaRepositories
 public interface MessageCategoryRepository extends JpaRepository<MessageCategory, Long> {
 
-    List<MessageCategory> findByProjectId(Long projectId);
+    List<MessageCategory> findByCompanyIdAndProjectId(Long companyId, Long projectId);
 }
 

@@ -99,7 +99,7 @@ public class MessageControllerTest {
                 .postTime(OffsetDateTime.now(UTC))
                 .build());
 
-        when(messageService.findMessageListByProjectId(1L)).thenReturn(messageGetDtoList);
+        when(messageService.findMessageListByCompanyIdAndProjectId(1L, 1L)).thenReturn(messageGetDtoList);
         mockMvc.perform(get("/projects/1/messages"))
                 .andExpect(status().isOk());
     }
@@ -151,15 +151,15 @@ public class MessageControllerTest {
                 .docURL("https:www.adc.com")
                 .build();
 
-        when(messageService.findMessageById(1L)).thenReturn(messageGetDto);
-        mockMvc.perform(get("/projects/1/messages/1"))
+        when(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L)).thenReturn(messageGetDto);
+        mockMvc.perform(get("companines/1/projects/1/messages/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void throwMessageNotFoundExceptionWhenMessageIdNotExist() throws Exception {
-        when(messageService.findMessageById(1L)).thenThrow(new MessageNotFoundException("this message not exist"));
-        mockMvc.perform(get("/projects/1/messages/1"))
+        when(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L)).thenThrow(new MessageNotFoundException("this message not exist"));
+        mockMvc.perform(get("companies/1/projects/1/messages/1"))
                 .andExpect(status().isNotFound());
     }
 }

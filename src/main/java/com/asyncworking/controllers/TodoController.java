@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/projects/{projectId}")
+@RequestMapping("companies/{companyId}/projects/{projectId}")
 @RequiredArgsConstructor
 public class TodoController {
 
@@ -30,15 +30,16 @@ public class TodoController {
     }
 
     @GetMapping("/todolists")
-    public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long projectId,
+    public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long companyId, @PathVariable Long projectId,
                                                             @NotNull @RequestParam("quantity") Integer quantity) {
-        return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByProjectId(projectId, quantity));
+        return ResponseEntity.ok(todoService.findRequiredNumberTodoListsByCompanyIdAndProjectId(companyId, projectId, quantity));
     }
 
     @GetMapping("/todolists/{todolistId}")
-    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long todolistId) {
+    public ResponseEntity<TodoListDto> fetchSingleTodoList(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                           @PathVariable Long todolistId) {
         log.info("todolistId:" + todolistId);
-        return ResponseEntity.ok(todoService.fetchSingleTodoList(todolistId));
+        return ResponseEntity.ok(todoService.fetchSingleTodoList(companyId, projectId, todolistId));
     }
 
 

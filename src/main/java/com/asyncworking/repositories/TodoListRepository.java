@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
@@ -22,6 +23,9 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
                     " limit :quantity")
     List<TodoList> findTodoListsByProjectIdOrderByCreatedTime(@Param("projectId") Long projectId, @Param("quantity") Integer quantity);
 
-    @Query(value = "select tl from TodoList tl left join fetch tl.todoItems where tl.project.id=:projectId order by tl.createdTime desc")
-    List<TodoList> findTodolistWithTodoItems(@Param("projectId") Long projectId, Pageable pageable);
+    @Query(value = "select tl from TodoList tl left join fetch tl.todoItems where tl.project.id=:projectId and tl.companyId=:companyId order by tl.createdTime desc")
+    List<TodoList> findTodolistWithTodoItems(@Param("companyId") long companyId, @Param("projectId") Long projectId, Pageable pageable);
+
+    Optional<TodoList> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long todoListId);
+
 }

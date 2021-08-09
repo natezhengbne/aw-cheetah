@@ -153,9 +153,10 @@ public class TodoServiceTest {
                 .createdTime(now(UTC))
                 .updatedTime(now(UTC))
                 .build());
-        when(todoListRepository.findTodolistWithTodoItems(any(), any()))
+        when(todoListRepository.findTodolistWithTodoItems(any(), any(), any()))
                 .thenReturn(todoLists);
-        List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByProjectId(project.getId(), quantity);
+        List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByCompanyIdAndProjectId(project.getCompanyId(),
+                project.getId(), quantity);
         assertEquals(quantity, todoListDtos.size());
     }
 
@@ -181,7 +182,7 @@ public class TodoServiceTest {
     public void throwTodoListNotFoundExceptionWhenIdIsNotExist() {
         when(todoListRepository.findById(2L))
                 .thenThrow(new TodoListNotFoundException("Cannot find todoList by id: 2"));
-        assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(2L));
+        assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(1L, 1L, 2L));
     }
 
     @Test
@@ -189,10 +190,11 @@ public class TodoServiceTest {
         List<TodoItem> todoItems = new ArrayList<>();
         todoItems.add(todoItem1);
         todoItems.add(todoItem2);
-        when(todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(any()))
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(any(), any(), any()))
                 .thenReturn(todoItems);
 
-        List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId());
+        List<TodoItemGetDto> todoItemGetDtos = todoService.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(todoList.getCompanyId(),
+                todoList.getProject().getId(), todoList.getId());
         assertEquals(2, todoItemGetDtos.size());
         assertEquals("test1", todoItemGetDtos.get(0).getNotes());
         assertEquals("des1", todoItemGetDtos.get(0).getDescription());

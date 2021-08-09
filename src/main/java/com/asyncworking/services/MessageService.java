@@ -80,8 +80,12 @@ public class MessageService {
                 .getName();
     }
 
-    public List<MessageGetDto> findMessageListByProjectId(Long projectId) {
-        List<Message> messageList = messageRepository.findByProjectId(projectId);
+    public List<MessageGetDto> findMessageListByCompanyIdAndProjectId(Long companyId, Long projectId) {
+        List<Message> messageList = messageRepository.findByCompanyIdAndProjectId(companyId, projectId);
+        if (messageList.size() == 0) {
+            throw new MessageNotFoundException(String.format("Cannot find messageList by company id:%d and project id:%d",
+                    companyId, projectId));
+        }
         List<UserEntity> userEntityList = findUserEntityByMessageList(messageList);
         Map<Long, String> userIdNameMap = userEntityList.stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getName));
 
@@ -104,8 +108,8 @@ public class MessageService {
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + userIds));
     }
 
-    public MessageGetDto findMessageById(Long id) {
-        return messageRepository.findById(id)
+    public MessageGetDto findMessageByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id) {
+        return messageRepository.findByCompanyIdAndProjectIdAndId(companyId, projectId, id)
                 .map(m -> messageMapper.fromEntity(m, findUsernameByUserId(m.getPosterUserId())))
                 .orElseThrow(() -> new MessageNotFoundException("cannot find message by id " + id));
     }

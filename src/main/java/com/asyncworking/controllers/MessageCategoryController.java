@@ -17,13 +17,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/projects/{projectId}")
+@RequestMapping("companies/{companyId}/projects/{projectId}")
+//Todo
 public class MessageCategoryController {
     private final MessageCategoryService messageCategoryService;
 
     @GetMapping("/message-categories")
-    public ResponseEntity<List<MessageCategoryGetDto>> getMessageCategoryList(@PathVariable Long projectId) {
+    public ResponseEntity<List<MessageCategoryGetDto>> getMessageCategoryList(@PathVariable Long companyId, @PathVariable Long projectId) {
         log.info("get projectId " + projectId + " :message category");
-        return ResponseEntity.ok(messageCategoryService.findMessageCategoryListByProjectId(projectId));
+        return ResponseEntity.ok(messageCategoryService.findMessageCategoryListByCompanyIdAndProjectId(companyId, projectId));
     }
 }
