@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -68,7 +69,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     @SneakyThrows
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) {
-        response.setStatus(401);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write("Wrong password or user email");
 
     }

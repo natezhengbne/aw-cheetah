@@ -44,9 +44,9 @@ public class JwtService {
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         return Jwts.builder()
                 .setSubject(email)
-                .claim("authorities", user.getAuthorities())
-                .claim("companyIds", companyIds)
-                .claim("projectIds", projectIds)
+                .claim(JwtComponent.AUTHORITIES.value(), user.getAuthorities())
+                .claim(JwtComponent.COMPANY_IDS.value(), companyIds)
+                .claim(JwtComponent.PROJECT_IDS.value(), projectIds)
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -54,7 +54,7 @@ public class JwtService {
     }
 
     public JwtDto refreshJwtToken(String auth) {
-        String oldToken = auth.replace("Bearer ", "");
+        String oldToken = auth.replace(JwtComponent.AUTHORIZATION_TYPE.value(), "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -63,7 +63,7 @@ public class JwtService {
         Claims body = claimsJws.getBody();
         String email = body.getSubject();
 
-        var authorities = (List<LinkedTreeMap<String, Object>>) body.get("authorities");
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(JwtComponent.AUTHORITIES.value());
 
         UserDetails user = applicationUserService.loadUserByUsername(email);
         if (authorities.size() == user.getAuthorities().size()) {
