@@ -55,7 +55,8 @@ public class UserController {
     }
 
     @GetMapping("/invitations/companies")
-    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
+//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
                                             @RequestParam(value = "email") String email,
                                             @RequestParam(value = "name") String name,

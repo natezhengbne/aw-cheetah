@@ -13,6 +13,7 @@ public enum RoleName {
     }
 
     public String value() {
-        return this.value;
+        return value;
     }
+
 }

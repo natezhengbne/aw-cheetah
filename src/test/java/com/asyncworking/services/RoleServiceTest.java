@@ -57,7 +57,7 @@ public class RoleServiceTest {
     public void shouldAssignRoleGivenRoleNameAndUserEntity() {
         when(roleRepository.findByName(any())).thenReturn(Optional.of(mockRole));
         ArgumentCaptor<UserRole> userRoleArgumentCaptor = ArgumentCaptor.forClass(UserRole.class);
-        roleService.assignRole(mockUser, RoleName.COMPANY_MANAGER.value(), 1L);
+        roleService.assignRole(mockUser, RoleName.COMPANY_MANAGER, 1L);
         verify(userRoleRepository).save(userRoleArgumentCaptor.capture());
     }
 

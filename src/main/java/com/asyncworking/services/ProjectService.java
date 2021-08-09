@@ -5,10 +5,7 @@ import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.models.Project;
-import com.asyncworking.models.ProjectUser;
-import com.asyncworking.models.ProjectUserId;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -81,7 +78,7 @@ public class ProjectService {
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
 
-        roleService.assignRole(selectedUserEntity, "Project Manager", newProject.getId());
+        roleService.assignRole(selectedUserEntity, RoleName.PROJECT_MANAGER, newProject.getId());
 
         createDefaultMessageCategories(newProject);
 
