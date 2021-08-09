@@ -29,6 +29,7 @@ public class ProjectMapper {
     public ProjectInfoDto mapProjectToProjectInfoDto(Project project) {
         return ProjectInfoDto.builder()
                 .id(project.getId())
+                .leaderId(project.getLeaderId())
                 .name(project.getName())
                 .description(project.getDescription())
                 .projectUserNames(project.getProjectUsers().stream()

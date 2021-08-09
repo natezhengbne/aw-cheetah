@@ -1,15 +1,15 @@
 package com.asyncworking.auth;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.UserRole;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,26 +21,28 @@ import org.springframework.stereotype.Service;
 public class ApplicationUserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
+    private final UserRoleRepository userRoleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        UserEntity foundUser = mapToUserDetails(email);
+        UserEntity user = mapToUserDetails(email);
 
-        log.info(foundUser.toString());
+        Set<UserRole> userRoles = userRoleRepository.findByUserEntity(user);
+        Set<GrantedAuthority> grantedAuthorities = userRoles.stream()
+                .map(userRole -> new AwcheetahGrantedAuthority(userRole.getRole().getName(), userRole.getId().getTargetId()))
+                .collect(Collectors.toSet());
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("edit message");
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(authority);
-
-        log.info(foundUser.getPassword());
-        return new User(foundUser.getEmail(),
-                foundUser.getPassword().replaceAll("\\s+", ""),
-                authorities);
+        return new ApplicationUserDetails(user.getEmail(),
+                user.getPassword().replaceAll("\\s+", ""),
+                grantedAuthorities,
+                true,
+                true,
+                true,
+                true);
     }
 
-    private UserEntity mapToUserDetails (String email) {
+    public UserEntity mapToUserDetails(String email) {
         return userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(String.format("Username %s not found", email)));
