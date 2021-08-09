@@ -26,4 +26,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                        @Param("notes")String notes,
                        @Param("originNotes")String originNotes,
                        @Param("dueDates")OffsetDateTime dueDate);
+
+    @Query(value = "select t.subscribersIds from TodoItem t where t.id = :todoItemId and t.projectId = :projectId")
+    String findSubscribersIdsByProjectIdAndId(@Param("projectId")Long projectId, @Param("todoItemId") Long todoItemId);
 }

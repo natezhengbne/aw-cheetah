@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,5 +118,12 @@ public class TodoService {
         return todoItemRepository
                 .findById(todoItemId)
                 .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
+    }
+
+    public List<String> findAssignedPeople(Long projectId, Long todoItemId) {
+        return Arrays.stream(todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId).split(","))
+                .collect(Collectors.toList());
+
+
     }
 }
