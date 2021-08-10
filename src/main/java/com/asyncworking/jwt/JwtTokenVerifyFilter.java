@@ -21,6 +21,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.asyncworking.jwt.JwtClaims.*;
+
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenVerifyFilter extends OncePerRequestFilter {
@@ -31,30 +33,31 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
     @SneakyThrows
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         log.debug("doFilterInternal() started");
-        String authorizationHeader = request.getHeader(JwtClaims.AUTHORIZATION.value());
-        if (authorizationHeader == null || !authorizationHeader.startsWith(JwtClaims.AUTHORIZATION_TYPE.value())) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION.value());
+        if (authorizationHeader == null || !authorizationHeader.startsWith(AUTHORIZATION_TYPE.value())) {
             log.info("No authorizationHeader or header not startWith Bearer");
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorizationHeader.replace(JwtClaims.AUTHORIZATION_TYPE.value(), "");
+        String token = authorizationHeader.replace(AUTHORIZATION_TYPE.value(), "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token);
         Claims body = claimsJws.getBody();
-        String username = body.getSubject();
+
+        String email = body.getSubject();
 
         Set<AwcheetahGrantedAuthority> grantedAuthorities = getAuthoritiesFromJwtBody(body);
 
-        Set<Long> companyIds = getIdSetFromJwtBody(body, JwtClaims.COMPANY_IDS.value());
+        Set<Long> companyIds = getIdSetFromJwtBody(body, COMPANY_IDS.value());
 
-        Set<Long> projectIds = getIdSetFromJwtBody(body, JwtClaims.PROJECT_IDS.value());
+        Set<Long> projectIds = getIdSetFromJwtBody(body, PROJECT_IDS.value());
 
         Authentication authentication = new AwcheetahAuthenticationToken(
-                username,
+                email,
                 null,
                 grantedAuthorities,
                 companyIds,
@@ -66,10 +69,10 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
     }
 
     private Set<AwcheetahGrantedAuthority> getAuthoritiesFromJwtBody(Claims body) {
-        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(JwtClaims.AUTHORITIES.value());
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(AUTHORITIES.value());
         return authorities.stream()
-                .map(map -> new AwcheetahGrantedAuthority(map.get(JwtClaims.ROLE.value()).toString(),
-                        ((Double) map.get(JwtClaims.TARGET_ID.value())).longValue()))
+                .map(map -> new AwcheetahGrantedAuthority(map.get(ROLE.value()).toString(),
+                        ((Double) map.get(TARGET_ID.value())).longValue()))
                 .collect(Collectors.toSet());
     }
 

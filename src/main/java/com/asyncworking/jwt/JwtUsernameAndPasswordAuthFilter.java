@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 
 @RequiredArgsConstructor
 public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthenticationFilter {
@@ -49,7 +51,9 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                                             Authentication authResult) throws IOException {
         String email = authResult.getName();
 
-        String jwtToken = jwtService.creatJwtToken(email);
+        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+
+        String jwtToken = jwtService.creatJwtToken(email, authorities);
 
         UserEntity user = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));

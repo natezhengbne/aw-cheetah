@@ -1,6 +1,5 @@
 package com.asyncworking.auth;
 
-import com.asyncworking.models.RoleNames;
 import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.asyncworking.auth.AwcheetahAuthenticationToken.COMPANY_IDS;
+import static com.asyncworking.auth.AwcheetahAuthenticationToken.PROJECT_IDS;
+import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
 
 @Component
 @RequiredArgsConstructor
@@ -49,7 +52,7 @@ public class Guard {
 
     private boolean ifUserBelongsToCompany(Authentication authentication, Long companyId) {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
-        Set<Long> companyIds = details.get(AwcheetahAuthenticationToken.COMPANY_IDS);
+        Set<Long> companyIds = details.get(COMPANY_IDS);
         if (!companyIds.contains(companyId)) {
             log.info("User does not belong to this company!");
             return false;
@@ -59,7 +62,7 @@ public class Guard {
 
     private boolean ifUserBelongsToProject(Authentication authentication, Long projectId) {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
-        Set<Long> projectIds = details.get(AwcheetahAuthenticationToken.PROJECT_IDS);
+        Set<Long> projectIds = details.get(PROJECT_IDS);
         if (!projectIds.contains(projectId)) {
             log.info("User does not belong to this project!");
             return false;
@@ -73,7 +76,7 @@ public class Guard {
                 .collect(Collectors.toSet());
 
         for (AwcheetahGrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals(RoleNames.COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId)) {
+            if (authority.getAuthority().equals(COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId)) {
                 return true;
             }
         }
@@ -89,6 +92,6 @@ public class Guard {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
         return ifUserBelongsToProject(authentication, projectId)
-                || roleNames.contains(RoleNames.COMPANY_MANAGER.value());
+                || roleNames.contains(COMPANY_MANAGER.value());
     }
 }

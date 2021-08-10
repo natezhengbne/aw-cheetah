@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.asyncworking.models.RoleNames.*;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -46,12 +47,12 @@ public class UserRoleRepositoryTest extends DBHelper {
                 .build();
 
         mockRole1 = Role.builder()
-                .name(RoleNames.COMPANY_MANAGER.value())
+                .name(COMPANY_MANAGER.value())
                 .authorities(new HashSet<>())
                 .build();
 
         mockRole2 = Role.builder()
-                .name(RoleNames.PROJECT_MANAGER.value())
+                .name(PROJECT_MANAGER.value())
                 .authorities(new HashSet<>())
                 .build();
 

@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.asyncworking.models.RoleNames.PROJECT_MANAGER;
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
@@ -78,7 +79,7 @@ public class ProjectService {
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
 
-        roleService.assignRole(selectedUserEntity, RoleNames.PROJECT_MANAGER, newProject.getId());
+        roleService.assignRole(selectedUserEntity, PROJECT_MANAGER, newProject.getId());
 
         createDefaultMessageCategories(newProject);
 

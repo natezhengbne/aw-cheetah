@@ -1,6 +1,5 @@
 package com.asyncworking.auth;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -13,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+
 @Component
 @ControllerAdvice
 public class AuthEntryPoint implements AuthenticationEntryPoint {
@@ -20,14 +22,14 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException authException) throws IOException {
-        httpServletResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+        httpServletResponse.setStatus(NOT_ACCEPTABLE.value());
         setResponseBody(httpServletResponse,"Authentication Failed Due To Invalid Token");
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AccessDeniedException accessDeniedException) throws IOException {
-        httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+        httpServletResponse.setStatus(FORBIDDEN.value());
         setResponseBody(httpServletResponse, "Access Denied Due To Non-authorization");
     }
 
