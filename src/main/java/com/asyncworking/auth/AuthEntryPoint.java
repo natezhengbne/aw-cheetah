@@ -21,7 +21,7 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException authException) throws IOException {
         httpServletResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
-        setResponseBody(httpServletResponse,"Authentication Failed Due To Invalid Token");
+        setResponseBody(httpServletResponse, "Authentication Failed Due To Invalid Token");
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
