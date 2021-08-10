@@ -1,8 +1,10 @@
 package com.asyncworking.config;
 
 import com.amazonaws.services.sqs.AmazonSQSAsync;
+import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import io.awspring.cloud.messaging.listener.QueueMessageHandler;
 import io.awspring.cloud.messaging.listener.SimpleMessageListenerContainer;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -13,4 +15,10 @@ import static org.mockito.Mockito.mock;
 public class TestConfig {
     @MockBean
     private SimpleMessageListenerContainer simpleMessageListenerContainer;
+
+    @MockBean
+    private AmazonSQSConfig amazonSQSConfig;
+
+    @MockBean
+    private QueueMessagingTemplate queueMessagingTemplate;
 }
