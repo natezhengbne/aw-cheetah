@@ -18,6 +18,7 @@ import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,12 +142,16 @@ public class TodoService {
 
     public List<AssignedPeopleGetDto> findAssignedPeople(Long projectId, Long todoItemId) {
 
-        List<Long> idList=  Arrays.asList(todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId)
+        String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId);
+        if (subscribersIds.length() == 0) {
+            return null;
+//            throw new UserNotFoundException("cannot find user in todo item " + todoItemId);
+        }
+        List<Long> idList = Arrays.asList(subscribersIds
                 .split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
         List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
-
 
 
     }
