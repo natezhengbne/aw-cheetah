@@ -80,15 +80,4 @@ public class Guard {
         return false;
     }
 
-    //Only for temporary use, will be deleted after APIs updating.
-    public boolean checkProjectAccess(Authentication authentication, Long projectId) {
-        if (!ifNotAnonymousAuthentication(authentication)) {
-            return false;
-        }
-        Set<String> roleNames = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-        return ifUserBelongsToProject(authentication, projectId)
-                || roleNames.contains(RoleNames.COMPANY_MANAGER.value());
-    }
 }
