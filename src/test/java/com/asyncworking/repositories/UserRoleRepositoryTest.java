@@ -46,12 +46,12 @@ public class UserRoleRepositoryTest extends DBHelper {
                 .build();
 
         mockRole1 = Role.builder()
-                .name("Company Manager")
+                .name(RoleNames.COMPANY_MANAGER.value())
                 .authorities(new HashSet<>())
                 .build();
 
         mockRole2 = Role.builder()
-                .name("Project Manager")
+                .name(RoleNames.PROJECT_MANAGER.value())
                 .authorities(new HashSet<>())
                 .build();
 

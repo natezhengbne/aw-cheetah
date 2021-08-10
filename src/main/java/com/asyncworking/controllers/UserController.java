@@ -33,7 +33,7 @@ public class UserController {
     @GetMapping("/company")
     public ResponseEntity verifyCompany(@RequestParam(value = "email") String email) {
         log.info(email);
-        if (userService.ifCompanyExits(email)){
+        if (userService.ifCompanyExits(email)) {
             return ResponseEntity.ok(userService.fetchCompanyId(email));
         }
         return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
@@ -55,11 +55,12 @@ public class UserController {
     }
 
     @GetMapping("/invitations/companies")
+//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
-                                                @RequestParam(value = "email") String email,
-                                                @RequestParam(value = "name") String name,
-                                                @RequestParam(value = "title") String title){
+                                            @RequestParam(value = "email") String email,
+                                            @RequestParam(value = "name") String name,
+                                            @RequestParam(value = "title") String title) {
         return ResponseEntity.ok(userService.generateInvitationLink(companyId, email, name, title));
     }
 

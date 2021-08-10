@@ -1,10 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.exceptions.RoleNotFoundException;
-import com.asyncworking.models.Role;
-import com.asyncworking.models.UserEntity;
-import com.asyncworking.models.UserRole;
-import com.asyncworking.models.UserRoleId;
+import com.asyncworking.models.*;
 import com.asyncworking.repositories.RoleRepository;
 import com.asyncworking.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +18,8 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
-    public void assignRole(UserEntity user, String roleName, Long targetId) {
-        Role role = fetchRoleByName(roleName);
+    public void assignRole(UserEntity user, RoleNames roleName, Long targetId) {
+        Role role = fetchRoleByName(roleName.value());
         UserRole userRole = UserRole.builder()
                 .id(new UserRoleId(user.getId(), role.getId(), targetId))
                 .userEntity(user)

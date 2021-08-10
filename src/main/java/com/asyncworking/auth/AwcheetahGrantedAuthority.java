@@ -41,6 +41,6 @@ public class AwcheetahGrantedAuthority implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return targetId + role;
+        return targetId + "_" + role;
     }
 }

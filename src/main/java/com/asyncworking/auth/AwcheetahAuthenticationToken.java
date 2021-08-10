@@ -10,6 +10,10 @@ import java.util.Set;
 
 public class AwcheetahAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
+    public static final String COMPANY_IDS = "companyIds";
+
+    public static final String PROJECT_IDS = "projectIds";
+
     private final Set<Long> companyIds;
 
     private final Set<Long> projectIds;
@@ -24,8 +28,8 @@ public class AwcheetahAuthenticationToken extends UsernamePasswordAuthentication
     @Override
     public Object getDetails() {
         Map<String, Set<Long>> details = new HashMap<>();
-        details.put("companyIds", companyIds);
-        details.put("projectIds", projectIds);
+        details.put(COMPANY_IDS, companyIds);
+        details.put(PROJECT_IDS, projectIds);
         return details;
     }
 

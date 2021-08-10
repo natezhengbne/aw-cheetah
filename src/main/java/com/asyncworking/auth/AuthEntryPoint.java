@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Component
 @ControllerAdvice
@@ -19,21 +19,23 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-                         AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException {
         httpServletResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
-        httpServletResponse.getWriter().write("Authentication Failed Due To Invalid Token");
-
+        setResponseBody(httpServletResponse,"Authentication Failed Due To Invalid Token");
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AccessDeniedException accessDeniedException) throws IOException {
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
-        httpServletResponse.getWriter().write("Access Denied Due To Non-authorization");
-
+        setResponseBody(httpServletResponse, "Access Denied Due To Non-authorization");
     }
 
-
-
+    private void setResponseBody(HttpServletResponse response, String message) throws IOException {
+        PrintWriter out = response.getWriter();
+        out.print(message);
+        out.flush();
+        out.close();
+    }
 }
 

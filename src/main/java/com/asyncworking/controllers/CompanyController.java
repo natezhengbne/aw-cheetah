@@ -42,6 +42,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{companyId}/profile")
+//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity updateCompanyProfile(@PathVariable("companyId") Long companyId,
                                                @Valid @RequestBody CompanyModificationDto companyModificationDto) {
