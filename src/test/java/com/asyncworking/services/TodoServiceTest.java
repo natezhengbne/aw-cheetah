@@ -14,7 +14,9 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
+import com.asyncworking.utility.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,8 +59,14 @@ public class TodoServiceTest {
 
     private TodoService todoService;
 
+    @Mock
+    private UserRepository userRepository;
+
     @Autowired
     private TodoMapper todoMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     private TodoListDto mockTodoListDto;
 
@@ -79,7 +87,9 @@ public class TodoServiceTest {
                 todoItemRepository,
                 projectRepository,
                 userService,
-                todoMapper);
+                todoMapper,
+                userRepository,
+                userMapper);
 
         mockTodoListDto = TodoListDto.builder()
                 .projectId(1L)
@@ -238,9 +248,10 @@ public class TodoServiceTest {
                 .notes("notes/n")
                 .originNotes("<div>notes</div>")
                 .dueDate(OffsetDateTime.now(UTC))
+                .subscribersIds("1,2,3")
                 .build();
         when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getNotes(),
-                todoItemPut.getOriginNotes(), todoItemPut.getDueDate())).thenReturn(0);
+                todoItemPut.getOriginNotes(), todoItemPut.getDueDate(), todoItemPut.getSubscribersIds())).thenReturn(0);
         assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, todoItemPut));
     }
 

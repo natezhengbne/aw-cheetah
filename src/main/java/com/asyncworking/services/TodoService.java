@@ -91,13 +91,11 @@ public class TodoService {
     }
 
 
-    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long projectId, Long todoItemId) {
+    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long todoItemId) {
         TodoItem todoItem = findTodoItemById(todoItemId);
-        Map<Long, String> assignedPeopleMap = findAssignedPeopleMap(projectId, todoItemId);
         return todoMapper.fromTodoItemToTodoItemPageDto(todoItem,
                 findProjectById(todoItem.getProjectId()),
-                userService.findUserById(todoItem.getCreatedUserId()),
-                assignedPeopleMap);
+                userService.findUserById(todoItem.getCreatedUserId()));
     }
 
     @Transactional
@@ -106,7 +104,8 @@ public class TodoService {
                 todoItemPutDto.getDescription(),
                 todoItemPutDto.getNotes(),
                 todoItemPutDto.getOriginNotes(),
-                todoItemPutDto.getDueDate());
+                todoItemPutDto.getDueDate(),
+                todoItemPutDto.getSubscribersIds());
         if (res != 1) {
             throw new TodoItemNotFoundException("There is no todoItem id is " + todoItemId);
         }
@@ -129,23 +128,12 @@ public class TodoService {
                 .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
     }
 
-    public Map<Long, String> findAssignedPeopleMap(Long projectId, Long todoItemId) {
-
-        List<Long> idList= Arrays.asList(todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId)
-                .split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
-        List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
-                .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
-
-        return  userEntityList.stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getName));
-
-    }
 
     public List<AssignedPeopleGetDto> findAssignedPeople(Long projectId, Long todoItemId) {
 
         String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId);
         if (subscribersIds.length() == 0) {
             return null;
-//            throw new UserNotFoundException("cannot find user in todo item " + todoItemId);
         }
         List<Long> idList = Arrays.asList(subscribersIds
                 .split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());

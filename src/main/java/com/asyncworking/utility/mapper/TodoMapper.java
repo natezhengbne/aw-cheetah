@@ -56,8 +56,7 @@ public interface TodoMapper {
     @Mapping(target = "projectName", expression = "java(project.getName())")
     @Mapping(target = "todoItemGetDto", expression = "java(fromTodoItemEntity(todoItem))")
     @Mapping(target = "createdUserName", expression = "java(userEntity.getName())")
-    @Mapping(target = "assignedPeople", expression ="java(assignedPeople)" )
-    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project, UserEntity userEntity, Map<Long, String> assignedPeople);
+    TodoItemPageDto fromTodoItemToTodoItemPageDto(TodoItem todoItem, Project project, UserEntity userEntity);
 
     List<TodoItemGetDto> todoItemsToTodoItemGetDtos(List<TodoItem> todoItems);
 

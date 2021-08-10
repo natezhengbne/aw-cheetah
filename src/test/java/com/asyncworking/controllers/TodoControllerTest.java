@@ -116,7 +116,7 @@ class TodoControllerTest {
     @Test
     public void shouldReturnOkIfGetTodoItemPageInfoSuccessful() throws Exception {
         TodoItemPageDto todoItemPageDto = TodoItemPageDto.builder().build();
-        when(todoService.fetchTodoItemPageInfoByIds(1L, 1L))
+        when(todoService.fetchTodoItemPageInfoByIds(1L))
                 .thenReturn(todoItemPageDto);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/projects/1/todoitems/1")
