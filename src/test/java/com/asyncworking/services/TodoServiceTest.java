@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -153,7 +155,8 @@ public class TodoServiceTest {
                 .createdTime(now(UTC))
                 .updatedTime(now(UTC))
                 .build());
-        when(todoListRepository.findTodolistWithTodoItems(any(), any(), any()))
+        when(todoListRepository.findTodolistWithTodoItems(project.getCompanyId(),
+                project.getId(), PageRequest.of(0, quantity)))
                 .thenReturn(todoLists);
         List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByCompanyIdAndProjectId(project.getCompanyId(),
                 project.getId(), quantity);
@@ -174,7 +177,8 @@ public class TodoServiceTest {
                 .updatedTime(now(UTC))
                 .build();
 
-        when(todoListRepository.findByCompanyIdAndProjectIdAndId(any())).thenReturn(Optional.of(mockTodoList));
+        when(todoListRepository.findByCompanyIdAndProjectIdAndId(project.getCompanyId(), project.getId(),
+                mockTodoList.getId())).thenReturn(Optional.of(mockTodoList));
         assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.fetchSingleTodoList(project.getCompanyId(), project.getId(),
                 mockTodoList.getId()).getTodoListTitle());
     }
@@ -222,7 +226,7 @@ public class TodoServiceTest {
 
     @Test
     public void throwTodoItemNotFoundExceptionWhenTodoitemIdIsNotExist() {
-        when(todoItemRepository.findByCompanyIdAndProjectIdAndId(any(), any(), any()))
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndId(2L, 2L, 2L))
                 .thenReturn(Optional.empty());
         Exception exception = assertThrows(TodoItemNotFoundException.class,
                 () -> todoService.fetchTodoItemPageInfoByIds(2L, 2L, 2L));

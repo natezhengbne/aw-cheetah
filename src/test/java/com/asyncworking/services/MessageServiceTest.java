@@ -328,7 +328,7 @@ public class MessageServiceTest {
                 .docURL("abc.com")
                 .subscribersIds("1L,2L")
                 .build();
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage1));
+        when(messageRepository.findByCompanyIdAndProjectIdAndId(1L, 1L, 1L)).thenReturn(Optional.of(mockMessage1));
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         assertEquals(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L), mockMessageGetDto);
     }

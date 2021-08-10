@@ -11,11 +11,13 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
+    Optional<Project> findByCompanyIdAndId(Long companyId, Long projectId);
 
     List<Project> findProjectsByCompanyId(@Param("companyId") Long companyId);
 
@@ -26,9 +28,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Set<Long> findPublicProjectIdSetByCompanyId(@Param("companyId") Long companyId);
 
     @Modifying
-    @Query("update Project p set p.name=:name, p.description=:description, p.updatedTime=:updatedTime where p.id=:id")
+    @Query("update Project p set p.name=:name, p.description=:description, p.updatedTime=:updatedTime " +
+            "where p.id=:id and p.companyId=:companyId")
     int updateProjectInfo(@Param("id") Long id,
                           @Param("name") String name,
                           @Param("description") String description,
-                          @Param("updatedTime") OffsetDateTime updatedTime);
+                          @Param("updatedTime") OffsetDateTime updatedTime,
+                          @Param("companyId")Long companyId);
 }

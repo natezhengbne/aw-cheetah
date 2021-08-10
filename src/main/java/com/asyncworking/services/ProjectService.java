@@ -48,8 +48,8 @@ public class ProjectService {
 
     private final MessageCategoryService messageCategoryService;
 
-    public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
-        return projectRepository.findById(projectId)
+    public ProjectInfoDto fetchProjectInfoByProjectId(Long companyId, Long projectId) {
+        return projectRepository.findByCompanyIdAndId(companyId, projectId)
                 .map(projectMapper::mapProjectToProjectInfoDto)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
     }
@@ -62,7 +62,7 @@ public class ProjectService {
 
     public List<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
         List<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
-                .map(projectId -> fetchProjectInfoByProjectId(projectId))
+                .map(projectId -> fetchProjectInfoByProjectId(companyId, projectId))
                 .collect(Collectors.toList());
         List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
@@ -116,23 +116,24 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateProjectInfo(ProjectModificationDto projectModificationDto) {
+    public void updateProjectInfo(Long companyId, Long projectId, ProjectModificationDto projectModificationDto) {
 
-        projectRepository.updateProjectInfo(projectModificationDto.getProjectId(),
+        projectRepository.updateProjectInfo(projectId,
                 projectModificationDto.getName(),
                 projectModificationDto.getDescription(),
-                OffsetDateTime.now(UTC));
+                OffsetDateTime.now(UTC),
+                companyId);
     }
 
-    public List<EmployeeGetDto> findAllMembersByProjectId(Long projectId) {
-        return userRepository.findAllMembersByProjectId(projectId).stream()
+    public List<EmployeeGetDto> findAllMembersByCompanyIdAndProjectId(Long companyId, Long projectId) {
+        return userRepository.findAllMembersByCompanyIdAndProjectId(companyId, projectId).stream()
                 .map(employeeMapper::mapEntityToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void addProjectUsers(Long projectId, List<Long> userIds) {
-        Project project = projectRepository.findById(projectId)
+    public void addProjectUsers(Long companyId, Long projectId, List<Long> userIds) {
+        Project project = projectRepository.findByCompanyIdAndId(companyId, projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
         List<ProjectUser> projectUsers = userRepository.findAllById(userIds).stream()
                 .map(user -> addProjectUsers(user, project))
