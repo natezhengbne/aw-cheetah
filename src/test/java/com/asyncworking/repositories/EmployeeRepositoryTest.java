@@ -1,10 +1,11 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.config.TestConfig;
 import com.asyncworking.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
+@Import(TestConfig.class)
 public class EmployeeRepositoryTest extends DBHelper {
 
     @BeforeEach

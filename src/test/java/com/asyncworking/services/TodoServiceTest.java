@@ -15,15 +15,14 @@ import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
-import lombok.extern.slf4j.Slf4j;
+import com.asyncworking.utility.mapper.TodoMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -38,9 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Slf4j
+@ExtendWith(MockitoExtension.class)
 public class TodoServiceTest {
 
     @Mock
@@ -57,7 +54,6 @@ public class TodoServiceTest {
 
     private TodoService todoService;
 
-    @Autowired
     private TodoMapper todoMapper;
 
     private TodoListDto mockTodoListDto;
@@ -74,6 +70,7 @@ public class TodoServiceTest {
 
     @BeforeEach
     public void setup() {
+        todoMapper = new TodoMapperImpl();
         todoService = new TodoService(
                 todoListRepository,
                 todoItemRepository,
@@ -123,7 +120,7 @@ public class TodoServiceTest {
 
     @Test
     public void throwProjectNotFoundExceptionWhenProjectIdIsNotExist() {
-        when(projectRepository.findById(2L))
+        when(projectRepository.findById(1L))
                 .thenThrow(new ProjectNotFoundException("Cannot find project by id:2"));
         assertThrows(ProjectNotFoundException.class, () -> todoService.createTodoList(mockTodoListDto));
     }
