@@ -1,12 +1,12 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.config.TestConfig;
 import com.asyncworking.models.*;
+import io.awspring.cloud.messaging.listener.SimpleMessageListenerContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -16,9 +16,11 @@ import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@Transactional
-@Import(TestConfig.class)
+@ActiveProfiles("test")
 public class EmployeeRepositoryTest extends DBHelper {
+
+    @MockBean
+    private SimpleMessageListenerContainer simpleMessageListenerContainer;
 
     @BeforeEach
     void setUp() {

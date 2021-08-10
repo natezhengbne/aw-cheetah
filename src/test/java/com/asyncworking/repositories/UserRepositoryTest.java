@@ -1,14 +1,13 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.config.TestConfig;
 import com.asyncworking.models.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@Import(TestConfig.class)
+@ActiveProfiles("test")
 public class UserRepositoryTest extends DBHelper {
 
     @Mock

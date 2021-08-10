@@ -1,13 +1,12 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.config.TestConfig;
 import com.asyncworking.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
-@Import(TestConfig.class)
+@ActiveProfiles("test")
 public class CompanyRepositoryTest extends DBHelper {
 
     Company mockCompany;
