@@ -55,5 +55,4 @@ cloud:
       auto: false
     credentials:
       access-key: AKIAYJZSMLQCAMSE23MO
-      secret-key: QbhbYRMj9mTKm8o9/sY72iJ3O2i5CxQidsR
-
+      secret-key: QbhbYRMj9mTKm8o9/s

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Transactional
 @Import(TestConfig.class)
 public class CompanyRepositoryTest extends DBHelper {
 
