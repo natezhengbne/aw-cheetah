@@ -1,5 +1,6 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.config.TestConfig;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
@@ -8,15 +9,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+@Import(TestConfig.class)
 class TodoItemRepositoryTest extends DBHelper {
 
     @BeforeEach
