@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class AssignedPeopleGetDto {
     private Long id;
     private String name;
+
 }
