@@ -56,3 +56,6 @@ cloud:
     credentials:
       access-key: test
       secret-key: test
+
+sqs:
+  enable: true
