@@ -40,6 +40,9 @@ public class CompanyServiceTest {
     @Mock
     private CompanyRepository companyRepository;
 
+    @Mock
+    private RoleService roleService;
+
     @Autowired
     private EmployeeMapper employeeMapper;
 
@@ -59,7 +62,8 @@ public class CompanyServiceTest {
             employeeRepository,
             companyMapper,
             userMapper,
-            employeeMapper
+            employeeMapper,
+            roleService
         );
     }
 

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class UserController {
     @GetMapping("/company")
     public ResponseEntity verifyCompany(@RequestParam(value = "email") String email) {
         log.info(email);
-        if (userService.ifCompanyExits(email)){
+        if (userService.ifCompanyExits(email)) {
             return ResponseEntity.ok(userService.fetchCompanyId(email));
         }
         return new ResponseEntity<>("first login", HttpStatus.NO_CONTENT);
@@ -54,10 +55,12 @@ public class UserController {
     }
 
     @GetMapping("/invitations/companies")
+//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
-                                                @RequestParam(value = "email") String email,
-                                                @RequestParam(value = "name") String name,
-                                                @RequestParam(value = "title") String title){
+                                            @RequestParam(value = "email") String email,
+                                            @RequestParam(value = "name") String name,
+                                            @RequestParam(value = "title") String title) {
         return ResponseEntity.ok(userService.generateInvitationLink(companyId, email, name, title));
     }
 
@@ -97,7 +100,7 @@ public class UserController {
             return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
         }
 
-        if (!userService.ifEmailExists(email) ) {
+        if (!userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("success", HttpStatus.OK);

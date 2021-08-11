@@ -1,10 +1,10 @@
 package com.asyncworking.config;
 
 import com.asyncworking.auth.ApplicationUserService;
-import com.asyncworking.jwt.JwtConfig;
-import com.asyncworking.jwt.JwtTokenVerifier;
+import com.asyncworking.auth.AuthEntryPoint;
+import com.asyncworking.jwt.JwtService;
+import com.asyncworking.jwt.JwtTokenVerifyFilter;
 import com.asyncworking.jwt.JwtUsernameAndPasswordAuthFilter;
-import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,19 +23,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import javax.crypto.SecretKey;
 import java.util.List;
 
+import static org.springframework.http.HttpMethod.GET;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final ApplicationUserService myUserDetailsService;
-
+    private final ApplicationUserService applicationUserService;
 
     private final SecretKey secretKey;
-    private final JwtConfig jwtConfig;
-    private final UserRepository userRepository;
-    private final ProjectUserRepository projectUserRepository;
 
+    private final JwtService jwtService;
+
+    private final UserRepository userRepository;
 
     @SneakyThrows
     protected void configure(HttpSecurity http) {
@@ -43,22 +44,32 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .cors().configurationSource(request -> {
             var cors = new CorsConfiguration();
-            cors.setAllowedOrigins(List.of("http://localhost:3000", "http://www.asyncworking.com", "https://www.asyncworking.com"));
-            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedOrigins(List.of("http://localhost:3000",
+                    "http://www.asyncworking.com",
+                    "https://www.asyncworking.com"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
         })
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), secretKey, userRepository, projectUserRepository))
-                .addFilterAfter(new JwtTokenVerifier(secretKey), JwtUsernameAndPasswordAuthFilter.class)
+                .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtService, userRepository))
+                .addFilterAfter(new JwtTokenVerifyFilter(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
+                .antMatchers(GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
+                .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")
+                .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
+                .access("@guard.checkProjectAccessOtherMethods(authentication, #companyId, #projectId)")
+                .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
+                .antMatchers("/projects/{projectId:^[1-9]\\d*$}/**").access("@guard.checkProjectAccess(authentication, #projectId)")
                 .antMatchers("/", "/resend", "/signup", "/password", "/invitations/**", "/verify", "index", "/css/*", "/actuator" +
                         "/*")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
     }
 
     @Override
@@ -71,7 +82,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(myUserDetailsService);
+        provider.setUserDetailsService(applicationUserService);
         return provider;
     }
 

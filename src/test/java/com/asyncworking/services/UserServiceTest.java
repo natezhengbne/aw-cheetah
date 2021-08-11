@@ -4,6 +4,7 @@ import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
+import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
@@ -39,6 +40,9 @@ public class UserServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
+    @Mock
+    private JwtService jwtService;
+
     @Autowired
     private UserMapper userMapper;
 
@@ -53,10 +57,10 @@ public class UserServiceTest {
                 userRepository,
                 companyRepository,
                 employeeRepository,
+                jwtService,
                 userMapper,
                 frontEndUrlConfig);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
-        ReflectionTestUtils.setField(userService, "secretKey", "7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\\\//asdf");
     }
 
     @Test

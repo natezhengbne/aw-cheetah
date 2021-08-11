@@ -2,9 +2,11 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
 import com.asyncworking.services.CompanyService;
+import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,6 +20,7 @@ import java.util.List;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final ProjectService projectService;
 
     @PostMapping
     public ResponseEntity createCompany(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
@@ -31,13 +34,23 @@ public class CompanyController {
         return ResponseEntity.ok(companyColleagueDto);
     }
 
+    @GetMapping("/{companyId}/projects")
+    public ResponseEntity getProjectList(@PathVariable("companyId")
+                                         @NotNull Long companyId,
+                                         @RequestParam(value = "userId")
+                                         @NotNull Long userId) {
+        return ResponseEntity.ok(projectService.fetchAvailableProjectInfoList(companyId, userId));
+    }
+
     @GetMapping("/{companyId}/profile")
     public ResponseEntity<CompanyModificationDto> fetchCompanyProfile(@PathVariable("companyId")
-                                                                     @NotNull Long companyId) {
+                                                                      @NotNull Long companyId) {
         return ResponseEntity.ok(companyService.fetchCompanyProfileById(companyId));
     }
 
     @PutMapping("/{companyId}/profile")
+//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity updateCompanyProfile(@PathVariable("companyId") Long companyId,
                                                @Valid @RequestBody CompanyModificationDto companyModificationDto) {
         companyService.updateCompany(companyModificationDto);

@@ -1,12 +1,10 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.CompanyColleagueDto;
-import com.asyncworking.dtos.CompanyInfoDto;
-import com.asyncworking.dtos.CompanyModificationDto;
-import com.asyncworking.dtos.EmployeeGetDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
+import com.asyncworking.services.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +38,8 @@ public class CompanyControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private CompanyService companyService;
+    @MockBean
+    private ProjectService projectService;
 
     @Test
     public void testCompanyCreateSuccess() throws Exception {
@@ -214,6 +214,25 @@ public class CompanyControllerTest {
     public void shouldReturnEmployeesByCompanyIdAndProjectId() throws Exception {
         mockMvc.perform(get("/companies/1/available-employees")
                 .param("projectId", String.valueOf(1L)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfGetProjectInfoListSuccessful() throws Exception {
+        Long companyId = 1L;
+        Long userId = 1L;
+        List<String> projectUserNames = Arrays.asList("+", "-", "*");
+        ProjectInfoDto projectInfoDto = ProjectInfoDto.builder()
+                .id(1L)
+                .name("SSS")
+                .projectUserNames(projectUserNames)
+                .build();
+        when(projectService.fetchAvailableProjectInfoList(companyId, userId)).thenReturn(Arrays.asList(projectInfoDto));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/companies/1/projects")
+                        .param("userId", String.valueOf(1L))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 }

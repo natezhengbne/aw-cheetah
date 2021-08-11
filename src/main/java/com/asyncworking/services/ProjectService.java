@@ -5,10 +5,7 @@ import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.models.Project;
-import com.asyncworking.models.ProjectUser;
-import com.asyncworking.models.ProjectUserId;
-import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.*;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -23,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.asyncworking.models.RoleNames.PROJECT_MANAGER;
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
@@ -42,6 +40,10 @@ public class ProjectService {
 
     private final UserService userService;
 
+    private final RoleService roleService;
+
+    private final CompanyService companyService;
+
     private final MessageCategoryService messageCategoryService;
 
     public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
@@ -56,15 +58,34 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
+        List<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
+                .map(projectId -> fetchProjectInfoByProjectId(projectId))
+                .collect(Collectors.toList());
+        List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
+        userProjects.retainAll(companyProjects);
+        Long adminId = companyService.fetchCompanyById(companyId).getAdminId();
+        if (adminId == userId) {
+            return companyProjects;
+        }
+        return userProjects;
+    }
+
     @Transactional
     public Long createProjectAndProjectUser(ProjectDto projectDto) {
 
         UserEntity selectedUserEntity = userService.findUserById(projectDto.getOwnerId());
+
         Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
         projectRepository.save(newProject);
-        this.createDefaultMessageCategories(newProject);
+
+        roleService.assignRole(selectedUserEntity, PROJECT_MANAGER, newProject.getId());
+
+        createDefaultMessageCategories(newProject);
+
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
+
         return newProject.getId();
     }
 
@@ -105,6 +126,12 @@ public class ProjectService {
         return userRepository.findAllMembersByProjectId(projectId).stream()
                 .map(employeeMapper::mapEntityToDto)
                 .collect(Collectors.toList());
+    }
+
+    public boolean ifProjectIsPublic(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
+        return !project.getIsPrivate();
     }
 
     @Transactional

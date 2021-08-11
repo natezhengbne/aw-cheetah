@@ -8,6 +8,7 @@ import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +30,6 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.createProjectAndProjectUser(projectDto));
     }
 
-    @GetMapping("/{companyId}")
-    public ResponseEntity getProjectList(@PathVariable("companyId")
-                                         @NotNull Long companyId) {
-        return ResponseEntity.ok(projectService.fetchProjectInfoListByCompanyId(companyId));
-    }
-
     @GetMapping("/{projectId}/project-info")
     public ResponseEntity getProjectInfo(@PathVariable("projectId") @NotNull Long projectId) {
         log.info("projectId: {}", projectId);
@@ -43,6 +38,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/project-info")
+//    @PreAuthorize("hasPermission(#projectId, 'Project Manager')")
     public ResponseEntity updateProjectProfile(@PathVariable("projectId") Long projectId,
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
         projectService.updateProjectInfo(projectModificationDto);

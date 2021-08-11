@@ -15,10 +15,11 @@ public class ProjectInfoDto {
 
     private Long id;
 
+    private Long leaderId;
+
     private String name;
 
     private String description;
 
     private List<String> projectUserNames;
-
 }

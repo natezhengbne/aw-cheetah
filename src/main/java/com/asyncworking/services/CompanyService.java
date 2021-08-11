@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
@@ -42,6 +43,8 @@ public class CompanyService {
 
     private final EmployeeMapper employeeMapper;
 
+    private final RoleService roleService;
+
     @Transactional
     public Long createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
 
@@ -50,6 +53,8 @@ public class CompanyService {
         Company newCompany = createCompany(companyModificationDto.getName(), selectedUserEntity.getId());
 
         companyRepository.save(newCompany);
+
+        roleService.assignRole(selectedUserEntity, COMPANY_MANAGER, newCompany.getId());
 
         Employee newEmployee = createEmployee
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),
@@ -114,7 +119,7 @@ public class CompanyService {
         return userMapper.mapEntityToCompanyProfileDto(company);
     }
 
-    private Company fetchCompanyById(Long companyId) {
+    public Company fetchCompanyById(Long companyId) {
         return companyRepository
                 .findById(companyId)
                 .orElseThrow(() -> new CompanyNotFoundException("Can not find company with Id:" + companyId));
