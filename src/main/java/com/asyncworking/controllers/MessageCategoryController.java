@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("companies/{companyId}/projects/{projectId}")
-//Todo
+
 public class MessageCategoryController {
     private final MessageCategoryService messageCategoryService;
 
