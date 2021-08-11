@@ -1,13 +1,11 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.config.TestConfig;
 import com.asyncworking.models.Message;
 import com.asyncworking.models.MessageCategory;
 import com.asyncworking.models.Project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.OffsetDateTime;
@@ -18,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(TestConfig.class)
 public class MessageRepositoryTest extends DBHelper {
 
     private Project mockProject;

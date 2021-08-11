@@ -1,6 +1,5 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.config.TestConfig;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyInfoDto;
 import com.asyncworking.dtos.CompanyModificationDto;
@@ -10,13 +9,10 @@ import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
-@Import(TestConfig.class)
 @ActiveProfiles("test")
 
 public class CompanyControllerTest {
@@ -45,9 +40,7 @@ public class CompanyControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private CompanyService companyService;
-
-
-
+    
     @Test
     public void testCompanyCreateSuccess() throws Exception {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
