@@ -82,10 +82,6 @@ public class MessageService {
 
     public List<MessageGetDto> findMessageListByCompanyIdAndProjectId(Long companyId, Long projectId) {
         List<Message> messageList = messageRepository.findByCompanyIdAndProjectId(companyId, projectId);
-        if (messageList.size() == 0) {
-            throw new MessageNotFoundException(String.format("Cannot find messageList by company id:%d and project id:%d",
-                    companyId, projectId));
-        }
         List<UserEntity> userEntityList = findUserEntityByMessageList(messageList);
         Map<Long, String> userIdNameMap = userEntityList.stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getName));
 
