@@ -8,7 +8,6 @@ import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +39,7 @@ public class ProjectController {
     @GetMapping("/{projectId}/project-info")
     public ResponseEntity getProjectInfo(@PathVariable("companyId") Long companyId, @PathVariable("projectId") @NotNull Long projectId) {
         log.info("projectId: {}", projectId);
-        ProjectInfoDto projectInfoDto = projectService.fetchProjectInfoByProjectId(companyId, projectId);
+        ProjectInfoDto projectInfoDto = projectService.fetchProjectInfoByProjectIdAndCompanyId(companyId, projectId);
         return ResponseEntity.ok(projectInfoDto);
     }
 

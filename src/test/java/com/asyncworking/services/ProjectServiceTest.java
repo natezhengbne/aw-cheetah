@@ -102,14 +102,14 @@ public class ProjectServiceTest {
         when(projectRepository.findByCompanyIdAndId(any(), any())).thenReturn(Optional.of(mockProject));
         when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
         assertEquals(projectInfoDto.getName(),
-                projectService.fetchProjectInfoByProjectId(mockProject.getCompanyId(), mockProject.getId()).getName());
+                projectService.fetchProjectInfoByProjectIdAndCompanyId(mockProject.getCompanyId(), mockProject.getId()).getName());
     }
 
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenProjectIdIsNotExist() {
         when(projectRepository.findByCompanyIdAndId(1L, 1L)).thenThrow(
                 new ProjectNotFoundException("Can not find project by projectId: 1L"));
-        assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoByProjectId(1L, 1L));
+        assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoByProjectIdAndCompanyId(1L, 1L));
     }
 
     @Test

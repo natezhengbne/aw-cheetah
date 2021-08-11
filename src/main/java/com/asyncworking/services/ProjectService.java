@@ -45,8 +45,14 @@ public class ProjectService {
 
     private final MessageCategoryService messageCategoryService;
 
-    public ProjectInfoDto fetchProjectInfoByProjectId(Long companyId, Long projectId) {
+    public ProjectInfoDto fetchProjectInfoByProjectIdAndCompanyId(Long companyId, Long projectId) {
         return projectRepository.findByCompanyIdAndId(companyId, projectId)
+                .map(projectMapper::mapProjectToProjectInfoDto)
+                .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
+    }
+
+    public ProjectInfoDto fetchProjectInfoByProjectId(Long projectId) {
+        return projectRepository.findById(projectId)
                 .map(projectMapper::mapProjectToProjectInfoDto)
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
     }
@@ -59,12 +65,12 @@ public class ProjectService {
 
     public List<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
         List<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
-                .map(projectId -> fetchProjectInfoByProjectId(companyId, projectId))
+                .map(this::fetchProjectInfoByProjectId)
                 .collect(Collectors.toList());
         List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
         Long adminId = companyService.fetchCompanyById(companyId).getAdminId();
-        if (adminId == userId) {
+        if (adminId.equals(userId)) {
             return companyProjects;
         }
         return userProjects;
