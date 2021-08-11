@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 
