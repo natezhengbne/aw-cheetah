@@ -230,9 +230,6 @@ class UserControllerTest extends ControllerHelper{
 
     @Test
     public void shouldReturnBadRequestIfParamNotExist() throws Exception {
-        String email = "a@gmail.com";
-        when(userService.ifCompanyExits(email)).thenReturn(false);
-
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/company")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
