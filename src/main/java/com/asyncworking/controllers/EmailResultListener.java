@@ -5,10 +5,11 @@ import io.awspring.cloud.messaging.listener.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 
-@Controller
+@Component
 @Slf4j
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "sqs.enable",
