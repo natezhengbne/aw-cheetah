@@ -17,3 +17,6 @@ jwt:
   secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
 
 url: https://www.asyncworking.com
+
+sqs:
+  enable: false

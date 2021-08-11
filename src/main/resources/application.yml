@@ -57,3 +57,5 @@ cloud:
       access-key: AKIAYJZSMLQCAMSE23MO
       secret-key: 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
 
+sqs:
+  enable: true
