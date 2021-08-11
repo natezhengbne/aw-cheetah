@@ -125,7 +125,7 @@ public class ProjectServiceTest {
         Company mockReturnedCompany = Company.builder()
                 .adminId(2L)
                 .build();
-        when(projectRepository.findByCompanyIdAndId(any(), any())).thenReturn(Optional.of(mockProject));
+        when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
         when(projectRepository.findProjectsByCompanyId(any())).thenReturn(List.of(mockProject));
         when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
         when(projectUserRepository.findProjectIdByUserId(any())).thenReturn(projectId);
