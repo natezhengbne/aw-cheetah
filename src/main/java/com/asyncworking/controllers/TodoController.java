@@ -67,7 +67,7 @@ public class TodoController {
         return ResponseEntity.ok(todoService.changeTodoItemCompleted(todoitemId));
     }
 
-    @GetMapping("/todoitems/{todoitemId}/assignedPeoples")
+    @GetMapping("/todoitems/{todoitemId}/assignees")
     public  ResponseEntity<?> findAssignedPeopleById(@PathVariable Long projectId, @PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.findAssignedPeople(projectId, todoitemId));
     }
