@@ -54,7 +54,7 @@ public class Guard {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
         Set<Long> companyIds = details.get(COMPANY_IDS);
         if (!companyIds.contains(companyId)) {
-            log.info("User does not belong to this company!");
+            log.info("User does not belong to this company, access denied.");
             return false;
         }
         return true;
@@ -64,7 +64,7 @@ public class Guard {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
         Set<Long> projectIds = details.get(PROJECT_IDS);
         if (!projectIds.contains(projectId)) {
-            log.info("User does not belong to this project!");
+            log.info("User does not belong to this project, access denied");
             return false;
         }
         return true;
