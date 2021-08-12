@@ -54,8 +54,8 @@ cloud:
     stack:
       auto: false
     credentials:
-      access-key: test
-      secret-key: test
+      accesskey: test
+      secretkey: test
 
 sqs:
   enable: true
