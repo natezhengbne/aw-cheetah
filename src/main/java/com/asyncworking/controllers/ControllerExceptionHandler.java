@@ -45,7 +45,7 @@ public class ControllerExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(e.getLocalizedMessage());
         ErrorDto error = new ErrorDto("Project not found", details);
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = {EmployeeNotFoundException.class})

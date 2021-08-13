@@ -135,7 +135,7 @@ public class MessageControllerTest {
         mockMvc.perform(post("/companies/1/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
     }
 
     @Test

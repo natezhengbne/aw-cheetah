@@ -11,15 +11,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static com.asyncworking.jwt.JwtClaims.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +43,25 @@ public class JwtService {
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         return Jwts.builder()
                 .setSubject(email)
-                .claim(JwtClaims.AUTHORITIES.value(), user.getAuthorities())
-                .claim(JwtClaims.COMPANY_IDS.value(), companyIds)
-                .claim(JwtClaims.PROJECT_IDS.value(), projectIds)
+                .claim(AUTHORITIES.value(), user.getAuthorities())
+                .claim(COMPANY_IDS.value(), companyIds)
+                .claim(PROJECT_IDS.value(), projectIds)
+                .setIssuedAt(new Date())
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String creatJwtToken(String email, Collection<? extends GrantedAuthority> authorities) {
+        UserEntity userEntity = userRepository.findUserEntityByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
+        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
+        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
+        return Jwts.builder()
+                .setSubject(email)
+                .claim(AUTHORITIES.value(), authorities)
+                .claim(COMPANY_IDS.value(), companyIds)
+                .claim(PROJECT_IDS.value(), projectIds)
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -50,7 +69,7 @@ public class JwtService {
     }
 
     public JwtDto refreshJwtToken(String auth) {
-        String oldToken = auth.replace(JwtClaims.AUTHORIZATION_TYPE.value(), "");
+        String oldToken = auth.replace(AUTHORIZATION_TYPE.value(), "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -59,7 +78,7 @@ public class JwtService {
         Claims body = claimsJws.getBody();
         String email = body.getSubject();
 
-        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(JwtClaims.AUTHORITIES.value());
+        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(AUTHORITIES.value());
 
         UserDetails user = applicationUserService.loadUserByUsername(email);
         if (authorities.size() == user.getAuthorities().size()) {
@@ -75,4 +94,6 @@ public class JwtService {
                 .message("JwtToken has already refreshed.")
                 .build();
     }
+
+
 }
