@@ -50,7 +50,7 @@ public class TodoController {
     }
 
     @GetMapping("/todoitems/{todoitemId}")
-    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long todoitemId) {
+    public ResponseEntity<TodoItemPageDto> getTodoItemPageInfo(@PathVariable Long projectId, @PathVariable Long todoitemId) {
         log.info("todoitemId:" + todoitemId);
         return ResponseEntity.ok(todoService.fetchTodoItemPageInfoByIds(todoitemId));
     }
@@ -65,5 +65,10 @@ public class TodoController {
     @PutMapping("/todoitems/{todoitemId}/completed")
     public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.changeTodoItemCompleted(todoitemId));
+    }
+
+    @GetMapping("/todoitems/{todoitemId}/assignees")
+    public  ResponseEntity<?> findAssignedPeopleById(@PathVariable Long projectId, @PathVariable Long todoitemId) {
+        return ResponseEntity.ok(todoService.findAssignedPeople(projectId, todoitemId));
     }
 }

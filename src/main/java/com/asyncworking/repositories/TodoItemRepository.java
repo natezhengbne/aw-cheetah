@@ -20,10 +20,14 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
 
     @Modifying
     @Query(value = "update TodoItem t set t.description=:description,t.notes=:notes,t.originNotes=:originNotes," +
-            "t.dueDate=:dueDates where t.id=:todoItemId")
+            "t.dueDate=:dueDates, t.subscribersIds=:subscribersIds where t.id=:todoItemId")
     int updateTodoItem(@Param("todoItemId") Long todoItemId,
                        @Param("description")String description,
                        @Param("notes")String notes,
                        @Param("originNotes")String originNotes,
-                       @Param("dueDates")OffsetDateTime dueDate);
+                       @Param("dueDates")OffsetDateTime dueDate,
+                       @Param("subscribersIds")String subscribersIds);
+
+    @Query(value = "select t.subscribersIds from TodoItem t where t.id = :todoItemId and t.projectId = :projectId")
+    String findSubscribersIdsByProjectIdAndId(@Param("projectId")Long projectId, @Param("todoItemId") Long todoItemId);
 }

@@ -17,4 +17,6 @@ public class TodoItemPutDto {
     private String originNotes;
 
     private OffsetDateTime dueDate;
+
+    private String subscribersIds;
 }

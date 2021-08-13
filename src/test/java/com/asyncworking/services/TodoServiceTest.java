@@ -1,6 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
@@ -14,8 +15,11 @@ import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
+import com.asyncworking.utility.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -57,8 +61,14 @@ public class TodoServiceTest {
 
     private TodoService todoService;
 
+    @Mock
+    private UserRepository userRepository;
+
     @Autowired
     private TodoMapper todoMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     private TodoListDto mockTodoListDto;
 
@@ -79,7 +89,9 @@ public class TodoServiceTest {
                 todoItemRepository,
                 projectRepository,
                 userService,
-                todoMapper);
+                todoMapper,
+                userRepository,
+                userMapper);
 
         mockTodoListDto = TodoListDto.builder()
                 .projectId(1L)
@@ -238,9 +250,10 @@ public class TodoServiceTest {
                 .notes("notes/n")
                 .originNotes("<div>notes</div>")
                 .dueDate(OffsetDateTime.now(UTC))
+                .subscribersIds("1,2,3")
                 .build();
         when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getNotes(),
-                todoItemPut.getOriginNotes(), todoItemPut.getDueDate())).thenReturn(0);
+                todoItemPut.getOriginNotes(), todoItemPut.getDueDate(), todoItemPut.getSubscribersIds())).thenReturn(0);
         assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, todoItemPut));
     }
 
@@ -257,10 +270,60 @@ public class TodoServiceTest {
                 .build();
     }
 
+    private TodoItem buildTodoItem(TodoList todoList, String notes, String description, String subscribersIds) {
+        return TodoItem.builder()
+                .todoList(todoList)
+                .companyId(todoList.getCompanyId())
+                .projectId(todoList.getProject().getId())
+                .notes(notes)
+                .description(description)
+                .completed(Boolean.FALSE)
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .subscribersIds(subscribersIds)
+                .build();
+    }
+
     private UserEntity buildUser() {
         return userEntity.builder()
                 .name("test user")
                 .build();
+    }
+
+    @Test
+    public void findAssignedPeopleTest() {
+        TodoItem todoItem = buildTodoItem(todoList, "123", "a", "1,2");
+        when(todoItemRepository.findSubscribersIdsByProjectIdAndId(todoItem.getProjectId(), todoItem.getId()))
+                .thenReturn("1,2");
+
+        UserEntity mockUser1 = UserEntity.builder()
+                .id(1L)
+                .email("plus@gmail.com")
+                .name("plus")
+                .build();
+
+
+        UserEntity mockUser2 = UserEntity.builder()
+                .id(2L)
+                .email("urnotfl@gmail.com")
+                .name("urnotFl")
+                .build();
+
+        when(userRepository.findByIdIn(List.of(1L, 2L))).thenReturn(Optional.of(List.of(mockUser1, mockUser2)));
+
+        AssignedPeopleGetDto assignedPeopleGetDto = AssignedPeopleGetDto.builder()
+                .name("plus")
+                .id(1L)
+                .build();
+
+        AssignedPeopleGetDto assignedPeopleGetDto2 = AssignedPeopleGetDto.builder()
+                .name("urnotFl")
+                .id(2L)
+                .build();
+
+        assertEquals(List.of(assignedPeopleGetDto, assignedPeopleGetDto2),
+                todoService.findAssignedPeople(todoItem.getProjectId(), todoItem.getId()));
+
     }
 
 }

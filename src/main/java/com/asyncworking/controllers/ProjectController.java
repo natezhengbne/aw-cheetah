@@ -51,6 +51,13 @@ public class ProjectController {
         List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(projectId);
         return ResponseEntity.ok(members);
     }
+    @GetMapping("/{projectId}/asc-members")
+    public ResponseEntity getMembersByProjectIdDescByName(@PathVariable Long projectId) {
+        log.info("Project ID: {}", projectId);
+        List<EmployeeGetDto> members = projectService.findAllMembersByProjectIdAscByName
+                (projectId);
+        return ResponseEntity.ok(members);
+    }
 
     @PostMapping("/{projectId}/members")
     public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,

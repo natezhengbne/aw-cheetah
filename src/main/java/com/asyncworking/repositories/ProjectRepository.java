@@ -31,4 +31,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                           @Param("name") String name,
                           @Param("description") String description,
                           @Param("updatedTime") OffsetDateTime updatedTime);
+
 }

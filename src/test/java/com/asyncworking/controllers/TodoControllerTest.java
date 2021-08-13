@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -151,6 +153,24 @@ class TodoControllerTest {
                 .content(objectMapper.writeValueAsString(todoItemPut)))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void shouldReturnAssignedPeople() throws Exception {
+        AssignedPeopleGetDto assignedPeopleGetDto = AssignedPeopleGetDto.builder()
+                .name("fl")
+                .id(1L)
+                .build();
+        AssignedPeopleGetDto assignedPeopleGetDto2 = AssignedPeopleGetDto.builder()
+                .name("fll")
+                .id(2L)
+                .build();
+
+        when(todoService.findAssignedPeople(1L, 1L))
+                .thenReturn(List.of(assignedPeopleGetDto, assignedPeopleGetDto2));
+
+        mockMvc.perform(get("/projects/1/todoitems/1/assignees"))
+                .andExpect(status().isOk());
     }
 }
 
