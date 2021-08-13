@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
@@ -53,7 +54,7 @@ public class CompanyService {
 
         companyRepository.save(newCompany);
 
-        roleService.assignRole(selectedUserEntity, RoleNames.COMPANY_MANAGER, newCompany.getId());
+        roleService.assignRole(selectedUserEntity, COMPANY_MANAGER, newCompany.getId());
 
         Employee newEmployee = createEmployee
                 (new EmployeeId(selectedUserEntity.getId(), newCompany.getId()),

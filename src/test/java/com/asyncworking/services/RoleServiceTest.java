@@ -2,7 +2,6 @@ package com.asyncworking.services;
 
 import com.asyncworking.exceptions.RoleNotFoundException;
 import com.asyncworking.models.Role;
-import com.asyncworking.models.RoleNames;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.models.UserRole;
 import com.asyncworking.repositories.RoleRepository;
@@ -16,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
+import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -45,7 +45,7 @@ public class RoleServiceTest {
 
         mockRole = Role.builder()
                 .id(1L)
-                .name(RoleNames.COMPANY_MANAGER.value())
+                .name(COMPANY_MANAGER.value())
                 .build();
 
         mockUser = UserEntity.builder()
@@ -57,7 +57,7 @@ public class RoleServiceTest {
     public void shouldAssignRoleGivenRoleNameAndUserEntity() {
         when(roleRepository.findByName(any())).thenReturn(Optional.of(mockRole));
         ArgumentCaptor<UserRole> userRoleArgumentCaptor = ArgumentCaptor.forClass(UserRole.class);
-        roleService.assignRole(mockUser, RoleNames.COMPANY_MANAGER, 1L);
+        roleService.assignRole(mockUser, COMPANY_MANAGER, 1L);
         verify(userRoleRepository).save(userRoleArgumentCaptor.capture());
     }
 
