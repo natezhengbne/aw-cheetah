@@ -34,6 +34,8 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                        @Param("projectId")Long projectId,
                        @Param("subscribersIds")String subscribersIds);
 
-    @Query(value = "select t.subscribersIds from TodoItem t where t.id = :todoItemId and t.projectId = :projectId")
-    String findSubscribersIdsByProjectIdAndId(@Param("projectId")Long projectId, @Param("todoItemId") Long todoItemId);
+    @Query(value = "select t.subscribersIds from TodoItem t where t.id = :todoItemId and t.projectId = :projectId" +
+            " and t.companyId = :companyId")
+    String findSubscribersIdsByProjectIdAndId(@Param("companyId") Long companyId, @Param("projectId")Long projectId,
+                                              @Param("todoItemId") Long todoItemId);
 }

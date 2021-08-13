@@ -167,7 +167,7 @@ class TodoControllerTest {
                 .id(2L)
                 .build();
 
-        when(todoService.findAssignedPeople(1L, 1L))
+        when(todoService.findAssignedPeople(1L, 1L, 1L))
                 .thenReturn(List.of(assignedPeopleGetDto, assignedPeopleGetDto2));
 
         mockMvc.perform(get("/companies/1/projects/1/todoitems/1/assignees"))

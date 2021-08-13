@@ -302,7 +302,7 @@ public class TodoServiceTest {
     @Test
     public void findAssignedPeopleTest() {
         TodoItem todoItem = buildTodoItem(todoList, "123", "a", "1,2");
-        when(todoItemRepository.findSubscribersIdsByProjectIdAndId(todoItem.getProjectId(), todoItem.getId()))
+        when(todoItemRepository.findSubscribersIdsByProjectIdAndId(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()))
                 .thenReturn("1,2");
 
         UserEntity mockUser1 = UserEntity.builder()
@@ -331,7 +331,7 @@ public class TodoServiceTest {
                 .build();
 
         assertEquals(List.of(assignedPeopleGetDto, assignedPeopleGetDto2),
-                todoService.findAssignedPeople(todoItem.getProjectId(), todoItem.getId()));
+                todoService.findAssignedPeople(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()));
 
     }
 

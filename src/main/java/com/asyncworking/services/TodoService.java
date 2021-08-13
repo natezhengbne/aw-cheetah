@@ -135,9 +135,9 @@ public class TodoService {
     }
 
 
-    public List<AssignedPeopleGetDto> findAssignedPeople(Long projectId, Long todoItemId) {
+    public List<AssignedPeopleGetDto> findAssignedPeople(Long companyId, Long projectId, Long todoItemId) {
 
-        String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId);
+        String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(companyId, projectId, todoItemId);
         if (subscribersIds.length() == 0) {
             return null;
         }
