@@ -170,7 +170,7 @@ class TodoControllerTest {
         when(todoService.findAssignedPeople(1L, 1L))
                 .thenReturn(List.of(assignedPeopleGetDto, assignedPeopleGetDto2));
 
-        mockMvc.perform(get("companies/1/projects/1/todoitems/1/assignees"))
+        mockMvc.perform(get("/companies/1/projects/1/todoitems/1/assignees"))
                 .andExpect(status().isOk());
     }
 }
