@@ -57,54 +57,60 @@ public class TodoService {
         return newTodoList.getId();
     }
 
-    public List<TodoListDto> findRequiredNumberTodoListsByProjectId(Long projectId, Integer quantity) {
-        return todoListRepository.findTodolistWithTodoItems(projectId, PageRequest.of(0, quantity)).stream()
+    public List<TodoListDto> findRequiredNumberTodoListsByCompanyIdAndProjectId(Long companyId, Long projectId, Integer quantity) {
+        return todoListRepository.findTodolistWithTodoItems(companyId, projectId, PageRequest.of(0, quantity)).stream()
                 .map(todoList -> todoMapper.fromTodoListEntity(todoList, todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems())))
                 .collect(Collectors.toList());
     }
 
-    public TodoListDto fetchSingleTodoList(Long id) {
-        return todoMapper.fromTodoListEntity(findTodoListById(id), findTodoItemsByTodoListIdOrderByCreatedTime(id));
+    public TodoListDto fetchSingleTodoList(Long companyId, Long projectId, Long id) {
+        return todoMapper.fromTodoListEntity(findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, id),
+                findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc
+                (companyId, projectId, id));
     }
 
     @Transactional
-    public Long createTodoItem(@Valid TodoItemPostDto todoItemPostDto) {
+    public Long createTodoItem(Long companyId, Long projectId, @Valid TodoItemPostDto todoItemPostDto) {
         TodoItem savedTodoItem = todoItemRepository.save(
-                todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListById(todoItemPostDto.getTodolistId())));
+                todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListByCompanyIdAndProjectIdAndId
+                        (companyId, projectId, todoItemPostDto.getTodolistId())));
         log.info("created a item with id " + savedTodoItem.getId());
         return savedTodoItem.getId();
     }
 
     @Transactional
-    public Boolean changeTodoItemCompleted(Long id) {
-        TodoItem todoItem = findTodoItemById(id);
+    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id) {
+        TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(!todoItem.getCompleted());
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }
 
-    public List<TodoItemGetDto> findTodoItemsByTodoListIdOrderByCreatedTime(Long todoListId) {
-        return todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(todoListId).stream()
+    public List<TodoItemGetDto> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId,
+                                                                                               Long projectId, Long todoListId) {
+        return todoItemRepository.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(companyId, projectId, todoListId)
+                .stream()
                 .map(todoMapper::fromTodoItemEntity)
                 .collect(Collectors.toList());
     }
 
 
-    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long todoItemId) {
-        TodoItem todoItem = findTodoItemById(todoItemId);
+    public TodoItemPageDto fetchTodoItemPageInfoByIds(Long companyId, Long projectId, Long todoItemId) {
+        TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, todoItemId);
         return todoMapper.fromTodoItemToTodoItemPageDto(todoItem,
                 findProjectById(todoItem.getProjectId()),
                 userService.findUserById(todoItem.getCreatedUserId()));
     }
 
     @Transactional
-    public void updateTodoItemDetails(Long todoItemId, TodoItemPutDto todoItemPutDto) {
+    public void updateTodoItemDetails(Long companyId, Long projectId, Long todoItemId, TodoItemPutDto todoItemPutDto) {
         int res = todoItemRepository.updateTodoItem(todoItemId,
                 todoItemPutDto.getDescription(),
                 todoItemPutDto.getNotes(),
                 todoItemPutDto.getOriginNotes(),
                 todoItemPutDto.getDueDate(),
+                companyId, projectId,
                 todoItemPutDto.getSubscribersIds());
         if (res != 1) {
             throw new TodoItemNotFoundException("There is no todoItem id is " + todoItemId);
@@ -117,22 +123,22 @@ public class TodoService {
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id:" + projectId));
     }
 
-    private TodoList findTodoListById(Long todoListId) {
-        return todoListRepository.findById(todoListId)
+    private TodoList findTodoListByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long todoListId) {
+        return todoListRepository.findByCompanyIdAndProjectIdAndId(companyId, projectId, todoListId)
                 .orElseThrow(() -> new TodoListNotFoundException("Cannot find todoList by id: " + todoListId));
     }
 
-    private TodoItem findTodoItemById(Long todoItemId) {
+    private TodoItem findTodoItemByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long todoItemId) {
         return todoItemRepository
-                .findById(todoItemId)
+                .findByCompanyIdAndProjectIdAndId(companyId, projectId, todoItemId)
                 .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
     }
 
 
-    public List<AssignedPeopleGetDto> findAssignedPeople(Long projectId, Long todoItemId) {
+    public List<AssignedPeopleGetDto> findAssignedPeople(Long companyId, Long projectId, Long todoItemId) {
 
-        String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId);
-        if (subscribersIds.length() == 0 ) {
+        String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(companyId, projectId, todoItemId);
+        if (subscribersIds.length() == 0) {
             return null;
         }
         List<Long> idList = Arrays.asList(subscribersIds

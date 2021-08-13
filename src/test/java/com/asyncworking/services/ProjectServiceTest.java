@@ -99,17 +99,17 @@ public class ProjectServiceTest {
 
     @Test
     public void shouldReturnProjectInfoDtoByProjectId() {
-        when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
+        when(projectRepository.findByCompanyIdAndId(any(), any())).thenReturn(Optional.of(mockProject));
         when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
         assertEquals(projectInfoDto.getName(),
-                projectService.fetchProjectInfoByProjectId(mockProject.getId()).getName());
+                projectService.fetchProjectInfoByProjectIdAndCompanyId(mockProject.getCompanyId(), mockProject.getId()).getName());
     }
 
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenProjectIdIsNotExist() {
-        when(projectRepository.findById(1L)).thenThrow(
+        when(projectRepository.findByCompanyIdAndId(1L, 1L)).thenThrow(
                 new ProjectNotFoundException("Can not find project by projectId: 1L"));
-        assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoByProjectId(1L));
+        assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoByProjectIdAndCompanyId(1L, 1L));
     }
 
     @Test
@@ -189,17 +189,17 @@ public class ProjectServiceTest {
                 .title("dev")
                 .build();
 
-        when(userRepository.findAllMembersByProjectId(any())).thenReturn(List.of(mockEmployee));
+        when(userRepository.findAllMembersByCompanyIdAndProjectId(any(), any())).thenReturn(List.of(mockEmployee));
         when(employeeMapper.mapEntityToDto(mockEmployee)).thenReturn(mockEmployeeGetDto);
-        assertEquals(mockEmployee.getName(), projectService.findAllMembersByProjectId(1L).get(0).getName());
+        assertEquals(mockEmployee.getName(), projectService.findAllMembersByCompanyIdAndProjectId(1L, 1L).get(0).getName());
     }
 
     @Test
     public void shouldThrowEmployeeNotFondExceptionWhenProjectDoNotHaveAnyMember() {
-        when(userRepository.findAllMembersByProjectId(1L)).thenThrow(
+        when(userRepository.findAllMembersByCompanyIdAndProjectId(1L, 1L)).thenThrow(
                 new EmployeeNotFoundException("Can not find member by project id: 1L")
         );
-        assertThrows(EmployeeNotFoundException.class, () -> projectService.findAllMembersByProjectId(1L));
+        assertThrows(EmployeeNotFoundException.class, () -> projectService.findAllMembersByCompanyIdAndProjectId(1L, 1L));
     }
 
     @Test
@@ -210,8 +210,8 @@ public class ProjectServiceTest {
                 .name("name1")
                 .description("mock dto for test")
                 .build();
-        projectService.updateProjectInfo(mockProjectModificationDto);
-        verify(projectRepository).updateProjectInfo(any(), any(), any(), any());
+        projectService.updateProjectInfo(1L, 1L, mockProjectModificationDto);
+        verify(projectRepository).updateProjectInfo(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -231,10 +231,10 @@ public class ProjectServiceTest {
 
         List<Long> ids = Arrays.asList(mockUserEntity1.getId(), mockUserEntity2.getId());
         List<UserEntity> userEntities = Arrays.asList(mockUserEntity1, mockUserEntity2);
-        when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
+        when(projectRepository.findByCompanyIdAndId(any(), any())).thenReturn(Optional.of(mockProject));
         when(userRepository.findAllById(any())).thenReturn(userEntities);
         ArgumentCaptor<List<ProjectUser>> projectUsersCaptor = ArgumentCaptor.forClass(List.class);
-        projectService.addProjectUsers(mockProject.getId(), ids);
+        projectService.addProjectUsers(mockProject.getCompanyId(), mockProject.getId(), ids);
         verify(projectUserRepository).saveAll(projectUsersCaptor.capture());
         assertEquals(mockUserEntity1.getId(), projectUsersCaptor.getValue().get(0).getUserEntity().getId());
     }

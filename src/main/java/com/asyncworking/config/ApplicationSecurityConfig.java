@@ -57,14 +57,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtService, userRepository))
                 .addFilterAfter(new JwtTokenVerifyFilter(secretKey), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers(GET, "/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
+                .antMatchers(GET, "/companies/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
                 .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")
-                .antMatchers("/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
+                .antMatchers("/companies/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
                 .access("@guard.checkProjectAccessOtherMethods(authentication, #companyId, #projectId)")
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
-                .antMatchers("/projects/{projectId:^[1-9]\\d*$}/**").access("@guard.checkProjectAccess(authentication, #projectId)")
-                .antMatchers("/", "/resend", "/signup", "/password", "/invitations/**", "/verify", "index", "/css/*", "/actuator" +
-                        "/*")
+                .antMatchers("/", "/resend", "/signup", "/password", "/invitations/info", "/invitations/register",
+                        "/verify", "index", "/css/*", "/actuator/*")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

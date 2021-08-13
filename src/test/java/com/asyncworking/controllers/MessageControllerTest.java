@@ -67,7 +67,7 @@ public class MessageControllerTest {
                 .build();
 
         when(messageService.createMessage(messagePostDto)).thenReturn(mockMessageGetDto);
-        mockMvc.perform(post("/1/projects/1/messages")
+        mockMvc.perform(post("/companies/1/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -100,8 +100,8 @@ public class MessageControllerTest {
                 .postTime(OffsetDateTime.now(UTC))
                 .build());
 
-        when(messageService.findMessageListByProjectId(1L)).thenReturn(messageGetDtoList);
-        mockMvc.perform(get("/1/projects/1/messages"))
+        when(messageService.findMessageListByCompanyIdAndProjectId(1L, 1L)).thenReturn(messageGetDtoList);
+        mockMvc.perform(get("/companies/1/projects/1/messages"))
                 .andExpect(status().isOk());
     }
 
@@ -112,7 +112,7 @@ public class MessageControllerTest {
                 .originNotes("<p>list rich editor</p>")
                 .build();
 
-        mockMvc.perform(post("/1/projects/1/messages")
+        mockMvc.perform(post("/companies/1/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -132,10 +132,10 @@ public class MessageControllerTest {
                 .build();
         when(messageService.createMessage(messagePostDto))
                 .thenThrow(new ProjectNotFoundException("this project not exist"));
-        mockMvc.perform(post("/1/projects/1/messages")
+        mockMvc.perform(post("/companies/1/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -152,15 +152,16 @@ public class MessageControllerTest {
                 .docURL("https:www.adc.com")
                 .build();
 
-        when(messageService.findMessageById(1L)).thenReturn(messageGetDto);
-        mockMvc.perform(get("/1/projects/1/messages/1"))
+        when(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L)).thenReturn(messageGetDto);
+        mockMvc.perform(get("/companies/1/projects/1/messages/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void throwMessageNotFoundExceptionWhenMessageIdNotExist() throws Exception {
-        when(messageService.findMessageById(1L)).thenThrow(new MessageNotFoundException("this message not exist"));
-        mockMvc.perform(get("/1/projects/1/messages/1"))
+        when(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L))
+                .thenThrow(new MessageNotFoundException("this message not exist"));
+        mockMvc.perform(get("/companies/1/projects/1/messages/1"))
                 .andExpect(status().isNotFound());
     }
 }

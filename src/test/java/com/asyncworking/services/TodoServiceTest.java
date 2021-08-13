@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -165,9 +167,11 @@ public class TodoServiceTest {
                 .createdTime(now(UTC))
                 .updatedTime(now(UTC))
                 .build());
-        when(todoListRepository.findTodolistWithTodoItems(any(), any()))
+        when(todoListRepository.findTodolistWithTodoItems(project.getCompanyId(),
+                project.getId(), PageRequest.of(0, quantity)))
                 .thenReturn(todoLists);
-        List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByProjectId(project.getId(), quantity);
+        List<TodoListDto> todoListDtos = todoService.findRequiredNumberTodoListsByCompanyIdAndProjectId(project.getCompanyId(),
+                project.getId(), quantity);
         assertEquals(quantity, todoListDtos.size());
     }
 
@@ -185,15 +189,17 @@ public class TodoServiceTest {
                 .updatedTime(now(UTC))
                 .build();
 
-        when(todoListRepository.findById(any())).thenReturn(Optional.of(mockTodoList));
-        assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.fetchSingleTodoList(mockTodoList.getId()).getTodoListTitle());
+        when(todoListRepository.findByCompanyIdAndProjectIdAndId(project.getCompanyId(), project.getId(),
+                mockTodoList.getId())).thenReturn(Optional.of(mockTodoList));
+        assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.fetchSingleTodoList(project.getCompanyId(), project.getId(),
+                mockTodoList.getId()).getTodoListTitle());
     }
 
     @Test
     public void throwTodoListNotFoundExceptionWhenIdIsNotExist() {
         when(todoListRepository.findById(2L))
                 .thenThrow(new TodoListNotFoundException("Cannot find todoList by id: 2"));
-        assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(2L));
+        assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(1L, 1L, 2L));
     }
 
     @Test
@@ -201,10 +207,11 @@ public class TodoServiceTest {
         List<TodoItem> todoItems = new ArrayList<>();
         todoItems.add(todoItem1);
         todoItems.add(todoItem2);
-        when(todoItemRepository.findByTodoListIdOrderByCreatedTimeDesc(any()))
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(any(), any(), any()))
                 .thenReturn(todoItems);
 
-        List<TodoItemGetDto> todoItemGetDtos = todoService.findTodoItemsByTodoListIdOrderByCreatedTime(todoList.getId());
+        List<TodoItemGetDto> todoItemGetDtos = todoService.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc
+                (todoList.getCompanyId(), todoList.getProject().getId(), todoList.getId());
         assertEquals(2, todoItemGetDtos.size());
         assertEquals("test1", todoItemGetDtos.get(0).getNotes());
         assertEquals("des1", todoItemGetDtos.get(0).getDescription());
@@ -214,7 +221,7 @@ public class TodoServiceTest {
 
     @Test
     public void shouldReturnTodoItemPageDtoByGivenTodoitemId() {
-        when(todoItemRepository.findById(any()))
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndId(any(), any(), any()))
                 .thenReturn(Optional.of(todoItem1));
         when(projectRepository.findById(any()))
                 .thenReturn(Optional.of(project));
@@ -225,16 +232,16 @@ public class TodoServiceTest {
                         .name("lalal")
                         .build());
         TodoItemPageDto returnedTodoItemPageDto = todoService.
-                fetchTodoItemPageInfoByIds(todoItem1.getId());
+                fetchTodoItemPageInfoByIds(project.getCompanyId(), project.getId(), todoItem1.getId());
         assertEquals(project.getName(), returnedTodoItemPageDto.getProjectName());
     }
 
     @Test
     public void throwTodoItemNotFoundExceptionWhenTodoitemIdIsNotExist() {
-        when(todoItemRepository.findById(any()))
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndId(2L, 2L, 2L))
                 .thenReturn(Optional.empty());
         Exception exception = assertThrows(TodoItemNotFoundException.class,
-                () -> todoService.fetchTodoItemPageInfoByIds(2L));
+                () -> todoService.fetchTodoItemPageInfoByIds(2L, 2L, 2L));
 
         String expectedMessage = "Cannot find TodoItem by id: 2";
 
@@ -253,8 +260,10 @@ public class TodoServiceTest {
                 .subscribersIds("1,2,3")
                 .build();
         when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getNotes(),
-                todoItemPut.getOriginNotes(), todoItemPut.getDueDate(), todoItemPut.getSubscribersIds())).thenReturn(0);
-        assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, todoItemPut));
+                todoItemPut.getOriginNotes(), todoItemPut.getDueDate(), 1L, 1L,
+                todoItemPut.getSubscribersIds())).thenReturn(0);
+        assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, 1L, 1L, todoItemPut));
+
     }
 
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
@@ -293,7 +302,7 @@ public class TodoServiceTest {
     @Test
     public void findAssignedPeopleTest() {
         TodoItem todoItem = buildTodoItem(todoList, "123", "a", "1,2");
-        when(todoItemRepository.findSubscribersIdsByProjectIdAndId(todoItem.getProjectId(), todoItem.getId()))
+        when(todoItemRepository.findSubscribersIdsByProjectIdAndId(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()))
                 .thenReturn("1,2");
 
         UserEntity mockUser1 = UserEntity.builder()
@@ -322,7 +331,7 @@ public class TodoServiceTest {
                 .build();
 
         assertEquals(List.of(assignedPeopleGetDto, assignedPeopleGetDto2),
-                todoService.findAssignedPeople(todoItem.getProjectId(), todoItem.getId()));
+                todoService.findAssignedPeople(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()));
 
     }
 

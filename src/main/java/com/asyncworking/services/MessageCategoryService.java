@@ -49,8 +49,8 @@ public class MessageCategoryService {
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id: " + projectId));
     }
 
-    public List<MessageCategoryGetDto> findMessageCategoryListByProjectId(Long projectId) {
-        List<MessageCategory> messageCategoryList = messageCategoryRepository.findByProjectId(projectId);
+    public List<MessageCategoryGetDto> findMessageCategoryListByCompanyIdAndProjectId(Long companyId, Long projectId) {
+        List<MessageCategory> messageCategoryList = messageCategoryRepository.findByCompanyIdAndProjectId(companyId, projectId);
 
         return messageCategoryList.stream()
                 .map(messageCategory -> messageMapper.fromCategoryEntity(messageCategory)).collect(Collectors.toList());

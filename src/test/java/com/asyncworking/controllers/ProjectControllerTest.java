@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -44,7 +43,7 @@ public class ProjectControllerTest {
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -57,7 +56,7 @@ public class ProjectControllerTest {
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -69,7 +68,7 @@ public class ProjectControllerTest {
                 .name("")
                 .ownerId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -81,7 +80,7 @@ public class ProjectControllerTest {
                 .name("")
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -96,9 +95,9 @@ public class ProjectControllerTest {
                 .name("SSS")
                 .projectUserNames(projectUserNames)
                 .build();
-        when(projectService.fetchProjectInfoByProjectId(1L)).thenReturn(projectInfoDto);
+        when(projectService.fetchProjectInfoByProjectIdAndCompanyId(1L, 1L)).thenReturn(projectInfoDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/projects/1/project-info")
+                MockMvcRequestBuilders.get("/companies/1/projects/1/project-info")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
@@ -111,7 +110,7 @@ public class ProjectControllerTest {
                 .description("desc")
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/projects/1/project-info")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/project-info")
                 .content(objectMapper.writeValueAsString(projectModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -125,7 +124,7 @@ public class ProjectControllerTest {
                 .description("desc")
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/projects/1/project-info")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/project-info")
                 .content(objectMapper.writeValueAsString(projectModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -133,14 +132,14 @@ public class ProjectControllerTest {
 
     @Test
     public void shouldReturnOkIfGetMembersByProjectId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/projects/1/members")
+        mockMvc.perform(MockMvcRequestBuilders.get("/companies/1/projects/1/members")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnOkIfCreateMembersByProjectIdAndUserId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/projects/1/members")
+        mockMvc.perform(MockMvcRequestBuilders.post("/companies/1/projects/1/members")
                 .param("userIds", "1,2"))
                 .andExpect(status().isOk());
     }

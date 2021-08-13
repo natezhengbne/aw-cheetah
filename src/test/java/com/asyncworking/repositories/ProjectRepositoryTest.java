@@ -93,7 +93,8 @@ public class ProjectRepositoryTest extends DBHelper {
         int count = projectRepository.updateProjectInfo(mockProject.getId(),
                 "AW-new-project",
                 "Gaming",
-                OffsetDateTime.now(UTC));
+                OffsetDateTime.now(UTC),
+                mockProject.getCompanyId());
         assertEquals(1, count);
     }
 

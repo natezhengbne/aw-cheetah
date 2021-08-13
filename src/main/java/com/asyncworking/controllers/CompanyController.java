@@ -34,13 +34,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyColleagueDto);
     }
 
-    @GetMapping("/{companyId}/projects")
-    public ResponseEntity getProjectList(@PathVariable("companyId")
-                                         @NotNull Long companyId,
-                                         @RequestParam(value = "userId")
-                                         @NotNull Long userId) {
-        return ResponseEntity.ok(projectService.fetchAvailableProjectInfoList(companyId, userId));
-    }
 
     @GetMapping("/{companyId}/profile")
     public ResponseEntity<CompanyModificationDto> fetchCompanyProfile(@PathVariable("companyId")

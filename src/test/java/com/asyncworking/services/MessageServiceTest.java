@@ -304,9 +304,9 @@ public class MessageServiceTest {
     @Test
     public void shouldReturnListOfMessageGetDtoListWhenGivenCorrectProjectId() {
         this.mockMessage();
-        when(messageRepository.findByProjectId(1L)).thenReturn(List.of(mockMessage1, mockMessage2, mockMessage3));
+        when(messageRepository.findByCompanyIdAndProjectId(1L, 1L)).thenReturn(List.of(mockMessage1, mockMessage2, mockMessage3));
         when(userRepository.findByIdIn(List.of(1L, 1L, 2L))).thenReturn(Optional.of(List.of(mockUserEntity1, mockUserEntity2)));
-        List<MessageGetDto> mockMessageGetDtoList = messageService.findMessageListByProjectId(1L);
+        List<MessageGetDto> mockMessageGetDtoList = messageService.findMessageListByCompanyIdAndProjectId(1L, 1L);
         assertNotNull(mockMessageGetDtoList);
         assertEquals(3, mockMessageGetDtoList.size());
     }
@@ -328,9 +328,9 @@ public class MessageServiceTest {
                 .docURL("abc.com")
                 .subscribersIds("1L,2L")
                 .build();
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage1));
+        when(messageRepository.findByCompanyIdAndProjectIdAndId(1L, 1L, 1L)).thenReturn(Optional.of(mockMessage1));
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
-        assertEquals(messageService.findMessageById(1L), mockMessageGetDto);
+        assertEquals(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L), mockMessageGetDto);
     }
 
     @Test
@@ -361,15 +361,15 @@ public class MessageServiceTest {
                 .docURL("abc.com")
                 .subscribersIds("1L,2L")
                 .build();
-        when(messageRepository.findById(1L)).thenReturn(Optional.of(mockMessage));
+        when(messageRepository.findByCompanyIdAndProjectIdAndId(1L, 1L, 1L)).thenReturn(Optional.of(mockMessage));
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
-        assertEquals(messageService.findMessageById(1L), mockMessageGetDto);
+        assertEquals(messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L), mockMessageGetDto);
     }
 
     @Test
     public void shouldThrowMessageNotFoundExceptionWhenGivenIdNotExists() {
         when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
-        assertThrows(MessageNotFoundException.class, () -> messageService.findMessageById(1L));
+        assertThrows(MessageNotFoundException.class, () -> messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L));
     }
 
 }

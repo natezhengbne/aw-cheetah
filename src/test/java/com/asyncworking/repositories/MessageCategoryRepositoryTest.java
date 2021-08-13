@@ -55,7 +55,8 @@ public class MessageCategoryRepositoryTest extends DBHelper {
     public void shouldReturnMessageCategoryListGivenAnProjectId() {
         messageCategoryRepository.save(mockFirstMessageCategory);
         messageCategoryRepository.save(mockSecondMessageCategory);
-        List<MessageCategory> messageCategoryList = messageCategoryRepository.findByProjectId(mockProject.getId());
+        List<MessageCategory> messageCategoryList = messageCategoryRepository.findByCompanyIdAndProjectId
+                (mockProject.getCompanyId(), mockProject.getId());
         assertEquals(2, messageCategoryList.size());
     }
 }

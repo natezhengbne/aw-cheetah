@@ -107,7 +107,8 @@ class TodoItemRepositoryTest extends DBHelper {
         TodoItem todoItem = buildTodoItem(todoList, "nihao", "heihei", subscribersIds);
         todoItemRepository.save(todoItem);
 
-        assertEquals(subscribersIds, todoItemRepository.findSubscribersIdsByProjectIdAndId(project.getId(), todoItem.getId()));
+        assertEquals(subscribersIds, todoItemRepository.findSubscribersIdsByProjectIdAndId(project.getCompanyId(),
+                project.getId(), todoItem.getId()));
 
     }
 }
