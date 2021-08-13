@@ -59,11 +59,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query(nativeQuery = true,
             value = "select u.id, u.name, u.email\n" +
-                    "from project_user pu, user_info u \n" +
-                    "where pu.user_id = u.id " +
-                    "and pu.project_id = :id " +
+                    "from user_info u \n" +
+                    "where u.id in (select pu.user_id from project_user pu where pu.project_id = (" +
+                    "select p.id from project p where p.id =:id and p.company_id = :companyId ))" +
                     "order by u.name")
-    List<IEmployeeInfo> findAllMembersByProjectIdAscByName(@Param("id") Long id);
+    List<IEmployeeInfo> findAllMembersByCompanyIdAndProjectIdAscByName(@Param("companyId") Long companyId,
+                                                                       @Param("id") Long id);
 
     @Query(nativeQuery = true,
             value = "SELECT u.id, u.name, u.email, employeeinfo.title FROM ( " +

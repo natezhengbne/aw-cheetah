@@ -59,10 +59,11 @@ public class ProjectController {
         return ResponseEntity.ok(members);
     }
     @GetMapping("/{projectId}/asc-members")
-    public ResponseEntity getMembersByProjectIdDescByName(@PathVariable Long projectId) {
+    public ResponseEntity getMembersByProjectIdDescByName(@PathVariable("companyId") Long companyId,
+                                                          @PathVariable Long projectId) {
         log.info("Project ID: {}", projectId);
-        List<EmployeeGetDto> members = projectService.findAllMembersByProjectIdAscByName
-                (projectId);
+        List<EmployeeGetDto> members = projectService.findAllMembersByCompanyIdAndProjectIdAscByName
+                (companyId, projectId);
         return ResponseEntity.ok(members);
     }
 

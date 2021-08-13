@@ -135,8 +135,8 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public List<EmployeeGetDto> findAllMembersByProjectIdAscByName(Long projectId) {
-        return userRepository.findAllMembersByProjectIdAscByName(projectId).stream()
+    public List<EmployeeGetDto> findAllMembersByCompanyIdAndProjectIdAscByName(Long companyId, Long projectId) {
+        return userRepository.findAllMembersByCompanyIdAndProjectIdAscByName(companyId, projectId).stream()
                 .map(employeeMapper::mapEntityToDto)
                 .collect(Collectors.toList());
     }
