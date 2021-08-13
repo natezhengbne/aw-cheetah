@@ -132,7 +132,7 @@ public class TodoService {
     public List<AssignedPeopleGetDto> findAssignedPeople(Long projectId, Long todoItemId) {
 
         String subscribersIds = todoItemRepository.findSubscribersIdsByProjectIdAndId(projectId, todoItemId);
-        if (subscribersIds.length() == 0 || subscribersIds == null) {
+        if (subscribersIds.length() == 0 ) {
             return null;
         }
         List<Long> idList = Arrays.asList(subscribersIds

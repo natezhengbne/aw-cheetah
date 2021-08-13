@@ -1,1 +1,1 @@
-ALTER TABLE "todo_item" ADD "subscribers_ids" VARCHAR(1000);
+ALTER TABLE "todo_item" ADD "subscribers_ids" VARCHAR(1000) DEFAULT '' NOT NULL;
