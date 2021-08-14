@@ -56,8 +56,8 @@ cloud:
     stack:
       auto: false
     credentials:
-      accesskey: test
-      secretkey: test
-    endpoint: https://sqs.ap-southeast-2.amazonaws.com
+      access-key: test
+      secret-key: test
+
 sqs:
   enable: true
