@@ -15,7 +15,6 @@ services:
     networks:
       - persist
 
-
   pgadmin:
     image: dpage/pgadmin4
     volumes:
@@ -28,6 +27,29 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     networks:
       - persist
+
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    network_mode: bridge
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      - DEFAULT_REGION=ap-southeast-2
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - SERVICES=lambda, sqs, s3, ses, events
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=docker-reuse
+      - LAMBDA_REMOTE_DOCKER=false
+      # - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOST_TMP_FOLDER=${TMPDIR}
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
 
 volumes:

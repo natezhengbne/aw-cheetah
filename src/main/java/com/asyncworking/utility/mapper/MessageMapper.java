@@ -56,6 +56,7 @@ public class MessageMapper {
                 .messageTitle(messagePostDto.getMessageTitle())
                 .docURL(messagePostDto.getDocURL())
                 .content(messagePostDto.getContent())
+                .originNotes(messagePostDto.getOriginNotes())
                 .createdTime(OffsetDateTime.now(UTC))
                 .updatedTime(OffsetDateTime.now(UTC))
                 .postTime(OffsetDateTime.now(UTC))
