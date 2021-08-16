@@ -112,12 +112,11 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
     }
 
-    String generateVerifyLink(String email) {
+    public String generateVerifyLink(String email) {
         String verifyLink = frontEndUrlConfig.getFrontEndUrl() + "/verifylink/verify?code=" + this.generateJws(email);
         log.info("verifyLink: {}", verifyLink);
         return verifyLink;
     }
-
 
     private String generateJws(String email) {
         String jws = Jwts.builder()
