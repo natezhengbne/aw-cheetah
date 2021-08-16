@@ -46,7 +46,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             var cors = new CorsConfiguration();
             cors.setAllowedOrigins(List.of("http://localhost:3000",
                     "http://www.asyncworking.com",
-                    "https://www.asyncworking.com"));
+                    "https://www.asyncworking.com",
+                    "https://uat.asyncworking.com",
+                    "https://uat2.asyncworking.com"
+                    ));
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
