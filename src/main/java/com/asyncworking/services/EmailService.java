@@ -29,7 +29,6 @@ public class EmailService {
         message.put("userName", userEntity.getName());
         message.put("email", userEntity.getEmail());
         message.put("verificationLink", verifyLink);
-        // TODO templateType, templateURL(S3 Bucket url)
         // 1.Invite 2. Signup 3. Forget Password
         String messageStr = "";
         try {

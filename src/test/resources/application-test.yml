@@ -29,6 +29,7 @@ cloud:
     credentials:
       accesskey: test
       secretkey: test
+    endpoint: http://localhost:4566
 
 jwt:
   secret: securesecuresecuresecuresecuresecu
