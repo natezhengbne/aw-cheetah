@@ -6,16 +6,16 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=awcheetah
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=uatawcheetah
     username: postgres
     password: admin
   flyway:
     enabled: true
-    schemas: awcheetah
+    schemas: uatawcheetah
   jpa:
     properties:
       hibernate:
-        default_schema: awcheetah
+        default_schema: uatawcheetah
         jdbc:
           time_zone: UTC
     show-sql: true
@@ -27,7 +27,7 @@ logging:
     com.asyncworking: debug
 
 #production env
-url: https://www.asyncworking.com
+url: https://uat.asyncworking.com
 
 #local env
 #url: http://localhost:3000
