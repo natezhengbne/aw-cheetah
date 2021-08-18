@@ -78,11 +78,11 @@ public class ProjectService {
     }
 
     @Transactional
-    public Long createProjectAndProjectUser(ProjectDto projectDto) {
+    public Long createProjectAndProjectUser(Long companyId, ProjectDto projectDto) {
 
         UserEntity selectedUserEntity = userService.findUserById(projectDto.getOwnerId());
 
-        Project newProject = projectMapper.mapProjectDtoToProject(projectDto);
+        Project newProject = projectMapper.mapProjectDtoToProject(companyId, projectDto);
         projectRepository.save(newProject);
 
         roleService.assignRole(selectedUserEntity, PROJECT_MANAGER, newProject.getId());

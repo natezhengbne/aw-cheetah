@@ -26,8 +26,8 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity createProject(@Valid @RequestBody ProjectDto projectDto) {
-        return ResponseEntity.ok(projectService.createProjectAndProjectUser(projectDto));
+    public ResponseEntity createProject(@PathVariable("companyId") @NotNull Long companyId, @Valid @RequestBody ProjectDto projectDto) {
+        return ResponseEntity.ok(projectService.createProjectAndProjectUser(companyId, projectDto));
     }
 
     @GetMapping

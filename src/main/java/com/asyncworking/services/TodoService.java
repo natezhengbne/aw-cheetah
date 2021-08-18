@@ -49,9 +49,13 @@ public class TodoService {
     private final UserMapper userMapper;
 
     @Transactional
-    public Long createTodoList(TodoListDto todoListDto) {
+    public Long createTodoList(Long companyId, Long projectId, TodoListDto todoListDto) {
+        Project project = findProjectById(projectId);
+        if (project.getCompanyId() != companyId) {
+            throw new ProjectNotFoundException("There is no project: " + projectId + "in this company: " + companyId);
+        }
         TodoList newTodoList = todoMapper.toTodoListEntity(todoListDto,
-                findProjectById(todoListDto.getProjectId()));
+                project);
         log.info("create a new TodoList: " + newTodoList.getTodoListTitle());
         todoListRepository.save(newTodoList);
         return newTodoList.getId();
