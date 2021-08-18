@@ -8,6 +8,7 @@ import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/project-info")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager') or hasPermission(#projectId, 'Project Manager')")
     public ResponseEntity updateProjectProfile(@PathVariable("companyId") Long companyId,
                                                @PathVariable("projectId") Long projectId,
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
