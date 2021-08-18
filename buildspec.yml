@@ -12,24 +12,23 @@ phases:
       - echo Logging in to Amazon ECR...
       #- $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${ECR_URI_PREFIX}
-      - IMAGE_REPO_NAME=${ECR_REPO_NAME}
-      - REPOSITORY_URI=${ECR_URI_PREFIX}/${IMAGE_REPO_NAME} # $IMAGE_REPO_NAME set in Build environment
+      - IMAGE_REPO_NAME=${ECR_REPO_NAME} #defined in Build environmnet
+      - REPOSITORY_URI=${ECR_URI_PREFIX}/${IMAGE_REPO_NAME} # $IMAGE_REPO_NAME defined in Build environment
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - pwd
-      - ls -al
-      - echo "${IMAGE_TAG}"
+      - ls -alh
+      - echo ${IMAGE_TAG}
       - echo ${IMAGE_REPO_NAME}
   build:
     commands:
-      - echo Starting to build ${ENV}
+      - echo Starting to build ${ENV} # defined in Build environment
       - echo Build started on `date`
       - echo $DOCKERHUB_PW | docker login -u $DOCKERHUB_USER --password-stdin
       - uname -a
       - pwd
-      - ls -al
+      - ls -alh
       - docker images
-      #- docker-compose up -d
       - echo Building the Docker image...
       - docker build -t ${IMAGE_REPO_NAME}:latest .
       - docker tag ${IMAGE_REPO_NAME}:latest ${REPOSITORY_URI}:${IMAGE_TAG}
@@ -40,6 +39,7 @@ phases:
       - docker push ${REPOSITORY_URI}:${IMAGE_TAG}
       - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' ${AW_CONTAINER} ${REPOSITORY_URI}:${IMAGE_TAG} > imagedefinitions.json
-      # $AW_CONTAINER set in Build Environment 
+      # $AW_CONTAINER defined in Build Environment 
+      - cat imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
