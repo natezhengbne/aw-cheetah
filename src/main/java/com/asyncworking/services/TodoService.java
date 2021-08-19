@@ -50,12 +50,7 @@ public class TodoService {
 
     @Transactional
     public Long createTodoList(Long companyId, Long projectId, TodoListDto todoListDto) {
-        Project project = findProjectById(projectId);
-        if (project.getCompanyId() != companyId) {
-            throw new ProjectNotFoundException("There is no project: " + projectId + "in this company: " + companyId);
-        }
-        TodoList newTodoList = todoMapper.toTodoListEntity(todoListDto,
-                project);
+        TodoList newTodoList = todoMapper.toTodoListEntity(todoListDto, findProjectById(companyId, projectId));
         log.info("create a new TodoList: " + newTodoList.getTodoListTitle());
         todoListRepository.save(newTodoList);
         return newTodoList.getId();
@@ -103,7 +98,7 @@ public class TodoService {
     public TodoItemPageDto fetchTodoItemPageInfoByIds(Long companyId, Long projectId, Long todoItemId) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, todoItemId);
         return todoMapper.fromTodoItemToTodoItemPageDto(todoItem,
-                findProjectById(todoItem.getProjectId()),
+                findProjectById(companyId, todoItem.getProjectId()),
                 userService.findUserById(todoItem.getCreatedUserId()));
     }
 
@@ -121,9 +116,9 @@ public class TodoService {
         }
     }
 
-    private Project findProjectById(Long projectId) {
+    private Project findProjectById(Long companyId, Long projectId) {
         return projectRepository
-                .findById(projectId)
+                .findByCompanyIdAndId(companyId, projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id:" + projectId));
     }
 

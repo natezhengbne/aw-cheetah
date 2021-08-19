@@ -128,7 +128,7 @@ public class TodoServiceTest {
     @Test
     @Transactional
     public void createTodoListSuccess() {
-        when(projectRepository.findById(1L))
+        when(projectRepository.findByCompanyIdAndId(1L, 1L))
                 .thenReturn(Optional.of(project));
         ArgumentCaptor<TodoList> todoListCaptor = ArgumentCaptor.forClass(TodoList.class);
         todoService.createTodoList(project.getCompanyId(), project.getId(), mockTodoListDto);
@@ -224,7 +224,7 @@ public class TodoServiceTest {
     public void shouldReturnTodoItemPageDtoByGivenTodoitemId() {
         when(todoItemRepository.findByCompanyIdAndProjectIdAndId(any(), any(), any()))
                 .thenReturn(Optional.of(todoItem1));
-        when(projectRepository.findById(any()))
+        when(projectRepository.findByCompanyIdAndId(any(), any()))
                 .thenReturn(Optional.of(project));
         when(userService.findUserById(any()))
                 .thenReturn(buildUser());
