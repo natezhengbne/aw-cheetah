@@ -1,18 +1,22 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.auth.AuthPermissionEvaluator;
+import com.asyncworking.config.SpringSecurityWebAuxTestConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.net.URI;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTest extends ControllerHelper{
@@ -89,12 +93,14 @@ class UserControllerTest extends ControllerHelper{
     }
 
     @Test
+    @WithUserDetails("company manager")
     public void shouldCreateInvitationLinkSuccessful() throws Exception {
         Long companyId = 1L;
         String title = "developer";
         String name = "user1";
         String email = "user1@gmail.com";
 
+        when(authPermissionEvaluator.hasPermission(any(), any(), any())).thenReturn(true);
         mockMvc.perform(get("/invitations/companies")
                 .param("companyId", String.valueOf(companyId))
                 .param("title", title)
@@ -236,5 +242,38 @@ class UserControllerTest extends ControllerHelper{
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void shouldReturnOkIfEmailIsValid() throws Exception {
+        String email = "test@gmail.com";
+        when(userService.ifEmailExists(email)).thenReturn(true);
+        when(userService.ifUnverified(email)).thenReturn(false);
+
+        mockMvc.perform(put("/password")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnErrorIfEmailIsNotExist() throws Exception {
+        String email = "test@gmail.com";
+        when(userService.ifEmailExists(email)).thenReturn(false);
+
+        mockMvc.perform(put("/password")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnErrorIfEmailIsUnactivated() throws Exception {
+        String email = "test@gmail.com";
+        when(userService.ifUnverified(email)).thenReturn(true);
+
+        mockMvc.perform(put("/password")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isConflict());
+    }
 }
 

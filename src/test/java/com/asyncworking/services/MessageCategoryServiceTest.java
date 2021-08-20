@@ -113,10 +113,10 @@ public class MessageCategoryServiceTest {
     @Test
     public void shouldReturnListOfMessageCategoryGetDtoWhenGivenProjectId() {
         this.mockMessageCategory();
-        when(messageCategoryRepository.findByProjectId(1L)).thenReturn(List.of(mockMessageCategory1,
+        when(messageCategoryRepository.findByCompanyIdAndProjectId(1L, 1L)).thenReturn(List.of(mockMessageCategory1,
                 mockMessageCategory2));
         List<MessageCategoryGetDto> mockMessageCategoryGetDtoList =
-                messageCategoryService.findMessageCategoryListByProjectId(1L);
+                messageCategoryService.findMessageCategoryListByCompanyIdAndProjectId(1L, 1L);
         assertNotNull(mockMessageCategoryGetDtoList);
         assertEquals(2, mockMessageCategoryGetDtoList.size());
     }

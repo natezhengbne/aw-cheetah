@@ -30,6 +30,12 @@ public abstract class DBHelper {
 	@Autowired
 	protected MessageCategoryRepository messageCategoryRepository;
 
+	@Autowired
+	protected RoleRepository roleRepository;
+
+	@Autowired
+	protected UserRoleRepository userRoleRepository;
+
 	protected void clearDb() {
 		todoItemRepository.deleteAll();
 		todoItemRepository.flush();
@@ -60,5 +66,11 @@ public abstract class DBHelper {
 
 		messageCategoryRepository.deleteAll();
 		messageCategoryRepository.flush();
+
+		roleRepository.deleteAll();
+		roleRepository.flush();
+
+		userRoleRepository.deleteAll();
+		userRoleRepository.flush();
 	}
 }

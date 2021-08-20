@@ -23,7 +23,7 @@ public class ProjectControllerTest extends ControllerHelper{
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -36,7 +36,7 @@ public class ProjectControllerTest extends ControllerHelper{
                 .ownerId(1L)
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -48,7 +48,7 @@ public class ProjectControllerTest extends ControllerHelper{
                 .name("")
                 .ownerId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -60,27 +60,10 @@ public class ProjectControllerTest extends ControllerHelper{
                 .name("")
                 .companyId(1L)
                 .build();
-        mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void shouldReturnOkIfGetProjectInfoListSuccessful() throws Exception {
-        Long companyId = 1L;
-        List<String> projectUserNames = Arrays.asList("+", "-", "*");
-        ProjectInfoDto projectInfoDto = ProjectInfoDto.builder()
-                .id(1L)
-                .name("SSS")
-                .projectUserNames(projectUserNames)
-                .build();
-        when(projectService.fetchProjectInfoListByCompanyId(companyId)).thenReturn(Arrays.asList(projectInfoDto));
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/projects/1")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
     }
 
     @Test
@@ -92,9 +75,9 @@ public class ProjectControllerTest extends ControllerHelper{
                 .name("SSS")
                 .projectUserNames(projectUserNames)
                 .build();
-        when(projectService.fetchProjectInfoByProjectId(1L)).thenReturn(projectInfoDto);
+        when(projectService.fetchProjectInfoByProjectIdAndCompanyId(1L, 1L)).thenReturn(projectInfoDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/projects/1/project-info")
+                MockMvcRequestBuilders.get("/companies/1/projects/1/project-info")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
@@ -107,7 +90,7 @@ public class ProjectControllerTest extends ControllerHelper{
                 .description("desc")
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/projects/1/project-info")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/project-info")
                 .content(objectMapper.writeValueAsString(projectModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -121,7 +104,7 @@ public class ProjectControllerTest extends ControllerHelper{
                 .description("desc")
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/projects/1/project-info")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/project-info")
                 .content(objectMapper.writeValueAsString(projectModificationDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -129,14 +112,14 @@ public class ProjectControllerTest extends ControllerHelper{
 
     @Test
     public void shouldReturnOkIfGetMembersByProjectId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/projects/1/members")
+        mockMvc.perform(MockMvcRequestBuilders.get("/companies/1/projects/1/members")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnOkIfCreateMembersByProjectIdAndUserId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/projects/1/members")
+        mockMvc.perform(MockMvcRequestBuilders.post("/companies/1/projects/1/members")
                 .param("userIds", "1,2"))
                 .andExpect(status().isOk());
     }

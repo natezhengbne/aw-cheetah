@@ -39,6 +39,9 @@ public class CompanyServiceTest {
     private CompanyRepository companyRepository;
 
     @Mock
+    private RoleService roleService;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private EmployeeMapper employeeMapper;
@@ -51,7 +54,6 @@ public class CompanyServiceTest {
 
     private CompanyService companyService;
 
-
     @BeforeEach()
     public void setup() {
         employeeMapper = new EmployeeMapper();
@@ -63,7 +65,8 @@ public class CompanyServiceTest {
             employeeRepository,
             companyMapper,
             userMapper,
-            employeeMapper
+            employeeMapper,
+            roleService
         );
     }
 

@@ -16,24 +16,26 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/projects/{projectId}")
+@RequestMapping("companies/{companyId}/projects/{projectId}")
 public class MessageController {
     private final MessageService messageService;
 
     @GetMapping("/messages")
-    public ResponseEntity<List<MessageGetDto>> getMessageList(@PathVariable Long projectId) {
+    public ResponseEntity<List<MessageGetDto>> getMessageList(@PathVariable Long companyId, @PathVariable Long projectId) {
         log.info("get projectId " + projectId + " :messages");
-        return ResponseEntity.ok(messageService.findMessageListByProjectId(projectId));
+        return ResponseEntity.ok(messageService.findMessageListByCompanyIdAndProjectId(companyId, projectId));
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long projectId, @Valid @RequestBody MessagePostDto messagePostDto) {
+    public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                       @Valid @RequestBody MessagePostDto messagePostDto) {
         return ResponseEntity.ok(messageService.createMessage(messagePostDto));
     }
 
     @GetMapping("/messages/{messageId}")
-    public ResponseEntity<MessageGetDto> getMessages(@PathVariable Long projectId, @PathVariable Long messageId) {
+    public ResponseEntity<MessageGetDto> getMessages(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                     @PathVariable Long messageId) {
         log.info("get messageId " + messageId);
-        return ResponseEntity.ok(messageService.findMessageById(messageId));
+        return ResponseEntity.ok(messageService.findMessageByCompanyIdAndProjectIdAndId(companyId, projectId, messageId));
     }
 }

@@ -1,5 +1,6 @@
 package com.asyncworking.auth;
 
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
@@ -9,7 +10,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -52,7 +52,7 @@ public class ApplicationUserServiceTest {
 
     @Test
     public void shouldThrowUsernameNotFoundException() {
-        assertThrows(UsernameNotFoundException.class, () -> applicationUserService.loadUserByUsername("b@asyncworking.com"));
+        assertThrows(UserNotFoundException.class, () -> applicationUserService.loadUserByUsername("b@asyncworking.com"));
     }
 
     @Test
@@ -60,6 +60,6 @@ public class ApplicationUserServiceTest {
         UserDetails userDetails = applicationUserService.loadUserByUsername("a@asyncworking.com");
         assertEquals("a@asyncworking.com", userDetails.getUsername());
         assertEquals("testpass", userDetails.getPassword());
-        assertFalse(userDetails.getAuthorities().stream().findFirst().isEmpty());
+        assertTrue(userDetails.getAuthorities().stream().findFirst().isEmpty());
     }
 }

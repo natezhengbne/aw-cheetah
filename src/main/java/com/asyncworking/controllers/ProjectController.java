@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/companies/{companyId}/projects")
 @RequiredArgsConstructor
 @Validated
 public class ProjectController {
@@ -29,38 +29,50 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.createProjectAndProjectUser(projectDto));
     }
 
-    @GetMapping("/{companyId}")
+    @GetMapping
     public ResponseEntity getProjectList(@PathVariable("companyId")
-                                         @NotNull Long companyId) {
-        return ResponseEntity.ok(projectService.fetchProjectInfoListByCompanyId(companyId));
+                                         @NotNull Long companyId,
+                                         @RequestParam(value = "userId")
+                                         @NotNull Long userId) {
+        return ResponseEntity.ok(projectService.fetchAvailableProjectInfoList(companyId, userId));
     }
-
     @GetMapping("/{projectId}/project-info")
-    public ResponseEntity getProjectInfo(@PathVariable("projectId") @NotNull Long projectId) {
+    public ResponseEntity getProjectInfo(@PathVariable("companyId") Long companyId, @PathVariable("projectId") @NotNull Long projectId) {
         log.info("projectId: {}", projectId);
-        ProjectInfoDto projectInfoDto = projectService.fetchProjectInfoByProjectId(projectId);
+        ProjectInfoDto projectInfoDto = projectService.fetchProjectInfoByProjectIdAndCompanyId(companyId, projectId);
         return ResponseEntity.ok(projectInfoDto);
     }
 
     @PutMapping("/{projectId}/project-info")
-    public ResponseEntity updateProjectProfile(@PathVariable("projectId") Long projectId,
+    public ResponseEntity updateProjectProfile(@PathVariable("companyId") Long companyId,
+                                               @PathVariable("projectId") Long projectId,
                                                @Valid @RequestBody ProjectModificationDto projectModificationDto) {
-        projectService.updateProjectInfo(projectModificationDto);
+        projectService.updateProjectInfo(companyId, projectId, projectModificationDto);
         return ResponseEntity.ok("success");
     }
 
     @GetMapping("/{projectId}/members")
-    public ResponseEntity getMembersByProjectId(@PathVariable Long projectId) {
+    public ResponseEntity getMembersByCompanyIdAndProjectId(@PathVariable("companyId") Long companyId,
+                                                            @PathVariable("projectId") Long projectId) {
         log.info("Project ID: {}", projectId);
-        List<EmployeeGetDto> members = projectService.findAllMembersByProjectId(projectId);
+        List<EmployeeGetDto> members = projectService.findAllMembersByCompanyIdAndProjectId(companyId, projectId);
+        return ResponseEntity.ok(members);
+    }
+    @GetMapping("/{projectId}/asc-members")
+    public ResponseEntity getMembersByProjectIdDescByName(@PathVariable("companyId") Long companyId,
+                                                          @PathVariable Long projectId) {
+        log.info("Project ID: {}", projectId);
+        List<EmployeeGetDto> members = projectService.findAllMembersByCompanyIdAndProjectIdAscByName
+                (companyId, projectId);
         return ResponseEntity.ok(members);
     }
 
     @PostMapping("/{projectId}/members")
-    public ResponseEntity<?> addMembersByProjectIdAndUserId(@PathVariable Long projectId,
+    public ResponseEntity<?> addMembersByCompanyIdProjectIdAndUserId(@PathVariable("companyId") Long companyId,
+                                                            @PathVariable("projectId") Long projectId,
                                                             @RequestParam("userIds") @NotNull List<Long> userIds) {
-        log.info("projectID: {}, userIds: {}", projectId, userIds);
-        projectService.addProjectUsers(projectId, userIds);
+        log.info(" companyId{}, projectID: {}, userIds: {}", companyId, projectId, userIds);
+        projectService.addProjectUsers(companyId, projectId, userIds);
         return ResponseEntity.ok("success");
     }
 }
