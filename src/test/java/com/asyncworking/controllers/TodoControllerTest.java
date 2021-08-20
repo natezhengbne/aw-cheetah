@@ -49,7 +49,7 @@ class TodoControllerTest {
                 .projectId(1L)
                 .todoListTitle("test_todo_list")
                 .build();
-        when(todoService.createTodoList(todoListDto))
+        when(todoService.createTodoList(1L, 1L, todoListDto))
                 .thenReturn(1L);
         mockMvc.perform(post("/companies/1/projects/1/todolists")
                 .content(objectMapper.writeValueAsString(todoListDto))

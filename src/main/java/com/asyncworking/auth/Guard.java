@@ -4,7 +4,6 @@ import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -81,17 +80,5 @@ public class Guard {
             }
         }
         return false;
-    }
-
-    //Only for temporary use, will be deleted after APIs updating.
-    public boolean checkProjectAccess(Authentication authentication, Long projectId) {
-        if (!ifNotAnonymousAuthentication(authentication)) {
-            return false;
-        }
-        Set<String> roleNames = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-        return ifUserBelongsToProject(authentication, projectId)
-                || roleNames.contains(COMPANY_MANAGER.value());
     }
 }

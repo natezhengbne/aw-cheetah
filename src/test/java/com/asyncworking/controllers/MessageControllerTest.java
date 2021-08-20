@@ -66,7 +66,7 @@ public class MessageControllerTest {
                 .docURL("https:www.adc.com")
                 .build();
 
-        when(messageService.createMessage(messagePostDto)).thenReturn(mockMessageGetDto);
+        when(messageService.createMessage(1L, 1L, messagePostDto)).thenReturn(mockMessageGetDto);
         mockMvc.perform(post("/companies/1/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -130,7 +130,7 @@ public class MessageControllerTest {
                 .originNotes("<p>list rich editor</p>")
                 .docURL("https:www.adc.com")
                 .build();
-        when(messageService.createMessage(messagePostDto))
+        when(messageService.createMessage(1L, 1L, messagePostDto))
                 .thenThrow(new ProjectNotFoundException("this project not exist"));
         mockMvc.perform(post("/companies/1/projects/1/messages")
                 .content(objectMapper.writeValueAsString(messagePostDto))
