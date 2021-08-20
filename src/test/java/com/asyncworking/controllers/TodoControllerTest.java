@@ -9,11 +9,9 @@ import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.TodoItem;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,14 +77,12 @@ class TodoControllerTest extends ControllerHelper{
     }
 
     @Test
-    @Rollback
     public void todoItemCreateSuccess() throws Exception {
         TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
                 .todolistId(1L)
                 .notes("test1")
                 .description("test des1")
                 .createdUserId(1L)
-                .dueDate(OffsetDateTime.now())
                 .build();
         when(todoService.createTodoItem(1L, 1L, todoItemPostDto))
                 .thenReturn(1L);

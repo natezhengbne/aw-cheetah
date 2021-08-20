@@ -1,25 +1,28 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.auth.AuthPermissionEvaluator;
-import com.asyncworking.config.SpringSecurityWebAuxTestConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.UserService;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.net.URI;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTest extends ControllerHelper{
+
+    @MockBean
+    private AuthPermissionEvaluator authPermissionEvaluator;
 
     @Test
     public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception {
@@ -50,7 +53,6 @@ class UserControllerTest extends ControllerHelper{
     public void shouldReturnErrorIfEmailExists() throws Exception {
         String email = "a@gmail.com";
         when(userService.ifEmailExists(email)).thenReturn(true);
-
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/signup")
                         .param("email", email)
@@ -100,7 +102,6 @@ class UserControllerTest extends ControllerHelper{
         String name = "user1";
         String email = "user1@gmail.com";
 
-        when(authPermissionEvaluator.hasPermission(any(), any(), any())).thenReturn(true);
         mockMvc.perform(get("/invitations/companies")
                 .param("companyId", String.valueOf(companyId))
                 .param("title", title)

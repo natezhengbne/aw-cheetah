@@ -20,7 +20,6 @@ import java.util.List;
 public class CompanyController {
 
     private final CompanyService companyService;
-    private final ProjectService projectService;
 
     @PostMapping
     public ResponseEntity createCompany(@Valid @RequestBody CompanyModificationDto companyModificationDto) {

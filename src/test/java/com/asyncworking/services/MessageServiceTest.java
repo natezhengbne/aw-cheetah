@@ -29,6 +29,7 @@ import java.util.Optional;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -362,7 +363,7 @@ public class MessageServiceTest {
 
     @Test
     public void shouldThrowMessageNotFoundExceptionWhenGivenIdNotExists() {
-        when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
+        lenient().when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
         assertThrows(MessageNotFoundException.class, () -> messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L));
     }
 

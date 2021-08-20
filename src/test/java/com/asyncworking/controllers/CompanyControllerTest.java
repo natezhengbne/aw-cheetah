@@ -8,11 +8,13 @@ import com.asyncworking.services.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -20,20 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@AutoConfigureMockMvc(addFilters = false)
-//@SpringBootTest
-//@ActiveProfiles("test")
-
 public class CompanyControllerTest extends ControllerHelper {
-
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
-    private CompanyService companyService;
-    @MockBean
-    private ProjectService projectService;
 
     @Test
     public void testCompanyCreateSuccess() throws Exception {
@@ -128,9 +117,9 @@ public class CompanyControllerTest extends ControllerHelper {
         CompanyNotFoundException error = new CompanyNotFoundException("Can not found company by id: 1");
         when(companyService.findCompanyById(1L)).thenThrow(error);
 
-        String errorMsg = mockMvc.perform(get("/companies/1"))
+        String errorMsg = Objects.requireNonNull(mockMvc.perform(get("/companies/1"))
                 .andExpect(status().isNotFound())
-                .andReturn().getResolvedException().getMessage();
+                .andReturn().getResolvedException()).getMessage();
 
         assertEquals("Can not found company by id: 1", errorMsg);
 
@@ -166,9 +155,9 @@ public class CompanyControllerTest extends ControllerHelper {
         EmployeeNotFoundException error = new EmployeeNotFoundException("Can not found employee by company id: 1");
         when(companyService.findAllEmployeeByCompanyId(1L)).thenThrow(error);
 
-        String errorMsg = mockMvc.perform(get("/companies/1/employees"))
+        String errorMsg = Objects.requireNonNull(mockMvc.perform(get("/companies/1/employees"))
                 .andExpect(status().isNotFound())
-                .andReturn().getResolvedException().getMessage();
+                .andReturn().getResolvedException()).getMessage();
 
         assertEquals("Can not found employee by company id: 1", errorMsg);
     }

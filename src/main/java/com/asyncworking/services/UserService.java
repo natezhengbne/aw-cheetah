@@ -45,7 +45,6 @@ public class UserService {
     private final FrontEndUrlConfig frontEndUrlConfig;
     private final EmailService emailService;
 
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
@@ -94,7 +93,7 @@ public class UserService {
                 .claim("authorities", authorities)
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
                 .compact();
     }
 
@@ -162,14 +161,13 @@ public class UserService {
         Claims body = jws.getBody();
         Long companyId = (long) Double.parseDouble(body.get("companyId").toString());
         String companyName = getCompanyInfo(companyId).getName();
-        ExternalEmployeeDto externalEmployeeDto = ExternalEmployeeDto.builder()
+        return ExternalEmployeeDto.builder()
                 .companyId(companyId)
                 .email(body.get("email").toString())
                 .name(body.get("name").toString())
                 .title(body.get("title").toString())
                 .companyName(companyName)
                 .build();
-        return externalEmployeeDto;
     }
 
     @Transactional
