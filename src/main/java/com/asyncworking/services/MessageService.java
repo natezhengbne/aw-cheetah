@@ -59,7 +59,9 @@ public class MessageService {
     }
 
     public void verifyMessagePostDto(Long companyId, Long projectId, MessagePostDto messagePostDto) {
-       if (projectRepository.findById(projectId).get().getCompanyId() != companyId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() ->
+                new ProjectNotFoundException("There is no project: " + projectId));
+       if (project.getCompanyId() != companyId) {
            throw new ProjectNotFoundException("There is no project: " + projectId + "in this company: " + companyId);
        }
         if (!userRepository.existsById(messagePostDto.getPosterUserId())) {
