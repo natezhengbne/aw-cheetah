@@ -6,9 +6,7 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Getter
-@Setter
-@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "todo_item")

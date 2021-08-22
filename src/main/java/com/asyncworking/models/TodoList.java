@@ -7,8 +7,7 @@ import java.util.List;
 
 @Builder
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "todo_list")

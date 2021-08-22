@@ -7,6 +7,7 @@ import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
@@ -48,6 +49,9 @@ public class UserServiceTest {
     private EmployeeRepository employeeRepository;
 
     @Mock
+    private EmailSendRepository emailSendRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -72,6 +76,7 @@ public class UserServiceTest {
                 userRepository,
                 companyRepository,
                 employeeRepository,
+                emailSendRepository,
                 jwtService,
                 userMapper,
                 frontEndUrlConfig,

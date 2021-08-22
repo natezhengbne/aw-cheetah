@@ -38,9 +38,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "is_email_sent")
-    private Boolean isEmailSent;
-
     @Column(name = "created_time", nullable = false)
     private OffsetDateTime createdTime;
 
@@ -50,6 +47,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity",
             cascade = CascadeType.ALL)
     private Set<Employee> employees;
+
+    @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
+    private EmailSend emailSend;
 
     public void addEmployee(Employee employee) {
         employees.add(employee);

@@ -7,6 +7,7 @@ import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
@@ -38,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailSendRepository emailSendRepository;
 
     private final JwtService jwtService;
 
@@ -215,7 +217,7 @@ public class UserService {
 
     @Transactional
     public void updateEmailSent(String email) {
-        if (userRepository.updateVerificationEmailSent(email) != 1) {
+        if (emailSendRepository.updateVerificationEmailSent(email) < 1) {
             throw new UserNotFoundException("Cannot find user with email: " + email);
         }
     }

@@ -29,6 +29,11 @@ public class EmailService {
         message.put("userName", userEntity.getName());
         message.put("email", userEntity.getEmail());
         message.put("verificationLink", verifyLink);
+        message.put("templateType", "Verification");
+        message.put("templateS3Bucket", "aw-email-template");
+        message.put("templateS3Key", "verification_email_template.txt");
+
+//        message.put("type", String type);
         // 1.Invite 2. Signup 3. Forget Password
         String messageStr = "";
         try {

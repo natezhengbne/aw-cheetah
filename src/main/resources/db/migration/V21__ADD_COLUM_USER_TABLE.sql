@@ -1,1 +1,0 @@
-ALTER TABLE "user_info" ADD "is_email_sent" BOOLEAN;
