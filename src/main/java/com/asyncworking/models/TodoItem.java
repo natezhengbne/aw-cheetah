@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "todo_item")

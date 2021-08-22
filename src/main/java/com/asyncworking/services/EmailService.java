@@ -24,17 +24,16 @@ public class EmailService {
     @Value("${cloud.aws.sqs.outgoing-queue.url}")
     private String endPoint;
 
-    public void sendMessageToSQS(UserEntity userEntity, String verifyLink) {
+    public void sendMessageToSQS(UserEntity userEntity, String verifyLink, String templateType) {
         Map<String, String> message = new HashMap<>();
-        message.put("userName", userEntity.getName());
         message.put("email", userEntity.getEmail());
+        message.put("userName", userEntity.getName());
         message.put("verificationLink", verifyLink);
-        message.put("templateType", "Verification");
-        message.put("templateS3Bucket", "aw-email-template");
+        message.put("templateType", templateType);
+        message.put("templateS3Bucket", "aw-email-template-jh");
         message.put("templateS3Key", "verification_email_template.txt");
 
-//        message.put("type", String type);
-        // 1.Invite 2. Signup 3. Forget Password
+
         String messageStr = "";
         try {
             messageStr = objectMapper.writeValueAsString(message);

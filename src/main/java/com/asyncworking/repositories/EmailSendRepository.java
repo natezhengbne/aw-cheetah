@@ -13,6 +13,12 @@ import javax.validation.constraints.NotNull;
 @Repository
 @EnableJpaRepositories
 public interface EmailSendRepository extends JpaRepository<Project, Long>{
+
+    @Modifying
+    @Query(nativeQuery = true, value = "INSERT INTO email_send s (user_id) VALUES(" +
+            "SELECT u.id FROM UserEntity u WHERE u.email =:email)")
+    void insertUserInfo(@Param("email") String email);
+
     @Modifying
     @Query(value = "update EmailSend e set e.isSent = true where UserEntity.email =:email", nativeQuery = true)
     int updateVerificationEmailSent(@NotNull @Param("email") String email);

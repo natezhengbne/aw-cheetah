@@ -55,9 +55,11 @@ public class UserService {
     }
 
     public void createUserAndSendMessageToSQS(AccountDto accountDto) {
+//        emailSendRepository.insertUserInfo(accountDto.getEmail());
+
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(userEntity);
-        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()));
+        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()), "Verification");
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -103,7 +105,7 @@ public class UserService {
     public void resendMessageToSQS(String email) {
         emailService.sendMessageToSQS(
                 findUnVerifiedUserByEmail(email),
-                generateVerifyLink(email));
+                generateVerifyLink(email), "Verfication");
     }
 
     private UserEntity findUnVerifiedUserByEmail(String email) {
@@ -217,6 +219,8 @@ public class UserService {
 
     @Transactional
     public void updateEmailSent(String email) {
+        emailSendRepository.insertUserInfo(email);
+
         if (emailSendRepository.updateVerificationEmailSent(email) < 1) {
             throw new UserNotFoundException("Cannot find user with email: " + email);
         }
