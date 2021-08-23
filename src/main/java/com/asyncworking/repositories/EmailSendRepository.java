@@ -1,6 +1,6 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.models.Project;
+import com.asyncworking.models.EmailSend;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,14 +12,9 @@ import javax.validation.constraints.NotNull;
 
 @Repository
 @EnableJpaRepositories
-public interface EmailSendRepository extends JpaRepository<Project, Long>{
+public interface EmailSendRepository extends JpaRepository<EmailSend, Long>{
 
     @Modifying
-    @Query(nativeQuery = true, value = "INSERT INTO email_send s (user_id) VALUES(" +
-            "SELECT u.id FROM UserEntity u WHERE u.email =:email)")
-    void insertUserInfo(@Param("email") String email);
-
-    @Modifying
-    @Query(value = "update EmailSend e set e.isSent = true where UserEntity.email =:email", nativeQuery = true)
+    @Query(value = "UPDATE EmailSend e SET e.sendStatus = TRUE WHERE e.receiver =:email AND e.sendStatus = FALSE")
     int updateVerificationEmailSent(@NotNull @Param("email") String email);
 }

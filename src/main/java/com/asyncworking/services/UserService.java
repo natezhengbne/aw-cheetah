@@ -19,13 +19,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,11 +53,10 @@ public class UserService {
     }
 
     public void createUserAndSendMessageToSQS(AccountDto accountDto) {
-//        emailSendRepository.insertUserInfo(accountDto.getEmail());
-
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
+        emailService.createEmailSendingRecord(EmailType.Verification, accountDto.getEmail(), userEntity);
         userRepository.save(userEntity);
-        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()), "Verification");
+        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()), EmailType.Verification);
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -102,10 +99,10 @@ public class UserService {
     }
 
 
-    public void resendMessageToSQS(String email) {
+    public void resendMessageToSQS(String email, EmailType emailType) {
         emailService.sendMessageToSQS(
                 findUnVerifiedUserByEmail(email),
-                generateVerifyLink(email), "Verfication");
+                generateVerifyLink(email), emailType);
     }
 
     private UserEntity findUnVerifiedUserByEmail(String email) {
@@ -217,10 +214,14 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
     }
 
+//    @Transactional
+//    public void updateEmailSent(String email, String emailType) {
+//        if (emailSendRepository.updateVerificationEmailSent(email, emailType) < 1) {
+//            throw new UserNotFoundException("Cannot find user with email: " + email);
+//        }
+//    }
     @Transactional
     public void updateEmailSent(String email) {
-        emailSendRepository.insertUserInfo(email);
-
         if (emailSendRepository.updateVerificationEmailSent(email) < 1) {
             throw new UserNotFoundException("Cannot find user with email: " + email);
         }

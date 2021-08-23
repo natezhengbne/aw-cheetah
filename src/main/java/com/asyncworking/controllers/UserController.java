@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
+import com.asyncworking.models.EmailType;
 import com.asyncworking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,7 @@ public class UserController {
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
-        userService.resendMessageToSQS(userInfoDto.getEmail());
+        userService.resendMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
         return ResponseEntity.ok("success");
     }
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -48,8 +49,8 @@ public class UserEntity {
             cascade = CascadeType.ALL)
     private Set<Employee> employees;
 
-    @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
-    private EmailSend emailSend;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity", cascade = CascadeType.ALL)
+    private List<EmailSend> emailSends;
 
     public void addEmployee(Employee employee) {
         employees.add(employee);
