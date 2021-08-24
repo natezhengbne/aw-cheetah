@@ -9,12 +9,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
 
 @Repository
 @EnableJpaRepositories
 public interface EmailSendRepository extends JpaRepository<EmailSend, Long>{
 
     @Modifying
-    @Query(value = "UPDATE EmailSend e SET e.sendStatus = TRUE WHERE e.receiver =:email AND e.sendStatus = FALSE")
-    int updateVerificationEmailSent(@NotNull @Param("email") String email);
+    @Query(value = "UPDATE EmailSend e SET e.sendStatus = TRUE, e.receiveTime =:receiveTime " +
+            "WHERE e.receiver =:email AND e.sendStatus = FALSE")
+    int updateVerificationEmailSent(@NotNull @Param("email") String email,
+                                    @NotNull @Param("receiveTime") OffsetDateTime receiveTime
+    );
 }

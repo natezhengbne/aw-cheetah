@@ -1,9 +1,7 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.models.EmailSend;
 import com.asyncworking.models.EmailType;
-import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;

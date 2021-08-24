@@ -33,7 +33,7 @@ services:
     image: localstack/localstack
     network_mode: bridge
     ports:
-      - "127.0.0.1:4566:4566"
+      - '4566:4566'
     environment:
       - DEFAULT_REGION=ap-southeast-2
       - NODE_TLS_REJECT_UNAUTHORIZED=0

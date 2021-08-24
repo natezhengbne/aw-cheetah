@@ -214,15 +214,9 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
     }
 
-//    @Transactional
-//    public void updateEmailSent(String email, String emailType) {
-//        if (emailSendRepository.updateVerificationEmailSent(email, emailType) < 1) {
-//            throw new UserNotFoundException("Cannot find user with email: " + email);
-//        }
-//    }
     @Transactional
     public void updateEmailSent(String email) {
-        if (emailSendRepository.updateVerificationEmailSent(email) < 1) {
+        if (emailSendRepository.updateVerificationEmailSent(email, OffsetDateTime.now(UTC)) < 1) {
             throw new UserNotFoundException("Cannot find user with email: " + email);
         }
     }

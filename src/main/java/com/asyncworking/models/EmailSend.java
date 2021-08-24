@@ -37,4 +37,7 @@ public class EmailSend {
 
     @Column(name = "send_time", nullable = false)
     private OffsetDateTime sendTime;
+
+    @Column(name = "receive_time")
+    private OffsetDateTime receiveTime;
 }
