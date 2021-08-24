@@ -1,5 +1,6 @@
 package com.asyncworking.models;
 
+import com.asyncworking.constants.EmailType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "email_send")
-public class EmailSend {
+public class EmailSendRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Type(type = "long")

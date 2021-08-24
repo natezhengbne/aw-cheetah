@@ -1,4 +1,4 @@
-package com.asyncworking.models;
+package com.asyncworking.constants;
 
 public enum EmailType {
     Verification

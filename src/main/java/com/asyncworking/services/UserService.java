@@ -1,6 +1,8 @@
 package com.asyncworking.services;
 
 import com.asyncworking.config.FrontEndUrlConfig;
+import com.asyncworking.constants.EmailType;
+import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
@@ -17,6 +19,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -54,9 +57,10 @@ public class UserService {
 
     public void createUserAndSendMessageToSQS(AccountDto accountDto) {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
-        emailService.createEmailSendingRecord(EmailType.Verification, accountDto.getEmail(), userEntity);
+        emailService.saveEmailSendingRecord(userEntity, EmailType.Verification, accountDto.getEmail());
         userRepository.save(userEntity);
-        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()), EmailType.Verification);
+        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()),
+                EmailType.Verification, userEntity.getEmail());
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -98,11 +102,10 @@ public class UserService {
                 .compact();
     }
 
-
     public void resendMessageToSQS(String email, EmailType emailType) {
-        emailService.sendMessageToSQS(
-                findUnVerifiedUserByEmail(email),
-                generateVerifyLink(email), emailType);
+        UserEntity emailSender = findUnVerifiedUserByEmail(email);
+        emailService.saveEmailSendingRecord(emailSender, EmailType.Verification, email);
+        emailService.sendMessageToSQS(emailSender, generateVerifyLink(email), emailType, emailSender.getEmail());
     }
 
     private UserEntity findUnVerifiedUserByEmail(String email) {

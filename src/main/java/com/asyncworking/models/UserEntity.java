@@ -1,5 +1,6 @@
 package com.asyncworking.models;
 
+import com.asyncworking.constants.Status;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,7 +51,7 @@ public class UserEntity {
     private Set<Employee> employees;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity", cascade = CascadeType.ALL)
-    private List<EmailSend> emailSends;
+    private List<EmailSendRecord> emailSendRecords;
 
     public void addEmployee(Employee employee) {
         employees.add(employee);

@@ -1,7 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
-import com.asyncworking.models.EmailType;
+import com.asyncworking.constants.EmailType;
 import com.asyncworking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URISyntaxException;
 
 @Slf4j
 @RestController

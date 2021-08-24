@@ -37,5 +37,8 @@ jwt:
 
 url: https://www.asyncworking.com
 
+localstack:
+  host: localhost
+
 sqs:
   enable: false
