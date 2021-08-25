@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ControllerHelper {
 
+    @MockBean
     protected ObjectMapper objectMapper;
 
     protected ControllerExceptionHandler controllerExceptionHandler;
@@ -47,6 +48,7 @@ public class ControllerHelper {
     @Mock
     protected UserService userService;
 
+    @MockBean
     protected MockMvc mockMvc;
 
     @BeforeEach

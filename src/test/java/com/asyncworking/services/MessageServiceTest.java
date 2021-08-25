@@ -265,7 +265,7 @@ public class MessageServiceTest {
 
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenGivenMessagePostDtoWhichProjectIdIsNotExist() {
-        when(userRepository.existsById(1L)).thenReturn(true);
+        lenient().when(userRepository.existsById(1L)).thenReturn(true);
         when(projectRepository.findById(1L))
                 .thenThrow(new ProjectNotFoundException("Cannot find project by id:1"));
 
@@ -276,7 +276,7 @@ public class MessageServiceTest {
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenGivenProjectIdNotBelongToTheGivenCompanyId() {
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
-        when(userRepository.existsById(1L)).thenReturn(true);
+        lenient().when(userRepository.existsById(1L)).thenReturn(true);
         assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(7777L,
                 messagePostDto.getProjectId(), messagePostDto));
     }
