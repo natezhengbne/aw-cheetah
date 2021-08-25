@@ -1,24 +1,22 @@
 package com.asyncworking.controllers;
 
-
-import com.asyncworking.auth.AuthPermissionEvaluator;
 import com.asyncworking.services.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@Slf4j
 public class ControllerHelper {
 
-    @MockBean
     protected ObjectMapper objectMapper;
 
     protected ControllerExceptionHandler controllerExceptionHandler;
@@ -48,7 +46,6 @@ public class ControllerHelper {
     @Mock
     protected UserService userService;
 
-    @MockBean
     protected MockMvc mockMvc;
 
     @BeforeEach
@@ -68,6 +65,6 @@ public class ControllerHelper {
                 projectController,
                 todoController,
                 userController).build();
-    }
 
+    }
 }

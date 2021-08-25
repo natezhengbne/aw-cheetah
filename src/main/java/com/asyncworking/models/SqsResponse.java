@@ -8,6 +8,6 @@ import java.time.OffsetDateTime;
 public class SqsResponse {
     private String emailType;
     private String email;
-    private OffsetDateTime timeReceived;
+    private String timeReceived;
     private String sesResultId;
 }

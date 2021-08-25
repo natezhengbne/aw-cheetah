@@ -6,16 +6,16 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=uatawcheetah
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=awcheetah
     username: postgres
     password: admin
   flyway:
     enabled: true
-    schemas: uatawcheetah
+    schemas: awcheetah
   jpa:
     properties:
       hibernate:
-        default_schema: uatawcheetah
+        default_schema: awcheetah
         jdbc:
           time_zone: UTC
     show-sql: true
@@ -27,7 +27,7 @@ logging:
     com.asyncworking: debug
 
 #production env
-url: https://uat.asyncworking.com
+url: https://www.asyncworking.com
 
 #local env
 #url: http://localhost:3000
@@ -37,28 +37,6 @@ jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
   secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
 
-#cloud:
-#  aws:
-#    region:
-#      static: ap-southeast-2
-#      auto: false
-#    sqs:
-#      incoming-queue:
-#        name: AWRECEIVEQ
-#        url: http://localhost:4566/000000000000/AWRECEIVEQ
-#      outgoing-queue:
-#        name: AWVerificationEmailBasicPP
-#        url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
-#    stack:
-#      auto: false
-#    credentials:
-#      accesskey: test
-#      secretkey: test
-#    S3:
-#      templateS3Bucket: aw-email-template-jh
-#      templateS3Key: verification_email_template.txt
-#    endpoint: http://localhost:4566
-
 cloud:
   aws:
     region:
@@ -66,21 +44,21 @@ cloud:
       auto: false
     sqs:
       incoming-queue:
-        name: Outcome
-        url: https://sqs.ap-southeast-2.amazonaws.com/780378238023/Outcome
+        name: AWRECEIVEQ
+        url: http://localhost:4566/000000000000/AWRECEIVEQ
       outgoing-queue:
-        name: aw_email_service
-        url: https://sqs.ap-southeast-2.amazonaws.com/780378238023/aw_email_service
+        name: AWVerificationEmailBasicPP
+        url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
     stack:
       auto: false
     credentials:
-      access-key: AKIA3LMRK5RDTNBHPGIS
-      secret-key: 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
+      accesskey: test
+      secretkey: test
     S3:
-      templateS3Bucket: aw-email-template-jh
+      templateS3Bucket: aw-email-template
       templateS3Key: verification_email_template.txt
+    endpoint: http://localhost:4566
 
-    endpoint: https://sqs.ap-southeast-2.amazonaws.com
 
 sqs:
   enable: true
