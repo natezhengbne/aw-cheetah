@@ -39,25 +39,6 @@ jwt:
 
 
 
-#cloud:
-#  aws:
-#    region:
-#      static: ap-southeast-2
-#      auto: false
-#    sqs:
-#      incoming-queue:
-#        name: AW_RECEIVE_Q
-#        url: https://sqs.ap-southeast-2.amazonaws.com/245866473499/AW_RECEIVE_Q
-#      outgoing-queue:
-#        name: AWVerificationEmailBasicPP
-#        url: https://sqs.ap-southeast-2.amazonaws.com/245866473499/AWVerificationEmailBasicPP
-#    stack:
-#      auto: false
-#    credentials:
-#      access-key: test
-#      secret-key: test
-#    endpoint: http://localhost:4566
-
 cloud:
   aws:
     region:
@@ -65,17 +46,44 @@ cloud:
       auto: false
     sqs:
       incoming-queue:
-        name: Outcome
-        url: https://sqs.ap-southeast-2.amazonaws.com/780378238023/Outcome
+        name: AWRECEIVEQ
+        url: http://localhost:4566/000000000000/AWRECEIVEQ
       outgoing-queue:
-        name: aw_email_service
-        url: https://sqs.ap-southeast-2.amazonaws.com/780378238023/aw_email_service
-    stack:
-      auto: false
-    credentials:
-      access-key: AKIA3LMRK5RDTNBHPGIS
-      secret-key: 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
-    endpoint: https://sqs.ap-southeast-2.amazonaws.com
+        name: AWVerificationEmailBasicPP
+        url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
+      stack:
+        auto: false
+      credentials:
+        accesskey: test
+        secretkey: test
+      endpoint: http://localhost:4566/
+    S3:
+      templateS3Bucket: aw-email-template-jh
+      templateS3Key: verification_email_template.txt
+    endpoint: http://localhost:4566
+
+#cloud:
+#  aws:
+#    region:
+#      static: ap-southeast-2
+#      auto: false
+#    sqs:
+#      incoming-queue:
+#        name: Outcome
+#        url: https://sqs.ap-southeast-2.amazonaws.com/780378238023/Outcome
+#      outgoing-queue:
+#        name: aw_email_service
+#        url: https://sqs.ap-southeast-2.amazonaws.com/780378238023/aw_email_service
+#    stack:
+#      auto: false
+#    credentials:
+#      access-key: AKIA3LMRK5RDTNBHPGIS
+#      secret-key: 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
+#    S3:
+#      templateS3Bucket: aw-email-template-jh
+#      templateS3Key: verification_email_template.txt
+#
+#    endpoint: https://sqs.ap-southeast-2.amazonaws.com
 
 sqs:
   enable: true

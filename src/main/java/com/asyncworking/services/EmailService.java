@@ -27,6 +27,11 @@ import static java.time.ZoneOffset.UTC;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+    @Value("${cloud.aws.S3.templateS3Bucket}")
+    private String templateS3Bucket;
+
+    @Value("${cloud.aws.S3.templateS3Key}")
+    private String templateS3Key;
 
     private final QueueMessagingTemplate queueMessagingTemplate;
     private final ObjectMapper objectMapper;
@@ -43,8 +48,8 @@ public class EmailService {
         message.put("userName", userEntity.getName());
         message.put("verificationLink", verifyLink);
         message.put("templateType", templateType.toString());
-        message.put("templateS3Bucket", "aw-email-template-jh");
-        message.put("templateS3Key", "verification_email_template.txt");
+        message.put("templateS3Bucket", templateS3Bucket);
+        message.put("templateS3Key", templateS3Key);
 
         String messageStr = "";
         try {

@@ -24,11 +24,15 @@ cloud:
       outgoing-queue:
         name: AWVerificationEmailBasicPP
         url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
-    stack:
-      auto: false
-    credentials:
-      accesskey: test
-      secretkey: test
+      stack:
+        auto: false
+      credentials:
+        accesskey: test
+        secretkey: test
+      endpoint: http://localhost:4566/
+    S3:
+      templateS3Bucket: aw-email-template-jh
+      templateS3Key: verification_email_template.txt
     endpoint: http://localhost:4566
 
 jwt:
