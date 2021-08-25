@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 @Component
 public class ProjectMapper {
 
-    public Project mapProjectDtoToProject(ProjectDto projectDto) {
+    public Project mapProjectDtoToProject(Long companyId, ProjectDto projectDto) {
         return Project.builder()
                 .name(projectDto.getName())
                 .leaderId(projectDto.getOwnerId())
-                .companyId(projectDto.getCompanyId())
+                .companyId(companyId)
                 .projectUsers(new HashSet<>())
                 .isDeleted(false)
                 .isPrivate(false)

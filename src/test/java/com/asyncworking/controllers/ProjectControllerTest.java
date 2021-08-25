@@ -1,10 +1,15 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.config.SpringSecurityWebAuxTestConfig;
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
@@ -83,6 +88,7 @@ public class ProjectControllerTest extends ControllerHelper{
     }
 
     @Test
+    @WithUserDetails("project manager")
     public void shouldReturnOkIfUpdateProjectInfoSuccessful() throws Exception {
         ProjectModificationDto projectModificationDto = ProjectModificationDto.builder()
                 .projectId(1L)

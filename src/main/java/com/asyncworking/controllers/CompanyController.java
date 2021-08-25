@@ -2,7 +2,6 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
 import com.asyncworking.services.CompanyService;
-import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +40,6 @@ public class CompanyController {
     }
 
     @PutMapping("/{companyId}/profile")
-//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity updateCompanyProfile(@PathVariable("companyId") Long companyId,
                                                @Valid @RequestBody CompanyModificationDto companyModificationDto) {

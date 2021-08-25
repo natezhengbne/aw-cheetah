@@ -85,6 +85,7 @@ public class MessageServiceTest {
                 messageCategoryRepository
         );
         mockProject = Project.builder()
+                .companyId(1L)
                 .id(1L)
                 .name("project1")
                 .build();
@@ -201,14 +202,14 @@ public class MessageServiceTest {
                 .subscribersIds("1L,2L")
                 .build();
 
-        when(companyRepository.existsById(1L)).thenReturn(true);
         when(userRepository.existsById(1L)).thenReturn(true);
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
         when(messageCategoryRepository.findById(1L)).thenReturn(Optional.of(mockFirstMessageCategory));
 
-        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto));
+        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto.getCompanyId(), messagePostDto.getProjectId(),
+                messagePostDto));
     }
 
     @Test
@@ -253,30 +254,39 @@ public class MessageServiceTest {
                 .docURL("https:www.adc.com")
                 .build();
 
-        when(companyRepository.existsById(1L)).thenReturn(true);
         when(userRepository.existsById(1L)).thenReturn(true);
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
 
-        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto1));
+        assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto1.getCompanyId(), messagePostDto1.getProjectId(),
+                messagePostDto1));
     }
 
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenGivenMessagePostDtoWhichProjectIdIsNotExist() {
-        when(companyRepository.existsById(1L)).thenReturn(true);
         when(userRepository.existsById(1L)).thenReturn(true);
         when(projectRepository.findById(1L))
                 .thenThrow(new ProjectNotFoundException("Cannot find project by id:1"));
 
-        assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(messagePostDto));
+        assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(messagePostDto.getCompanyId(),
+                messagePostDto.getProjectId(), messagePostDto));
+    }
+
+    @Test
+    public void shouldThrowProjectNotFoundExceptionWhenGivenProjectIdNotBelongToTheGivenCompanyId() {
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
+        when(userRepository.existsById(1L)).thenReturn(true);
+        assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(7777L,
+                messagePostDto.getProjectId(), messagePostDto));
     }
 
     @Test
     public void shouldThrowUserNotFoundExceptionWhenGivenMessagePostDtoWhichUserIdIsNotExist() {
-        when(companyRepository.existsById(1L)).thenReturn(true);
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
         when(userRepository.existsById(1L)).thenReturn(false);
-        assertThrows(UserNotFoundException.class, () -> messageService.createMessage(messagePostDto));
+        assertThrows(UserNotFoundException.class, () -> messageService.createMessage(messagePostDto.getCompanyId(),
+                messagePostDto.getProjectId(), messagePostDto));
     }
 
     @Test

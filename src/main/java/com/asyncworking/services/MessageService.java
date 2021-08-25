@@ -36,8 +36,8 @@ public class MessageService {
     private final MessageCategoryRepository messageCategoryRepository;
 
     @Transactional
-    public MessageGetDto createMessage(MessagePostDto messagePostDto) {
-        verifyMessagePostDto(messagePostDto);
+    public MessageGetDto createMessage(Long companyId, Long projectId, MessagePostDto messagePostDto) {
+        verifyMessagePostDto(companyId, projectId, messagePostDto);
         if (messagePostDto.getMessageCategoryId() != null) {
             Message message = messageMapper.toEntity(messagePostDto,
                     fetchProjectById(messagePostDto.getProjectId()),
@@ -58,10 +58,12 @@ public class MessageService {
         }
     }
 
-    public void verifyMessagePostDto(MessagePostDto messagePostDto) {
-        if (!companyRepository.existsById(messagePostDto.getCompanyId())) {
-            throw new CompanyNotFoundException("Cannot find company by id:" + messagePostDto.getCompanyId());
-        }
+    public void verifyMessagePostDto(Long companyId, Long projectId, MessagePostDto messagePostDto) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() ->
+                new ProjectNotFoundException("There is no project: " + projectId));
+       if (project.getCompanyId() != companyId) {
+           throw new ProjectNotFoundException("There is no project: " + projectId + "in this company: " + companyId);
+       }
         if (!userRepository.existsById(messagePostDto.getPosterUserId())) {
             throw new UserNotFoundException("Cannot find user by id: " + messagePostDto.getPosterUserId());
         }
