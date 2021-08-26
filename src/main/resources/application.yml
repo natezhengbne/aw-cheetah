@@ -44,8 +44,8 @@ cloud:
       auto: false
     sqs:
       incoming-queue:
-        name: AWRECEIVEQ
-        url: http://localhost:4566/000000000000/AWRECEIVEQ
+        name: AW_RECEIVE_Q
+        url: http://localhost:4566/000000000000/AW_RECEIVE_Q
       outgoing-queue:
         name: AWVerificationEmailBasicPP
         url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
