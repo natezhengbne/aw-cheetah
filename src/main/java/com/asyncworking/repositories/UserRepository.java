@@ -68,13 +68,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query(nativeQuery = true,
             value = "SELECT u.id, u.name, u.email, employeeinfo.title FROM ( " +
-                    "SELECT * FROM uatawcheetah.company_user cu " +
+                    "SELECT * FROM awcheetah.company_user cu " +
                     "WHERE cu.user_id NOT IN ( " +
                     "SELECT projectu.user_id FROM ( " +
-                    "SELECT * FROM uatawcheetah.project_user pu " +
+                    "SELECT * FROM awcheetah.project_user pu " +
                     "WHERE pu.project_id = :projectId) AS projectu) " +
                     "AND cu.company_id = :companyId) AS employeeinfo " +
-                    "LEFT JOIN uatawcheetah.user_info u ON u.id = employeeinfo.user_id AND u.status = 'ACTIVATED' " +
+                    "LEFT JOIN awcheetah.user_info u ON u.id = employeeinfo.user_id AND u.status = 'ACTIVATED' " +
                     "ORDER BY u.name;")
     List<IAvailableEmployeeInfo> findAvailableEmployeesByCompanyAndProjectId(@Param("companyId") Long companyId,
                                                                              @Param("projectId") Long projectId);
