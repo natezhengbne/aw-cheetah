@@ -6,10 +6,13 @@ import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +26,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CompanyControllerTest extends ControllerHelper {
+    @Mock
+    private CompanyService companyService;
+    @Mock
+    private ProjectService projectService;
+
+    private ProjectController projectController;
+    private CompanyController companyController;
+
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        companyController = new CompanyController(companyService);
+        projectController = new ProjectController(projectService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                projectController,
+                companyController
+        ).build();
+    }
 
     @Test
     public void testCompanyCreateSuccess() throws Exception {

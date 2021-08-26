@@ -217,8 +217,8 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
     }
 
-    @Transactional
-    public void updateEmailSent(String email) {
+    @Transactional(rollbackFor = UserNotFoundException.class)
+    public void updateEmailSent(String email) throws UserNotFoundException{
         if (emailSendRepository.updateVerificationEmailSent(email, OffsetDateTime.now(UTC)) < 1) {
             throw new UserNotFoundException("Cannot find user with email: " + email);
         }

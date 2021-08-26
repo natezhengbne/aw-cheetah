@@ -5,12 +5,15 @@ import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.net.URI;
 
@@ -20,9 +23,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTest extends ControllerHelper{
-
+    @Mock
+    private UserService userService;
     @MockBean
     private AuthPermissionEvaluator authPermissionEvaluator;
+
+    private UserController userController;
+
+    @BeforeEach
+    protected void setUp() {
+        super.setUp();
+        userController = new UserController(userService);
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+    }
 
     @Test
     public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception {

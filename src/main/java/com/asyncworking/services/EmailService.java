@@ -50,7 +50,7 @@ public class EmailService {
         try {
             messageStr = objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(messageStr).build());
     }

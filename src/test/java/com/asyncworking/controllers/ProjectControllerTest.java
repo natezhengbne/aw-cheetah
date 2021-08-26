@@ -3,9 +3,13 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.services.ProjectService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +19,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ProjectControllerTest extends ControllerHelper{
+    @Mock
+    private ProjectService projectService;
+    private ProjectController projectController;
+
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        projectController = new ProjectController(projectService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                projectController
+        ).build();
+    }
 
     @Test
     public void testProjectCreateSuccess() throws Exception {

@@ -7,9 +7,13 @@ import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.TodoItem;
+import com.asyncworking.services.TodoService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -21,6 +25,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class TodoControllerTest extends ControllerHelper{
+    @Mock
+    private TodoService todoService;
+    private TodoController todoController;
+
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        todoController = new TodoController(todoService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                todoController
+        ).build();
+    }
+
     @Test
     public void todoListCreateSuccess() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
