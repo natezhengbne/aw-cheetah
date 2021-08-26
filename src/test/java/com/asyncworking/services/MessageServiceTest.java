@@ -14,7 +14,10 @@ import com.asyncworking.repositories.*;
 import com.asyncworking.utility.mapper.MessageMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,10 +29,10 @@ import java.util.Optional;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class MessageServiceTest {
     @Mock
     private MessageRepository messageRepository;
@@ -46,7 +49,7 @@ public class MessageServiceTest {
     @Mock
     private MessageCategoryRepository messageCategoryRepository;
 
-    @Autowired
+    @Spy
     private MessageMapper messageMapper;
 
     private MessageService messageService;
@@ -200,7 +203,6 @@ public class MessageServiceTest {
                 .build();
 
         when(userRepository.existsById(1L)).thenReturn(true);
-        when(messageCategoryRepository.existsById(1L)).thenReturn(true);
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
@@ -263,7 +265,7 @@ public class MessageServiceTest {
 
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenGivenMessagePostDtoWhichProjectIdIsNotExist() {
-        when(userRepository.existsById(1L)).thenReturn(true);
+        lenient().when(userRepository.existsById(1L)).thenReturn(true);
         when(projectRepository.findById(1L))
                 .thenThrow(new ProjectNotFoundException("Cannot find project by id:1"));
 
@@ -274,7 +276,7 @@ public class MessageServiceTest {
     @Test
     public void shouldThrowProjectNotFoundExceptionWhenGivenProjectIdNotBelongToTheGivenCompanyId() {
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
-        when(userRepository.existsById(1L)).thenReturn(true);
+        lenient().when(userRepository.existsById(1L)).thenReturn(true);
         assertThrows(ProjectNotFoundException.class, () -> messageService.createMessage(7777L,
                 messagePostDto.getProjectId(), messagePostDto));
     }
@@ -371,7 +373,7 @@ public class MessageServiceTest {
 
     @Test
     public void shouldThrowMessageNotFoundExceptionWhenGivenIdNotExists() {
-        when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
+        lenient().when(messageRepository.findById(1L)).thenThrow(new MessageNotFoundException("cannot find message by id " + 1L));
         assertThrows(MessageNotFoundException.class, () -> messageService.findMessageByCompanyIdAndProjectIdAndId(1L, 1L, 1L));
     }
 

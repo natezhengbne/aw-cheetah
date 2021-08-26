@@ -1,7 +1,7 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.constants.Status;
 import com.asyncworking.models.*;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

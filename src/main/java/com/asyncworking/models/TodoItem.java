@@ -6,8 +6,7 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

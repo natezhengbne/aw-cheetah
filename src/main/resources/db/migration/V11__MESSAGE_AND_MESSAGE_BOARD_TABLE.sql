@@ -1,7 +1,5 @@
 CREATE SCHEMA IF not exists "awcheetah";
 
-
-
 CREATE TABLE IF NOT EXISTS "message" (
     "id" BIGSERIAL NOT NULL PRIMARY KEY,
     "company_id" BIGSERIAL NOT NULL,

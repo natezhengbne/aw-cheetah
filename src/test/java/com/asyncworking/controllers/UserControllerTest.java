@@ -1,23 +1,19 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.auth.AuthPermissionEvaluator;
-import com.asyncworking.config.SpringSecurityWebAuxTestConfig;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.net.URI;
 
@@ -26,21 +22,20 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = SpringSecurityWebAuxTestConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
-class UserControllerTest {
-
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
+class UserControllerTest extends ControllerHelper{
+    @Mock
     private UserService userService;
     @MockBean
     private AuthPermissionEvaluator authPermissionEvaluator;
 
+    private UserController userController;
+
+    @BeforeEach
+    protected void setUp() {
+        super.setUp();
+        userController = new UserController(userService);
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+    }
 
     @Test
     public void shouldReturnNonAuthoritativeInformationWhenUnverifiedLogin() throws Exception {
@@ -71,7 +66,6 @@ class UserControllerTest {
     public void shouldReturnErrorIfEmailExists() throws Exception {
         String email = "a@gmail.com";
         when(userService.ifEmailExists(email)).thenReturn(true);
-
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/signup")
                         .param("email", email)
@@ -93,9 +87,6 @@ class UserControllerTest {
 
     @Test
     public void shouldReturnBadRequestIfParamNotProvided() throws Exception {
-        String email = "a@gmail.com";
-        when(userService.ifEmailExists(email)).thenReturn(false);
-
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/signup")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -124,7 +115,6 @@ class UserControllerTest {
         String name = "user1";
         String email = "user1@gmail.com";
 
-        when(authPermissionEvaluator.hasPermission(any(), any(), any())).thenReturn(true);
         mockMvc.perform(get("/invitations/companies")
                 .param("companyId", String.valueOf(companyId))
                 .param("title", title)
@@ -260,9 +250,6 @@ class UserControllerTest {
 
     @Test
     public void shouldReturnBadRequestIfParamNotExist() throws Exception {
-        String email = "a@gmail.com";
-        when(userService.ifCompanyExits(email)).thenReturn(false);
-
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/company")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))

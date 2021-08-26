@@ -10,14 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.OffsetDateTime;
-
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertEquals;
 
-@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 class TodoItemRepositoryTest extends DBHelper {
@@ -32,7 +28,6 @@ class TodoItemRepositoryTest extends DBHelper {
     }
 
     @Test
-    @Rollback
     public void giveTodoItemRepository_whenSavedAndRetrievesTodoItem_thenOk() {
         Project savedProject = projectRepository.save(buildProject("AWProject"));
         TodoList savedTodoList = todoListRepository.save(buildTodoList(savedProject, "first"));

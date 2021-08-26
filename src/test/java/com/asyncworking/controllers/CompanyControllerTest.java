@@ -6,19 +6,18 @@ import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -26,20 +25,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc(addFilters = false)
-@SpringBootTest
-@ActiveProfiles("test")
-
-public class CompanyControllerTest {
-
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
+public class CompanyControllerTest extends ControllerHelper {
+    @Mock
     private CompanyService companyService;
-    @MockBean
+    @Mock
     private ProjectService projectService;
+
+    private ProjectController projectController;
+    private CompanyController companyController;
+
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        companyController = new CompanyController(companyService);
+        projectController = new ProjectController(projectService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                projectController,
+                companyController
+        ).build();
+    }
 
     @Test
     public void testCompanyCreateSuccess() throws Exception {
@@ -134,9 +139,9 @@ public class CompanyControllerTest {
         CompanyNotFoundException error = new CompanyNotFoundException("Can not found company by id: 1");
         when(companyService.findCompanyById(1L)).thenThrow(error);
 
-        String errorMsg = mockMvc.perform(get("/companies/1"))
+        String errorMsg = Objects.requireNonNull(mockMvc.perform(get("/companies/1"))
                 .andExpect(status().isNotFound())
-                .andReturn().getResolvedException().getMessage();
+                .andReturn().getResolvedException()).getMessage();
 
         assertEquals("Can not found company by id: 1", errorMsg);
 
@@ -172,9 +177,9 @@ public class CompanyControllerTest {
         EmployeeNotFoundException error = new EmployeeNotFoundException("Can not found employee by company id: 1");
         when(companyService.findAllEmployeeByCompanyId(1L)).thenThrow(error);
 
-        String errorMsg = mockMvc.perform(get("/companies/1/employees"))
+        String errorMsg = Objects.requireNonNull(mockMvc.perform(get("/companies/1/employees"))
                 .andExpect(status().isNotFound())
-                .andReturn().getResolvedException().getMessage();
+                .andReturn().getResolvedException()).getMessage();
 
         assertEquals("Can not found employee by company id: 1", errorMsg);
     }

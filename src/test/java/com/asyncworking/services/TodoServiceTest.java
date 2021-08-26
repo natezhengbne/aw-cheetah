@@ -20,10 +20,14 @@ import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import com.asyncworking.utility.mapper.TodoMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,12 +45,9 @@ import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Slf4j
+@ExtendWith(MockitoExtension.class)
 public class TodoServiceTest {
 
     @Mock
@@ -66,10 +67,8 @@ public class TodoServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Autowired
     private TodoMapper todoMapper;
 
-    @Autowired
     private UserMapper userMapper;
 
     private TodoListDto mockTodoListDto;
@@ -86,6 +85,7 @@ public class TodoServiceTest {
 
     @BeforeEach
     public void setup() {
+        todoMapper = new TodoMapperImpl();
         todoService = new TodoService(
                 todoListRepository,
                 todoItemRepository,
@@ -138,7 +138,7 @@ public class TodoServiceTest {
 
     @Test
     public void throwProjectNotFoundExceptionWhenProjectIdIsNotExist() {
-        when(projectRepository.findById(2L))
+        lenient().when(projectRepository.findById(2L))
                 .thenThrow(new ProjectNotFoundException("Cannot find project by id:2"));
         assertThrows(ProjectNotFoundException.class, () -> todoService.createTodoList(1L, 2L, mockTodoListDto));
     }
@@ -198,7 +198,7 @@ public class TodoServiceTest {
 
     @Test
     public void throwTodoListNotFoundExceptionWhenIdIsNotExist() {
-        when(todoListRepository.findById(2L))
+        lenient().when(todoListRepository.findById(2L))
                 .thenThrow(new TodoListNotFoundException("Cannot find todoList by id: 2"));
         assertThrows(TodoListNotFoundException.class, () -> todoService.fetchSingleTodoList(1L, 1L, 2L));
     }
@@ -295,45 +295,9 @@ public class TodoServiceTest {
     }
 
     private UserEntity buildUser() {
-        return userEntity.builder()
+        return UserEntity.builder()
                 .name("test user")
                 .build();
-    }
-
-    @Test
-    public void findAssignedPeopleTest() {
-        TodoItem todoItem = buildTodoItem(todoList, "123", "a", "1,2");
-        when(todoItemRepository.findSubscribersIdsByProjectIdAndId(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()))
-                .thenReturn("1,2");
-
-        UserEntity mockUser1 = UserEntity.builder()
-                .id(1L)
-                .email("plus@gmail.com")
-                .name("plus")
-                .build();
-
-
-        UserEntity mockUser2 = UserEntity.builder()
-                .id(2L)
-                .email("urnotfl@gmail.com")
-                .name("urnotFl")
-                .build();
-
-        when(userRepository.findByIdIn(List.of(1L, 2L))).thenReturn(Optional.of(List.of(mockUser1, mockUser2)));
-
-        AssignedPeopleGetDto assignedPeopleGetDto = AssignedPeopleGetDto.builder()
-                .name("plus")
-                .id(1L)
-                .build();
-
-        AssignedPeopleGetDto assignedPeopleGetDto2 = AssignedPeopleGetDto.builder()
-                .name("urnotFl")
-                .id(2L)
-                .build();
-
-        assertEquals(List.of(assignedPeopleGetDto, assignedPeopleGetDto2),
-                todoService.findAssignedPeople(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()));
-
     }
 
 }

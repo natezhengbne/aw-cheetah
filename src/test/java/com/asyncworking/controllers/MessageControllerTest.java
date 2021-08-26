@@ -6,15 +6,15 @@ import com.asyncworking.exceptions.MessageNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.services.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -26,20 +26,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+public class MessageControllerTest extends ControllerHelper {
+    @Mock
+    private MessageService messageService;
+    private MessageController messageController;
 
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
-public class MessageControllerTest {
-
-    @MockBean
-    MessageService messageService;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        messageController = new MessageController(messageService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                messageController
+        ).build();
+    }
 
     @Test
     public void createMessageSuccess() throws Exception {

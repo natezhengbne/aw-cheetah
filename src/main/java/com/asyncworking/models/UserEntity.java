@@ -1,11 +1,13 @@
 package com.asyncworking.models;
 
+import com.asyncworking.constants.Status;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -47,6 +49,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity",
             cascade = CascadeType.ALL)
     private Set<Employee> employees;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity", cascade = CascadeType.ALL)
+    private List<EmailSendRecord> emailSendRecords;
 
     public void addEmployee(Employee employee) {
         employees.add(employee);

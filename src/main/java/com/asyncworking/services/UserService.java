@@ -1,12 +1,15 @@
 package com.asyncworking.services;
 
 import com.asyncworking.config.FrontEndUrlConfig;
+import com.asyncworking.constants.EmailType;
+import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
@@ -16,15 +19,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,11 +40,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailSendRepository emailSendRepository;
 
     private final JwtService jwtService;
 
     private final UserMapper userMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
+    private final EmailService emailService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -51,10 +55,12 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndGenerateVerifyLink(AccountDto accountDto) {
+    public void createUserAndSendMessageToSQS(AccountDto accountDto) {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
+        emailService.saveEmailSendingRecord(userEntity, EmailType.Verification, accountDto.getEmail());
         userRepository.save(userEntity);
-        this.generateVerifyLink(accountDto.getEmail());
+        emailService.sendMessageToSQS(userEntity, generateVerifyLink(userEntity.getEmail()),
+                EmailType.Verification, userEntity.getEmail());
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -84,6 +90,27 @@ public class UserService {
         String token = jwtService.creatJwtToken(accountDto.getEmail());
 
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
+    }
+
+    public String createJwtTokenForInvitationPeople(String email,  List<GrantedAuthority> authorities) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("authorities", authorities)
+                .setIssuedAt(new Date())
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .compact();
+    }
+
+    public void resendMessageToSQS(String email, EmailType emailType) {
+        UserEntity emailSender = findUnVerifiedUserByEmail(email);
+        emailService.saveEmailSendingRecord(emailSender, EmailType.Verification, email);
+        emailService.sendMessageToSQS(emailSender, generateVerifyLink(email), emailType, emailSender.getEmail());
+    }
+
+    private UserEntity findUnVerifiedUserByEmail(String email) {
+        return userRepository.findUnverifiedStatusByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
     }
 
     public String generateVerifyLink(String email) {
@@ -138,14 +165,13 @@ public class UserService {
         Claims body = jws.getBody();
         Long companyId = (long) Double.parseDouble(body.get("companyId").toString());
         String companyName = getCompanyInfo(companyId).getName();
-        ExternalEmployeeDto externalEmployeeDto = ExternalEmployeeDto.builder()
+        return ExternalEmployeeDto.builder()
                 .companyId(companyId)
                 .email(body.get("email").toString())
                 .name(body.get("name").toString())
                 .title(body.get("title").toString())
                 .companyName(companyName)
                 .build();
-        return externalEmployeeDto;
     }
 
     @Transactional
@@ -170,7 +196,7 @@ public class UserService {
         return body.get("email").toString();
     }
 
-    private int activeUser(String email) {
+    public int activeUser(String email) {
         return userRepository.updateStatusByEmail(email, Status.ACTIVATED);
     }
 
@@ -189,5 +215,12 @@ public class UserService {
     public UserEntity findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
+    }
+
+    @Transactional(rollbackFor = UserNotFoundException.class)
+    public void updateEmailSent(String email) throws UserNotFoundException{
+        if (emailSendRepository.updateVerificationEmailSent(email, OffsetDateTime.now(UTC)) < 1) {
+            throw new UserNotFoundException("Cannot find user with email: " + email);
+        }
     }
 }

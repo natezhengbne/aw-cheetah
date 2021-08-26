@@ -5,17 +5,16 @@ import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.services.ProjectService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
+
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,20 +23,20 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = SpringSecurityWebAuxTestConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
-public class ProjectControllerTest {
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+public class ProjectControllerTest extends ControllerHelper{
+    @Mock
     private ProjectService projectService;
+    private ProjectController projectController;
+
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        projectController = new ProjectController(projectService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                projectController
+        ).build();
+    }
 
     @Test
     public void testProjectCreateSuccess() throws Exception {

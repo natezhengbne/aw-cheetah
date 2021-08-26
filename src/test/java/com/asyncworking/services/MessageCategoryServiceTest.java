@@ -10,10 +10,10 @@ import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.utility.mapper.MessageMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class MessageCategoryServiceTest {
     @Mock
     private MessageCategoryRepository messageCategoryRepository;
@@ -37,8 +36,9 @@ public class MessageCategoryServiceTest {
 
     private MessageCategoryPostDto messageCategoryPostDto;
 
-    @Autowired
+    @Spy
     private MessageMapper messageMapper;
+
 
     private MessageCategory mockMessageCategory1;
 
@@ -97,7 +97,6 @@ public class MessageCategoryServiceTest {
                 .emoji("👋")
                 .build();
 
-        when(projectRepository.existsById(1L)).thenReturn(true);
         when(messageCategoryRepository.save(any())).thenReturn(mockReturnMessageCategory);
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
 

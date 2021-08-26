@@ -14,13 +14,11 @@ import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-import javax.transaction.Transactional;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class CompanyServiceTest {
+
     @Mock
     private UserRepository userRepository;
 
@@ -43,19 +41,24 @@ public class CompanyServiceTest {
     @Mock
     private RoleService roleService;
 
-    @Autowired
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private EmployeeMapper employeeMapper;
 
-    @Autowired
+
     private CompanyMapper companyMapper;
 
-    @Autowired
+
     private UserMapper userMapper;
 
     private CompanyService companyService;
 
     @BeforeEach()
     public void setup() {
+        employeeMapper = new EmployeeMapper();
+        companyMapper = new CompanyMapper();
+        userMapper = new UserMapper(passwordEncoder);
         companyService = new CompanyService(
             userRepository,
             companyRepository,
@@ -68,7 +71,6 @@ public class CompanyServiceTest {
     }
 
     @Test
-    @Transactional
     public void createCompanyAndEmployeeGivenProperUserInfoDto() {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("lengary@asyncworking.com")

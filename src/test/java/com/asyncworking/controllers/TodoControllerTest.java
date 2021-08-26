@@ -8,18 +8,12 @@ import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.TodoService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -30,17 +24,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
-class TodoControllerTest {
+class TodoControllerTest extends ControllerHelper{
+    @Mock
+    private TodoService todoService;
+    private TodoController todoController;
 
-    @MockBean
-    TodoService todoService;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        todoController = new TodoController(todoService);
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                controllerExceptionHandler,
+                todoController
+        ).build();
+    }
 
     @Test
     public void todoListCreateSuccess() throws Exception {
@@ -98,14 +95,12 @@ class TodoControllerTest {
     }
 
     @Test
-    @Rollback
     public void todoItemCreateSuccess() throws Exception {
         TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
                 .todolistId(1L)
                 .notes("test1")
                 .description("test des1")
                 .createdUserId(1L)
-                .dueDate(OffsetDateTime.now())
                 .build();
         when(todoService.createTodoItem(1L, 1L, todoItemPostDto))
                 .thenReturn(1L);

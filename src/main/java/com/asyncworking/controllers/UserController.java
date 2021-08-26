@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
+import com.asyncworking.constants.EmailType;
 import com.asyncworking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URISyntaxException;
 
 @Slf4j
 @RestController
@@ -50,12 +50,11 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndGenerateVerifyLink(accountDto);
+        userService.createUserAndSendMessageToSQS(accountDto);
         return ResponseEntity.ok("success");
     }
 
     @GetMapping("/invitations/companies")
-//    @PreAuthorize("hasPermission(#companyId, T(com.asyncworking.models.RoleName).COMPANY_MANAGER.value())")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
     public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
                                             @RequestParam(value = "email") String email,
@@ -65,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/invitations/info")
-    public ResponseEntity getInvitationInfo(@RequestParam(value = "code") String code) throws URISyntaxException {
+    public ResponseEntity getInvitationInfo(@RequestParam(value = "code") String code) {
         log.info("The code is " + code);
         ExternalEmployeeDto externalEmployeeDto = userService.getUserInfo(code);
         return ResponseEntity.ok(externalEmployeeDto);
@@ -79,12 +78,12 @@ public class UserController {
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
-        userService.generateVerifyLink(userInfoDto.getEmail());
+        userService.resendMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
         return ResponseEntity.ok("success");
     }
 
     @PostMapping("/verify")
-    public ResponseEntity verifyActiveUser(@RequestParam(value = "code") String code) throws URISyntaxException {
+    public ResponseEntity verifyActiveUser(@RequestParam(value = "code") String code) {
         log.info(code);
         boolean isVerified = userService.isAccountActivated(code);
         if (isVerified) {

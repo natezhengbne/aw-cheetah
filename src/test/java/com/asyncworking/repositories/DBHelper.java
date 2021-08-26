@@ -36,6 +36,9 @@ public abstract class DBHelper {
 	@Autowired
 	protected UserRoleRepository userRoleRepository;
 
+	@Autowired
+	protected EmailSendRepository emailSendRepository;
+
 	protected void clearDb() {
 		todoItemRepository.deleteAll();
 		todoItemRepository.flush();
@@ -72,5 +75,8 @@ public abstract class DBHelper {
 
 		userRoleRepository.deleteAll();
 		userRoleRepository.flush();
+
+		emailSendRepository.deleteAll();
+		emailSendRepository.flush();
 	}
 }

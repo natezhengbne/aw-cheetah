@@ -1,21 +1,25 @@
 package com.asyncworking.services;
 
 import com.asyncworking.config.FrontEndUrlConfig;
+import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -28,7 +32,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@Slf4j
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class UserServiceTest {
     @Mock
@@ -41,25 +46,38 @@ public class UserServiceTest {
     private EmployeeRepository employeeRepository;
 
     @Mock
+    private EmailSendRepository emailSendRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
     private JwtService jwtService;
 
-    @Autowired
     private UserMapper userMapper;
 
     private UserService userService;
 
-    @Autowired
     private FrontEndUrlConfig frontEndUrlConfig;
+
+    @Mock
+    private EmailService emailService;
+
 
     @BeforeEach()
     void setup() {
+        userMapper = new UserMapper(passwordEncoder);
+        frontEndUrlConfig = new FrontEndUrlConfig();
+        frontEndUrlConfig.setFrontEndUrl("https://www.asyncworking.com");
         userService = new UserService(
                 userRepository,
                 companyRepository,
                 employeeRepository,
+                emailSendRepository,
                 jwtService,
                 userMapper,
-                frontEndUrlConfig);
+                frontEndUrlConfig,
+                emailService);
         ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
     }
 
@@ -158,7 +176,7 @@ public class UserServiceTest {
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        userService.createUserAndGenerateVerifyLink(accountDto);
+        userService.createUserAndSendMessageToSQS(accountDto);
 
         verify(userRepository).save(captor.capture());
         UserEntity savedUser = captor.getValue();

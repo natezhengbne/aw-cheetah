@@ -1,11 +1,13 @@
 package com.asyncworking.repositories;
 
+import com.asyncworking.constants.Status;
 import com.asyncworking.models.*;
+import io.awspring.cloud.messaging.listener.SimpleMessageListenerContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -17,12 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@Transactional
 @ActiveProfiles("test")
 public class EmployeeRepositoryTest extends DBHelper {
     private UserEntity mockUserEntity;
     private Company mockCompany;
     private Employee mockEmployee;
+
+    @MockBean
+    private SimpleMessageListenerContainer simpleMessageListenerContainer;
 
     @BeforeEach
     public void setUp() {

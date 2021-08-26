@@ -1,7 +1,7 @@
 package com.asyncworking.auth;
 
 import com.asyncworking.exceptions.UserNotFoundException;
-import com.asyncworking.models.Status;
+import com.asyncworking.constants.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

@@ -12,6 +12,34 @@ spring:
   flyway:
     enabled: false
 
+cloud:
+  aws:
+    region:
+      static: ap-southeast-2
+      auto: false
+    sqs:
+      incoming-queue:
+        name: AWRECEIVEQ
+        url: http://localhost:4566/000000000000/AWRECEIVEQ
+      outgoing-queue:
+        name: AWVerificationEmailBasicPP
+        url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
+    stack:
+      auto: false
+    credentials:
+      accesskey: test
+      secretkey: test
+    S3:
+      templateS3Bucket: aw-email-template-jh
+      templateS3Key: verification_email_template.txt
+    endpoint: http://localhost:4566
+
 jwt:
   secret: securesecuresecuresecuresecuresecu
   secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
+
+localstack:
+  host: localhost
+
+sqs:
+  enable: false
