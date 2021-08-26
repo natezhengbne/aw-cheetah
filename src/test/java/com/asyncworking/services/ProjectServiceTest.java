@@ -145,6 +145,7 @@ public class ProjectServiceTest {
     @Test
     @Transactional
     public void createProjectAndProjectUserGivenProperProjectDto() {
+        Long companyId = 2L;
         ProjectDto projectDto = ProjectDto.builder()
                 .name("AW")
                 .ownerId(2L)
@@ -158,12 +159,12 @@ public class ProjectServiceTest {
 
         when(userService.findUserById(projectDto.getOwnerId()))
                 .thenReturn(mockReturnedUserEntity);
-        when(projectMapper.mapProjectDtoToProject(projectDto))
+        when(projectMapper.mapProjectDtoToProject(companyId, projectDto))
                 .thenReturn(mockProject);
 
         ArgumentCaptor<ProjectUser> projectUserCaptor = ArgumentCaptor.forClass(ProjectUser.class);
         ArgumentCaptor<Project> projectCaptor = ArgumentCaptor.forClass(Project.class);
-        projectService.createProjectAndProjectUser(projectDto);
+        projectService.createProjectAndProjectUser(companyId, projectDto);
         verify(projectRepository).save(projectCaptor.capture());
         verify(projectUserRepository).save(projectUserCaptor.capture());
         ProjectUser savedProjectUser = projectUserCaptor.getValue();

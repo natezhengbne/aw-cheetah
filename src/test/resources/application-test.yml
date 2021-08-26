@@ -29,13 +29,14 @@ cloud:
     credentials:
       accesskey: test
       secretkey: test
+    S3:
+      templateS3Bucket: aw-email-template-jh
+      templateS3Key: verification_email_template.txt
     endpoint: http://localhost:4566
 
 jwt:
   secret: securesecuresecuresecuresecuresecu
   secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
-
-url: https://www.asyncworking.com
 
 localstack:
   host: localhost

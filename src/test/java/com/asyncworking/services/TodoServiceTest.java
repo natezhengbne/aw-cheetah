@@ -101,6 +101,7 @@ public class TodoServiceTest {
                 .build();
 
         project = Project.builder()
+                .id(1L)
                 .name("AWProject")
                 .isDeleted(false)
                 .isPrivate(false)
@@ -127,10 +128,10 @@ public class TodoServiceTest {
     @Test
     @Transactional
     public void createTodoListSuccess() {
-        when(projectRepository.findById(1L))
+        when(projectRepository.findByCompanyIdAndId(1L, 1L))
                 .thenReturn(Optional.of(project));
         ArgumentCaptor<TodoList> todoListCaptor = ArgumentCaptor.forClass(TodoList.class);
-        todoService.createTodoList(mockTodoListDto);
+        todoService.createTodoList(project.getCompanyId(), project.getId(), mockTodoListDto);
         verify(todoListRepository).save(todoListCaptor.capture());
         assertEquals(project, todoListCaptor.getValue().getProject());
     }
@@ -139,7 +140,7 @@ public class TodoServiceTest {
     public void throwProjectNotFoundExceptionWhenProjectIdIsNotExist() {
         lenient().when(projectRepository.findById(2L))
                 .thenThrow(new ProjectNotFoundException("Cannot find project by id:2"));
-        assertThrows(ProjectNotFoundException.class, () -> todoService.createTodoList(mockTodoListDto));
+        assertThrows(ProjectNotFoundException.class, () -> todoService.createTodoList(1L, 2L, mockTodoListDto));
     }
 
     @Test
@@ -223,7 +224,7 @@ public class TodoServiceTest {
     public void shouldReturnTodoItemPageDtoByGivenTodoitemId() {
         when(todoItemRepository.findByCompanyIdAndProjectIdAndId(any(), any(), any()))
                 .thenReturn(Optional.of(todoItem1));
-        when(projectRepository.findById(any()))
+        when(projectRepository.findByCompanyIdAndId(any(), any()))
                 .thenReturn(Optional.of(project));
         when(userService.findUserById(any()))
                 .thenReturn(buildUser());

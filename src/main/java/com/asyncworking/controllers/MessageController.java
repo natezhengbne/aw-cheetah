@@ -29,7 +29,7 @@ public class MessageController {
     @PostMapping("/messages")
     public ResponseEntity<MessageGetDto> createMessage(@PathVariable Long companyId, @PathVariable Long projectId,
                                                        @Valid @RequestBody MessagePostDto messagePostDto) {
-        return ResponseEntity.ok(messageService.createMessage(messagePostDto));
+        return ResponseEntity.ok(messageService.createMessage(companyId, projectId, messagePostDto));
     }
 
     @GetMapping("/messages/{messageId}")

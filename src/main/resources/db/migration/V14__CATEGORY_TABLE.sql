@@ -1,4 +1,4 @@
-CREATE SCHEMA IF not exists "uatawcheetah";
+CREATE SCHEMA IF not exists "awcheetah";
 
 CREATE TABLE IF NOT EXISTS "message_category" (
     "id" BIGSERIAL NOT NULL PRIMARY KEY,

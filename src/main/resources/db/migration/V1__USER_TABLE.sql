@@ -1,4 +1,4 @@
-CREATE SCHEMA if not exists "uatawcheetah";
+CREATE SCHEMA if not exists "awcheetah";
 DROP TABLE IF EXISTS "user";
 CREATE TABLE "user" (
     "id" BIGSERIAL PRIMARY KEY,
