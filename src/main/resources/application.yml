@@ -35,7 +35,7 @@ url: https://www.asyncworking.com
 
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
-  secretKey: 7756adfasdfenci,,@@33$$*()sdfsdkjhsnklp999002qejf\\//asdf
+  secretKey: securesecuresecuresecuresecuresecuresecuresecuresecuresecures
 
 cloud:
   aws:
@@ -43,10 +43,10 @@ cloud:
       static: ap-southeast-2
       auto: false
     sqs:
-      incoming-queue:
+      incomingqueue:
         name: AW_RECEIVE_Q
         url: http://localhost:4566/000000000000/AW_RECEIVE_Q
-      outgoing-queue:
+      outgoingqueue:
         name: AWVerificationEmailBasicPP
         url: http://localhost:4566/000000000000/AWVerificationEmailBasicPP
     stack:

@@ -39,7 +39,7 @@ public class EmailService {
 
     private final EmailSendRepository emailSendRepository;
 
-    @Value("${cloud.aws.sqs.outgoing-queue.url}")
+    @Value("${cloud.aws.sqs.outgoingqueue.url}")
     private String endPoint;
 
     public void sendMessageToSQS(UserEntity userEntity, String verifyLink, EmailType templateType, String receiverEmail) {
