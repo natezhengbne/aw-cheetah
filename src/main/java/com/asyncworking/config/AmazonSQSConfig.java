@@ -8,11 +8,13 @@ import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import io.awspring.cloud.messaging.config.SimpleMessageListenerContainerFactory;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+@Slf4j
 @Configuration
 public class AmazonSQSConfig {
     @Value("${cloud.aws.credentials.accesskey}")
@@ -37,6 +39,8 @@ public class AmazonSQSConfig {
         } else {
             builder.withRegion(Regions.AP_SOUTHEAST_2);
         }
+
+        log.info("accesskey = {}, secretKey={}", accessKey, secretKey);
         builder.withCredentials(
             new AWSStaticCredentialsProvider(
                 new BasicAWSCredentials(accessKey, secretKey)
