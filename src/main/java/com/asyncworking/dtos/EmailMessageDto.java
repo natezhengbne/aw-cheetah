@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailMessageDto {
-    private String receiverEmail;
+    private String email;
     private String userName;
-    private String verifyLink;
+    private String verificationLink;
     private String templateType;
     private String templateS3Bucket;
     private String templateS3Key;

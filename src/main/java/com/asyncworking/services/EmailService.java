@@ -5,7 +5,6 @@ import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.utility.mapper.EmailMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +27,15 @@ public class EmailService {
     @Value("${cloud.aws.sqs.outgoingqueue.url}")
     private String endPoint;
 
-    public void sendMessageToSQS(UserEntity userEntity, String verifyLink, EmailType templateType, String receiverEmail) throws JsonProcessingException {
-        queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(
-                objectMapper.writeValueAsString(
-                        emailMapper.toEmailMessageDto(userEntity, verifyLink, templateType, receiverEmail)))
-                .build());
+    public void sendMessageToSQS(UserEntity userEntity, String verificationLink, EmailType templateType, String receiverEmail) {
+        try {
+            queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(
+                    objectMapper.writeValueAsString(
+                            emailMapper.toEmailMessageDto(userEntity, verificationLink, templateType, receiverEmail))
+            ).build());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     @Transactional

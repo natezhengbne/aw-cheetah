@@ -19,7 +19,6 @@ import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -61,7 +60,7 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndSendMessageToSQS(AccountDto accountDto) throws JsonProcessingException {
+    public void createUserAndSendMessageToSQS(AccountDto accountDto) {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         emailService.saveEmailSendingRecord(userEntity, EmailType.Verification, accountDto.getEmail());
         userRepository.save(userEntity);
@@ -108,7 +107,7 @@ public class UserService {
                 .compact();
     }
 
-    public void resendMessageToSQS(String email, EmailType emailType) throws JsonProcessingException {
+    public void resendMessageToSQS(String email, EmailType emailType) {
         UserEntity emailSender = findUnVerifiedUserByEmail(email);
         emailService.saveEmailSendingRecord(emailSender, EmailType.Verification, email);
         emailService.sendMessageToSQS(emailSender, generateVerifyLink(email), emailType, emailSender.getEmail());
