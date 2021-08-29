@@ -3,23 +3,29 @@ package com.asyncworking.services;
 import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.constants.Status;
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.ExternalEmployeeDto;
+import com.asyncworking.dtos.InvitedAccountGetDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.models.*;
+import com.asyncworking.models.Company;
+import com.asyncworking.models.Employee;
+import com.asyncworking.models.EmployeeId;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.UserMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -55,7 +61,7 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndSendMessageToSQS(AccountDto accountDto) {
+    public void createUserAndSendMessageToSQS(AccountDto accountDto) throws JsonProcessingException {
         UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
         emailService.saveEmailSendingRecord(userEntity, EmailType.Verification, accountDto.getEmail());
         userRepository.save(userEntity);
@@ -102,7 +108,7 @@ public class UserService {
                 .compact();
     }
 
-    public void resendMessageToSQS(String email, EmailType emailType) {
+    public void resendMessageToSQS(String email, EmailType emailType) throws JsonProcessingException {
         UserEntity emailSender = findUnVerifiedUserByEmail(email);
         emailService.saveEmailSendingRecord(emailSender, EmailType.Verification, email);
         emailService.sendMessageToSQS(emailSender, generateVerifyLink(email), emailType, emailSender.getEmail());

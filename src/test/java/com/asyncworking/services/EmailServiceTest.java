@@ -5,25 +5,20 @@ import com.asyncworking.constants.EmailType;
 import com.asyncworking.constants.Status;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
-import com.asyncworking.utility.mapper.EmailSendRecordMapper;
+import com.asyncworking.utility.mapper.EmailMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 
-import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
 
 import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class EmailServiceTest {
@@ -42,14 +37,14 @@ public class EmailServiceTest {
 
     private UserEntity mockUserEntity;
 
-    private EmailSendRecordMapper emailSendRecordMapper;
+    private EmailMapper emailMapper;
 
     @BeforeEach
     public void setUP() {
         emailService = new EmailService(
                 queueMessagingTemplate,
                 objectMapper,
-                emailSendRecordMapper,
+                emailMapper,
                 emailSendRepository
 
         );

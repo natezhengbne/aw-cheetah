@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.*;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.services.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
+    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) throws JsonProcessingException {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
         userService.createUserAndSendMessageToSQS(accountDto);
         return ResponseEntity.ok("success");
@@ -77,7 +78,7 @@ public class UserController {
     }
 
     @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
+    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) throws JsonProcessingException {
         userService.resendMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
         return ResponseEntity.ok("success");
     }
