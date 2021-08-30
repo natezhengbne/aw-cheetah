@@ -32,9 +32,9 @@ url: https://www.asyncworking.com
 #local env
 #url: http://localhost:3000
 
-
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
+
   secretKey: securesecuresecuresecuresecuresecuresecuresecuresecuresecures
 
 cloud:
@@ -58,7 +58,6 @@ cloud:
       templateS3Bucket: aw-email-template
       templateS3Key: verification_email_template.txt
     endpoint: http://localhost:4566
-
 
 sqs:
   enable: true

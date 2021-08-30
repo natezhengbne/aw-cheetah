@@ -69,14 +69,14 @@ public class ProjectRepositoryTest extends DBHelper {
     @Test
     public void shouldGetProjectSuccessfullyGivenCompanyId() {
         saveMockData();
-        List<Project> returnedProjectIds = projectRepository.findProjectsByCompanyId(1L);
+        List<Project> returnedProjectIds = projectRepository.findByCompanyId(1L);
         assertNotNull(returnedProjectIds);
     }
 
     @Test
     public void shouldReturnEmptyDueToGivenCompanyIdWithoutProjects() {
         saveMockData();
-        List<Project> returnedProjects = projectRepository.findProjectsByCompanyId(0L);
+        List<Project> returnedProjects = projectRepository.findByCompanyId(0L);
         assertTrue(returnedProjects.isEmpty());
     }
 

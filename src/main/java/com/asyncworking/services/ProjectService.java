@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.asyncworking.models.RoleNames.PROJECT_MANAGER;
@@ -58,18 +59,26 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
     }
 
-    public List<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
-        return projectRepository.findProjectsByCompanyId(companyId).stream()
+    private Set<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
+        return projectRepository.findByCompanyId(companyId).stream()
                 .map(projectMapper::mapProjectToProjectInfoDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public List<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
-        List<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
+    private Set<ProjectInfoDto> fetchPublicProjectInfoListByCompanyId(Long companyId) {
+        return projectRepository.findPublicProjectsByCompanyId(companyId).stream()
+                .map(projectMapper::mapProjectToProjectInfoDto)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
+        Set<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
                 .map(this::fetchProjectInfoByProjectId)
-                .collect(Collectors.toList());
-        List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
+                .collect(Collectors.toSet());
+        Set<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
+        Set<ProjectInfoDto> publicCompanyProjects = fetchPublicProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
+        userProjects.addAll(publicCompanyProjects);
         Long adminId = companyService.fetchCompanyById(companyId).getAdminId();
         if (adminId.equals(userId)) {
             return companyProjects;
