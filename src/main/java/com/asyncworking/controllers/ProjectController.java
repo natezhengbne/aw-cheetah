@@ -1,9 +1,6 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.EmployeeGetDto;
-import com.asyncworking.dtos.ProjectDto;
-import com.asyncworking.dtos.ProjectInfoDto;
-import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

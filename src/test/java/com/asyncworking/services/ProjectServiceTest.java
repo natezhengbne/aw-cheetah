@@ -1,14 +1,12 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.EmployeeGetDto;
-import com.asyncworking.dtos.ProjectDto;
-import com.asyncworking.dtos.ProjectInfoDto;
-import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
@@ -33,6 +31,9 @@ public class ProjectServiceTest {
 
     @Mock
     private ProjectUserRepository projectUserRepository;
+
+    @Mock
+    private TodoItemRepository todoItemRepository;
 
     @Mock
     private ProjectRepository projectRepository;
@@ -68,6 +69,7 @@ public class ProjectServiceTest {
         projectService = new ProjectService(
                         userRepository,
                         projectRepository,
+                        todoItemRepository,
                         projectUserRepository,
                         projectMapper,
                         employeeMapper,

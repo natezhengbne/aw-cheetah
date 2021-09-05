@@ -5,25 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectInfoDto {
+@Builder
+public class ProjectProgressCompleted {
 
     private Long id;
 
-    private Long leaderId;
-
-    private String name;
-
-    private String description;
-
-    private int todoItemTotalNum;
-
     private int todoItemCompleteNum;
-
-    private List<String> projectUserNames;
 }
