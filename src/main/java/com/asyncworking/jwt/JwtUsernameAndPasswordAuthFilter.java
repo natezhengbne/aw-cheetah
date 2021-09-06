@@ -48,15 +48,15 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication authResult) throws IOException {
-        String email = authResult.getName();
+                                            Authentication authentication) throws IOException {
+        String email = authentication.getName();
 
-        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
-
-        String jwtToken = jwtService.creatJwtToken(email, authorities);
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         UserEntity user = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
+
+        String jwtToken = jwtService.creatJwtToken(user, authorities);
 
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(user.getId())

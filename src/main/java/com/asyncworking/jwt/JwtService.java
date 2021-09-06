@@ -52,13 +52,11 @@ public class JwtService {
                 .compact();
     }
 
-    public String creatJwtToken(String email, Collection<? extends GrantedAuthority> authorities) {
-        UserEntity userEntity = userRepository.findUserEntityByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
+    public String creatJwtToken(UserEntity userEntity, Collection<? extends GrantedAuthority> authorities) {
         Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userEntity.getEmail())
                 .claim(AUTHORITIES.value(), authorities)
                 .claim(COMPANY_IDS.value(), companyIds)
                 .claim(PROJECT_IDS.value(), projectIds)
