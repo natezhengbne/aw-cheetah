@@ -18,7 +18,7 @@ public class JwtController {
 
     @SneakyThrows
     @GetMapping
-    public ResponseEntity refreshToken(@RequestHeader("Authorization") String auth) {
+    public ResponseEntity<JwtDto> refreshToken(@RequestHeader("Authorization") String auth) {
         return ResponseEntity.ok(jwtService.refreshJwtToken(auth));
     }
 }
