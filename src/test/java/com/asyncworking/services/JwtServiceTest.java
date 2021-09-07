@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.auth.ApplicationUserDetails;
 import com.asyncworking.auth.ApplicationUserService;
+import com.asyncworking.auth.AwcheetahGrantedAuthority;
 import com.asyncworking.jwt.JwtDto;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.UserEntity;
@@ -18,17 +19,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.asyncworking.jwt.JwtClaims.AUTHORIZATION_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-
-import static com.asyncworking.jwt.JwtClaims.*;
 
 @ExtendWith(MockitoExtension.class)
 public class JwtServiceTest {
@@ -56,9 +55,8 @@ public class JwtServiceTest {
 
     private Set<Long> projectIds;
 
-    private String secretKey = "ssssssssssssssssssssssssssssssss";
-
     private SecretKey secretKey() {
+        String secretKey = "ssssssssssssssssssssssssssssssss";
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
@@ -105,6 +103,7 @@ public class JwtServiceTest {
                 .setSigningKey(secretKey())
                 .build()
                 .parseClaimsJws(accessToken);
+
         assertEquals(claimsJws.getBody().getSubject(), email);
     }
 
@@ -119,6 +118,7 @@ public class JwtServiceTest {
                 .setSigningKey(secretKey())
                 .build()
                 .parseClaimsJws(accessToken);
+
         assertEquals(claimsJws.getBody().getSubject(), email);
     }
 
@@ -132,14 +132,15 @@ public class JwtServiceTest {
         String accessToken = jwtService.creatJwtToken(mockUser, mockAuthorities);
         String auth = AUTHORIZATION_TYPE.value() + accessToken;
         JwtDto jwtDto = jwtService.refreshJwtToken(auth);
-        assertEquals(jwtDto.getAccessToken(), accessToken);
+
+        assertEquals(jwtDto.getMessage(), "No need to refresh the jwtToken.");
     }
 
     @Test
     public void shouldRefreshJwtToken() {
         String email = "a@asyncworking.com";
-        Set<SimpleGrantedAuthority> mockAuthorities = new HashSet<>();
-        mockAuthorities.add(new SimpleGrantedAuthority("Company Manager"));
+        Set<GrantedAuthority> mockAuthorities = new HashSet<>();
+        mockAuthorities.add(new AwcheetahGrantedAuthority("Company Manager", 1L));
         when(userRepository.findUserEntityByEmail(email)).thenReturn(java.util.Optional.ofNullable(mockUser));
         when(employeeRepository.findCompanyIdByUserId(1L)).thenReturn(companyIds);
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
@@ -148,6 +149,7 @@ public class JwtServiceTest {
         String accessToken = jwtService.creatJwtToken(mockUser, mockAuthorities);
         String auth = AUTHORIZATION_TYPE.value() + accessToken;
         JwtDto jwtDto = jwtService.refreshJwtToken(auth);
+
         assertEquals(jwtDto.getMessage(), "JwtToken has already refreshed.");
     }
 }
