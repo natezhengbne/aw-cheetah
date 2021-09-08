@@ -75,8 +75,6 @@ public class JwtServiceTest {
                 .email("a@asyncworking.com")
                 .build();
 
-        mockAuthorities = new HashSet<>();
-
         mockUserDetails = new ApplicationUserDetails("a@asyncworking.com",
                 "password",
                 mockAuthorities,
@@ -85,6 +83,8 @@ public class JwtServiceTest {
                 true,
                 true
         );
+
+        mockAuthorities = new HashSet<>();
 
         companyIds = new HashSet<>();
         projectIds = new HashSet<>();
@@ -123,7 +123,7 @@ public class JwtServiceTest {
     }
 
     @Test
-    public void shouldNotRefreshJwtToken() {
+    public void shouldNotRefreshJwtTokenGivenAuthoritiesNotChange() {
         String email = "a@asyncworking.com";
         when(employeeRepository.findCompanyIdByUserId(1L)).thenReturn(companyIds);
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
@@ -137,7 +137,7 @@ public class JwtServiceTest {
     }
 
     @Test
-    public void shouldRefreshJwtToken() {
+    public void shouldRefreshJwtTokenGivenAuthoritiesChange() {
         String email = "a@asyncworking.com";
         Set<GrantedAuthority> mockAuthorities = new HashSet<>();
         mockAuthorities.add(new AwcheetahGrantedAuthority("Company Manager", 1L));
