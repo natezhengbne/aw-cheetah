@@ -75,6 +75,8 @@ public class JwtServiceTest {
                 .email("a@asyncworking.com")
                 .build();
 
+        mockAuthorities = new HashSet<>();
+
         mockUserDetails = new ApplicationUserDetails("a@asyncworking.com",
                 "password",
                 mockAuthorities,
@@ -83,8 +85,6 @@ public class JwtServiceTest {
                 true,
                 true
         );
-
-        mockAuthorities = new HashSet<>();
 
         companyIds = new HashSet<>();
         projectIds = new HashSet<>();
