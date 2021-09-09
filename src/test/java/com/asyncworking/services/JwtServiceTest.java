@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.asyncworking.jwt.JwtClaims.AUTHORIZATION_TYPE;
+import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -98,7 +99,7 @@ public class JwtServiceTest {
         when(employeeRepository.findCompanyIdByUserId(1L)).thenReturn(companyIds);
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
 
-        String accessToken = jwtService.creatJwtToken("a@asyncworking.com");
+        String accessToken = jwtService.creatJwtToken(email);
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey())
                 .build()
@@ -140,7 +141,8 @@ public class JwtServiceTest {
     public void shouldRefreshJwtTokenGivenAuthoritiesChange() {
         String email = "a@asyncworking.com";
         Set<GrantedAuthority> mockAuthorities = new HashSet<>();
-        mockAuthorities.add(new AwcheetahGrantedAuthority("Company Manager", 1L));
+        mockAuthorities.add(new AwcheetahGrantedAuthority(COMPANY_MANAGER.value(), 1L));
+
         when(userRepository.findUserEntityByEmail(email)).thenReturn(java.util.Optional.ofNullable(mockUser));
         when(employeeRepository.findCompanyIdByUserId(1L)).thenReturn(companyIds);
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
