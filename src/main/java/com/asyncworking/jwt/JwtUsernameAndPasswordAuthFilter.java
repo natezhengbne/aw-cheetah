@@ -50,9 +50,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                                             FilterChain chain,
                                             Authentication authentication) throws IOException {
         String email = authentication.getName();
-
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
         UserEntity user = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
 
@@ -64,7 +62,6 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
                 .name(user.getName())
                 .accessToken(jwtToken)
                 .build();
-
         String userInfoJson = new Gson().toJson(userInfoDto);
 
         setResponseBody(response, userInfoJson);
