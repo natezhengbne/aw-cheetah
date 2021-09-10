@@ -18,7 +18,6 @@ import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,7 +71,7 @@ public class TodoService {
         TodoItem savedTodoItem = todoItemRepository.save(
                 todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListByCompanyIdAndProjectIdAndId
                         (companyId, projectId, todoItemPostDto.getTodolistId())));
-        log.info("created a item with id " + savedTodoItem.getId());
+        log.info("created a item with id: {} ", savedTodoItem.getId());
         return savedTodoItem.getId();
     }
 

@@ -4,6 +4,7 @@ import com.asyncworking.constants.EmailType;
 import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmailMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
@@ -23,6 +24,7 @@ public class EmailService {
     private final EmailMapper emailMapper;
 
     private final EmailSendRepository emailSendRepository;
+    private final UserRepository userRepository;
 
     @Value("${cloud.aws.sqs.outgoingqueue.url}")
     private String endPoint;

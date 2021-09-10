@@ -1,7 +1,6 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
@@ -17,22 +16,15 @@ import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
-import com.asyncworking.utility.mapper.UserMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import com.asyncworking.utility.mapper.TodoMapperImpl;
+import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -44,7 +36,6 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -210,7 +201,6 @@ public class TodoServiceTest {
         todoItems.add(todoItem2);
         when(todoItemRepository.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(any(), any(), any()))
                 .thenReturn(todoItems);
-
         List<TodoItemGetDto> todoItemGetDtos = todoService.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc
                 (todoList.getCompanyId(), todoList.getProject().getId(), todoList.getId());
         assertEquals(2, todoItemGetDtos.size());

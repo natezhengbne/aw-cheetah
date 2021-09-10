@@ -4,6 +4,7 @@ import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.UserEntity;
+import lombok.NonNull;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -31,8 +32,8 @@ public interface EmailMapper {
 //    @Mapping(target = "templateS3Key", constant = "cloud.aws.S3.templateS3Key")
     @Mapping(target = "templateS3Bucket", constant = "aw-email-template-jh")
     @Mapping(target = "templateS3Key", constant = "verification_email_template.txt")
-
-    EmailMessageDto toEmailMessageDto(UserEntity userEntity, String verificationLink, EmailType templateType, String receiverEmail);
+    EmailMessageDto toEmailMessageDto(@NonNull UserEntity userEntity, String verificationLink,
+                                      @NonNull EmailType templateType, String receiverEmail);
 
     default OffsetDateTime getCurrentTime() {
         return OffsetDateTime.now(UTC);
