@@ -28,10 +28,8 @@ public interface EmailMapper {
     @Mapping(target = "templateType", expression = "java(templateType.toString())")
     @Mapping(target = "userName", expression = "java(userEntity.getName())")
     @Mapping(target = "email", source = "receiverEmail")
-//    @Mapping(target = "templateS3Bucket", constant = "cloud.aws.S3.templateS3Bucket")
-//    @Mapping(target = "templateS3Key", constant = "cloud.aws.S3.templateS3Key")
-    @Mapping(target = "templateS3Bucket", constant = "aw-email-template-jh")
-    @Mapping(target = "templateS3Key", constant = "verification_email_template.txt")
+    @Mapping(target = "templateS3Bucket", constant = "${cloud.aws.S3.templateS3Bucket}")
+    @Mapping(target = "templateS3Key", constant = "${cloud.aws.S3.templateS3Key}")
     EmailMessageDto toEmailMessageDto(@NonNull UserEntity userEntity, String verificationLink,
                                       @NonNull EmailType templateType, String receiverEmail);
 
