@@ -1,0 +1,42 @@
+version: 0.2
+
+env: 
+  parameter-store: 
+    DOCKERHUB_USER: 'AW_DOCKERHUB_USERNAME'
+    DOCKERHUB_PW: 'AW_DOCKERHUB_PW'
+    ECR_URI_PREFIX: 'AW_Cheetah_ECR_URI_PREFIX'
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      #- $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${ECR_URI_PREFIX}
+      - IMAGE_REPO_NAME_UAT=${ECR_REPO_NAME_UAT} #defined in Build environmnet
+      - REPOSITORY_URI_UAT=${ECR_URI_PREFIX}/${IMAGE_REPO_NAME_UAT} #IMAGE_REPO_NAME_UAT defined in build env
+      - IMAGE_REPO_NAME_PROD=${ECR_REPO_NAME_PROD} #defined in Build environmnet
+      - REPOSITORY_URI_PROD=${ECR_URI_PREFIX}/${IMAGE_REPO_NAME_PROD} # $IMAGE_REPO_NAME_PROD defined in Build environment
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - echo ${IMAGE_TAG}
+      #- echo ${IMAGE_REPO_NAME}
+  build:
+    commands:
+      - echo Starting to build ${ENV} # defined in Build environment
+      - echo Build started on `date`
+      - docker pull ${REPOSITORY_URI_UAT}:${IMAGE_TAG}
+      - docker images 
+      - IMAGE_ID=$(docker images | grep ${IMAGE_TAG} | awk '{print $3}')
+      - echo ${IMAGE_ID}
+      - docker tag ${IMAGE_ID} ${REPOSITORY_URI_PROD}:${IMAGE_TAG}
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push ${REPOSITORY_URI_PROD}:${IMAGE_TAG}
+      - echo Writing image definitions file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' ${AW_CONTAINER} ${ECR_URI_PREFIX}/${IMAGE_REPO_NAME_PROD}:${IMAGE_TAG} > imagedefinitions.json
+      # $AW_CONTAINER defined in Build Environment 
+      - cat imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

@@ -1,14 +1,12 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.EmployeeGetDto;
-import com.asyncworking.dtos.ProjectDto;
-import com.asyncworking.dtos.ProjectInfoDto;
-import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
@@ -22,8 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.transaction.Transactional;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -34,6 +31,9 @@ public class ProjectServiceTest {
 
     @Mock
     private ProjectUserRepository projectUserRepository;
+
+    @Mock
+    private TodoItemRepository todoItemRepository;
 
     @Mock
     private ProjectRepository projectRepository;
@@ -69,6 +69,7 @@ public class ProjectServiceTest {
         projectService = new ProjectService(
                         userRepository,
                         projectRepository,
+                        todoItemRepository,
                         projectUserRepository,
                         projectMapper,
                         employeeMapper,
@@ -112,34 +113,17 @@ public class ProjectServiceTest {
     }
 
     @Test
-    public void shouldReturnProjectInfoListByCompanyId() {
-        when(projectRepository.findProjectsByCompanyId(any())).thenReturn(List.of(mockProject));
-        when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
-        assertEquals(projectInfoDto.getName(),
-                projectService.fetchProjectInfoListByCompanyId(mockProject.getCompanyId()).get(0).getName());
-    }
-
-    @Test
     public void shouldReturnAvailableProjectInfoList() {
         Company mockReturnedCompany = Company.builder()
                 .adminId(2L)
                 .build();
         when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
-        when(projectRepository.findProjectsByCompanyId(any())).thenReturn(List.of(mockProject));
+        when(projectRepository.findByCompanyId(any())).thenReturn(List.of(mockProject));
         when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
         when(projectUserRepository.findProjectIdByUserId(any())).thenReturn(projectId);
         when(companyService.fetchCompanyById(any())).thenReturn(mockReturnedCompany);
-        assertEquals(projectInfoDto.getName(),
-                projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 2L).get(0).getName());
-        assertEquals(projectInfoDto.getName(),
-                projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 1L).get(0).getName());
-    }
-
-    @Test
-    public void shouldThrowProjectNotFoundExceptionWhenCompanyDoNotHaveAnyProject() {
-        when(projectRepository.findProjectsByCompanyId(1L)).thenThrow(
-                new ProjectNotFoundException("Can not find project by companyId: 1L"));
-        assertThrows(ProjectNotFoundException.class, () -> projectService.fetchProjectInfoListByCompanyId(1L));
+        assertTrue(projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 2L).contains(projectInfoDto));
+        assertTrue(projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 1L).contains(projectInfoDto));
     }
 
     @Test

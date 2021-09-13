@@ -146,4 +146,11 @@ public class ProjectControllerTest extends ControllerHelper{
                 .param("userIds", "1,2"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldReturnMembersWhenGivenProjectIdDescByName() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/companies/1/projects/1/asc-members")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

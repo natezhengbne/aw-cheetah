@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -232,7 +233,8 @@ public class CompanyControllerTest extends ControllerHelper {
                 .name("SSS")
                 .projectUserNames(projectUserNames)
                 .build();
-        when(projectService.fetchAvailableProjectInfoList(companyId, userId)).thenReturn(Arrays.asList(projectInfoDto));
+        when(projectService.fetchAvailableProjectInfoList(companyId, userId))
+                .thenReturn(Set.of(projectInfoDto));
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/companies/1/projects")

@@ -1,13 +1,14 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.EmployeeGetDto;
-import com.asyncworking.dtos.ProjectDto;
-import com.asyncworking.dtos.ProjectInfoDto;
-import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.ProjectNotFoundException;
-import com.asyncworking.models.*;
+import com.asyncworking.models.Project;
+import com.asyncworking.models.ProjectUser;
+import com.asyncworking.models.ProjectUserId;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.asyncworking.models.RoleNames.PROJECT_MANAGER;
@@ -31,6 +34,8 @@ public class ProjectService {
     private final UserRepository userRepository;
 
     private final ProjectRepository projectRepository;
+
+    private final TodoItemRepository todoItemRepository;
 
     private final ProjectUserRepository projectUserRepository;
 
@@ -58,23 +63,64 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectNotFoundException("Can not find project by projectId: " + projectId));
     }
 
-    public List<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
-        return projectRepository.findProjectsByCompanyId(companyId).stream()
+    private Set<ProjectInfoDto> fetchProjectInfoListByCompanyId(Long companyId) {
+        return projectRepository.findByCompanyId(companyId).stream()
                 .map(projectMapper::mapProjectToProjectInfoDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public List<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
-        List<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
+    private Set<ProjectInfoDto> fetchPublicProjectInfoListByCompanyId(Long companyId) {
+        return projectRepository.findPublicProjectsByCompanyId(companyId).stream()
+                .map(projectMapper::mapProjectToProjectInfoDto)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
+        Set<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
                 .map(this::fetchProjectInfoByProjectId)
-                .collect(Collectors.toList());
-        List<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
+                .collect(Collectors.toSet());
+        Set<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
+        Set<ProjectInfoDto> publicCompanyProjects = fetchPublicProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
+        userProjects.addAll(publicCompanyProjects);
         Long adminId = companyService.fetchCompanyById(companyId).getAdminId();
         if (adminId.equals(userId)) {
-            return companyProjects;
+            return addProgressInfo(companyProjects);
         }
-        return userProjects;
+        return addProgressInfo(userProjects);
+    }
+
+    private Set<ProjectInfoDto> addProgressInfo(Set<ProjectInfoDto> projectInfo) {
+        List<Long> projectIdList = projectInfo.stream().map(ProjectInfoDto::getId).collect(Collectors.toList());
+
+        List<ProjectProgressTotal> todoItemTotalNum = todoItemRepository.findAllByProjectId(projectIdList).stream()
+                .map(projectMapper::mapIProjectTotalToProjectDto)
+                .collect(Collectors.toList());
+        Map<Long, Integer> totalNumMap = todoItemTotalNum.stream()
+                .collect(Collectors.toMap(ProjectProgressTotal::getId, ProjectProgressTotal::getTodoItemTotalNum));
+
+        List<ProjectProgressCompleted> todoItemComNum =
+                todoItemRepository.findAllCompletedByProjectId(projectIdList).stream()
+                        .map(projectMapper::mapIProjectToProjectDto)
+                        .collect(Collectors.toList());
+        Map<Long, Integer> comNumMap = todoItemComNum.stream()
+                .collect(Collectors.toMap(ProjectProgressCompleted::getId, ProjectProgressCompleted::getTodoItemCompleteNum));
+
+        for (ProjectInfoDto value : projectInfo) {
+            if (totalNumMap.containsKey(value.getId())) {
+                value.setTodoItemTotalNum(totalNumMap.get(value.getId()));
+            } else {
+                value.setTodoItemTotalNum(0);
+            }
+        }
+        for (ProjectInfoDto value : projectInfo) {
+            if (comNumMap.containsKey(value.getId())) {
+                value.setTodoItemCompleteNum(comNumMap.get(value.getId()));
+            } else {
+                value.setTodoItemCompleteNum(0);
+            }
+        }
+        return projectInfo;
     }
 
     @Transactional

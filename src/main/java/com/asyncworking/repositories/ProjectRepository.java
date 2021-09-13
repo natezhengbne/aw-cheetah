@@ -19,11 +19,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<Project> findByCompanyIdAndId(Long companyId, Long projectId);
 
-    @Query(nativeQuery = true, value = "select * from project where company_id = :companyId and is_private = false")
-    List<Project> findProjectsByCompanyId(@Param("companyId") Long companyId);
+    List<Project> findByCompanyId(Long companyId);
 
-    @Query(nativeQuery = true, value = "select id from project where company_id = :companyId")
-    Set<Long> findProjectIdSetByCompanyId(@Param("companyId") Long companyId);
+    @Query(nativeQuery = true, value = "select * from project where company_id = :companyId and is_private = false")
+    List<Project> findPublicProjectsByCompanyId(@Param("companyId") Long companyId);
 
     @Modifying
     @Query("update Project p set p.name=:name, p.description=:description, p.updatedTime=:updatedTime " +
