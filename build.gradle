@@ -32,7 +32,6 @@ dependencies {
 	implementation 'org.projectlombok:lombok:1.18.16'
     implementation 'org.jetbrains:annotations:20.1.0'
 	implementation "io.awspring.cloud:spring-cloud-starter-aws-messaging:2.3.0"
-	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 	compile "io.awspring.cloud:spring-cloud-aws-messaging:2.3.0"
 	compile "io.awspring.cloud:spring-cloud-aws-dependencies:2.3.0"

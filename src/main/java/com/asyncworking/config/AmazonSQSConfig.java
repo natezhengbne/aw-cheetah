@@ -31,7 +31,7 @@ public class AmazonSQSConfig {
         return new QueueMessagingTemplate(buildAmazonSQSAsync());
     }
 
-    private AmazonSQSAsync buildAmazonSQSAsync() {
+    public AmazonSQSAsync buildAmazonSQSAsync() {
         final AmazonSQSAsyncClientBuilder builder = AmazonSQSAsyncClientBuilder.standard();
         if (serviceEndpoint.equals("http://localhost:4566")) {
             builder.withEndpointConfiguration(

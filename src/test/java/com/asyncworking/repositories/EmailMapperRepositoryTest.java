@@ -15,7 +15,7 @@ import static java.time.ZoneOffset.UTC;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class EmailSendRecordMapperRepositoryTest extends DBHelper{
+public class EmailMapperRepositoryTest extends DBHelper{
 
     private UserEntity mockUserEntity;
 
