@@ -66,7 +66,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("@guard.checkProjectAccessOtherMethods(authentication, #companyId, #projectId)")
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
                 .antMatchers("/", "/resend", "/signup", "/password", "/invitations/info", "/invitations/register",
-                        "/verify", "index", "/css/*", "/actuator/*")
+                        "/verify", "index", "/css/*", "/actuator/*", "/password-reset/info", "/password-reset")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

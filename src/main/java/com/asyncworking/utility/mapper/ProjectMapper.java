@@ -45,7 +45,6 @@ public class ProjectMapper {
     }
 
     public ProjectProgressCompleted mapIProjectToProjectDto(IProjectProgressCompleted project) {
-        log.info("测试: " + project.getId() + "_____" + project.getTodoItemCompleteNum());
         return ProjectProgressCompleted.builder()
                 .id(project.getId())
                 .todoItemCompleteNum(project.getTodoItemCompleteNum())
@@ -53,8 +52,6 @@ public class ProjectMapper {
     }
 
     public ProjectProgressTotal mapIProjectTotalToProjectDto(IProjectProgressTotal project) {
-        log.info("测试: " + project.getId() + "_____" + project.getTodoItemTotalNum());
-
         return ProjectProgressTotal.builder()
                 .id(project.getId())
                 .todoItemTotalNum(project.getTodoItemTotalNum())

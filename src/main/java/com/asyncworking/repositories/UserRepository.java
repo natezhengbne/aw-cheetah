@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,4 +89,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsById(Long id);
 
 
+    @Modifying
+    @Query(value = "UPDATE UserEntity u SET u.password = :password, u.updatedTime =:receiveTime " +
+            "WHERE u.email=:email")
+    int resetPasswordById(@NotNull @Param("email") String email,
+                          @NotNull @Param("password") String password,
+                          @NotNull @Param("receiveTime") OffsetDateTime receiveTime
+    );
 }

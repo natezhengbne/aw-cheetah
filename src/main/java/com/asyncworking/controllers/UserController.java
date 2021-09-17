@@ -1,7 +1,7 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.*;
 import com.asyncworking.constants.EmailType;
+import com.asyncworking.dtos.*;
 import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -93,16 +93,28 @@ public class UserController {
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 
-    @PutMapping("/password")
-    public ResponseEntity resetPassword(@RequestParam(value = "email") String email) {
-        // Todo: add password rest function
+    @PostMapping("/password")
+    public ResponseEntity generateResetPasswordLink(@RequestParam(value = "email")  String email) {
         if (userService.ifUnverified(email)) {
             return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
         }
-
         if (!userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        userService.generateResetPasswordLink(email);
+        return ResponseEntity.ok("sent");
+    }
+
+    @GetMapping("/password-reset/info")
+    public ResponseEntity getResetterInfo(@RequestParam(value = "code") String code) {
+        log.info("The code is " + code);
+        userService.getResetterInfo(code);
+        return ResponseEntity.ok("valid");
+    }
+
+    @PutMapping("/password-reset")
+    public ResponseEntity resetPassword(@Valid @RequestBody UserInfoDto userInfoDto) {
+        userService.resetPassword(userInfoDto);
+        return ResponseEntity.ok("reset");
     }
 }

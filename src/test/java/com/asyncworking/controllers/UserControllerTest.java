@@ -255,7 +255,7 @@ class UserControllerTest extends ControllerHelper{
         when(userService.ifEmailExists(email)).thenReturn(true);
         when(userService.ifUnverified(email)).thenReturn(false);
 
-        mockMvc.perform(put("/password")
+        mockMvc.perform(post("/password")
                 .param("email", email)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
@@ -266,7 +266,7 @@ class UserControllerTest extends ControllerHelper{
         String email = "test@gmail.com";
         when(userService.ifEmailExists(email)).thenReturn(false);
 
-        mockMvc.perform(put("/password")
+        mockMvc.perform(post("/password")
                 .param("email", email)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
@@ -277,10 +277,38 @@ class UserControllerTest extends ControllerHelper{
         String email = "test@gmail.com";
         when(userService.ifUnverified(email)).thenReturn(true);
 
-        mockMvc.perform(put("/password")
+        mockMvc.perform(post("/password")
                 .param("email", email)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void shouldReturnOkWhenDecodeSuccessfully() throws Exception {
+        String code = "code";
+        when(userService.getResetterInfo(code)).thenReturn(null);
+
+        mockMvc.perform(get("/password-reset/info")
+                .param("code", code)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnSuccessfulWhenPasswordReset() throws Exception {
+        UserInfoDto accountDto = UserInfoDto.builder()
+                .id(1L)
+                .name("aaa")
+                .email("aaa@qq.com")
+                .password("aaaaaa")
+                .title("title")
+                .accessToken("code")
+                .build();
+
+        mockMvc.perform(put("/password-reset")
+                .content(objectMapper.writeValueAsString(accountDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
 

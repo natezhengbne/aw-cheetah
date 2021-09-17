@@ -1,5 +1,6 @@
 package com.asyncworking.constants;
 
 public enum EmailType {
-    Verification
+    Verification,
+    ForgetPassword
 }

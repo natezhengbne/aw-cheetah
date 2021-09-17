@@ -3,6 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.jwt.JwtService;
@@ -11,7 +12,12 @@ import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +62,8 @@ public class UserServiceTest {
     private JwtService jwtService;
 
     private UserMapper userMapper;
+    @Mock
+    private EmployeeMapper employeeMapper;
 
     private UserService userService;
 
@@ -62,7 +71,7 @@ public class UserServiceTest {
 
     @Mock
     private EmailService emailService;
-
+    private String secretKey = "securesecuresecuresecuresecuresecuresecure";
 
     @BeforeEach()
     void setup() {
@@ -76,9 +85,11 @@ public class UserServiceTest {
                 emailSendRepository,
                 jwtService,
                 userMapper,
+                employeeMapper,
                 frontEndUrlConfig,
-                emailService);
-        ReflectionTestUtils.setField(userService, "jwtSecret", "securesecuresecuresecuresecuresecuresecure");
+                emailService,
+                passwordEncoder);
+        ReflectionTestUtils.setField(userService, "jwtSecret", secretKey);
     }
 
     @Test
@@ -155,14 +166,17 @@ public class UserServiceTest {
     @Test
     public void shouldGenerateActivationLinkGivenUserEmail() {
         String siteUrl = frontEndUrlConfig.getFrontEndUrl();
-        String verifyLink = userService.generateVerifyLink("user0001@test.com");
-        assertEquals(
-                siteUrl.concat("/verifylink/verify?code=")
-                        .concat("eyJhbGciOiJIUzI1NiJ9.")
-                        .concat("eyJzdWIiOiJzaWduVXAiLCJlbWFpbCI6InVzZXIwMDAxQHRlc3QuY29tIn0.")
-                        .concat("Lm7JlWoG0lyw2KWYBpnGfmt2HMP6H3vvPeN36gSVGrE"),
-                verifyLink
-        );
+        String verifyLink = userService.generateLink("user0001@test.com",
+                "/verifylink/verify?code=",
+                "signUp",
+                new Date(System.currentTimeMillis() + 1000000));
+        String jwtToken = verifyLink.replace("https://www.asyncworking.com/verifylink/verify?code=", "");
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(jwtToken);
+
+        assertEquals(claimsJws.getBody().getSubject(), "signUp");
     }
 
     @Test
@@ -233,6 +247,39 @@ public class UserServiceTest {
         when(userRepository.updateStatusByEmail("user@gmail.com", Status.ACTIVATED)).thenReturn(1);
 
         assertTrue(userService.isAccountActivated(code));
+    }
+
+    @Test
+    public void shouldReturnSetterInfoWhenGivenCode() {
+        UserEntity mockReturnedUserEntity = UserEntity.builder()
+                .id(1L)
+                .email("plus@gmail.com")
+                .name("aName")
+                .title("title")
+                .build();
+        EmployeeGetDto employeeGetDto = EmployeeGetDto.builder()
+                .id(1L)
+                .email("plus@gmail.com")
+                .name("aName")
+                .title("title")
+                .build();
+        when(userRepository.findByEmail(any())).thenReturn(Optional.ofNullable(mockReturnedUserEntity));
+        when(employeeMapper.mapEntityToDto(mockReturnedUserEntity)).thenReturn(employeeGetDto);
+
+        String verifyLink = userService.generateLink("plus@gmail.com",
+                "/verifylink/verify?code=",
+                "passwordReset",
+                new Date(System.currentTimeMillis() + 1000000));
+        String jwtToken = verifyLink.replace("https://www.asyncworking.com/verifylink/verify?code=", "");
+
+        EmployeeGetDto mockUser = userService.getResetterInfo(jwtToken);
+
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(jwtToken);
+
+        assertEquals(mockUser.getEmail(), claimsJws.getBody().get("email"));
     }
 
     @Test

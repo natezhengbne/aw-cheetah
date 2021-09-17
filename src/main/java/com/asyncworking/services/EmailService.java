@@ -31,10 +31,13 @@ public class EmailService {
     private String endPoint;
 
     @Value("${cloud.aws.S3.templateS3Bucket}")
-    private String S3Bucket;
+    private String s3Bucket;
 
     @Value("${cloud.aws.S3.templateS3Key}")
-    private String S3Key;
+    private String s3Key;
+
+    @Value("${cloud.aws.S3.templateResetPasswordS3Key}")
+    private String s3resetPasswordTemplateKey;
 
     public void sendMessageToSQS(UserEntity userEntity, String verificationLink, EmailType templateType, String receiverEmail) {
         try {
@@ -54,15 +57,26 @@ public class EmailService {
         );
     }
 
-    private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String verificationLink,
+    private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String link,
                                               EmailType templateType, String receiverEmail) {
+        String s3TemplateKey = s3Key;
+        switch (templateType) {
+            case Verification:
+                s3TemplateKey = s3Key;
+                break;
+            case ForgetPassword:
+                s3TemplateKey = s3resetPasswordTemplateKey;
+                break;
+            default:
+                break;
+        }
         return EmailMessageDto.builder()
                 .userName(userEntity.getName())
-                .verificationLink(verificationLink)
+                .verificationLink(link)
                 .templateType(templateType.toString())
                 .email(receiverEmail)
-                .templateS3Bucket(S3Bucket)
-                .templateS3Key(S3Key)
+                .templateS3Bucket(s3Bucket)
+                .templateS3Key(s3TemplateKey)
                 .build();
     }
 }
