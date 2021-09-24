@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
@@ -28,6 +29,15 @@ public class TodoController {
     public ResponseEntity<Long> createTodoList(@PathVariable Long companyId, @PathVariable Long projectId,
                                                @Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(companyId, projectId, todoListDto));
+    }
+
+    @PutMapping("/todolists/{todolistId}")
+    public ResponseEntity updateTodoList(@PathVariable Long companyId, @PathVariable Long projectId,
+                                         @PathVariable Long todolistId,
+                                         @Valid @RequestBody TodoListDto todoListDto) {
+        todoService.updateTodoListInfo(companyId, projectId, todolistId, todoListDto);
+        log.info(todoListDto.toString());
+        return ResponseEntity.ok("success");
     }
 
     @GetMapping("/todolists")

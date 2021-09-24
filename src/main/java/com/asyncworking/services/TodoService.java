@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.*;
 import com.asyncworking.exceptions.ProjectNotFoundException;
@@ -21,11 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.time.ZoneOffset.UTC;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +57,19 @@ public class TodoService {
         log.info("create a new TodoList: " + newTodoList.getTodoListTitle());
         todoListRepository.save(newTodoList);
         return newTodoList.getId();
+    }
+
+    @Transactional
+    public void updateTodoListInfo(Long companyId, Long projectId, Long todoListId,
+                                   @Valid @RequestBody TodoListDto todoListDto) {
+        todoListRepository.updateTodoListInfo(
+                todoListId,
+                companyId,
+                projectId,
+                todoListDto.getTodoListTitle(),
+                todoListDto.getDetails(),
+                OffsetDateTime.now(UTC)
+        );
     }
 
     public List<TodoListDto> findRequiredNumberTodoListsByCompanyIdAndProjectId(Long companyId, Long projectId, Integer quantity) {
