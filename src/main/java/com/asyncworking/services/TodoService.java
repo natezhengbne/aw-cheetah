@@ -67,7 +67,6 @@ public class TodoService {
                 companyId,
                 projectId,
                 todoListDto.getTodoListTitle(),
-                todoListDto.getDetails(),
                 OffsetDateTime.now(UTC)
         );
     }

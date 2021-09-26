@@ -32,8 +32,6 @@ public class TodoController {
     }
 
     @PutMapping("/todolists/{todolistId}")
-    @PreAuthorize("hasPermission(#companyId, 'Company Manager') " +
-            "or hasPermission(#projectId, 'Project Manager')")
     public ResponseEntity updateTodoList(@PathVariable Long companyId, @PathVariable Long projectId,
                                          @PathVariable Long todolistId,
                                          @Valid @RequestBody TodoListDto todoListDto) {

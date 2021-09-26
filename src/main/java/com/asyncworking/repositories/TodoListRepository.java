@@ -32,14 +32,13 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
     Optional<TodoList> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long todoListId);
 
     @Modifying
-    @Query("update TodoList t set t.todoListTitle=:title, t.details=:detail, t.updatedTime=:updatedTime " +
+    @Query("update TodoList t set t.todoListTitle=:title, t.updatedTime=:updatedTime " +
             "where t.id=:id and t.companyId=:companyId and t.project.id=:projectId")
     int updateTodoListInfo(
             @Param("id") Long id,
             @Param("companyId")Long companyId,
             @Param("projectId")Long projectId,
             @Param("title") String title,
-            @Param("detail") String detail,
             @Param("updatedTime") OffsetDateTime updatedTime
     );
 }
