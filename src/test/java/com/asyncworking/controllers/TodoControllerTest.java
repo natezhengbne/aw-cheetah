@@ -1,5 +1,6 @@
 package com.asyncworking.controllers;
 
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
@@ -8,14 +9,15 @@ import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.TodoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,5 +170,35 @@ class TodoControllerTest extends ControllerHelper{
         mockMvc.perform(get("/companies/1/projects/1/todoitems/1/assignees"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldReturnOkIfUpdateTodolistSuccessful() throws Exception {
+        TodoListDto todolistDto = TodoListDto.builder()
+                .id(1L)
+                .projectId(1L)
+                .todoListTitle("abc")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists/1")
+                .content(objectMapper.writeValueAsString(todolistDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void throwBadRequestIfUpdateTodolistTitleIsEmpty() throws Exception {
+        TodoListDto todolistDto = TodoListDto.builder()
+                .id(1L)
+                .projectId(1L)
+                .todoListTitle("")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists/1")
+                        .content(objectMapper.writeValueAsString(todolistDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
 }
 

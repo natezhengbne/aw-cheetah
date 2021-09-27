@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
@@ -257,6 +258,18 @@ public class TodoServiceTest {
 
     }
 
+//    @Test
+//    @javax.transaction.Transactional
+//    public void shouldUpdateTodolistSuccess() {
+//        TodoListDto todolistDto = TodoListDto.builder()
+//                .id(1L)
+//                .projectId(1L)
+//                .todoListTitle("abc")
+//                .build();
+//        todoService.updateTodoListInfo(1L, 1L, 1L, todolistDto);
+//        verify(todoListRepository).updateTodoListInfo(any(), any(), any(), any(), any());
+//    }
+
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
         return TodoItem.builder()
                 .todoList(todoList)
@@ -289,5 +302,4 @@ public class TodoServiceTest {
                 .name("test user")
                 .build();
     }
-
 }
