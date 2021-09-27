@@ -1,6 +1,5 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
@@ -9,12 +8,10 @@ import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.TodoService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -44,8 +41,6 @@ class TodoControllerTest extends ControllerHelper{
     @Test
     public void todoListCreateSuccess() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
-                .id(1L)
-                .projectId(1L)
                 .todoListTitle("test_todo_list")
                 .build();
         when(todoService.createTodoList(1L, 1L, todoListDto))
