@@ -1,7 +1,6 @@
 package com.asyncworking.repositories;
 
-import com.asyncworking.models.IProjectProgressCompleted;
-import com.asyncworking.models.IProjectProgressTotal;
+import com.asyncworking.models.IProjectProgressInfo;
 import com.asyncworking.models.TodoItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +41,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     String findSubscribersIdsByProjectIdAndId(@Param("companyId") Long companyId, @Param("projectId") Long projectId,
                                               @Param("todoItemId") Long todoItemId);
 
-    @Query(value = "SELECT ti.projectId as id, COUNT(ti) as todoItemTotalNum FROM TodoItem ti  " +
-            "WHERE ti.projectId in :projectIdList GROUP BY ti.projectId")
-    List<IProjectProgressTotal> findAllByProjectId(@Param("projectIdList") List<Long> projectIdList);
-
-    @Query(value = "SELECT ti.projectId as id, COUNT(ti) as todoItemCompleteNum FROM TodoItem ti  " +
-            "WHERE ti.projectId in :projectIdList and ti.completed=true GROUP BY ti.projectId")
-    List<IProjectProgressCompleted> findAllCompletedByProjectId(@Param("projectIdList") List<Long> projectIdList);
+    @Query(value = "SELECT ti.projectId as id, ti.completed as status, COUNT(ti) as todoItemStatusNum FROM TodoItem ti  " +
+            "WHERE ti.projectId in :projectIdList GROUP BY ti.projectId, ti.completed")
+    List<IProjectProgressInfo> findProgressInfoByProjectId(@Param("projectIdList") Collection<Long> projectIdList);
 }

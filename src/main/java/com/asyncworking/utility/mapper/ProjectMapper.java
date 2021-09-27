@@ -2,10 +2,6 @@ package com.asyncworking.utility.mapper;
 
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
-import com.asyncworking.dtos.ProjectProgressCompleted;
-import com.asyncworking.dtos.ProjectProgressTotal;
-import com.asyncworking.models.IProjectProgressCompleted;
-import com.asyncworking.models.IProjectProgressTotal;
 import com.asyncworking.models.Project;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -41,20 +37,6 @@ public class ProjectMapper {
                 .projectUserNames(project.getProjectUsers().stream()
                         .map(projectUser -> projectUser.getUserEntity().getName())
                         .collect(Collectors.toList()))
-                .build();
-    }
-
-    public ProjectProgressCompleted mapIProjectToProjectDto(IProjectProgressCompleted project) {
-        return ProjectProgressCompleted.builder()
-                .id(project.getId())
-                .todoItemCompleteNum(project.getTodoItemCompleteNum())
-                .build();
-    }
-
-    public ProjectProgressTotal mapIProjectTotalToProjectDto(IProjectProgressTotal project) {
-        return ProjectProgressTotal.builder()
-                .id(project.getId())
-                .todoItemTotalNum(project.getTodoItemTotalNum())
                 .build();
     }
 }

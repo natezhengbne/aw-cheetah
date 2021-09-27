@@ -21,9 +21,17 @@ public class ProjectInfoDto {
 
     private String description;
 
-    private int todoItemTotalNum;
+    private int todoItemUndoNum;
 
     private int todoItemCompleteNum;
 
     private List<String> projectUserNames;
+
+    public void setTodoNumByStatus(int todoItemStatusNum, Boolean status) {
+        if (status) {
+            todoItemCompleteNum = todoItemStatusNum;
+        } else {
+            todoItemUndoNum = todoItemStatusNum;
+        }
+    }
 }

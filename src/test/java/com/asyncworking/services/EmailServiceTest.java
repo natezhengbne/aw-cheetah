@@ -29,6 +29,8 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -62,7 +64,10 @@ public class EmailServiceTest {
     private AmazonSQSAsync amazonSQSAsync;
 
     private EmailResultListener emailResultListener;
-
+    private final Map<EmailType, String> emailType = new HashMap<>() {{
+        put(EmailType.Verification, "s3Key");
+        put(EmailType.ForgetPassword, "s3resetPasswordTemplateKey");
+    }};
     @Mock
     private AmazonSQSConfig amazonSQSConfig;
 
@@ -73,9 +78,7 @@ public class EmailServiceTest {
                 queueMessagingTemplate,
                 objectMapper,
                 emailMapper,
-                emailSendRepository,
-                userRepository
-        );
+                emailSendRepository);
 
         mockUserEntity = UserEntity.builder()
                 .id(1L)
@@ -106,7 +109,7 @@ public class EmailServiceTest {
         verify(emailSendRepository).save(emailSendRecordArgumentCaptor.capture());
         assertEquals(mockUserEntity, emailSendRecordArgumentCaptor.getValue().getUserEntity());
     }
-    
+
 
     @Test
     public void send_withDestination_usesDestination() {
