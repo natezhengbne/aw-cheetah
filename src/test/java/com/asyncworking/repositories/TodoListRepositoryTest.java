@@ -55,7 +55,7 @@ class TodoListRepositoryTest extends DBHelper {
     @Transactional
     public void shouldGet1AndUpdateTodolistSuccessfully() {
         saveMockData();
-        int count = todoListRepository.updateTodoListInfo(todoList1.getId(),
+        int count = todoListRepository.updateTodoListTitle(todoList1.getId(),
                 project.getCompanyId(),
                 project.getId(),
                 "New Title xxx",

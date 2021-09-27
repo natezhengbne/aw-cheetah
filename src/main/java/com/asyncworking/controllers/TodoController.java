@@ -1,6 +1,5 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
@@ -9,7 +8,6 @@ import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +30,10 @@ public class TodoController {
     }
 
     @PutMapping("/todolists/{todolistId}")
-    public ResponseEntity updateTodoList(@PathVariable Long companyId, @PathVariable Long projectId,
+    public ResponseEntity updateTodoListTitle(@PathVariable Long companyId, @PathVariable Long projectId,
                                          @PathVariable Long todolistId,
                                          @Valid @RequestBody TodoListDto todoListDto) {
-        todoService.updateTodoListInfo(companyId, projectId, todolistId, todoListDto);
-        log.info(todoListDto.toString());
+        todoService.updateTodoListTitle(companyId, projectId, todolistId, todoListDto.getTodoListTitle());
         return ResponseEntity.ok("success");
     }
 

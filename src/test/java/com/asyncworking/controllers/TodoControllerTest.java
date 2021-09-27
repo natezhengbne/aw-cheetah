@@ -167,7 +167,7 @@ class TodoControllerTest extends ControllerHelper{
     }
 
     @Test
-    public void shouldReturnOkIfUpdateTodolistSuccessful() throws Exception {
+    public void shouldReturnOkIfUpdateTodolistTitleSuccessful() throws Exception {
         TodoListDto todolistDto = TodoListDto.builder()
                 .id(1L)
                 .projectId(1L)

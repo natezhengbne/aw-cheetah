@@ -34,7 +34,7 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
     @Modifying
     @Query("update TodoList t set t.todoListTitle=:title, t.updatedTime=:updatedTime " +
             "where t.id=:id and t.companyId=:companyId and t.project.id=:projectId")
-    int updateTodoListInfo(
+    int updateTodoListTitle(
             @Param("id") Long id,
             @Param("companyId")Long companyId,
             @Param("projectId")Long projectId,

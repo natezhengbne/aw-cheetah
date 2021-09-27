@@ -260,15 +260,15 @@ public class TodoServiceTest {
 
     @Test
     @Transactional
-    public void shouldUpdateTodolistSuccess() {
+    public void shouldUpdateTodolistTitleSuccess() {
         TodoListDto todolistDto = TodoListDto.builder()
                 .id(1L)
                 .projectId(1L)
                 .todoListTitle("abc")
                 .build();
-        todoService.updateTodoListInfo(1L, 1L, 1L, todolistDto);
+        todoService.updateTodoListTitle(1L, 1L, 1L, todolistDto.getTodoListTitle());
 
-        verify(todoListRepository).updateTodoListInfo(any(), any(), any(), any(), any());
+        verify(todoListRepository).updateTodoListTitle(any(), any(), any(), any(), any());
     }
 
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {

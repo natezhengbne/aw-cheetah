@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.*;
 import com.asyncworking.exceptions.ProjectNotFoundException;
@@ -60,13 +59,13 @@ public class TodoService {
     }
 
     @Transactional
-    public void updateTodoListInfo(Long companyId, Long projectId, Long todoListId,
-                                   @Valid @RequestBody TodoListDto todoListDto) {
-        todoListRepository.updateTodoListInfo(
+    public void updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
+                                   @Valid @RequestBody String todoListTitle) {
+        todoListRepository.updateTodoListTitle(
                 todoListId,
                 companyId,
                 projectId,
-                todoListDto.getTodoListTitle(),
+                todoListTitle,
                 OffsetDateTime.now(UTC)
         );
     }
