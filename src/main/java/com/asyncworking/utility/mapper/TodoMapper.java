@@ -27,7 +27,6 @@ public interface TodoMapper {
     @Mapping(target = "companyId", source = "project.companyId")
     @Mapping(target = "project", source = "project")
     @Mapping(target = "todoListTitle", source = "todoListDto.todoListTitle")
-//    @Mapping(target = "details", source = "todoListDto.details")
     @Mapping(target = "docUrl", source = "todoListDto.docUrl")
     @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
