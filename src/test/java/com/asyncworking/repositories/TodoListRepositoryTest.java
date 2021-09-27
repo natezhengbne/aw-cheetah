@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest
-@Transactional
 @ActiveProfiles("test")
 class TodoListRepositoryTest extends DBHelper {
 
@@ -53,6 +52,7 @@ class TodoListRepositoryTest extends DBHelper {
     }
 
     @Test
+    @Transactional
     public void shouldGet1AndUpdateTodolistSuccessfully() {
         saveMockData();
         int count = todoListRepository.updateTodoListInfo(todoList1.getId(),
@@ -60,7 +60,6 @@ class TodoListRepositoryTest extends DBHelper {
                 project.getId(),
                 "New Title xxx",
                 OffsetDateTime.now(UTC));
-        log.info(String.valueOf(count));
         assertEquals(1, count);
     }
 

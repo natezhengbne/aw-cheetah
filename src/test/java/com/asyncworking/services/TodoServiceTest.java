@@ -259,7 +259,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    @javax.transaction.Transactional
+    @Transactional
     public void shouldUpdateTodolistSuccess() {
         TodoListDto todolistDto = TodoListDto.builder()
                 .id(1L)
