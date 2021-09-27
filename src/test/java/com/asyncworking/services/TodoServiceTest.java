@@ -258,17 +258,18 @@ public class TodoServiceTest {
 
     }
 
-//    @Test
-//    @javax.transaction.Transactional
-//    public void shouldUpdateTodolistSuccess() {
-//        TodoListDto todolistDto = TodoListDto.builder()
-//                .id(1L)
-//                .projectId(1L)
-//                .todoListTitle("abc")
-//                .build();
-//        todoService.updateTodoListInfo(1L, 1L, 1L, todolistDto);
-//        verify(todoListRepository).updateTodoListInfo(any(), any(), any(), any(), any());
-//    }
+    @Test
+    @javax.transaction.Transactional
+    public void shouldUpdateTodolistSuccess() {
+        TodoListDto todolistDto = TodoListDto.builder()
+                .id(1L)
+                .projectId(1L)
+                .todoListTitle("abc")
+                .build();
+        todoService.updateTodoListInfo(1L, 1L, 1L, todolistDto);
+
+        verify(todoListRepository).updateTodoListInfo(any(), any(), any(), any(), any());
+    }
 
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
         return TodoItem.builder()
