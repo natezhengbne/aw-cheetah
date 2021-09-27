@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 @ActiveProfiles("test")
 class TodoListRepositoryTest extends DBHelper {
 
@@ -49,6 +50,18 @@ class TodoListRepositoryTest extends DBHelper {
         saveMockData();
         List<TodoList> lists = todoListRepository.findTodoListsByProjectIdOrderByCreatedTime(Long.MAX_VALUE, 5);
         assertTrue(lists.isEmpty());
+    }
+
+    @Test
+    public void shouldGet1AndUpdateTodolistSuccessfully() {
+        saveMockData();
+        int count = todoListRepository.updateTodoListInfo(todoList1.getId(),
+                project.getCompanyId(),
+                project.getId(),
+                "New Title xxx",
+                OffsetDateTime.now(UTC));
+        log.info(String.valueOf(count));
+        assertEquals(1, count);
     }
 
     void saveMockData() {
