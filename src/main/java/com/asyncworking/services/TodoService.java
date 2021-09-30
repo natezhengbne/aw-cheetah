@@ -60,7 +60,7 @@ public class TodoService {
 
     @Transactional
     public void updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
-                                   @Valid @RequestBody String todoListTitle) {
+                                   @RequestBody String todoListTitle) {
         int res = todoListRepository.updateTodoListTitle(
                 todoListId,
                 companyId,

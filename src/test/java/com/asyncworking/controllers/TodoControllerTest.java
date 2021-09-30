@@ -169,8 +169,6 @@ class TodoControllerTest extends ControllerHelper{
     @Test
     public void shouldReturnOkIfUpdateTodolistTitleSuccessful() throws Exception {
         TodoListDto todolistDto = TodoListDto.builder()
-                .id(1L)
-                .projectId(1L)
                 .todoListTitle("abc")
                 .build();
 
@@ -183,8 +181,6 @@ class TodoControllerTest extends ControllerHelper{
     @Test
     public void throwBadRequestIfUpdateTodolistTitleIsEmpty() throws Exception {
         TodoListDto todolistDto = TodoListDto.builder()
-                .id(1L)
-                .projectId(1L)
                 .todoListTitle("")
                 .build();
 
