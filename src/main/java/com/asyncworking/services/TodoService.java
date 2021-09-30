@@ -69,7 +69,7 @@ public class TodoService {
                 OffsetDateTime.now(UTC)
         );
 
-        if (res == 0) {
+        if (res != 1) {
             throw new TodoListNotFoundException("Cannot find todoList by id: " + todoListId);
         }
     }

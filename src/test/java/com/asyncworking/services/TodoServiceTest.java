@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
@@ -260,15 +259,13 @@ public class TodoServiceTest {
 
     @Test
     @Transactional
-    public void shouldUpdateTodolistTitleSuccess() {
-        TodoListDto todolistDto = TodoListDto.builder()
-                .id(1L)
-                .projectId(1L)
-                .todoListTitle("abc")
-                .build();
-        todoService.updateTodoListTitle(1L, 1L, 1L, todolistDto.getTodoListTitle());
-
-        verify(todoListRepository).updateTodoListTitle(any(), any(), any(), any(), any());
+    public void throwTodoListNotFoundException() {
+        String title = "abc";
+        lenient()
+                .when(todoListRepository.updateTodoListTitle(1L, 1L, 1L, title, OffsetDateTime.now()))
+                .thenReturn(0);
+        assertThrows(TodoListNotFoundException.class, () ->
+                todoService.updateTodoListTitle(1L, 1L, 1L, title));
     }
 
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
