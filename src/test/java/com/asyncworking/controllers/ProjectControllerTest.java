@@ -44,6 +44,9 @@ public class ProjectControllerTest extends ControllerHelper{
                 .name("sss@qq.com")
                 .ownerId(1L)
                 .companyId(1L)
+                .ifPrivate(true)
+                .defaultView("Board")
+                .description("This is a project")
                 .build();
         mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
@@ -57,6 +60,9 @@ public class ProjectControllerTest extends ControllerHelper{
                 .name("  ")
                 .ownerId(1L)
                 .companyId(1L)
+                .ifPrivate(true)
+                .defaultView("Board")
+                .description("This is a project")
                 .build();
         mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
@@ -67,8 +73,11 @@ public class ProjectControllerTest extends ControllerHelper{
     @Test
     public void throwBadRequestWhenCompanyIdIsEmpty() throws Exception {
         ProjectDto projectDto = ProjectDto.builder()
-                .name("")
+                .name("sss@qq.com")
                 .ownerId(1L)
+                .ifPrivate(true)
+                .defaultView("Board")
+                .description("This is a project")
                 .build();
         mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))
@@ -79,8 +88,11 @@ public class ProjectControllerTest extends ControllerHelper{
     @Test
     public void throwBadRequestWhenOwnerIdIsEmpty() throws Exception {
         ProjectDto projectDto = ProjectDto.builder()
-                .name("")
+                .name("sss@qq.com")
                 .companyId(1L)
+                .ifPrivate(true)
+                .defaultView("Board")
+                .description("This is a project")
                 .build();
         mockMvc.perform(post("/companies/1/projects")
                 .content(objectMapper.writeValueAsString(projectDto))

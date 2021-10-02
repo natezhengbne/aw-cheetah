@@ -48,6 +48,9 @@ public class Project {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "default_view")
+    private String defaultView;
+
     @CreatedDate
     @Column(name = "created_time", nullable = false)
     private OffsetDateTime createdTime;

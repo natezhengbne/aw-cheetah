@@ -40,6 +40,8 @@ public class ProjectRepositoryTest extends DBHelper {
                 .name("newProject")
                 .isDeleted(false)
                 .isPrivate(false)
+                .defaultView("Board")
+                .description("This is a project")
                 .leaderId(1L)
                 .companyId(1L)
                 .createdTime(OffsetDateTime.now(UTC))

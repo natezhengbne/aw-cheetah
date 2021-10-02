@@ -25,4 +25,10 @@ public class ProjectDto {
     @NotNull(message = "companyId can not be null.")
     private Long companyId;
 
+    private String description;
+
+    private boolean ifPrivate;
+
+    private String defaultView;
+
 }

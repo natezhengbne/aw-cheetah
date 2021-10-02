@@ -22,7 +22,9 @@ public class ProjectMapper {
                 .companyId(companyId)
                 .projectUsers(new HashSet<>())
                 .isDeleted(false)
-                .isPrivate(false)
+                .isPrivate(projectDto.isIfPrivate())
+                .description(projectDto.getDescription())
+                .defaultView(projectDto.getDefaultView())
                 .createdTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .updatedTime(OffsetDateTime.now(ZoneOffset.UTC))
                 .build();
