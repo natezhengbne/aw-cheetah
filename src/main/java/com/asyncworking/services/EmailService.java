@@ -15,6 +15,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,10 +41,13 @@ public class EmailService {
     @Value("${cloud.aws.S3.templateResetPasswordS3Key}")
     private String s3resetPasswordTemplateKey;
 
-//    private final Map<EmailType, String> emailType = new HashMap<>() {{
-//        put(EmailType.Verification, s3Key);
-//        put(EmailType.ForgetPassword, s3resetPasswordTemplateKey);
-//    }};
+    private final Map<EmailType, String> emailType = new HashMap<>();
+
+    @PostConstruct
+    private void initMap() {
+        emailType.put(EmailType.Verification, s3Key);
+        emailType.put(EmailType.ForgetPassword, s3resetPasswordTemplateKey);
+    }
 
     public void sendMessageToSQS(UserEntity userEntity, String verificationLink, EmailType templateType, String receiverEmail) {
         try {
@@ -65,24 +69,13 @@ public class EmailService {
 
     private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String link,
                                               EmailType templateType, String receiverEmail) {
-        String s3TemplateKey = s3Key;
-        switch (templateType) {
-            case Verification:
-                s3TemplateKey = s3Key;
-                break;
-            case ForgetPassword:
-                s3TemplateKey = s3resetPasswordTemplateKey;
-                break;
-            default:
-                break;
-        }
         return EmailMessageDto.builder()
                 .userName(userEntity.getName())
                 .verificationLink(link)
                 .templateType(templateType.toString())
                 .email(receiverEmail)
                 .templateS3Bucket(s3Bucket)
-                .templateS3Key(s3TemplateKey)
+                .templateS3Key(emailType.get(templateType))
                 .build();
     }
 }
