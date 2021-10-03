@@ -258,11 +258,18 @@ public class TodoServiceTest {
     }
 
     @Test
+    public void returnTrueIfUpdateTodoListTitleSuccess() {
+        String newTitle = "abc";
+        when(todoListRepository.updateTodoListTitle(1L, 1L, 1L, newTitle, any()))
+                .thenReturn(1);
+        assertTrue(todoService.updateTodoListTitle(1L, 1L, 1L, newTitle));
+    }
+
+    @Test
     @Transactional
     public void throwTodoListNotFoundException() {
         String title = "abc";
-        lenient()
-                .when(todoListRepository.updateTodoListTitle(1L, 1L, 1L, title, OffsetDateTime.now()))
+        when(todoListRepository.updateTodoListTitle(1L, 1L, 1L, title, OffsetDateTime.now()))
                 .thenReturn(0);
         assertThrows(TodoListNotFoundException.class, () ->
                 todoService.updateTodoListTitle(1L, 1L, 1L, title));

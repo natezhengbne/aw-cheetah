@@ -59,7 +59,7 @@ public class TodoService {
     }
 
     @Transactional
-    public void updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
+    public boolean updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
                                    @RequestBody String todoListTitle) {
         int res = todoListRepository.updateTodoListTitle(
                 todoListId,
@@ -72,6 +72,7 @@ public class TodoService {
         if (res != 1) {
             throw new TodoListNotFoundException("Cannot find todoList by id: " + todoListId);
         }
+        return true;
     }
 
     public List<TodoListDto> findRequiredNumberTodoListsByCompanyIdAndProjectId(Long companyId, Long projectId, Integer quantity) {
