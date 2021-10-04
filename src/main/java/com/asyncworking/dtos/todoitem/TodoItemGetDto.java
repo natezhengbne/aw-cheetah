@@ -30,4 +30,6 @@ public class TodoItemGetDto {
 
     private String subscribersIds;
 
+    private OffsetDateTime completedTime;
+
 }

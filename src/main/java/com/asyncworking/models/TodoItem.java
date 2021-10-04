@@ -59,4 +59,7 @@ public class TodoItem {
 
     @Column(name = "subscribers_ids")
     private String subscribersIds;
+
+    @Column(name = "completed_time")
+    private OffsetDateTime completedTime;
 }

@@ -19,4 +19,6 @@ public class TodoItemPutDto {
     private OffsetDateTime dueDate;
 
     private String subscribersIds;
+
+    private OffsetDateTime completedTime;
 }

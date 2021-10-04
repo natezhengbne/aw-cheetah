@@ -43,7 +43,7 @@ public class TodoController {
         return ResponseEntity.ok(todoService.fetchSingleTodoList(companyId, projectId, todolistId));
     }
 
-
+    //改这个：
     @PostMapping("/todolists/{todolistId}/todoitems")
     public ResponseEntity createTodoItem(@PathVariable Long companyId, @PathVariable Long projectId,
                                          @Valid @RequestBody TodoItemPostDto todoItemPostDto) {
@@ -65,11 +65,11 @@ public class TodoController {
         todoService.updateTodoItemDetails(companyId, projectId, todoitemId, todoItemPutDto);
         return ResponseEntity.ok("update success");
     }
-
+//改这个
     @PutMapping("/todoitems/{todoitemId}/completed")
     public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId, @PathVariable Long projectId,
-                                                           @PathVariable Long todoitemId) {
-        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId));
+                                                           @PathVariable Long todoitemId ,@RequestParam boolean completed ) {
+        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId,completed));
     }
 
 

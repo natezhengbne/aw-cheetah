@@ -129,7 +129,7 @@ class TodoControllerTest extends ControllerHelper{
                 .companyId(1L)
                 .completed(true)
                 .build();
-        when(todoService.changeTodoItemCompleted(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()))
+        when(todoService.changeTodoItemCompleted(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId(),todoItem.getCompleted()))
                 .thenReturn(!todoItem.getCompleted());
         mockMvc.perform(put("/companies/1/projects/1/todoitems/1/completed")
                 .contentType(MediaType.APPLICATION_JSON))

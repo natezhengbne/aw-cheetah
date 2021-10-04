@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 
 
 @Data
@@ -34,4 +35,6 @@ public class TodoItemPostDto {
     private OffsetDateTime dueDate;
 
     private String subscribersIds;
+
+    private OffsetTime completedTime;
 }

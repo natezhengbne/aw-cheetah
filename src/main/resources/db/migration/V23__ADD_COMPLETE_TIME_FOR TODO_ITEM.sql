@@ -1,0 +1,1 @@
+ALTER TABLE "todo_item" ADD "completed_time"  TIMESTAMP WITH TIME ZONE;

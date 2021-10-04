@@ -66,7 +66,7 @@ public class TodoService {
                 (companyId, projectId, id));
     }
 
-    @Transactional
+
     public Long createTodoItem(Long companyId, Long projectId, @Valid TodoItemPostDto todoItemPostDto) {
         TodoItem savedTodoItem = todoItemRepository.save(
                 todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListByCompanyIdAndProjectIdAndId
@@ -75,11 +75,11 @@ public class TodoService {
         return savedTodoItem.getId();
     }
 
-    @Transactional
-    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id) {
+
+    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id,boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
-        todoItem.setCompleted(!todoItem.getCompleted());
+        todoItem.setCompleted(completed);
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }
