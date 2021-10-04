@@ -38,24 +38,14 @@ public class MessageService {
     @Transactional
     public MessageGetDto createMessage(Long companyId, Long projectId, MessagePostDto messagePostDto) {
         verifyMessagePostDto(companyId, projectId, messagePostDto);
-        if (messagePostDto.getMessageCategoryId() != null) {
-            Message message = messageMapper.toEntity(messagePostDto,
-                    fetchProjectById(messagePostDto.getProjectId()),
-                    fetchMessageCategoryById(messagePostDto.getMessageCategoryId()));
-            Message savedMessage = messageRepository.save(message);
-            log.info("create a new message : " + messagePostDto.getMessageTitle());
-            MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage,
-                    findUsernameByUserId(messagePostDto.getPosterUserId()));
-            return messageGetDto;
-        } else {
-            Message message = messageMapper.toEntity(messagePostDto,
-                    fetchProjectById(messagePostDto.getProjectId()));
-            Message savedMessage = messageRepository.save(message);
-            log.info("create a new message : " + messagePostDto.getMessageTitle());
-            MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage,
-                    findUsernameByUserId(messagePostDto.getPosterUserId()));
-            return messageGetDto;
-        }
+        Message message = messageMapper.toEntity(messagePostDto,
+                fetchProjectById(messagePostDto.getProjectId()),
+                fetchMessageCategoryById(messagePostDto.getMessageCategoryId()));
+        Message savedMessage = messageRepository.save(message);
+        log.info("create a new message : " + messagePostDto.getMessageTitle());
+        MessageGetDto messageGetDto = messageMapper.fromEntity(savedMessage,
+                findUsernameByUserId(messagePostDto.getPosterUserId()));
+        return messageGetDto;
     }
 
     public void verifyMessagePostDto(Long companyId, Long projectId, MessagePostDto messagePostDto) {
@@ -94,6 +84,9 @@ public class MessageService {
     }
 
     private MessageCategory fetchMessageCategoryById(Long messageCategoryId) {
+        if (messageCategoryId == null) {
+            return null;
+        }
         return messageCategoryRepository
                 .findById(messageCategoryId)
                 .orElseThrow(() -> new MessageCategoryNotFoundException("Cannot find message category by id: " + messageCategoryId));

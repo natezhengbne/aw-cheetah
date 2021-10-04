@@ -47,22 +47,6 @@ public class MessageMapper {
                 .build();
     }
 
-    public Message toEntity(MessagePostDto messagePostDto, Project project) {
-        return Message.builder()
-                .project(project)
-                .companyId(messagePostDto.getCompanyId())
-                .posterUserId(messagePostDto.getPosterUserId())
-                .messageCategory(null)
-                .messageTitle(messagePostDto.getMessageTitle())
-                .docURL(messagePostDto.getDocURL())
-                .content(messagePostDto.getContent())
-                .originNotes(messagePostDto.getOriginNotes())
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .postTime(OffsetDateTime.now(UTC))
-                .subscribersIds(messagePostDto.getSubscribersIds())
-                .build();
-    }
 
     public MessageCategoryGetDto fromCategoryEntity(MessageCategory messageCategory) {
         return MessageCategoryGetDto.builder()
