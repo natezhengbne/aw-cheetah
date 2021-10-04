@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class TodoService {
     public TodoListDto fetchSingleTodoList(Long companyId, Long projectId, Long id) {
         return todoMapper.fromTodoListEntity(findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, id),
                 findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc
-                (companyId, projectId, id));
+                        (companyId, projectId, id));
     }
 
 
@@ -76,10 +77,17 @@ public class TodoService {
     }
 
 
-    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id,boolean completed) {
+    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
-        todoItem.setCompleted(completed);
+        todoItem.setCompleted(null);
+        todoItem.setCompletedTime(null);
+        if (completed) {
+            todoItem.setCompleted(completed);
+            todoItem.setCompletedTime(OffsetDateTime.now());
+        }
+
+
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }
