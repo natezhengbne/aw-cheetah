@@ -62,4 +62,12 @@ public class TodoItem {
 
     @Column(name = "completed_time")
     private OffsetDateTime completedTime;
+
+    public void setCompletedTime() {
+        if (completed) {
+            this.completedTime = OffsetDateTime.now();
+        } else {
+            this.completedTime = null;
+        }
+    }
 }

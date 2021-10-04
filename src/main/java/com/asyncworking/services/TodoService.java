@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,14 +79,8 @@ public class TodoService {
     public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
-        todoItem.setCompleted(null);
-        todoItem.setCompletedTime(null);
-        if (completed) {
-            todoItem.setCompleted(completed);
-            todoItem.setCompletedTime(OffsetDateTime.now());
-        }
-
-
+        todoItem.setCompleted(completed);
+        todoItem.setCompletedTime();
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }

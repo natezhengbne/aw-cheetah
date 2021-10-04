@@ -8,7 +8,6 @@ import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +42,6 @@ public class TodoController {
         return ResponseEntity.ok(todoService.fetchSingleTodoList(companyId, projectId, todolistId));
     }
 
-    //改这个：
     @PostMapping("/todolists/{todolistId}/todoitems")
     public ResponseEntity createTodoItem(@PathVariable Long companyId, @PathVariable Long projectId,
                                          @Valid @RequestBody TodoItemPostDto todoItemPostDto) {
@@ -65,18 +63,19 @@ public class TodoController {
         todoService.updateTodoItemDetails(companyId, projectId, todoitemId, todoItemPutDto);
         return ResponseEntity.ok("update success");
     }
-//改这个
-    @PutMapping("/todoitems/{todoitemId}/completed")
-    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId, @PathVariable Long projectId,
-                                                           @PathVariable Long todoitemId ,@RequestParam boolean completed ) {
-        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId,completed));
-    }
 
+    @PutMapping("/todoitems/{todoitemId}/completed")
+    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId,
+                                                           @PathVariable Long projectId,
+                                                           @PathVariable Long todoitemId,
+                                                           @RequestParam(value = "completed") boolean completed) {
+        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId, completed));
+    }
 
     //Todo
     @GetMapping("/todoitems/{todoitemId}/assignees")
-    public  ResponseEntity<?> findAssignedPeopleById(@PathVariable Long companyId, @PathVariable Long projectId,
-                                                     @PathVariable Long todoitemId) {
+    public ResponseEntity<?> findAssignedPeopleById(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                    @PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
     }
 }
