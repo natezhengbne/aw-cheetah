@@ -31,8 +31,6 @@ public class MessageService {
 
     private final UserRepository userRepository;
 
-    private final CompanyRepository companyRepository;
-
     private final MessageCategoryRepository messageCategoryRepository;
 
     @Transactional
