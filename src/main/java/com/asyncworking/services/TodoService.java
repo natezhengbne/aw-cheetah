@@ -110,7 +110,7 @@ public class TodoService {
                 todoItemPutDto.getDueDate(),
                 companyId, projectId,
                 todoItemPutDto.getSubscribersIds());
-        if (res != 1) {
+        if (res == 0) {
             throw new TodoItemNotFoundException("There is no todoItem id is " + todoItemId);
         }
     }
