@@ -40,9 +40,6 @@ public class MessageServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private CompanyRepository companyRepository;
-
-    @Mock
     private MessageCategoryRepository messageCategoryRepository;
 
     @Spy
@@ -77,7 +74,6 @@ public class MessageServiceTest {
                 projectRepository,
                 messageRepository,
                 userRepository,
-                companyRepository,
                 messageCategoryRepository
         );
         mockProject = Project.builder()
