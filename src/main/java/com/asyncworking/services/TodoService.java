@@ -21,11 +21,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.time.ZoneOffset.UTC;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +56,23 @@ public class TodoService {
         log.info("create a new TodoList: " + newTodoList.getTodoListTitle());
         todoListRepository.save(newTodoList);
         return newTodoList.getId();
+    }
+
+    @Transactional
+    public boolean updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
+                                   @RequestBody String todoListTitle) {
+        int res = todoListRepository.updateTodoListTitle(
+                todoListId,
+                companyId,
+                projectId,
+                todoListTitle,
+                OffsetDateTime.now(UTC)
+        );
+
+        if (res == 0) {
+            throw new TodoListNotFoundException("Cannot find todoList by id: " + todoListId);
+        }
+        return true;
     }
 
     public List<TodoListDto> findRequiredNumberTodoListsByCompanyIdAndProjectId(Long companyId, Long projectId, Integer quantity) {

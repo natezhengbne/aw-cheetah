@@ -40,8 +40,6 @@ class TodoControllerTest extends ControllerHelper {
     @Test
     public void todoListCreateSuccess() throws Exception {
         TodoListDto todoListDto = TodoListDto.builder()
-                .id(1L)
-                .projectId(1L)
                 .todoListTitle("test_todo_list")
                 .build();
         when(todoService.createTodoList(1L, 1L, todoListDto))
@@ -161,5 +159,31 @@ class TodoControllerTest extends ControllerHelper {
         mockMvc.perform(get("/companies/1/projects/1/todoitems/1/assignees"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldReturnOkIfUpdateTodolistTitleSuccessful() throws Exception {
+        TodoListDto todolistDto = TodoListDto.builder()
+                .todoListTitle("abc")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists/1")
+                .content(objectMapper.writeValueAsString(todolistDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void throwBadRequestIfUpdateTodolistTitleIsEmpty() throws Exception {
+        TodoListDto todolistDto = TodoListDto.builder()
+                .todoListTitle("")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists/1")
+                        .content(objectMapper.writeValueAsString(todolistDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
 }
 

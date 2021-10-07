@@ -36,6 +36,7 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -257,6 +258,24 @@ public class TodoServiceTest {
 
     }
 
+    @Test
+    public void returnTrueIfUpdateTodoListTitleSuccessfully() {
+        String title = "xxx";
+        when(todoListRepository.updateTodoListTitle(eq(1L), eq(1L), eq(1L), eq(title), any(OffsetDateTime.class)))
+                .thenReturn(1);
+        assertTrue(todoService.updateTodoListTitle(1L, 1L, 1L, title));
+    }
+
+    @Test
+    @Transactional
+    public void throwTodoListNotFoundException() {
+        String title = "xxx";
+        when(todoListRepository.updateTodoListTitle(eq(1L), eq(1L), eq(1L), eq(title), any(OffsetDateTime.class)))
+                .thenReturn(0);
+        assertThrows(TodoListNotFoundException.class, () ->
+                todoService.updateTodoListTitle(1L, 1L, 1L, title));
+    }
+
     private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
         return TodoItem.builder()
                 .todoList(todoList)
@@ -289,5 +308,4 @@ public class TodoServiceTest {
                 .name("test user")
                 .build();
     }
-
 }

@@ -29,6 +29,14 @@ public class TodoController {
         return ResponseEntity.ok(todoService.createTodoList(companyId, projectId, todoListDto));
     }
 
+    @PutMapping("/todolists/{todolistId}")
+    public ResponseEntity updateTodoListTitle(@PathVariable Long companyId, @PathVariable Long projectId,
+                                         @PathVariable Long todolistId,
+                                         @Valid @RequestBody TodoListDto todoListDto) {
+        todoService.updateTodoListTitle(companyId, projectId, todolistId, todoListDto.getTodoListTitle());
+        return ResponseEntity.ok("success");
+    }
+
     @GetMapping("/todolists")
     public ResponseEntity<List<TodoListDto>> fetchTodoLists(@PathVariable Long companyId, @PathVariable Long projectId,
                                                             @NotNull @RequestParam("quantity") Integer quantity) {

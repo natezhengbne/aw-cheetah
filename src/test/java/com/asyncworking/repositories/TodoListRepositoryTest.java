@@ -51,6 +51,18 @@ class TodoListRepositoryTest extends DBHelper {
         assertTrue(lists.isEmpty());
     }
 
+    @Test
+    @Transactional
+    public void shouldGet1AndUpdateTodolistSuccessfully() {
+        saveMockData();
+        int count = todoListRepository.updateTodoListTitle(todoList1.getId(),
+                project.getCompanyId(),
+                project.getId(),
+                "New Title xxx",
+                OffsetDateTime.now(UTC));
+        assertEquals(1, count);
+    }
+
     void saveMockData() {
         project = Project.builder()
                 .name("AWProject")
