@@ -2,7 +2,6 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
-import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
@@ -17,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
@@ -68,18 +65,13 @@ public class CompanyService {
     }
 
     public CompanyColleagueDto getCompanyInfoDto(String email) {
-
         List<ICompanyInfo> companiesInfo = companyRepository.findCompanyInfoByEmail(email);
-
         if ( companiesInfo == null || companiesInfo.isEmpty()) {
-            throw new CompanyNotFoundException("company not found");
+            throw new CompanyNotFoundException("Can not find companiesInfo by email:" + email);
         }
-        else {
-            ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
-            List<String> colleague = companyRepository.findNameById(companyInfo.getId());
-
-            return mapCompanyToCompanyDto(companyInfo, colleague);
-        }
+        log.info("find first company with company ID: {} by user's email: {}", companiesInfo.get(0).getId(), email);
+        List<String> colleague = companyRepository.findNameById(companiesInfo.get(0).getId());
+        return mapCompanyToCompanyDto(companiesInfo.get(0), colleague);
     }
 
     private CompanyColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo, List<String> colleague) {
@@ -142,29 +134,22 @@ public class CompanyService {
     }
 
     public CompanyInfoDto findCompanyById(Long id) {
+        log.info("find company by company ID: {}", id);
         Company foundCompany = companyRepository.findById(id)
                 .orElseThrow(() -> new CompanyNotFoundException("Can not find company by id:" + id));
         return companyMapper.mapEntityToDto(foundCompany);
     }
 
     public List<EmployeeGetDto> findAllEmployeeByCompanyId(Long id) {
-        log.info("company ID: {}", id);
-        List<IEmployeeInfo> employees = userRepository.findAllEmployeeByCompanyId(id);
-
-        if (employees.isEmpty()) {
-            throw new EmployeeNotFoundException("Can not find employee by company id:" + id);
-        }
-
-        List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
-        employees.stream()
-                .forEach(iEmployeeInfo -> employeeGetDtoList.add(employeeMapper.mapEntityToDto(iEmployeeInfo)));
-        return employeeGetDtoList;
+        log.info("search all employees by company ID: {}", id);
+        return userRepository.findAllEmployeeByCompanyId(id).stream()
+                .map(employeeMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     public List<AvailableEmployeesGetDto> findAvailableEmployees(Long companyId, Long projectId) {
-        log.info("Project ID: {}", projectId);
-        log.info("Company ID: {}", companyId);
-        //how to verify the pinvitations/registerrojectId and companyId if they are both invalid the result is always empty arrays
+        log.info("search all available employee by company ID: {}, and projectId ID: {}", companyId, projectId);
+        //how to verify the invitations/registerProjectId and companyId if they are both invalid the result is always empty arrays
         return userRepository.findAvailableEmployeesByCompanyAndProjectId(companyId, projectId).stream()
                 .map(employeeMapper::mapAvailableEmployeesEntityToDto)
                 .collect(Collectors.toList());
