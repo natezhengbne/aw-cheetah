@@ -22,7 +22,6 @@ public class TodoListDto {
 
     private Long id;
 
-    @NotNull(message = "projectId cannot be null.")
     private Long projectId;
 
     @NotBlank(message = "todoList must have a title.")

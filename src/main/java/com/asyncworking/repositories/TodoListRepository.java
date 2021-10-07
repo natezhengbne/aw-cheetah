@@ -3,11 +3,13 @@ package com.asyncworking.repositories;
 import com.asyncworking.models.TodoList;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +31,14 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
 
     Optional<TodoList> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long todoListId);
 
+    @Modifying
+    @Query("update TodoList t set t.todoListTitle=:title, t.updatedTime=:updatedTime " +
+            "where t.id=:id and t.companyId=:companyId and t.project.id=:projectId")
+    int updateTodoListTitle(
+            @Param("id") Long id,
+            @Param("companyId")Long companyId,
+            @Param("projectId")Long projectId,
+            @Param("title") String title,
+            @Param("updatedTime") OffsetDateTime updatedTime
+    );
 }

@@ -8,7 +8,6 @@ import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +27,14 @@ public class TodoController {
     public ResponseEntity<Long> createTodoList(@PathVariable Long companyId, @PathVariable Long projectId,
                                                @Valid @RequestBody TodoListDto todoListDto) {
         return ResponseEntity.ok(todoService.createTodoList(companyId, projectId, todoListDto));
+    }
+
+    @PutMapping("/todolists/{todolistId}")
+    public ResponseEntity updateTodoListTitle(@PathVariable Long companyId, @PathVariable Long projectId,
+                                         @PathVariable Long todolistId,
+                                         @Valid @RequestBody TodoListDto todoListDto) {
+        todoService.updateTodoListTitle(companyId, projectId, todolistId, todoListDto.getTodoListTitle());
+        return ResponseEntity.ok("success");
     }
 
     @GetMapping("/todolists")
