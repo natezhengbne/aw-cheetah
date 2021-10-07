@@ -68,14 +68,16 @@ public class CompanyService {
     }
 
     public CompanyColleagueDto getCompanyInfoDto(String email) {
-        if (companyRepository.findCompanyInfoByEmail(email) == null ||
-                companyRepository.findCompanyInfoByEmail(email).isEmpty()) {
+
+        List<ICompanyInfo> companiesInfo = companyRepository.findCompanyInfoByEmail(email);
+
+        if ( companiesInfo == null || companiesInfo.isEmpty()) {
             throw new CompanyNotFoundException("company not found");
-        } else {
+        }
+        else {
             ICompanyInfo companyInfo = companyRepository.findCompanyInfoByEmail(email).get(0);
             List<String> colleague = companyRepository.findNameById(companyInfo.getId());
 
-            log.info("company ID: {}", companyInfo.getId());
             return mapCompanyToCompanyDto(companyInfo, colleague);
         }
     }
