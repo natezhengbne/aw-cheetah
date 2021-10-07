@@ -140,11 +140,9 @@ public class CompanyService {
     }
 
     public CompanyInfoDto findCompanyById(Long id) {
-        Optional<Company> foundCompany = companyRepository.findById(id);
-        if (foundCompany.isEmpty()) {
-            throw new CompanyNotFoundException("Can not find company by id:" + id);
-        }
-        return companyMapper.mapEntityToDto(foundCompany.get());
+        Company foundCompany = companyRepository.findById(id)
+                .orElseThrow(() -> new CompanyNotFoundException("Can not find company by id:" + id));
+        return companyMapper.mapEntityToDto(foundCompany);
     }
 
     public List<EmployeeGetDto> findAllEmployeeByCompanyId(Long id) {
