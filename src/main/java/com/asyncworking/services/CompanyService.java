@@ -150,13 +150,14 @@ public class CompanyService {
     public List<EmployeeGetDto> findAllEmployeeByCompanyId(Long id) {
         log.info("company ID: {}", id);
         List<IEmployeeInfo> employees = userRepository.findAllEmployeeByCompanyId(id);
+
         if (employees.isEmpty()) {
             throw new EmployeeNotFoundException("Can not find employee by company id:" + id);
         }
+
         List<EmployeeGetDto> employeeGetDtoList = new ArrayList<>();
-        for (IEmployeeInfo iEmployeeInfo : employees) {
-            employeeGetDtoList.add(employeeMapper.mapEntityToDto(iEmployeeInfo));
-        }
+        employees.stream()
+                .forEach(iEmployeeInfo -> employeeGetDtoList.add(employeeMapper.mapEntityToDto(iEmployeeInfo)));
         return employeeGetDtoList;
     }
 
