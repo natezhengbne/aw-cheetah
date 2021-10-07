@@ -2,14 +2,12 @@ package com.asyncworking.dtos;
 
 
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
-import com.asyncworking.models.TodoItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -35,5 +33,5 @@ public class TodoListDto {
 
     private String docUrl;
 
-    List<TodoItemGetDto> todoItemGetDtos;
+    List<TodoItemGetDto> todoItems;
 }
