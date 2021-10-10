@@ -76,7 +76,7 @@ public class TodoController {
     public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId,
                                                            @PathVariable Long projectId,
                                                            @PathVariable Long todoitemId,
-                                                           @RequestParam(value = "completed") boolean completed) {
+                                                           @RequestParam(value = "completedStatus") boolean completed) {
         return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId, completed));
     }
 
