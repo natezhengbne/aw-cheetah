@@ -93,7 +93,7 @@ class TodoControllerTest extends ControllerHelper {
     @Test
     public void todoItemCreateSuccess() throws Exception {
         TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
-                .todolistId(1L)
+                .todoListId(1L)
                 .notes("test1")
                 .description("test des1")
                 .createdUserId(1L)
@@ -123,7 +123,7 @@ class TodoControllerTest extends ControllerHelper {
                 .thenReturn(false);
 
         mockMvc.perform(put("/companies/1/projects/1/todoitems/1/completed")
-                .param("completed", "false"))
+                .param("completedStatus", "false"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("false"));
     }

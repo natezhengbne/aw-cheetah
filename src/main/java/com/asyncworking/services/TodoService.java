@@ -91,7 +91,7 @@ public class TodoService {
     public Long createTodoItem(Long companyId, Long projectId, @Valid TodoItemPostDto todoItemPostDto) {
         TodoItem savedTodoItem = todoItemRepository.save(
                 todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListByCompanyIdAndProjectIdAndId
-                        (companyId, projectId, todoItemPostDto.getTodolistId())));
+                        (companyId, projectId, todoItemPostDto.getTodoListId())));
         log.info("created a item with id: {} ", savedTodoItem.getId());
         return savedTodoItem.getId();
     }
