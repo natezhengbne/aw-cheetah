@@ -1,6 +1,8 @@
 package com.asyncworking.models;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -61,6 +63,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project",
             cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<ProjectUser> projectUsers;
 
     @OneToMany(
