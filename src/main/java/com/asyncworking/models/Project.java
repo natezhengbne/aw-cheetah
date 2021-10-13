@@ -65,16 +65,12 @@ public class Project {
 
     @OneToMany(
             mappedBy = "project",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+            cascade = CascadeType.ALL)
     private Set<Message> messageSet;
 
     @OneToMany(
             mappedBy = "project",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+            cascade = CascadeType.ALL)
     private Set<MessageCategory> messageCategorySet;
     @OneToMany(mappedBy = "project",
             cascade = CascadeType.ALL, fetch = FetchType.LAZY)

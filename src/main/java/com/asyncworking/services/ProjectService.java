@@ -13,6 +13,7 @@ import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.UserRoleRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
 import static com.asyncworking.models.RoleNames.PROJECT_MANAGER;
 import static java.time.ZoneOffset.UTC;
 
@@ -44,6 +46,8 @@ public class ProjectService {
 
     private final ProjectUserRepository projectUserRepository;
 
+    private final UserRoleRepository userRoleRepository;
+
     private final ProjectMapper projectMapper;
 
     private final EmployeeMapper employeeMapper;
@@ -51,8 +55,6 @@ public class ProjectService {
     private final UserService userService;
 
     private final RoleService roleService;
-
-    private final CompanyService companyService;
 
     private final MessageCategoryService messageCategoryService;
 
@@ -75,24 +77,21 @@ public class ProjectService {
     }
 
     private Collection<ProjectInfoDto> fetchPublicProjectInfoListByCompanyId(Long companyId) {
-        return projectRepository.findPublicProjectsByCompanyId(companyId).stream()
+        return projectRepository.findByCompanyIdAndIsPrivate(companyId, false).stream()
                 .map(projectMapper::mapProjectToProjectInfoDto)
                 .collect(Collectors.toSet());
     }
 
     public Collection<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
-        Set<ProjectInfoDto> userProjects = projectUserRepository.findProjectIdByUserId(userId).stream()
-                .map(this::fetchProjectInfoByProjectId)
+        Set<ProjectInfoDto> userProjects = projectUserRepository.findProjectByUserId(userId).stream()
+                .map(projectMapper::mapProjectToProjectInfoDto)
                 .collect(Collectors.toSet());
         Set<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
         Collection<ProjectInfoDto> publicCompanyProjects = fetchPublicProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
         userProjects.addAll(publicCompanyProjects);
-        Long adminId = companyService.fetchCompanyById(companyId).getAdminId();
-        if (adminId.equals(userId)) {
-            return addProgressInfo(companyProjects);
-        }
-        return addProgressInfo(userProjects);
+        Set<Long> adminId = userRoleRepository.findUserIdByRoleNameAndTargetId(COMPANY_MANAGER.value(), companyId);
+        return adminId.contains(userId) ? addProgressInfo(companyProjects) : addProgressInfo(userProjects);
     }
 
     private Collection<ProjectInfoDto> addProgressInfo(Set<ProjectInfoDto> projectInfo) {
