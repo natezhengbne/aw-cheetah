@@ -76,18 +76,22 @@ public class ProjectService {
                 .collect(Collectors.toSet());
     }
 
-    private Collection<ProjectInfoDto> fetchPublicProjectInfoListByCompanyId(Long companyId) {
+    private Set<ProjectInfoDto> fetchPublicProjectInfoListByCompanyId(Long companyId) {
         return projectRepository.findByCompanyIdAndIsPrivate(companyId, false).stream()
                 .map(projectMapper::mapProjectToProjectInfoDto)
                 .collect(Collectors.toSet());
     }
 
-    public Collection<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
-        Set<ProjectInfoDto> userProjects = projectUserRepository.findProjectByUserId(userId).stream()
+    private Set<ProjectInfoDto> fetchProjectInfoListByUserId(Long userId) {
+        return projectUserRepository.findProjectByUserId(userId).stream()
                 .map(projectMapper::mapProjectToProjectInfoDto)
                 .collect(Collectors.toSet());
+    }
+
+    public Collection<ProjectInfoDto> fetchAvailableProjectInfoList(Long companyId, Long userId) {
         Set<ProjectInfoDto> companyProjects = fetchProjectInfoListByCompanyId(companyId);
-        Collection<ProjectInfoDto> publicCompanyProjects = fetchPublicProjectInfoListByCompanyId(companyId);
+        Set<ProjectInfoDto> userProjects = fetchProjectInfoListByUserId(userId);
+        Set<ProjectInfoDto> publicCompanyProjects = fetchPublicProjectInfoListByCompanyId(companyId);
         userProjects.retainAll(companyProjects);
         userProjects.addAll(publicCompanyProjects);
         Set<Long> adminId = userRoleRepository.findUserIdByRoleNameAndTargetId(COMPANY_MANAGER.value(), companyId);
