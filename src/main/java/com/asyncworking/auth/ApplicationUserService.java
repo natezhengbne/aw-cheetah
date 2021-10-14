@@ -1,8 +1,5 @@
 package com.asyncworking.auth;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.models.UserRole;
@@ -15,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service

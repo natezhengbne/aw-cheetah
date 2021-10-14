@@ -17,6 +17,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByCompanyId(Long companyId);
 
     List<Project> findByCompanyIdAndIsPrivate(Long companyId, boolean isPrivate);
+
     @Modifying
     @Query("update Project p set p.name=:name, p.description=:description, p.updatedTime=:updatedTime " +
             "where p.id=:id and p.companyId=:companyId")
