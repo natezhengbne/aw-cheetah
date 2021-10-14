@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 
 
 @Data
@@ -24,7 +23,6 @@ public class TodoItemPostDto {
     @Size(max = 512, message = "Description can not be more than 512 characters.")
     private String description;
 
-    @NotNull(message = "content cannot be null")
     private String notes;
 
     private String originNotes;
@@ -35,6 +33,4 @@ public class TodoItemPostDto {
     private OffsetDateTime dueDate;
 
     private String subscribersIds;
-
-    private OffsetTime completedTime;
 }
