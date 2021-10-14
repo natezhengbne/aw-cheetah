@@ -22,6 +22,8 @@ public class TodoItemGetDto {
 
     private Long projectId;
 
+    private Long companyId;
+
     private Boolean completed;
 
     private OffsetDateTime createdTime;
