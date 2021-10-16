@@ -32,7 +32,7 @@ public interface TodoMapper {
     TodoList toTodoListEntity(TodoListDto todoListDto, Project project);
 
     @Mapping(target = "projectId", expression = "java(getProject(todoList).getId())")
-    @Mapping(target = "todoItemsGetDto", source = "todoItemGetDtoList")
+    @Mapping(target = "todoItems", source = "todoItemGetDtoList")
     TodoListDto fromTodoListEntity(TodoList todoList, List<TodoItemGetDto> todoItemGetDtoList);
 
     @Mapping(target = "id", ignore = true)

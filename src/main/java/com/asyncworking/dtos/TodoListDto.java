@@ -33,5 +33,5 @@ public class TodoListDto {
 
     private String docUrl;
 
-    List<TodoItemGetDto> todoItemsGetDto;
+    List<TodoItemGetDto> todoItems;
 }
