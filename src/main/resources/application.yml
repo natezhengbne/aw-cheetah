@@ -26,11 +26,11 @@ logging:
   level:
     com.asyncworking: debug
 
-#production env
-#url: https://www.asyncworking.com
+production env
+url: https://www.asyncworking.com
 
-#local env
-url: http://localhost:3000
+##local env
+#url: http://localhost:3000
 
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
