@@ -4,7 +4,6 @@ import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
-import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.TodoList;
@@ -33,7 +32,7 @@ public interface TodoMapper {
     TodoList toTodoListEntity(TodoListDto todoListDto, Project project);
 
     @Mapping(target = "projectId", expression = "java(getProject(todoList).getId())")
-    @Mapping(target = "todoItemGetDtos", source = "todoItemGetDtoList")
+    @Mapping(target = "todoItems", source = "todoItemGetDtoList")
     TodoListDto fromTodoListEntity(TodoList todoList, List<TodoItemGetDto> todoItemGetDtoList);
 
     @Mapping(target = "id", ignore = true)
@@ -43,6 +42,7 @@ public interface TodoMapper {
     @Mapping(target = "completed", expression = "java(Boolean.FALSE)")
     @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
+    @Mapping(target = "completedTime", expression = "java(getCurrentTime())")
     TodoItem toTodoItemEntity(TodoItemPostDto todoItemPostDto, TodoList todoList);
 
     @Mapping(target = "todoItemId", source = "id")

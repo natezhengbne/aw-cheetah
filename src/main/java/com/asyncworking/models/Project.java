@@ -1,11 +1,24 @@
 package com.asyncworking.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -61,23 +74,18 @@ public class Project {
 
     @OneToMany(mappedBy = "project",
             cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<ProjectUser> projectUsers;
 
-    @OneToMany(
-            mappedBy = "project",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @OneToMany(mappedBy = "project",
+            cascade = CascadeType.ALL)
     private Set<Message> messageSet;
 
-    @OneToMany(
-            mappedBy = "project",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @OneToMany(mappedBy = "project",
+            cascade = CascadeType.ALL)
     private Set<MessageCategory> messageCategorySet;
     @OneToMany(mappedBy = "project",
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+            cascade = CascadeType.ALL)
     private Set<TodoList> todoLists;
 
     public void addProjectUser(ProjectUser projectUser) {

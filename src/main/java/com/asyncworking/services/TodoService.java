@@ -84,23 +84,24 @@ public class TodoService {
     public TodoListDto fetchSingleTodoList(Long companyId, Long projectId, Long id) {
         return todoMapper.fromTodoListEntity(findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, id),
                 findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc
-                (companyId, projectId, id));
+                        (companyId, projectId, id));
     }
 
-    @Transactional
+
     public Long createTodoItem(Long companyId, Long projectId, @Valid TodoItemPostDto todoItemPostDto) {
         TodoItem savedTodoItem = todoItemRepository.save(
                 todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListByCompanyIdAndProjectIdAndId
-                        (companyId, projectId, todoItemPostDto.getTodolistId())));
+                        (companyId, projectId, todoItemPostDto.getTodoListId())));
         log.info("created a item with id: {} ", savedTodoItem.getId());
         return savedTodoItem.getId();
     }
 
-    @Transactional
-    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id) {
+
+    public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
-        todoItem.setCompleted(!todoItem.getCompleted());
+        todoItem.setCompleted(completed);
+        todoItem.setCompletedTime();
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }

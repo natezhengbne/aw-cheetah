@@ -16,4 +16,7 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleId> 
     Set<Role> findRoleSetByUserId(@Param("userId") Long userId);
 
     Set<UserRole> findByUserEntity(UserEntity userEntity);
+
+    @Query("select ur.userEntity.id from UserRole ur where ur.role.name = :roleName and ur.id.targetId = :targetId")
+    Set<Long> findUserIdByRoleNameAndTargetId(@Param("roleName") String roleName, @Param("targetId") Long targetId);
 }

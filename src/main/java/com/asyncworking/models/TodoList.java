@@ -1,7 +1,23 @@
 package com.asyncworking.models;
 
-import lombok.*;
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -21,9 +37,7 @@ public class TodoList {
     @Column(name = "company_id", nullable = false)
     private Long companyId;
 
-    @ManyToOne(
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "project_id",
             referencedColumnName = "id",
@@ -31,7 +45,7 @@ public class TodoList {
     )
     private Project project;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "todoList", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL)
     @OrderBy("createdTime DESC")
     private List<TodoItem> todoItems;
 

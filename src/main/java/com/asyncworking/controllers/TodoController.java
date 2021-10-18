@@ -50,7 +50,6 @@ public class TodoController {
         return ResponseEntity.ok(todoService.fetchSingleTodoList(companyId, projectId, todolistId));
     }
 
-
     @PostMapping("/todolists/{todolistId}/todoitems")
     public ResponseEntity createTodoItem(@PathVariable Long companyId, @PathVariable Long projectId,
                                          @Valid @RequestBody TodoItemPostDto todoItemPostDto) {
@@ -74,16 +73,16 @@ public class TodoController {
     }
 
     @PutMapping("/todoitems/{todoitemId}/completed")
-    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId, @PathVariable Long projectId,
-                                                           @PathVariable Long todoitemId) {
-        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId));
+    public ResponseEntity<?> changeTodoItemCompletedStatus(@PathVariable Long companyId,
+                                                           @PathVariable Long projectId,
+                                                           @PathVariable Long todoitemId,
+                                                           @RequestParam(value = "completedStatus") boolean completed) {
+        return ResponseEntity.ok(todoService.changeTodoItemCompleted(companyId, projectId, todoitemId, completed));
     }
 
-
-    //Todo
     @GetMapping("/todoitems/{todoitemId}/assignees")
-    public  ResponseEntity<?> findAssignedPeopleById(@PathVariable Long companyId, @PathVariable Long projectId,
-                                                     @PathVariable Long todoitemId) {
+    public ResponseEntity<?> findAssignedPeopleById(@PathVariable Long companyId, @PathVariable Long projectId,
+                                                    @PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
     }
 }

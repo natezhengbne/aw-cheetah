@@ -8,6 +8,7 @@ import com.asyncworking.repositories.ProjectRepository;
 import com.asyncworking.repositories.ProjectUserRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.UserRoleRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.ProjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,9 @@ public class ProjectServiceTest {
     private ProjectRepository projectRepository;
 
     @Mock
+    private UserRoleRepository userRoleRepository;
+
+    @Mock
     private ProjectMapper projectMapper;
 
     @Mock
@@ -55,9 +59,6 @@ public class ProjectServiceTest {
     @Mock
     private RoleService roleService;
 
-    @Mock
-    private CompanyService companyService;
-
     private Project mockProject;
 
     private ProjectInfoDto projectInfoDto;
@@ -71,11 +72,11 @@ public class ProjectServiceTest {
                         projectRepository,
                         todoItemRepository,
                         projectUserRepository,
+                        userRoleRepository,
                         projectMapper,
                         employeeMapper,
                         userService,
                         roleService,
-                        companyService,
                         messageCategoryService
                 );
 
@@ -114,14 +115,11 @@ public class ProjectServiceTest {
 
     @Test
     public void shouldReturnAvailableProjectInfoList() {
-        Company mockReturnedCompany = Company.builder()
-                .adminId(2L)
-                .build();
-        when(projectRepository.findById(any())).thenReturn(Optional.of(mockProject));
         when(projectRepository.findByCompanyId(any())).thenReturn(List.of(mockProject));
+        when(projectUserRepository.findProjectByUserId(any())).thenReturn(Set.of(mockProject));
         when(projectMapper.mapProjectToProjectInfoDto(any())).thenReturn(projectInfoDto);
-        when(projectUserRepository.findProjectIdByUserId(any())).thenReturn(projectId);
-        when(companyService.fetchCompanyById(any())).thenReturn(mockReturnedCompany);
+        when(userRoleRepository.findUserIdByRoleNameAndTargetId(any(), any())).thenReturn(Set.of(2L));
+
         assertTrue(projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 2L).contains(projectInfoDto));
         assertTrue(projectService.fetchAvailableProjectInfoList(mockProject.getCompanyId(), 1L).contains(projectInfoDto));
     }

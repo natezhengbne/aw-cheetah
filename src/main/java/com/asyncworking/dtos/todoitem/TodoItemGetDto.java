@@ -22,6 +22,8 @@ public class TodoItemGetDto {
 
     private Long projectId;
 
+    private Long companyId;
+
     private Boolean completed;
 
     private OffsetDateTime createdTime;
@@ -29,5 +31,7 @@ public class TodoItemGetDto {
     private OffsetDateTime dueDate;
 
     private String subscribersIds;
+
+    private OffsetDateTime completedTime;
 
 }

@@ -17,13 +17,12 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class TodoItemPostDto {
     @NotNull(message = "TodoListId cannot be null.")
-    private Long todolistId;
+    private Long todoListId;
 
     @NotBlank(message = "TodoItem description can not be blank.")
     @Size(max = 512, message = "Description can not be more than 512 characters.")
     private String description;
 
-    @NotNull(message = "content cannot be null")
     private String notes;
 
     private String originNotes;

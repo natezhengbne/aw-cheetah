@@ -4,25 +4,19 @@ import com.asyncworking.models.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.Optional;
 
-@Repository
-@EnableJpaRepositories
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<Project> findByCompanyIdAndId(Long companyId, Long projectId);
 
     List<Project> findByCompanyId(Long companyId);
 
-    @Query(nativeQuery = true, value = "select * from project where company_id = :companyId and is_private = false")
-    List<Project> findPublicProjectsByCompanyId(@Param("companyId") Long companyId);
+    List<Project> findByCompanyIdAndIsPrivate(Long companyId, boolean isPrivate);
 
     @Modifying
     @Query("update Project p set p.name=:name, p.description=:description, p.updatedTime=:updatedTime " +

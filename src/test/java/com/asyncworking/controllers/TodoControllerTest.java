@@ -6,7 +6,6 @@ import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
-import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.TodoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class TodoControllerTest extends ControllerHelper{
+class TodoControllerTest extends ControllerHelper {
     @Mock
     private TodoService todoService;
     private TodoController todoController;
@@ -94,7 +93,7 @@ class TodoControllerTest extends ControllerHelper{
     @Test
     public void todoItemCreateSuccess() throws Exception {
         TodoItemPostDto todoItemPostDto = TodoItemPostDto.builder()
-                .todolistId(1L)
+                .todoListId(1L)
                 .notes("test1")
                 .description("test des1")
                 .createdUserId(1L)
@@ -119,17 +118,12 @@ class TodoControllerTest extends ControllerHelper{
     }
 
     @Test
-    public void shouldReturnOppositeStatusAfterChangeTodoItemCompleted() throws Exception {
-        TodoItem todoItem = TodoItem.builder()
-                .id(1L)
-                .projectId(1L)
-                .companyId(1L)
-                .completed(true)
-                .build();
-        when(todoService.changeTodoItemCompleted(todoItem.getCompanyId(), todoItem.getProjectId(), todoItem.getId()))
-                .thenReturn(!todoItem.getCompleted());
+    public void shouldReturnCompletedStatusAfterChangeTodoItemCompleted() throws Exception {
+        when(todoService.changeTodoItemCompleted(1L, 1L, 1L, false))
+                .thenReturn(false);
+
         mockMvc.perform(put("/companies/1/projects/1/todoitems/1/completed")
-                .contentType(MediaType.APPLICATION_JSON))
+                .param("completedStatus", "false"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("false"));
     }
