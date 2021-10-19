@@ -20,6 +20,8 @@ spring:
           time_zone: UTC
     show-sql: true
 
+swagger_env: dev
+
 logging:
   pattern:
     dateFormat: yyyy-MM-dd HH:mm:ss.SSS ZZZ

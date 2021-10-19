@@ -61,4 +61,15 @@ In this project, we use [CheckStyle](https://checkstyle.sourceforge.io/) for sta
 
 Install it to IDEA by opening Preferences -> Plugins, then search CheckStyle in marketplace and install.
 
+## Swagger Instruction
+**Swagger UI is only enable in development and UAT environment**
+### View API Documentation via swagger ui
+Open http://localhost:{{port}}/api/v1/swagger-ui.html in the web browser.
 
+### Send Request via the api which required JWT token
+Copy the JWT token <br>
+-> Click `Authentication` button in Swagger UI page<br>
+-> Paste the JWT token with `Bearer ` prefix.
+```
+Bearer <token>
+```

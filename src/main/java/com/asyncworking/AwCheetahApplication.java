@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories
 @EnableJpaAuditing
-public class AwCheetahApplication {public static void main(String[] args) {
-		SpringApplication.run(AwCheetahApplication.class, args);
-	}
+public class AwCheetahApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(AwCheetahApplication.class, args);
+    }
 }

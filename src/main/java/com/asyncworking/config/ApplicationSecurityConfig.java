@@ -38,6 +38,30 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepository;
 
+    private static final String[] AUTH_WHITELIST = {
+            "/",
+            "/resend",
+            "/signup",
+            "/password",
+            "/invitations/info",
+            "/invitations/register",
+            "/verify",
+            "index",
+            "/css/*",
+            "/actuator/*",
+            "/password-reset/info",
+            "/password-reset",
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/swagger-ui/**"
+    };
+
     @SneakyThrows
     protected void configure(HttpSecurity http) {
         http
@@ -49,7 +73,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     "https://www.asyncworking.com",
                     "https://uat.asyncworking.com",
                     "https://uat2.asyncworking.com"
-                    ));
+            ));
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
@@ -64,9 +88,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")
                 .antMatchers("/companies/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
                 .access("@guard.checkProjectAccessOtherMethods(authentication, #companyId, #projectId)")
-                .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**").access("@guard.checkCompanyAccess(authentication, #companyId)")
-                .antMatchers("/", "/resend", "/signup", "/password", "/invitations/info", "/invitations/register",
-                        "/verify", "index", "/css/*", "/actuator/*", "/password-reset/info", "/password-reset")
+                .antMatchers("/companies/{companyId:^[1-9]\\d*$}/**")
+                .access("@guard.checkCompanyAccess(authentication, #companyId)")
+                .antMatchers(AUTH_WHITELIST)
                 .permitAll()
                 .anyRequest()
                 .authenticated()
