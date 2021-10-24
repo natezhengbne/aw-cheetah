@@ -16,6 +16,8 @@ public class TodoItemPutDto {
 
     private String originNotes;
 
+    private String priority;
+
     private OffsetDateTime dueDate;
 
     private String subscribersIds;

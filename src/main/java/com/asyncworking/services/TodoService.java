@@ -89,9 +89,10 @@ public class TodoService {
 
 
     public Long createTodoItem(Long companyId, Long projectId, @Valid TodoItemPostDto todoItemPostDto) {
-        TodoItem savedTodoItem = todoItemRepository.save(
-                todoMapper.toTodoItemEntity(todoItemPostDto, findTodoListByCompanyIdAndProjectIdAndId
-                        (companyId, projectId, todoItemPostDto.getTodoListId())));
+        TodoList todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, todoItemPostDto.getTodoListId());
+        TodoItem todoItem = todoMapper.toTodoItemEntity(todoItemPostDto, todoList);
+        TodoItem savedTodoItem = todoItemRepository.save(todoItem);
+
         log.info("created a item with id: {} ", savedTodoItem.getId());
         return savedTodoItem.getId();
     }
@@ -126,6 +127,7 @@ public class TodoService {
     public void updateTodoItemDetails(Long companyId, Long projectId, Long todoItemId, TodoItemPutDto todoItemPutDto) {
         int res = todoItemRepository.updateTodoItem(todoItemId,
                 todoItemPutDto.getDescription(),
+                todoItemPutDto.getPriority(),
                 todoItemPutDto.getNotes(),
                 todoItemPutDto.getOriginNotes(),
                 todoItemPutDto.getDueDate(),

@@ -3,6 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
@@ -65,6 +66,8 @@ public class TodoServiceTest {
 
     private TodoListDto mockTodoListDto;
 
+    private TodoItemPostDto mockTodoItemPostDto;
+
     private UserEntity userEntity;
 
     private Project project;
@@ -74,6 +77,8 @@ public class TodoServiceTest {
     private TodoItem todoItem1;
 
     private TodoItem todoItem2;
+
+    private TodoItem todoItem;
 
     @BeforeEach
     public void setup() {
@@ -88,6 +93,7 @@ public class TodoServiceTest {
                 userMapper);
 
         mockTodoListDto = TodoListDto.builder()
+                .id(1L)
                 .projectId(1L)
                 .todoListTitle("FirstTodoList")
                 .build();
@@ -112,9 +118,32 @@ public class TodoServiceTest {
                 .updatedTime(now(UTC))
                 .build();
 
-        todoItem1 = buildTodoItem(todoList, "test1", "des1");
-        todoItem2 = buildTodoItem(todoList, "test2", "des2");
+        todoItem = TodoItem.builder()
+                .id(1L)
+                .todoList(todoList)
+                .notes("note1")
+                .priority("High")
+                .description("des1")
+                .originNotes("origin note")
+                .createdUserId(1L)
+                .dueDate(now(UTC))
+                .subscribersIds("1,2,3")
+                .companyId(todoList.getCompanyId())
+                .projectId(project.getId())
+                .build();
 
+        todoItem1 = buildTodoItem(todoList, "test1", "High", "des1", "1,2,3");
+        todoItem2 = buildTodoItem(todoList, "test2", "Low", "des2", "1,2,3");
+        mockTodoItemPostDto = TodoItemPostDto.builder()
+                .todoListId(todoList.getId())
+                .notes("note1")
+                .priority("High")
+                .description("des1")
+                .originNotes("origin note")
+                .createdUserId(1L)
+                .dueDate(now(UTC))
+                .subscribersIds("1,2,3")
+                .build();
     }
 
     @Test
@@ -126,6 +155,17 @@ public class TodoServiceTest {
         todoService.createTodoList(project.getCompanyId(), project.getId(), mockTodoListDto);
         verify(todoListRepository).save(todoListCaptor.capture());
         assertEquals(project, todoListCaptor.getValue().getProject());
+    }
+    @Test
+    public void createTodoItemSuccess() {
+        when(todoListRepository.findByCompanyIdAndProjectIdAndId(1L, 1L, 1L))
+                .thenReturn(Optional.of(todoList));
+        when(todoItemRepository.save(any())).
+                thenReturn(todoItem);
+        ArgumentCaptor<TodoItem> todoItemCaptor = ArgumentCaptor.forClass(TodoItem.class);
+        todoService.createTodoItem(project.getCompanyId(), project.getId(), mockTodoItemPostDto);
+        verify(todoItemRepository).save(todoItemCaptor.capture());
+        assertEquals(todoList.getId(), todoItemCaptor.getValue().getTodoList().getId());
     }
 
     @Test
@@ -246,12 +286,13 @@ public class TodoServiceTest {
     public void throwTodoItemNotFoundExceptionWhenTodoItemNotExist() {
         TodoItemPutDto todoItemPut = TodoItemPutDto.builder()
                 .description("title")
+                .priority("Low")
                 .notes("notes/n")
                 .originNotes("<div>notes</div>")
                 .dueDate(OffsetDateTime.now(UTC))
                 .subscribersIds("1,2,3")
                 .build();
-        when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getNotes(),
+        when(todoItemRepository.updateTodoItem(1L, todoItemPut.getDescription(), todoItemPut.getPriority(), todoItemPut.getNotes(),
                 todoItemPut.getOriginNotes(), todoItemPut.getDueDate(), 1L, 1L,
                 todoItemPut.getSubscribersIds())).thenReturn(0);
         assertThrows(TodoItemNotFoundException.class, () -> todoService.updateTodoItemDetails(1L, 1L, 1L, todoItemPut));
@@ -276,25 +317,13 @@ public class TodoServiceTest {
                 todoService.updateTodoListTitle(1L, 1L, 1L, title));
     }
 
-    private TodoItem buildTodoItem(TodoList todoList, String notes, String description) {
+    private TodoItem buildTodoItem(TodoList todoList, String notes, String priority, String description, String subscribersIds) {
         return TodoItem.builder()
                 .todoList(todoList)
                 .companyId(todoList.getCompanyId())
                 .projectId(todoList.getProject().getId())
                 .notes(notes)
-                .description(description)
-                .completed(Boolean.FALSE)
-                .createdTime(now(UTC))
-                .updatedTime(now(UTC))
-                .build();
-    }
-
-    private TodoItem buildTodoItem(TodoList todoList, String notes, String description, String subscribersIds) {
-        return TodoItem.builder()
-                .todoList(todoList)
-                .companyId(todoList.getCompanyId())
-                .projectId(todoList.getProject().getId())
-                .notes(notes)
+                .priority(priority)
                 .description(description)
                 .completed(Boolean.FALSE)
                 .createdTime(now(UTC))

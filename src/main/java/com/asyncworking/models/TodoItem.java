@@ -63,6 +63,9 @@ public class TodoItem {
     @Column(name = "completed_time")
     private OffsetDateTime completedTime;
 
+    @Column(name = "priority")
+    private String priority;
+
     public void setCompletedTime() {
         if (completed) {
             this.completedTime = OffsetDateTime.now();

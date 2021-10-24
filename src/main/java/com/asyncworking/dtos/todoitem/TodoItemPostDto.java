@@ -30,6 +30,8 @@ public class TodoItemPostDto {
     @NotNull(message = "created user id is required")
     private Long createdUserId;
 
+    private String priority;
+
     private OffsetDateTime dueDate;
 
     private String subscribersIds;

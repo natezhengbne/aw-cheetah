@@ -43,6 +43,7 @@ public interface TodoMapper {
     @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
     @Mapping(target = "completedTime", expression = "java(getCurrentTime())")
+    @Mapping(target = "priority", source = "todoItemPostDto.priority")
     TodoItem toTodoItemEntity(TodoItemPostDto todoItemPostDto, TodoList todoList);
 
     @Mapping(target = "todoItemId", source = "id")

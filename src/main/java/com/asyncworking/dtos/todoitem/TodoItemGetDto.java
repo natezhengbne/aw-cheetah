@@ -26,6 +26,8 @@ public class TodoItemGetDto {
 
     private Boolean completed;
 
+    private String priority;
+
     private OffsetDateTime createdTime;
 
     private OffsetDateTime dueDate;

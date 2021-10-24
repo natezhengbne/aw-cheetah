@@ -19,11 +19,12 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
 
 
     @Modifying
-    @Query(value = "update TodoItem t set t.description=:description,t.notes=:notes,t.originNotes=:originNotes," +
+    @Query(value = "update TodoItem t set t.description=:description, t.priority=:priority, t.notes=:notes,t.originNotes=:originNotes," +
             "t.dueDate=:dueDates, t.subscribersIds=:subscribersIds where t.id=:todoItemId and t.companyId=:companyId " +
             "and t.projectId = :projectId")
     int updateTodoItem(@Param("todoItemId") Long todoItemId,
                        @Param("description")String description,
+                       @Param("priority")String priority,
                        @Param("notes")String notes,
                        @Param("originNotes")String originNotes,
                        @Param("dueDates")OffsetDateTime dueDate,
