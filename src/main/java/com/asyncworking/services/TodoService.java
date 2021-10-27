@@ -167,7 +167,10 @@ public class TodoService {
         List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
+    }
 
-
+    public List<CardTodoItemDto> findUpcomingTodoItems(Long companyId) {
+        List<TodoItem> todoItemList = todoItemRepository.findByCompanyId(companyId);
+        return todoItemList.stream().map(item -> todoMapper.toCardTodoItemDto(item)).collect(Collectors.toList());
     }
 }

@@ -17,6 +17,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                                                                                   @Param("todoListId") Long todoListId);
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 
+    List<TodoItem> findByCompanyId(Long companyId);
 
     @Modifying
     @Query(value = "update TodoItem t set t.description=:description, t.priority=:priority, t.notes=:notes,t.originNotes=:originNotes," +

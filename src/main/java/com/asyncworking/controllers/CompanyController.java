@@ -1,7 +1,9 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.services.CompanyService;
+import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.util.List;
 public class CompanyController {
 
     private final CompanyService companyService;
+
+    private final TodoService todoService;
 
     @PostMapping
     public ResponseEntity createCompany(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
@@ -68,5 +72,12 @@ public class CompanyController {
         log.info("Company ID: {}", companyId);
         List<AvailableEmployeesGetDto> employees = companyService.findAvailableEmployees(companyId, projectId);
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/{companyId}/upcoming")
+    public ResponseEntity getUpcomingTasks(@PathVariable Long companyId) {
+        log.info("company ID: {}", companyId);
+        List<CardTodoItemDto> upcomingTodoItemDtoList = todoService.findUpcomingTodoItems(companyId);
+        return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 }
