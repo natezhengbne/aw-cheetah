@@ -175,22 +175,21 @@ public class TodoService {
         List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
                 .map(todoMapper::toCardTodoItemDto)
                 .collect(Collectors.toList());
+
         List<CardTodoItemDto> upcomingItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
                 .sorted(Comparator.comparing(CardTodoItemDto::getDueDate)
                         .thenComparing(CardTodoItemDto::getPriority, cardTodoItemDto::comparePriority)
                         .thenComparing(CardTodoItemDto::getProjectTitle))
                 .collect(Collectors.toList());
-
         List<CardTodoItemDto> expiringItems = todoItems.stream()
-                .filter(item -> (item.getDueDate().isAfter(today) && item.getDueDate().isBefore(today.plusDays(3))))
+                .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(3))))
                 .sorted(Comparator.comparing(CardTodoItemDto::getDueDate)
                         .thenComparing(CardTodoItemDto::getPriority, cardTodoItemDto::comparePriority)
                         .thenComparing(CardTodoItemDto::getProjectTitle))
                 .collect(Collectors.toList());
-
         List<CardTodoItemDto> overdueItems = todoItems.stream()
-                .filter(item -> (item.getDueDate().isBefore(today)))
+                .filter(item -> (item.getDueDate().isBefore(today.minusDays(1))))
                 .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed()
                         .thenComparing(CardTodoItemDto::getPriority, cardTodoItemDto::comparePriority)
                         .thenComparing(CardTodoItemDto::getProjectTitle))
@@ -199,6 +198,6 @@ public class TodoService {
         allTodoItems.add(upcomingItems);
         allTodoItems.add(expiringItems);
         allTodoItems.add(overdueItems);
-      return allTodoItems;
+        return allTodoItems;
     }
 }
