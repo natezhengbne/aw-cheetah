@@ -51,6 +51,7 @@ public interface TodoMapper {
     TodoItemGetDto fromTodoItemEntity(TodoItem todoItem);
 
     @Mapping(target = "projectTitle", expression = "java(todoItem.getTodoList().getProject().getName())")
+    @Mapping(target = "todoItemId", expression = "java(todoItem.getId())")
     CardTodoItemDto toCardTodoItemDto(TodoItem todoItem);
 
     @Mapping(target = "todoListId", expression = "java(getTodoList(todoItem).getId())")

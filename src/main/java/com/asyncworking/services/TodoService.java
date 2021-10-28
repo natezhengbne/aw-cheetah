@@ -170,84 +170,31 @@ public class TodoService {
 
     public List<List<CardTodoItemDto>> findCardsTodoItems(Long companyId) {
         OffsetDateTime today= OffsetDateTime.now();
-        List<String> sortList =  Arrays.asList("High","Medium","Low");
         List<List<CardTodoItemDto>> allTodoItems= new ArrayList<>();
+        CardTodoItemDto cardTodoItemDto= new CardTodoItemDto();
         List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
                 .map(item -> todoMapper.toCardTodoItemDto(item))
                 .collect(Collectors.toList());
         List<CardTodoItemDto> upcomingItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.plusDays(3))&&item.getDueDate().isBefore(today.plusDays(7))))
-                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed().thenComparing(CardTodoItemDto::getPriority,(x,y)->{
-                    if(x == null && y != null){
-                        return 1;
-                    }else if(x !=null && y == null){
-                        return -1;
-                    }else if(x == null && y == null){
-                        return -1;
-                    }else{
-                        for(String sort : sortList){
-                            if(sort.equals(x) || sort.equals(y)){
-                                if(x.equals(y)){
-                                    return 0;
-                                }else if(sort.equals(x)){
-                                    return -1;
-                                }else{
-                                    return 1;
-                                }
-                            }
-                        }
-                        return 0;
-                    }
-                }).thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed()
+                        .thenComparing(CardTodoItemDto::getPriority,(x,y)-> cardTodoItemDto.compareTo(x,y))
+                        .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList());
+
         List<CardTodoItemDto> expiringItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isAfter(today)&&item.getDueDate().isBefore(today.plusDays(3))))
-                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed().thenComparing(CardTodoItemDto::getPriority,(x,y)->{
-                    if(x == null && y != null){
-                        return 1;
-                    }else if(x !=null && y == null){
-                        return -1;
-                    }else if(x == null && y == null){
-                        return -1;
-                    }else{
-                        for(String sort : sortList){
-                            if(sort.equals(x) || sort.equals(y)){
-                                if(x.equals(y)){
-                                    return 0;
-                                }else if(sort.equals(x)){
-                                    return -1;
-                                }else{
-                                    return 1;
-                                }
-                            }
-                        }
-                        return 0;
-                    }
-                }).thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed().
+                        thenComparing(CardTodoItemDto::getPriority,(x,y)-> cardTodoItemDto.compareTo(x,y)).
+                        thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList());
+
         List<CardTodoItemDto> overDueItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isBefore(today)))
-                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed().thenComparing(CardTodoItemDto::getPriority,(x,y)->{
-                    if(x == null && y != null){
-                        return 1;
-                    }else if(x !=null && y == null){
-                        return -1;
-                    }else if(x == null && y == null){
-                        return -1;
-                    }else{
-                        for(String sort : sortList){
-                            if(sort.equals(x) || sort.equals(y)){
-                                if(x.equals(y)){
-                                    return 0;
-                                }else if(sort.equals(x)){
-                                    return -1;
-                                }else{
-                                    return 1;
-                                }
-                            }
-                        }
-                        return 0;
-                    }
-                }).thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList());
-      allTodoItems.add(upcomingItems);
+                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed().
+                        thenComparing(CardTodoItemDto::getPriority,(x,y)-> cardTodoItemDto.compareTo(x,y))
+                        .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList());
+
+
+        allTodoItems.add(upcomingItems);
       allTodoItems.add(expiringItems);
       allTodoItems.add(overDueItems);
       return allTodoItems;
