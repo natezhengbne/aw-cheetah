@@ -75,9 +75,8 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}/upcoming")
-    public ResponseEntity getUpcomingTasks(@PathVariable Long companyId) {
-        log.info("company ID: {}", companyId);
-        List<CardTodoItemDto> upcomingTodoItemDtoList = todoService.findUpcomingTodoItems(companyId);
+    public ResponseEntity getCardsTodoItems(@PathVariable Long companyId) {
+        List<CardTodoItemDto> upcomingTodoItemDtoList = todoService.findCardsTodoItems(companyId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 }

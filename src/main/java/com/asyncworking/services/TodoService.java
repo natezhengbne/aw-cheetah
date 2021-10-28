@@ -169,8 +169,9 @@ public class TodoService {
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
 
-    public List<CardTodoItemDto> findUpcomingTodoItems(Long companyId) {
-        List<TodoItem> todoItemList = todoItemRepository.findByCompanyId(companyId);
-        return todoItemList.stream().map(item -> todoMapper.toCardTodoItemDto(item)).collect(Collectors.toList());
+    public List<CardTodoItemDto> findCardsTodoItems(Long companyId) {
+        return todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
+                .map(item -> todoMapper.toCardTodoItemDto(item))
+                .collect(Collectors.toList());
     }
 }

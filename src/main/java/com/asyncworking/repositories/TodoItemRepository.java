@@ -17,7 +17,15 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                                                                                   @Param("todoListId") Long todoListId);
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 
-    List<TodoItem> findByCompanyId(Long companyId);
+    @Query(nativeQuery = true,
+            value = "select * \n" +
+                    "from todo_item \n" +
+                    "where company_id = :companyId " +
+                    "and completed = false " +
+                    "and due_date <= current_date + interval '7 days' " +
+                    "order by due_date"
+    )
+    List<TodoItem> findByCompanyIdAndDueDate(@Param("companyId")Long companyId);
 
     @Modifying
     @Query(value = "update TodoItem t set t.description=:description, t.priority=:priority, t.notes=:notes,t.originNotes=:originNotes," +
