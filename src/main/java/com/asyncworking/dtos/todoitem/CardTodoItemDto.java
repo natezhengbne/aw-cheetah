@@ -24,28 +24,23 @@ public class CardTodoItemDto {
 
     private OffsetDateTime dueDate;
 
-    public int compareTo(String Priority,String PreviousPriority){
-         List<String> sortList =  Arrays.asList("High","Medium","Low");
-            if(Priority == null && PreviousPriority != null){
-                return 1;
-            }else if(Priority !=null && PreviousPriority == null){
-                return -1;
-            }else if(Priority == null && PreviousPriority == null){
-                return -1;
-            }else{
-                for(String sort : sortList){
-                    if(sort.equals(Priority) || sort.equals(PreviousPriority)){
-                        if(Priority.equals(PreviousPriority)){
-                            return 0;
-                        }else if(sort.equals(Priority)){
-                            return -1;
-                        }else{
-                            return 1;
-                        }
-                    }
+    public int compareTo(String priority,String previousPriority){
+       return priority==null&&previousPriority!=null?1:
+                priority!=null&&previousPriority==null?-1:
+                        priority==null&&previousPriority==null?-1:
+                                sortListArrange(priority,previousPriority);
+        }
+
+        public int sortListArrange(String priority,String previousPriority){
+            List<String> sortList =  Arrays.asList("High","Medium","Low");
+        for(String sort : sortList){
+            if(sort.equals(priority) || sort.equals(previousPriority)){
+                return priority.equals(previousPriority)?0:
+                        sort.equals(priority)?-1:1;
+            }
                 }
                 return 0;
-            }
         }
+
     }
 
