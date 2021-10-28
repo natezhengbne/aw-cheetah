@@ -24,15 +24,11 @@ public class CardTodoItemDto {
     private OffsetDateTime dueDate;
 
     public int comparePriority(String first, String second) {
-        int firstPriority = TodoItemOrder.priorityOrder.indexOf(first);
-        int secondPriority = TodoItemOrder.priorityOrder.indexOf(second);
+        int firstIndex = TodoItemOrder.priorityOrder.indexOf(first);
+        int secondIndex = TodoItemOrder.priorityOrder.indexOf(second);
 
-        if ((second == null && first == null) || firstPriority == secondPriority) {
-            return 0;
-        }
-        else if ((second == null && first != null) || firstPriority > secondPriority) {
-            return 1;
-        }
+        if ((second == null && first == null) || firstIndex == secondIndex) return 0;
+        else if ((second == null && first != null) || firstIndex > secondIndex) return 1;
         return -1;
     }
 
