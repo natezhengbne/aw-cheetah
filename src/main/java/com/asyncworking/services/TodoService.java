@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -169,9 +170,12 @@ public class TodoService {
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
 
-    public List<CardTodoItemDto> findCardsTodoItems(Long companyId) {
-        return todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
+    public List<List<CardTodoItemDto>> findCardsTodoItems(Long companyId) {
+        List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
                 .map(item -> todoMapper.toCardTodoItemDto(item))
                 .collect(Collectors.toList());
+
+        List<CardTodoItemDto> upcomingItems = todoItems.stream()
+                .filter(item -> item.getDueDate()<=)
     }
 }
