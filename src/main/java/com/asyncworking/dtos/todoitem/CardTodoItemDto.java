@@ -23,7 +23,7 @@ public class CardTodoItemDto {
 
     private OffsetDateTime dueDate;
 
-    public int comparePriority(String first, String second) {
+    public static int comparePriority(String first, String second) {
         int firstIndex = TodoItemOrder.priorityOrder.indexOf(first);
         int secondIndex = TodoItemOrder.priorityOrder.indexOf(second);
 
