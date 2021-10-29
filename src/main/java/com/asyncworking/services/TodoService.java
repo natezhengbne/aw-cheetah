@@ -170,7 +170,7 @@ public class TodoService {
     }
 
     public List<List<CardTodoItemDto>> findCardTodoItemLists(Long companyId) {
-        OffsetDateTime today= OffsetDateTime.now();
+        OffsetDateTime today = OffsetDateTime.now();
         List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
                 .map(todoMapper::toCardTodoItemDto)
                 .collect(Collectors.toList());
@@ -194,6 +194,6 @@ public class TodoService {
                         .thenComparing(CardTodoItemDto::getProjectTitle))
                 .collect(Collectors.toList());
 
-        return Arrays.asList( upcomingItems, expiringItems, overdueItems);
+        return Arrays.asList(upcomingItems, expiringItems, overdueItems);
     }
 }

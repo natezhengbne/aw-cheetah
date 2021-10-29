@@ -28,7 +28,7 @@ public class CardTodoItemDto {
         int secondIndex = TodoItemOrder.priorityOrder.indexOf(second);
 
         if ((second == null && first == null) || firstIndex == secondIndex) return 0;
-        else if ((second == null && first != null) || firstIndex > secondIndex) return 1;
+        if ((second == null && first != null) || firstIndex > secondIndex) return 1;
         return -1;
     }
 
