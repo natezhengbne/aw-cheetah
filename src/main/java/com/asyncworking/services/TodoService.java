@@ -177,23 +177,20 @@ public class TodoService {
 
         List<CardTodoItemDto> upcomingItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
-                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate)
-                        .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
-                        .thenComparing(CardTodoItemDto::getProjectTitle))
                 .collect(Collectors.toList());
         List<CardTodoItemDto> expiringItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(3))))
-                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate)
-                        .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
-                        .thenComparing(CardTodoItemDto::getProjectTitle))
                 .collect(Collectors.toList());
         List<CardTodoItemDto> overdueItems = todoItems.stream()
                 .filter(item -> (item.getDueDate().isBefore(today.minusDays(1))))
-                .sorted(Comparator.comparing(CardTodoItemDto::getDueDate).reversed()
-                        .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
-                        .thenComparing(CardTodoItemDto::getProjectTitle))
                 .collect(Collectors.toList());
 
-        return Arrays.asList(upcomingItems, expiringItems, overdueItems);
+        List<List<CardTodoItemDto>> cardLists = Arrays.asList(upcomingItems, expiringItems, overdueItems);
+        cardLists.forEach(list -> list.stream().sorted(Comparator
+                .comparing(CardTodoItemDto::getDueDate)
+                .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
+                .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()));
+
+        return cardLists;
     }
 }
