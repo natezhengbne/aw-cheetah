@@ -75,7 +75,6 @@ public class CompanyController {
     @GetMapping("/{companyId}/cards")
     public ResponseEntity getCardsTodoItems(@PathVariable Long companyId) {
         log.info("Company ID: {}", companyId);
-
         List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }

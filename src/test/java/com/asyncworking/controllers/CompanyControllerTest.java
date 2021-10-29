@@ -1,24 +1,20 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.ProjectService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.Objects;
+import java.time.OffsetDateTime;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -56,8 +52,8 @@ public class CompanyControllerTest extends ControllerHelper {
                 .userTitle("VI")
                 .build();
         mockMvc.perform(post("/companies")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(companyModificationDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -74,9 +70,9 @@ public class CompanyControllerTest extends ControllerHelper {
         when(companyService.getCompanyInfoDto(email)).thenReturn(companyInfoDto);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/companies/company-info")
-                        .param("email", email)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        MockMvcRequestBuilders.get("/companies/company-info")
+                                .param("email", email)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 
@@ -89,8 +85,8 @@ public class CompanyControllerTest extends ControllerHelper {
                 .build();
 
         mockMvc.perform(post("/companies")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(companyModificationDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -107,6 +103,41 @@ public class CompanyControllerTest extends ControllerHelper {
     }
 
     @Test
+    void shouldGetAllCompaniesTodoItemCards() throws Exception {
+        CardTodoItemDto mockTodoItem1 = CardTodoItemDto.builder()
+                .todoItemId(1L)
+                .description("desc")
+                .projectTitle("title")
+                .priority("High")
+                .dueDate(OffsetDateTime.now().minusDays(3))
+                .build();
+
+        CardTodoItemDto mockTodoItem2 = CardTodoItemDto.builder()
+                .todoItemId(1L)
+                .description("desc1")
+                .projectTitle("title1")
+                .priority("Medium")
+                .dueDate(OffsetDateTime.now().plusDays(2))
+                .build();
+
+        CardTodoItemDto mockTodoItem3 = CardTodoItemDto.builder()
+                .todoItemId(1L)
+                .description("desc2")
+                .projectTitle("title2")
+                .priority("Low")
+                .dueDate(OffsetDateTime.now().plusDays(5))
+                .build();
+
+        List<CardTodoItemDto> overDueItem = List.of(mockTodoItem1);
+        List<CardTodoItemDto> expiringItem = List.of(mockTodoItem2);
+        List<CardTodoItemDto> upComingItem = List.of(mockTodoItem3);
+        List<List<CardTodoItemDto>> allTodoCardItemsList = List.of(upComingItem, expiringItem, overDueItem);
+        when(companyService.findTodoItemCardList(1L)).thenReturn(allTodoCardItemsList);
+        mockMvc.perform(get("/companies/1/cards"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void updateCompanyDescription() throws Exception {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
                 .adminEmail("aaa@qq.com")
@@ -115,8 +146,8 @@ public class CompanyControllerTest extends ControllerHelper {
                 .build();
 
         mockMvc.perform(get("/companies/1/profile")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(companyModificationDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -197,8 +228,8 @@ public class CompanyControllerTest extends ControllerHelper {
                 .description(text.repeat(33))
                 .build();
         mockMvc.perform(put("/companies/1/profile")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(companyModificationDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -212,15 +243,15 @@ public class CompanyControllerTest extends ControllerHelper {
                 .description("aa")
                 .build();
         mockMvc.perform(put("/companies/1/profile")
-                .content(objectMapper.writeValueAsString(companyModificationDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(companyModificationDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void shouldReturnEmployeesByCompanyIdAndProjectId() throws Exception {
         mockMvc.perform(get("/companies/1/available-employees")
-                .param("projectId", String.valueOf(1L)))
+                        .param("projectId", String.valueOf(1L)))
                 .andExpect(status().isOk());
     }
 
@@ -238,9 +269,9 @@ public class CompanyControllerTest extends ControllerHelper {
                 .thenReturn(Set.of(projectInfoDto));
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/companies/1/projects")
-                        .param("userId", String.valueOf(1L))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        MockMvcRequestBuilders.get("/companies/1/projects")
+                                .param("userId", String.valueOf(1L))
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 }
