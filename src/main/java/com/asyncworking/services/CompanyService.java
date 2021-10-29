@@ -1,5 +1,6 @@
 package com.asyncworking.services;
 
+import com.asyncworking.constants.CurrentTime;
 import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
@@ -169,7 +170,7 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
     public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId) {
-        OffsetDateTime today = OffsetDateTime.now();
+        OffsetDateTime today = CurrentTime.today;
         List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
                 .map(todoMapper::toCardTodoItemDto)
                 .collect(Collectors.toList());
