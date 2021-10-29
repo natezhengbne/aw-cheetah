@@ -186,11 +186,10 @@ public class TodoService {
                 .collect(Collectors.toList());
 
         List<List<CardTodoItemDto>> cardList = Arrays.asList(upcomingItems, expiringItems, overdueItems);
-        cardList.forEach(list -> list.stream().sorted(Comparator
+        return cardList.stream().map(list -> list.stream().sorted(Comparator
                 .comparing(CardTodoItemDto::getDueDate)
                 .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
-                .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()));
-
-        return cardList;
+                .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 }

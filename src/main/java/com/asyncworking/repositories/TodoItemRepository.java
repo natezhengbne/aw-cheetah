@@ -22,8 +22,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                     "from todo_item \n" +
                     "where company_id = :companyId " +
                     "and completed = false " +
-                    "and due_date <= current_date + interval '7 days' " +
-                    "order by due_date"
+                    "and due_date <= current_date + interval '7 days' "
     )
     List<TodoItem> findByCompanyIdAndDueDate(@Param("companyId")Long companyId);
 

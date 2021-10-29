@@ -4,5 +4,5 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TodoItemOrder {
-    public static List<String> priorityOrder = Arrays.asList("High", "Medium", "Low");
+    public static List<String> priorityOrder = Arrays.asList("Low", "Medium", "High");
 }
