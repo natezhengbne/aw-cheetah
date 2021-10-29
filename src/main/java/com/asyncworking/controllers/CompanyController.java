@@ -22,8 +22,6 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    private final TodoService todoService;
-
     @PostMapping
     public ResponseEntity createCompany(@Valid @RequestBody CompanyModificationDto companyModificationDto) {
         return ResponseEntity.ok(companyService.createCompanyAndEmployee(companyModificationDto));
@@ -76,7 +74,9 @@ public class CompanyController {
 
     @GetMapping("/{companyId}/cards")
     public ResponseEntity getCardsTodoItems(@PathVariable Long companyId) {
-        List<List<CardTodoItemDto>> upcomingTodoItemDtoList = todoService.findTodoItemCardList(companyId);
+        log.info("Company ID: {}", companyId);
+
+        List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 }

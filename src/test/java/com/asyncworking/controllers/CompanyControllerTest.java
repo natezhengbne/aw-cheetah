@@ -32,6 +32,7 @@ public class CompanyControllerTest extends ControllerHelper {
     @Mock
     private ProjectService projectService;
 
+
     private ProjectController projectController;
     private CompanyController companyController;
 

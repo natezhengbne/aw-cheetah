@@ -169,27 +169,4 @@ public class TodoService {
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
 
-    public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId) {
-        OffsetDateTime today = OffsetDateTime.now();
-        List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
-                .map(todoMapper::toCardTodoItemDto)
-                .collect(Collectors.toList());
-
-        List<CardTodoItemDto> upcomingItems = todoItems.stream()
-                .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
-                .collect(Collectors.toList());
-        List<CardTodoItemDto> expiringItems = todoItems.stream()
-                .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(3))))
-                .collect(Collectors.toList());
-        List<CardTodoItemDto> overdueItems = todoItems.stream()
-                .filter(item -> (item.getDueDate().isBefore(today.minusDays(1))))
-                .collect(Collectors.toList());
-
-        List<List<CardTodoItemDto>> cardList = Arrays.asList(upcomingItems, expiringItems, overdueItems);
-        return cardList.stream().map(list -> list.stream().sorted(Comparator
-                .comparing(CardTodoItemDto::getDueDate)
-                .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
-                .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()))
-                .collect(Collectors.toList());
-    }
 }

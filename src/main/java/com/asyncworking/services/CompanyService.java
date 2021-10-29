@@ -1,14 +1,18 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
+import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
+import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,13 +40,21 @@ public class CompanyService {
 
     private final EmployeeRepository employeeRepository;
 
+    private final TodoItemRepository todoItemRepository;
+
     private final CompanyMapper companyMapper;
 
     private final UserMapper userMapper;
 
     private final EmployeeMapper employeeMapper;
 
+    private final TodoMapper todoMapper;
+
     private final RoleService roleService;
+
+
+
+
 
     @Transactional
     public Long createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
@@ -152,6 +166,32 @@ public class CompanyService {
         //how to verify the invitations/registerProjectId and companyId if they are both invalid the result is always empty arrays
         return userRepository.findAvailableEmployeesByCompanyAndProjectId(companyId, projectId).stream()
                 .map(employeeMapper::mapAvailableEmployeesEntityToDto)
+                .collect(Collectors.toList());
+    }
+    public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId) {
+        OffsetDateTime today = OffsetDateTime.now();
+        List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
+                .map(todoMapper::toCardTodoItemDto)
+                .collect(Collectors.toList());
+        if (todoItems.isEmpty()) {
+            throw new TodoItemNotFoundException("There is no todoItem for company " + companyId);
+        }
+
+        List<CardTodoItemDto> upcomingItems = todoItems.stream()
+                .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
+                .collect(Collectors.toList());
+        List<CardTodoItemDto> expiringItems = todoItems.stream()
+                .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(3))))
+                .collect(Collectors.toList());
+        List<CardTodoItemDto> overdueItems = todoItems.stream()
+                .filter(item -> (item.getDueDate().isBefore(today.minusDays(1))))
+                .collect(Collectors.toList());
+
+        List<List<CardTodoItemDto>> cardList = Arrays.asList(upcomingItems, expiringItems, overdueItems);
+        return cardList.stream().map(list -> list.stream().sorted(Comparator
+                        .comparing(CardTodoItemDto::getDueDate)
+                        .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
+                        .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
 }

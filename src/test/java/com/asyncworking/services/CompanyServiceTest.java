@@ -8,9 +8,11 @@ import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
+import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +42,8 @@ public class CompanyServiceTest {
 
     @Mock
     private RoleService roleService;
+    @Mock
+    private TodoItemRepository todoItemRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -51,8 +55,10 @@ public class CompanyServiceTest {
 
 
     private UserMapper userMapper;
+    private TodoMapper todoMapper;
 
     private CompanyService companyService;
+
 
     @BeforeEach()
     public void setup() {
@@ -63,10 +69,13 @@ public class CompanyServiceTest {
             userRepository,
             companyRepository,
             employeeRepository,
+                todoItemRepository,
             companyMapper,
             userMapper,
             employeeMapper,
+                todoMapper,
             roleService
+
         );
     }
 
