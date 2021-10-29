@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.constants.CurrentTime;
 import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
@@ -21,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
@@ -52,9 +48,6 @@ public class CompanyService {
     private final TodoMapper todoMapper;
 
     private final RoleService roleService;
-
-
-
 
 
     @Transactional
@@ -169,13 +162,17 @@ public class CompanyService {
                 .map(employeeMapper::mapAvailableEmployeesEntityToDto)
                 .collect(Collectors.toList());
     }
+
+
     public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId) {
-        OffsetDateTime today = CurrentTime.today;
+        OffsetDateTime today = OffsetDateTime.now();
         List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
                 .map(todoMapper::toCardTodoItemDto)
                 .collect(Collectors.toList());
-        if (todoItems.isEmpty()) {
-            throw new TodoItemNotFoundException("There is no todoItem for company " + companyId);
+        if (todoItems.isEmpty()||todoItems == null) {
+            List<List<CardTodoItemDto>> cardList= new ArrayList<>(0);
+            return cardList;
+//            throw new TodoItemNotFoundException("There is no todoItem for company " + companyId);
         }
 
         List<CardTodoItemDto> upcomingItems = todoItems.stream()

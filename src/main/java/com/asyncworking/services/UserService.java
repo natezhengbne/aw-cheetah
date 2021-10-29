@@ -63,8 +63,8 @@ public class UserService {
         emailService.saveEmailSendingRecord(userEntity, EmailType.Verification, accountDto.getEmail());
         userRepository.save(userEntity);
         emailService.sendMessageToSQS(userEntity, generateLink(userEntity.getEmail(),
-                "/verifylink/verify?code=",
-                "signUp", expireDate),
+                        "/verifylink/verify?code=",
+                        "signUp", expireDate),
                 EmailType.Verification, userEntity.getEmail());
     }
 
