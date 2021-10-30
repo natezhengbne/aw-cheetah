@@ -166,22 +166,21 @@ public class CompanyService {
 
     public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId) {
         OffsetDateTime today = OffsetDateTime.now();
-        List<CardTodoItemDto> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId).stream()
-                .map(todoMapper::toCardTodoItemDto)
-                .collect(Collectors.toList());
-        if (todoItems.isEmpty()||todoItems == null) {
-            List<List<CardTodoItemDto>> cardList= new ArrayList<>(0);
-            return cardList;
-//            throw new TodoItemNotFoundException("There is no todoItem for company " + companyId);
+        List<TodoItem> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id " + companyId));
+
+        if (todoItems.isEmpty()) {
+            return Arrays.asList(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
 
-        List<CardTodoItemDto> upcomingItems = todoItems.stream()
+        List<CardTodoItemDto> todoItemDtos = todoItems.stream().map(todoMapper::toCardTodoItemDto).collect(Collectors.toList());
+        List<CardTodoItemDto> upcomingItems = todoItemDtos.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
                 .collect(Collectors.toList());
-        List<CardTodoItemDto> expiringItems = todoItems.stream()
+        List<CardTodoItemDto> expiringItems = todoItemDtos.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(3))))
                 .collect(Collectors.toList());
-        List<CardTodoItemDto> overdueItems = todoItems.stream()
+        List<CardTodoItemDto> overdueItems = todoItemDtos.stream()
                 .filter(item -> (item.getDueDate().isBefore(today.minusDays(1))))
                 .collect(Collectors.toList());
 

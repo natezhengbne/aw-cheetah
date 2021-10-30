@@ -24,7 +24,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                     "and completed = false " +
                     "and due_date <= current_date + interval '7 days' "
     )
-    List<TodoItem> findByCompanyIdAndDueDate(@Param("companyId")Long companyId);
+    Optional<List<TodoItem>> findByCompanyIdAndDueDate(@Param("companyId")Long companyId);
 
     @Modifying
     @Query(value = "update TodoItem t set t.description=:description, t.priority=:priority, t.notes=:notes,t.originNotes=:originNotes," +
