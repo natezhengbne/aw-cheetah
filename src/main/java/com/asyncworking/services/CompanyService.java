@@ -169,10 +169,6 @@ public class CompanyService {
         List<TodoItem> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId)
                 .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id " + companyId));
 
-        if (todoItems.isEmpty()) {
-            return Arrays.asList(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        }
-
         List<CardTodoItemDto> todoItemDtos = todoItems.stream().map(todoMapper::toCardTodoItemDto).collect(Collectors.toList());
         List<CardTodoItemDto> upcomingItems = todoItemDtos.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
