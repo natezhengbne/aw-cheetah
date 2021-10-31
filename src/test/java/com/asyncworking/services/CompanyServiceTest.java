@@ -5,7 +5,6 @@ import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
-import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
@@ -22,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -178,7 +177,7 @@ public class CompanyServiceTest {
 
     @Test
     void fetchCompanyTodoItemsByCompanyId() {
-        OffsetDateTime nowTime = OffsetDateTime.now();
+        OffsetDateTime nowTime = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
         CardTodoItemDto mockTodoItemDto1 = CardTodoItemDto.builder()
                 .todoItemId(1L)
                 .description("desc")
@@ -220,6 +219,7 @@ public class CompanyServiceTest {
                 .description("desc")
                 .todoList(mockTodoList1)
                 .priority("High")
+                .subscribersIds("1,2,3,4")
                 .dueDate(nowTime.minusDays(3)).build();
 
         TodoItem mockTodoItem2 = new TodoItem().builder()
@@ -227,6 +227,7 @@ public class CompanyServiceTest {
                 .description("desc1")
                 .todoList(mockTodoList2)
                 .priority("Medium")
+                .subscribersIds("1,3,6,8")
                 .dueDate(nowTime.plusDays(2)).build();
 
         TodoItem mockTodoItem3 = new TodoItem().builder()
@@ -234,13 +235,14 @@ public class CompanyServiceTest {
                 .description("desc2")
                 .todoList(mockTodoList3)
                 .priority("Low")
+                .subscribersIds("1,3,4,9,10")
                 .dueDate(nowTime.plusDays(5)).build();
         List<TodoItem> mockTodoItemList = List.of(mockTodoItem1, mockTodoItem2, mockTodoItem3);
 
 
-        when(todoItemRepository.findByCompanyIdAndDueDate(1L))
+        when(todoItemRepository.findByCompanyIdAndDueDate(1L, nowTime.plusDays(7)))
                 .thenReturn(Optional.of(mockTodoItemList));
-        List<List<CardTodoItemDto>> todoItemCardList = companyService.findTodoItemCardList(1L,1L);
+        List<List<CardTodoItemDto>> todoItemCardList = companyService.findTodoItemCardList(1L, 1L);
 
         assertEquals(allTodoCardItemsList, todoItemCardList);
     }
@@ -283,10 +285,10 @@ public class CompanyServiceTest {
 
     @Test
     void throwNotFoundExceptionWhenTodoItemNotExist() {
-
-        when(todoItemRepository.findByCompanyIdAndDueDate(1L)).thenReturn(Optional.empty());
+        OffsetDateTime offsetDateTime = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
+        when(todoItemRepository.findByCompanyIdAndDueDate(1L, offsetDateTime.plusDays(7))).thenReturn(Optional.empty());
         Exception exception = assertThrows(CompanyNotFoundException.class,
-                () -> companyService.findTodoItemCardList(1L,1L));
+                () -> companyService.findTodoItemCardList(1L, 1L));
         String expectedMessage = "Cannot find company by id 1";
         String actualMessage = exception.getMessage();
 

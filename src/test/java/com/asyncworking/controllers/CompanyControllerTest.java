@@ -104,6 +104,7 @@ public class CompanyControllerTest extends ControllerHelper {
 
     @Test
     void shouldGetAllCompaniesTodoItemCards() throws Exception {
+        Long userId = 1L;
         CardTodoItemDto mockTodoItem1 = CardTodoItemDto.builder()
                 .todoItemId(1L)
                 .description("desc")
@@ -132,8 +133,9 @@ public class CompanyControllerTest extends ControllerHelper {
         List<CardTodoItemDto> expiringItem = List.of(mockTodoItem2);
         List<CardTodoItemDto> upComingItem = List.of(mockTodoItem3);
         List<List<CardTodoItemDto>> allTodoCardItemsList = List.of(upComingItem, expiringItem, overDueItem);
-        when(companyService.findTodoItemCardList(1L,1L)).thenReturn(allTodoCardItemsList);
-        mockMvc.perform(get("/companies/1/cards"))
+        when(companyService.findTodoItemCardList(1L, 1L)).thenReturn(allTodoCardItemsList);
+        mockMvc.perform(get("/companies/1/cards")
+                        .param("userId", String.valueOf(userId)))
                 .andExpect(status().isOk());
     }
 
@@ -169,10 +171,12 @@ public class CompanyControllerTest extends ControllerHelper {
 
     @Test
     public void shouldReturnNotFoundIfCompanyNotExist() throws Exception {
+        Long userId = 1L;
         CompanyNotFoundException error = new CompanyNotFoundException("Can not found company by id: 1");
         when(companyService.findCompanyById(1L)).thenThrow(error);
 
-        String errorMsg = Objects.requireNonNull(mockMvc.perform(get("/companies/1"))
+        String errorMsg = Objects.requireNonNull(mockMvc.perform(get("/companies/1")
+                        .param("userId", String.valueOf(userId)))
                 .andExpect(status().isNotFound())
                 .andReturn().getResolvedException()).getMessage();
 

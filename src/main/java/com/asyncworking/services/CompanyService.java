@@ -3,7 +3,6 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
-import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
@@ -20,7 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
@@ -165,17 +168,13 @@ public class CompanyService {
 
 
     public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId, Long userId) {
-        OffsetDateTime today = OffsetDateTime.now();
-        List<TodoItem> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId)
+        OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
+        List<TodoItem> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId, today.plusDays(7))
                 .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id " + companyId));
 
         List<CardTodoItemDto> todoItemDtos = todoItems.stream()
                 .filter(item -> Arrays.asList(item.getSubscribersIds().trim().split(",")).contains(userId.toString()))
                 .map(todoMapper::toCardTodoItemDto).collect(Collectors.toList());
-
-//        List<CardTodoItemDto> todoItemDtos = todoItems.stream()
-//                .filter(todoItem -> CardTodoItemDto.filterSubscriberId(todoItem, userId))
-//                .map(todoMapper::toCardTodoItemDto).collect(Collectors.toList());
 
         List<CardTodoItemDto> upcomingItems = todoItemDtos.stream()
                 .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
