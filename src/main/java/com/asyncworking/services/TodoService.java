@@ -1,7 +1,6 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.dtos.todoitem.*;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
@@ -26,7 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -60,7 +60,7 @@ public class TodoService {
 
     @Transactional
     public boolean updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
-                                   @RequestBody String todoListTitle) {
+                                       @RequestBody String todoListTitle) {
         int res = todoListRepository.updateTodoListTitle(
                 todoListId,
                 companyId,

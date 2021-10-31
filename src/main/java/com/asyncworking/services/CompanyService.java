@@ -169,8 +169,7 @@ public class CompanyService {
 
     public List<List<CardTodoItemDto>> findTodoItemCardList(Long companyId, Long userId) {
         OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
-        List<TodoItem> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId, today.plusDays(7))
-                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id " + companyId));
+        List<TodoItem> todoItems = todoItemRepository.findByCompanyIdAndDueDate(companyId, today.plusDays(7));
 
         List<CardTodoItemDto> todoItemDtos = todoItems.stream()
                 .filter(item -> Arrays.asList(item.getSubscribersIds().trim().split(",")).contains(userId.toString()))

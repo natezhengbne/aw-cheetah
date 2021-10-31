@@ -14,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
@@ -197,9 +196,9 @@ class TodoItemRepositoryTest extends DBHelper {
     public void findTodoItemListsByDueDate() {
         OffsetDateTime afterSevenDays = OffsetDateTime.now();
         saveMockData();
-        List<List<TodoItem>> todoItemLists = todoItemRepository.
-                findByCompanyIdAndDueDate(1L, afterSevenDays).stream().collect(Collectors.toList());
-        assertEquals(1, todoItemLists.size());
+        List<TodoItem> byCompanyIdAndDueDate = todoItemRepository.
+                findByCompanyIdAndDueDate(1L, afterSevenDays);
+        assertEquals(1, byCompanyIdAndDueDate.size());
 
     }
 }

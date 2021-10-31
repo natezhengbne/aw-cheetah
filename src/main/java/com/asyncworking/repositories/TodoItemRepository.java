@@ -18,22 +18,13 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
 
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 
-//    @Query(nativeQuery = true,
-//            value = "select * \n" +
-//                    "from todo_item \n" +
-//                    "where company_id = :companyId " +
-//                    "and completed = false " +
-//                    "and due_date <= current_date + interval '7 days' "
-//    )
-//    Optional<List<TodoItem>> findByCompanyIdAndDueDate(@Param("companyId")Long companyId);
-
     @Query(
             value = "from TodoItem t \n" +
                     "where t.companyId = :companyId " +
                     "and t.completed = false " +
                     "and t.dueDate <= :afterSevenDays "
     )
-    Optional<List<TodoItem>> findByCompanyIdAndDueDate(@Param("companyId") Long companyId,
+    List<TodoItem> findByCompanyIdAndDueDate(@Param("companyId") Long companyId,
                                                        @Param("afterSevenDays") OffsetDateTime afterSevenDays);
 
     @Modifying

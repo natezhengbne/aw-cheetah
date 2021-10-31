@@ -241,7 +241,7 @@ public class CompanyServiceTest {
 
 
         when(todoItemRepository.findByCompanyIdAndDueDate(1L, nowTime.plusDays(7)))
-                .thenReturn(Optional.of(mockTodoItemList));
+                .thenReturn(mockTodoItemList);
         List<List<CardTodoItemDto>> todoItemCardList = companyService.findTodoItemCardList(1L, 1L);
 
         assertEquals(allTodoCardItemsList, todoItemCardList);
@@ -283,15 +283,4 @@ public class CompanyServiceTest {
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
     }
 
-    @Test
-    void throwNotFoundExceptionWhenTodoItemNotExist() {
-        OffsetDateTime offsetDateTime = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
-        when(todoItemRepository.findByCompanyIdAndDueDate(1L, offsetDateTime.plusDays(7))).thenReturn(Optional.empty());
-        Exception exception = assertThrows(CompanyNotFoundException.class,
-                () -> companyService.findTodoItemCardList(1L, 1L));
-        String expectedMessage = "Cannot find company by id 1";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
 }
