@@ -132,7 +132,7 @@ public class CompanyControllerTest extends ControllerHelper {
         List<CardTodoItemDto> expiringItem = List.of(mockTodoItem2);
         List<CardTodoItemDto> upComingItem = List.of(mockTodoItem3);
         List<List<CardTodoItemDto>> allTodoCardItemsList = List.of(upComingItem, expiringItem, overDueItem);
-        when(companyService.findTodoItemCardList(1L)).thenReturn(allTodoCardItemsList);
+        when(companyService.findTodoItemCardList(1L,1L)).thenReturn(allTodoCardItemsList);
         mockMvc.perform(get("/companies/1/cards"))
                 .andExpect(status().isOk());
     }

@@ -3,7 +3,6 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.services.CompanyService;
-import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -73,9 +72,9 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}/cards")
-    public ResponseEntity getCardsTodoItems(@PathVariable Long companyId) {
+    public ResponseEntity getCardsTodoItems(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
         log.info("Company ID: {}", companyId);
-        List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId);
+        List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId, userId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 }
