@@ -80,7 +80,6 @@ public class ProjectServiceTest {
                         messageCategoryService
                 );
 
-
         mockProject = Project.builder()
                 .id(2L)
                 .companyId(2L)

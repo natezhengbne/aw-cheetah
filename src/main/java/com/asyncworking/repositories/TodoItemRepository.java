@@ -15,22 +15,31 @@ import java.util.Optional;
 public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     List<TodoItem> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId, Long projectId,
                                                                                   @Param("todoListId") Long todoListId);
+
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 
+    @Query(
+            value = "from TodoItem t \n" +
+                    "where t.companyId = :companyId " +
+                    "and t.completed = false " +
+                    "and t.dueDate <= :afterSevenDays "
+    )
+    List<TodoItem> findByCompanyIdAndDueDate(@Param("companyId") Long companyId,
+                                                       @Param("afterSevenDays") OffsetDateTime afterSevenDays);
 
     @Modifying
     @Query(value = "update TodoItem t set t.description=:description, t.priority=:priority, t.notes=:notes,t.originNotes=:originNotes," +
             "t.dueDate=:dueDates, t.subscribersIds=:subscribersIds where t.id=:todoItemId and t.companyId=:companyId " +
             "and t.projectId = :projectId")
     int updateTodoItem(@Param("todoItemId") Long todoItemId,
-                       @Param("description")String description,
-                       @Param("priority")String priority,
-                       @Param("notes")String notes,
-                       @Param("originNotes")String originNotes,
-                       @Param("dueDates")OffsetDateTime dueDate,
-                       @Param("companyId")Long companyId,
-                       @Param("projectId")Long projectId,
-                       @Param("subscribersIds")String subscribersIds);
+                       @Param("description") String description,
+                       @Param("priority") String priority,
+                       @Param("notes") String notes,
+                       @Param("originNotes") String originNotes,
+                       @Param("dueDates") OffsetDateTime dueDate,
+                       @Param("companyId") Long companyId,
+                       @Param("projectId") Long projectId,
+                       @Param("subscribersIds") String subscribersIds);
 
     @Query(value = "select t.subscribersIds from TodoItem t where t.id = :todoItemId and t.projectId = :projectId" +
             " and t.companyId = :companyId")

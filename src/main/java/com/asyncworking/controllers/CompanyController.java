@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.services.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,5 +69,12 @@ public class CompanyController {
         log.info("Company ID: {}", companyId);
         List<AvailableEmployeesGetDto> employees = companyService.findAvailableEmployees(companyId, projectId);
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/{companyId}/cards")
+    public ResponseEntity getCardsTodoItems(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
+        log.info("Company ID: {}", companyId);
+        List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId, userId);
+        return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 }

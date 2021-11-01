@@ -1,6 +1,7 @@
 package com.asyncworking.utility.mapper;
 
 import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.dtos.todoitem.TodoItemGetDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
@@ -48,6 +49,10 @@ public interface TodoMapper {
 
     @Mapping(target = "todoItemId", source = "id")
     TodoItemGetDto fromTodoItemEntity(TodoItem todoItem);
+
+    @Mapping(target = "projectTitle", expression = "java(todoItem.getTodoList().getProject().getName())")
+    @Mapping(target = "todoItemId", expression = "java(todoItem.getId())")
+    CardTodoItemDto toCardTodoItemDto(TodoItem todoItem);
 
     @Mapping(target = "todoListId", expression = "java(getTodoList(todoItem).getId())")
     @Mapping(target = "todoListTitle", expression = "java(getTodoList(todoItem).getTodoListTitle())")

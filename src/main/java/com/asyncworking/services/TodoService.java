@@ -60,7 +60,7 @@ public class TodoService {
 
     @Transactional
     public boolean updateTodoListTitle(Long companyId, Long projectId, Long todoListId,
-                                   @RequestBody String todoListTitle) {
+                                       @RequestBody String todoListTitle) {
         int res = todoListRepository.updateTodoListTitle(
                 todoListId,
                 companyId,
@@ -167,7 +167,6 @@ public class TodoService {
         List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
-
-
     }
+
 }

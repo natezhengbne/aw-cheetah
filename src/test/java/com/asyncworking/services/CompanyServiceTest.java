@@ -3,15 +3,15 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.AvailableEmployeesGetDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
-import com.asyncworking.utility.mapper.CompanyMapper;
-import com.asyncworking.utility.mapper.EmployeeMapper;
-import com.asyncworking.utility.mapper.UserMapper;
+import com.asyncworking.utility.mapper.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +19,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +43,8 @@ public class CompanyServiceTest {
 
     @Mock
     private RoleService roleService;
+    @Mock
+    private TodoItemRepository todoItemRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -51,22 +56,28 @@ public class CompanyServiceTest {
 
 
     private UserMapper userMapper;
+    private TodoMapper todoMapper;
 
     private CompanyService companyService;
+
 
     @BeforeEach()
     public void setup() {
         employeeMapper = new EmployeeMapper();
         companyMapper = new CompanyMapper();
+        todoMapper = new TodoMapperImpl();
         userMapper = new UserMapper(passwordEncoder);
         companyService = new CompanyService(
-            userRepository,
-            companyRepository,
-            employeeRepository,
-            companyMapper,
-            userMapper,
-            employeeMapper,
-            roleService
+                userRepository,
+                companyRepository,
+                employeeRepository,
+                todoItemRepository,
+                companyMapper,
+                userMapper,
+                employeeMapper,
+                todoMapper,
+                roleService
+
         );
     }
 
@@ -163,6 +174,80 @@ public class CompanyServiceTest {
         assertEquals(expectedDescription, actualDescription);
     }
 
+
+    @Test
+    void fetchCompanyTodoItemsByCompanyId() {
+        OffsetDateTime nowTime = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
+        CardTodoItemDto mockTodoItemDto1 = CardTodoItemDto.builder()
+                .todoItemId(1L)
+                .description("desc")
+                .projectTitle("title")
+                .priority("High")
+                .dueDate(nowTime.minusDays(3))
+                .build();
+
+        CardTodoItemDto mockTodoItemDto2 = CardTodoItemDto.builder()
+                .todoItemId(1L)
+                .description("desc1")
+                .projectTitle("title1")
+                .priority("Medium")
+                .dueDate(nowTime.plusDays(2))
+                .build();
+
+        CardTodoItemDto mockTodoItemDto3 = CardTodoItemDto.builder()
+                .todoItemId(1L)
+                .description("desc2")
+                .projectTitle("title2")
+                .priority("Low")
+                .dueDate(nowTime.plusDays(5))
+                .build();
+
+        List<CardTodoItemDto> overDueItem = List.of(mockTodoItemDto1);
+        List<CardTodoItemDto> expiringItem = List.of(mockTodoItemDto2);
+        List<CardTodoItemDto> upComingItem = List.of(mockTodoItemDto3);
+        List<List<CardTodoItemDto>> allTodoCardItemsList = List.of(upComingItem, expiringItem, overDueItem);
+
+        Project mockProject1 = Project.builder().name("title").build();
+        Project mockProject2 = Project.builder().name("title1").build();
+        Project mockProject3 = Project.builder().name("title2").build();
+        TodoList mockTodoList1 = TodoList.builder().project(mockProject1).build();
+        TodoList mockTodoList2 = TodoList.builder().project(mockProject2).build();
+        TodoList mockTodoList3 = TodoList.builder().project(mockProject3).build();
+
+        TodoItem mockTodoItem1 = new TodoItem().builder()
+                .id(1L)
+                .description("desc")
+                .todoList(mockTodoList1)
+                .priority("High")
+                .subscribersIds("1,2,3,4")
+                .dueDate(nowTime.minusDays(3)).build();
+
+        TodoItem mockTodoItem2 = new TodoItem().builder()
+                .id(1L)
+                .description("desc1")
+                .todoList(mockTodoList2)
+                .priority("Medium")
+                .subscribersIds("1,3,6,8")
+                .dueDate(nowTime.plusDays(2)).build();
+
+        TodoItem mockTodoItem3 = new TodoItem().builder()
+                .id(1L)
+                .description("desc2")
+                .todoList(mockTodoList3)
+                .priority("Low")
+                .subscribersIds("1,3,4,9,10")
+                .dueDate(nowTime.plusDays(5)).build();
+        List<TodoItem> mockTodoItemList = List.of(mockTodoItem1, mockTodoItem2, mockTodoItem3);
+
+
+        when(todoItemRepository.findByCompanyIdAndDueDate(1L, nowTime.plusDays(7)))
+                .thenReturn(mockTodoItemList);
+        List<List<CardTodoItemDto>> todoItemCardList = companyService.findTodoItemCardList(1L, 1L);
+
+        assertEquals(allTodoCardItemsList, todoItemCardList);
+    }
+
+
     @Test
     void throwNotFoundExceptionWhenIdNotExist() {
 
@@ -197,4 +282,5 @@ public class CompanyServiceTest {
         List<AvailableEmployeesGetDto> result = companyService.findAvailableEmployees(1L, 1L);
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
     }
+
 }
