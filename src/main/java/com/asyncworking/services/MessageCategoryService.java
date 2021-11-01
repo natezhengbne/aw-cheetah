@@ -11,6 +11,7 @@ import com.asyncworking.utility.mapper.MessageMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,11 @@ public class MessageCategoryService {
     private final ProjectRepository projectRepository;
 
     private final MessageCategoryRepository messageCategoryRepository;
+
+    @Transactional
+    public void editMessageCategory(Long id, MessageCategoryGetDto messageCategoryGetDto) {
+        messageCategoryRepository.editMessage(id, messageCategoryGetDto.getCategoryName(), messageCategoryGetDto.getEmoji());
+    }
 
     public MessageCategoryGetDto createMessageCategory(MessageCategoryPostDto messageCategoryPostDto) {
         MessageCategory messageCategory = messageMapper.toCategoryEntity(messageCategoryPostDto,

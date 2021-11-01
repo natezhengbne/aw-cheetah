@@ -15,11 +15,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -101,6 +103,19 @@ public class MessageCategoryServiceTest {
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
 
         assertEquals(mockMessageCategoryGetDto, messageCategoryService.createMessageCategory(messageCategoryPostDto));
+    }
+
+    @Test
+    @Transactional
+    public void shouldEditMessageCategorySuccess() {
+        MessageCategoryGetDto mockMessageCategoryGetDto = MessageCategoryGetDto.builder()
+                .messageCategoryId(1L)
+                .categoryName("first test")
+                .messageCategoryId(1L)
+                .emoji("\uD83D\uDE00")
+                .build();
+        messageCategoryService.editMessageCategory(1L, mockMessageCategoryGetDto);
+        verify(messageCategoryRepository).editMessage(any(), any(), any());
     }
 
     @Test

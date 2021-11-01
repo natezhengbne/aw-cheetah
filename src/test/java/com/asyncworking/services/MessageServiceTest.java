@@ -198,7 +198,7 @@ public class MessageServiceTest {
         when(messageRepository.save(any())).thenReturn(mockReturnMessage);
         when(userRepository.findUserEntityById(1L)).thenReturn(Optional.of(mockUserEntity1));
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProject));
-        when(messageCategoryRepository.findById(1L)).thenReturn(Optional.of(mockFirstMessageCategory));
+        when(messageCategoryRepository.findById(any())).thenReturn(Optional.of(mockFirstMessageCategory));
 
         assertEquals(mockMessageGetDto, messageService.createMessage(messagePostDto.getCompanyId(), messagePostDto.getProjectId(),
                 messagePostDto));

@@ -71,6 +71,8 @@ public class MessageControllerTest extends ControllerHelper {
                 .content(objectMapper.writeValueAsString(messagePostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+//        mockMvc.perform(po)
     }
 
     @Test

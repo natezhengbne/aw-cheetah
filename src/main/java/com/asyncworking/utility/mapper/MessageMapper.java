@@ -1,6 +1,9 @@
 package com.asyncworking.utility.mapper;
 
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.MessageCategoryGetDto;
+import com.asyncworking.dtos.MessageCategoryPostDto;
+import com.asyncworking.dtos.MessageGetDto;
+import com.asyncworking.dtos.MessagePostDto;
 import com.asyncworking.models.Message;
 import com.asyncworking.models.MessageCategory;
 import com.asyncworking.models.Project;
@@ -58,6 +61,13 @@ public class MessageMapper {
     }
 
     public MessageCategory toCategoryEntity(MessageCategoryPostDto messageCategoryPostDto, Project project) {
+        if (messageCategoryPostDto.getEmoji() == null) {
+            return MessageCategory.builder()
+                    .project(project)
+                    .categoryName(messageCategoryPostDto.getCategoryName())
+                    .emoji("")
+                    .build();
+        }
         return MessageCategory.builder()
                 .project(project)
                 .categoryName(messageCategoryPostDto.getCategoryName())
