@@ -61,13 +61,6 @@ public class MessageMapper {
     }
 
     public MessageCategory toCategoryEntity(MessageCategoryPostDto messageCategoryPostDto, Project project) {
-        if (messageCategoryPostDto.getEmoji() == null) {
-            return MessageCategory.builder()
-                    .project(project)
-                    .categoryName(messageCategoryPostDto.getCategoryName())
-                    .emoji("")
-                    .build();
-        }
         return MessageCategory.builder()
                 .project(project)
                 .categoryName(messageCategoryPostDto.getCategoryName())

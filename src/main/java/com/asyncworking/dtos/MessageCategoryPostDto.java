@@ -20,5 +20,7 @@ public class MessageCategoryPostDto {
     @Size(max = 128, message = "Category name can not be more than 128 characters.")
     private String categoryName;
 
+    @NotNull(message = "emoji cannot be null.")
+    @Size(min = 1, message = "emoji is invalid.")
     private String emoji;
 }
