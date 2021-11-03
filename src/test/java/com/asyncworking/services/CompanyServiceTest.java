@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -186,14 +187,6 @@ public class CompanyServiceTest {
                 .dueDate(nowTime.minusDays(3))
                 .build();
 
-        CardTodoItemDto mockTodoItemDto2 = CardTodoItemDto.builder()
-                .todoItemId(1L)
-                .description("desc1")
-                .projectTitle("title1")
-                .priority("Medium")
-                .dueDate(nowTime.plusDays(2))
-                .build();
-
         CardTodoItemDto mockTodoItemDto3 = CardTodoItemDto.builder()
                 .todoItemId(1L)
                 .description("desc2")
@@ -203,7 +196,7 @@ public class CompanyServiceTest {
                 .build();
 
         List<CardTodoItemDto> overDueItem = List.of(mockTodoItemDto1);
-        List<CardTodoItemDto> expiringItem = List.of(mockTodoItemDto2);
+        List<CardTodoItemDto> expiringItem = new ArrayList<>(0);
         List<CardTodoItemDto> upComingItem = List.of(mockTodoItemDto3);
         List<List<CardTodoItemDto>> allTodoCardItemsList = List.of(upComingItem, expiringItem, overDueItem);
 
@@ -238,7 +231,6 @@ public class CompanyServiceTest {
                 .subscribersIds("1,3,4,9,10")
                 .dueDate(nowTime.plusDays(5)).build();
         List<TodoItem> mockTodoItemList = List.of(mockTodoItem1, mockTodoItem2, mockTodoItem3);
-
 
         when(todoItemRepository.findByCompanyIdAndDueDate(1L, nowTime.plusDays(7)))
                 .thenReturn(mockTodoItemList);
