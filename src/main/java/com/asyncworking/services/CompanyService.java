@@ -176,10 +176,10 @@ public class CompanyService {
                 .map(todoMapper::toCardTodoItemDto).collect(Collectors.toList());
 
         List<CardTodoItemDto> upcomingItems = todoItemDtos.stream()
-                .filter(item -> (item.getDueDate().isAfter(today.plusDays(3)) && item.getDueDate().isBefore(today.plusDays(7))))
+                .filter(item -> (item.getDueDate().isAfter(today.plusDays(2)) && item.getDueDate().isBefore(today.plusDays(7))))
                 .collect(Collectors.toList());
         List<CardTodoItemDto> expiringItems = todoItemDtos.stream()
-                .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(3))))
+                .filter(item -> (item.getDueDate().isAfter(today.minusDays(1)) && item.getDueDate().isBefore(today.plusDays(2))))
                 .collect(Collectors.toList());
         List<CardTodoItemDto> overdueItems = todoItemDtos.stream()
                 .filter(item -> (item.getDueDate().isBefore(today.minusDays(1))))
