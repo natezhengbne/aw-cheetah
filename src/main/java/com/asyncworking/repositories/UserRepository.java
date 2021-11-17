@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findEmploymentByEmail(@Param("email") String email);
 
     @Query(nativeQuery = true,
-            value = "select u.name, u.email, cu.title \n" +
+            value = "select u.id, u.name, u.email, cu.title \n" +
                     "from company_user cu, user_info u \n" +
                     "where cu.user_id = u.id \n" +
                     "and cu.company_id = :id " +
