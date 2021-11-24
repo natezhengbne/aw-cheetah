@@ -151,9 +151,9 @@ public class CompanyService {
         return companyMapper.mapEntityToDto(foundCompany);
     }
 
-    public List<EmployeeGetDto> findAllEmployeeByCompanyId(Long id) {
-        log.info("search all employees by company ID: {}", id);
-        return userRepository.findAllEmployeeByCompanyId(id).stream()
+    public List<EmployeeGetDto> findAllEmployeeByCompanyId(Long companyId) {
+        log.info("search all employees by company ID: {}", companyId);
+        return userRepository.findAllEmployeeByCompanyId(companyId).stream()
                 .map(employeeMapper::mapEntityToDto)
                 .collect(Collectors.toList());
     }
