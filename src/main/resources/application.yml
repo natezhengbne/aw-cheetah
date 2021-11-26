@@ -58,7 +58,7 @@ cloud:
       secretkey: test
     S3:
       templateS3Bucket: aw-email-template
-      templateS3Key: verification_email_template.txt
+      templateS3Key: verification_email_template_updated.html
       templateResetPasswordS3Key: reset_password_email_template.txt
     endpoint: http://localhost:4566
 
