@@ -29,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -328,5 +329,14 @@ public class UserServiceTest {
 
         List<IEmployeeInfo> employeeInfo = userRepository.findAllEmployeeByCompanyId(id);
         assertEquals("p", employeeInfo.get(0).getName());
+    }
+
+    @Test
+    public void shouldReturnInvitationLink() {
+        String expectedLink = frontEndUrlConfig.getFrontEndUrl()
+                .concat("/company-invitations/info?code=")
+                .concat("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIsImNvbXBhbn");
+        String actual = userService.generateCompanyInvitationLink(1L, "user2@gmail", "user2", new Date());
+        assertEquals(expectedLink.substring(0, 70), actual.substring(0, 70));
     }
 }

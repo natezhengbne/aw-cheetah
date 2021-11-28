@@ -29,10 +29,10 @@ logging:
     com.asyncworking: debug
 
 #production env
-url: https://www.asyncworking.com
+#url: https://www.asyncworking.com
 
 #local env
-#url: http://localhost:3000
+url: http://localhost:3000
 
 jwt:
   secret: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
@@ -60,6 +60,7 @@ cloud:
       templateS3Bucket: aw-email-template
       templateS3Key: verification_email_template_updated.html
       templateResetPasswordS3Key: reset_password_email_template.txt
+      templateCompanyInvitationS3Key: company_invitation_email_template.html
     endpoint: http://localhost:4566
 
 sqs:

@@ -1,17 +1,17 @@
 package com.asyncworking.services;
 
+import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.AvailableEmployeesGetDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyInvitedAccountDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.*;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.EmployeeRepository;
-import com.asyncworking.repositories.TodoItemRepository;
-import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.*;
 import com.asyncworking.utility.mapper.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,21 +45,26 @@ public class CompanyServiceTest {
 
     @Mock
     private RoleService roleService;
+
     @Mock
     private TodoItemRepository todoItemRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private EmailSendRepository emailSendRepository;
+
     private EmployeeMapper employeeMapper;
-
-
     private CompanyMapper companyMapper;
-
-
     private UserMapper userMapper;
     private TodoMapper todoMapper;
-
     private CompanyService companyService;
 
 
@@ -73,12 +79,14 @@ public class CompanyServiceTest {
                 companyRepository,
                 employeeRepository,
                 todoItemRepository,
+                emailSendRepository,
                 companyMapper,
                 userMapper,
                 employeeMapper,
                 todoMapper,
-                roleService
-
+                roleService,
+                emailService,
+                userService
         );
     }
 
@@ -273,6 +281,66 @@ public class CompanyServiceTest {
                 .thenReturn(List.of(mockIEmployeeInfo));
         List<AvailableEmployeesGetDto> result = companyService.findAvailableEmployees(1L, 1L);
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
+    }
+
+    @Test
+    public void shouldSaveEmailRecordAndSendSQSMessage() throws JsonProcessingException {
+        String receiverEmail = "test@gmail.com";
+        String receiverName = "Alice S";
+        String receiverTitle = "CEO";
+        Long companyId = 1L;
+        String companyName = "CompanyA";
+        String companyOwnerName = "OwnerB";
+        String invitationLink = "link";
+        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
+                .title(receiverTitle)
+                .name(receiverName)
+                .email(receiverEmail)
+                .build();
+        UserEntity receiver = UserEntity.builder()
+                .name(receiverName)
+                .email(receiverEmail)
+                .build();
+        ICompanyInvitationEmailCompanyInfo companyInfo = ICompanyInvitationEmailCompanyInfoImpl.builder()
+                .companyId(companyId)
+                .companyName(companyName)
+                .companyOwnerName(companyOwnerName)
+                .build();
+        EmailSendRecord emailSendRecord = EmailSendRecord.builder()
+                .companyId(companyId)
+                .userEntity(receiver)
+                .receiver(receiverEmail)
+                .emailType(EmailType.CompanyInvitation)
+                .sendStatus(false)
+                .build();
+        when(userRepository.findByEmail(any())).thenReturn(Optional.ofNullable(receiver));
+        when(emailSendRepository.findCompanyInfo(any())).thenReturn(Optional.ofNullable(companyInfo));
+        when(emailService.saveCompanyInvitationEmailSendingRecord(any(), any(), any(), any())).thenReturn(emailSendRecord);
+        when(userService.generateCompanyInvitationLink(any(), any(), any(), any())).thenReturn(invitationLink);
+        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
+
+        ArgumentCaptor<Long> emailRecordIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<String> receiverNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> receiverEmailCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> companyNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> companyOwnerNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> linkCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<EmailType> emailTypeCaptor = ArgumentCaptor.forClass(EmailType.class);
+        verify(emailService).sendCompanyInvitationMessageToSQS(
+                emailRecordIdCaptor.capture(),
+                receiverNameCaptor.capture(),
+                receiverEmailCaptor.capture(),
+                companyNameCaptor.capture(),
+                companyOwnerNameCaptor.capture(),
+                linkCaptor.capture(),
+                emailTypeCaptor.capture());
+
+        assertEquals("Alice", receiverNameCaptor.getValue());
+        assertEquals(receiverEmail, receiverEmailCaptor.getValue());
+        assertEquals(companyName, companyNameCaptor.getValue());
+        assertEquals(companyOwnerName, companyOwnerNameCaptor.getValue());
+        assertEquals(invitationLink, linkCaptor.getValue());
+        assertEquals(EmailType.CompanyInvitation, emailTypeCaptor.getValue());
     }
 
 }

@@ -9,10 +9,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-    Company findCompanyById(@Param("id") Long id);
+    Optional<Company> findCompanyById(@Param("id") Long id);
 
     @Query(nativeQuery = true, value =
             "SELECT c.id, c.name, c.description FROM company c, company_user cu, user_info u WHERE \n" +

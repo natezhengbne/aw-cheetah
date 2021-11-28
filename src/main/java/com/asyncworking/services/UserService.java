@@ -96,16 +96,6 @@ public class UserService {
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
 
-//    public String createJwtTokenForInvitationPeople(String email,  List<GrantedAuthority> authorities) {
-//        return Jwts.builder()
-//                .setSubject(email)
-//                .claim("authorities", authorities)
-//                .setIssuedAt(new Date())
-//                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-//                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
-//                .compact();
-//    }
-
     public void resendMessageToSQS(String email, EmailType emailType) {
         //Expires in 1 day
         Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
@@ -166,6 +156,23 @@ public class UserService {
                 .compact();
         log.info("invitationJwt: " + invitationJwt);
         return invitationJwt;
+    }
+
+    public String generateCompanyInvitationLink(Long companyId, String email, String name, Date expireDate) {
+        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
+                + "/company-invitations/info?code="
+                + Jwts.builder()
+                .setSubject("companyInvitation")
+                .claim("companyId", companyId)
+                .claim("email", email)
+                .claim("name", name)
+                .claim("date", expireDate)
+                .setIssuedAt(new Date())
+                .setExpiration(expireDate)
+                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
+                .compact();;
+        log.info("companyInvitationLink: " + invitationLink);
+        return invitationLink;
     }
 
     public ExternalEmployeeDto getUserInfo(String code) {

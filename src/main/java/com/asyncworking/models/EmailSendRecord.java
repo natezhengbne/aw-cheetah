@@ -36,9 +36,13 @@ public class EmailSendRecord {
     @Enumerated(EnumType.STRING)
     private EmailType emailType;
 
+    @JoinColumn(name = "company_id")
+    private Long companyId;
+
     @Column(name = "send_time", nullable = false)
     private OffsetDateTime sendTime;
 
     @Column(name = "receive_time")
     private OffsetDateTime receiveTime;
+
 }

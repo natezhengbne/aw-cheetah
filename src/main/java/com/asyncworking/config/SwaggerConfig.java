@@ -18,9 +18,9 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private final String ENV_DEV = "dev";
-    private final String ENV_UAT = "uat";
-    private final String PACKAGE_NAME = "com.asyncworking";
+    private static final String ENV_DEV = "dev";
+    private static final String ENV_UAT = "uat";
+    private static final String PACKAGE_NAME = "com.asyncworking";
 
     @Value("${swagger_env}")
     private String currentEnv;

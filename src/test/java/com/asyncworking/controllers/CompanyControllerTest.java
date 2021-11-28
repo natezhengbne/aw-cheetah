@@ -278,4 +278,18 @@ public class CompanyControllerTest extends ControllerHelper {
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldReturnOkIfSendCompanyInvitationSQSSuccessful() throws Exception {
+        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
+                .title("CEO")
+                .name("Alice S")
+                .email("test@gmail.com")
+                .build();
+        mockMvc.perform(
+                post("/companies/1/invite-company-users")
+                        .content(objectMapper.writeValueAsString(accountDto))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpect(status().isOk());
+    }
 }

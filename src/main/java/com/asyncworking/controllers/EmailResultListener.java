@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.models.SqsResponse;
+import com.asyncworking.services.EmailService;
 import com.asyncworking.services.UserService;
 import com.google.gson.Gson;
 import io.awspring.cloud.messaging.listener.annotation.SqsListener;
@@ -21,15 +22,24 @@ public class EmailResultListener {
 
     private final UserService userService;
 
-    @SqsListener(value = "${cloud.aws.sqs.incomingqueue.name}")
-    public void loadMessagesFromQueue(String message){
+    private final EmailService emailService;
+
+    @SqsListener(value = "${cloud.aws.sqs.incomingqueue.url}")
+    public void loadMessagesFromQueue(String message) {
         log.info("Message" + message);
         log.info("Respond Time From SQS: " + OffsetDateTime.now());
         log.info("Respond SES ID: " + parseStringMessage(message).getSesResultId());
-        userService.updateEmailSent(parseStringMessage(message).getEmail());
+        SqsResponse sqsResponse = parseStringMessage(message);
+        Long emailRecordId = sqsResponse.getEmailRecordId();
+        log.info("SQS Listener - Email Record ID: {}", emailRecordId);
+        if (emailRecordId == null) {
+            userService.updateEmailSent(sqsResponse.getEmail());
+        } else {
+            emailService.updateEmailRecordSendStatus(emailRecordId);
+        }
     }
 
-    private SqsResponse parseStringMessage(String message){
+    private SqsResponse parseStringMessage(String message) {
         return new Gson().fromJson(message, SqsResponse.class);
     }
 }

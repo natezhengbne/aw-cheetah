@@ -1,0 +1,1 @@
+ALTER TABLE "email_send" ADD "company_id" BIGINT;

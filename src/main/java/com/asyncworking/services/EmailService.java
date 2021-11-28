@@ -1,23 +1,29 @@
 package com.asyncworking.services;
 
 import com.asyncworking.constants.EmailType;
+import com.asyncworking.dtos.CompanyInvitationEmailMessageDto;
 import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.utility.mapper.EmailMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.field.OffsetDateTimeField;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Service
@@ -41,12 +47,16 @@ public class EmailService {
     @Value("${cloud.aws.S3.templateResetPasswordS3Key}")
     private String s3resetPasswordTemplateKey;
 
+    @Value("${cloud.aws.S3.templateCompanyInvitationS3Key}")
+    private String s3CompanyInvitationTemplateKey;
+
     private final Map<EmailType, String> emailType = new HashMap<>();
 
     @PostConstruct
     private void initMap() {
         emailType.put(EmailType.Verification, s3Key);
         emailType.put(EmailType.ForgetPassword, s3resetPasswordTemplateKey);
+        emailType.put(EmailType.CompanyInvitation, s3CompanyInvitationTemplateKey);
     }
 
     public void sendMessageToSQS(UserEntity userEntity, String verificationLink, EmailType templateType, String receiverEmail) {
@@ -58,6 +68,28 @@ public class EmailService {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public void sendCompanyInvitationMessageToSQS(
+            Long emailRecordId,
+            String receiverName,
+            String receiverEmail,
+            String companyName,
+            String companyOwnerName,
+            String invitationLink,
+            EmailType templateType
+    ) throws JsonProcessingException {
+        CompanyInvitationEmailMessageDto messageDto = toCompanyInvitationEmailMessageDto(
+                emailRecordId,
+                receiverName,
+                receiverEmail,
+                companyName,
+                companyOwnerName,
+                invitationLink,
+                templateType);
+        log.info("Company Email Message Record Id: {}", emailRecordId);
+        String payload = objectMapper.writeValueAsString(messageDto);
+        queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(payload).build());
     }
 
     @Transactional
@@ -77,5 +109,61 @@ public class EmailService {
                 .templateS3Bucket(s3Bucket)
                 .templateS3Key(emailType.get(templateType))
                 .build();
+    }
+
+    @Transactional
+    public int updateEmailRecordSendStatus(Long emailRecordId) {
+        return emailSendRepository.updateEmailRecordStatus(emailRecordId, OffsetDateTime.now(UTC));
+    }
+
+    private CompanyInvitationEmailMessageDto toCompanyInvitationEmailMessageDto(
+            Long emailRecordId, String receiverName, String receiverEmail,
+            String companyName, String companyOwnerName, String link, EmailType templateType) {
+        return CompanyInvitationEmailMessageDto.builder()
+                .emailRecordId(emailRecordId)
+                .email(receiverEmail)
+                .userName(receiverName)
+                .companyName(companyName)
+                .companyOwnerName(companyOwnerName)
+                .invitationLink(link)
+                .templateType(templateType)
+                .templateS3Bucket(s3Bucket)
+                .templateS3Key(emailType.get(templateType))
+                .build();
+    }
+
+    @Transactional
+    public EmailSendRecord saveCompanyInvitationEmailSendingRecord(
+            UserEntity receiver, EmailType templateType, String receiverEmail, Long companyId) {
+        EmailSendRecord emailSendRecord = toEmailSendRecordWithCompanyId(
+                receiver, templateType, receiverEmail, companyId);
+        log.info("Email Sending Record id: {}, Receiver Email: {}", emailSendRecord.getId(), emailSendRecord.getReceiver());
+        return emailSendRepository.save(emailSendRecord);
+    }
+
+    public static EmailSendRecord toEmailSendRecordWithCompanyId(
+            UserEntity userEntity, EmailType emailType, String receiverEmail, Long companyId) {
+        if (userEntity == null && emailType == null && receiverEmail == null && companyId == null) {
+            return null;
+        }
+
+        EmailSendRecord emailSendRecord = new EmailSendRecord();
+
+        if (userEntity != null) {
+            emailSendRecord.setUserEntity(userEntity);
+        }
+        if (emailType != null) {
+            emailSendRecord.setEmailType(emailType);
+        }
+        if (receiverEmail != null) {
+            emailSendRecord.setReceiver(receiverEmail);
+        }
+        if (companyId != null) {
+            emailSendRecord.setCompanyId(companyId);
+        }
+        emailSendRecord.setSendStatus(false);
+        emailSendRecord.setSendTime(OffsetDateTime.now());
+
+        return emailSendRecord;
     }
 }

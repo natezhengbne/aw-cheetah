@@ -25,4 +25,5 @@ public interface EmailMapper {
     default OffsetDateTime getCurrentTime() {
         return OffsetDateTime.now(UTC);
     }
+
 }

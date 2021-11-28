@@ -3,6 +3,7 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.services.CompanyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,6 @@ public class CompanyController {
         CompanyColleagueDto companyColleagueDto = companyService.getCompanyInfoDto(email);
         return ResponseEntity.ok(companyColleagueDto);
     }
-
 
     @GetMapping("/{companyId}/profile")
     public ResponseEntity<CompanyModificationDto> fetchCompanyProfile(@PathVariable("companyId")
@@ -76,5 +76,14 @@ public class CompanyController {
         log.info("Company ID: {}", companyId);
         List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId, userId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
+    }
+
+    @PostMapping("/{companyId}/invite-company-users")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
+    public ResponseEntity sendCompanyInvitationSQSMessage(@PathVariable Long companyId,
+                                                          @Valid @RequestBody CompanyInvitedAccountDto accountDto)
+            throws JsonProcessingException {
+        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
+        return ResponseEntity.ok("success");
     }
 }
