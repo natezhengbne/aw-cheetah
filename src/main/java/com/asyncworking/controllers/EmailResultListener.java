@@ -24,7 +24,7 @@ public class EmailResultListener {
 
     private final EmailService emailService;
 
-    @SqsListener(value = "${cloud.aws.sqs.incomingqueue.url}")
+    @SqsListener(value = "${cloud.aws.sqs.incomingqueue.name}")
     public void loadMessagesFromQueue(String message) {
         log.info("Message" + message);
         log.info("Respond Time From SQS: " + OffsetDateTime.now());
