@@ -117,4 +117,10 @@ public class UserController {
         userService.resetPassword(userInfoDto);
         return ResponseEntity.ok("reset");
     }
+
+    @GetMapping("/list-event")
+    public String getEventList() {
+        log.info("queryAppsync has been called");
+        return userService.queryAppSync();
+    }
 }

@@ -24,12 +24,19 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -266,5 +273,42 @@ public class UserService {
         EmployeeGetDto userDto = getResetterInfo(userInfoDto.getAccessToken());
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
+    }
+
+    public String queryAppSync(){
+        //换成你们自己的apiUrl
+         String apiUrl="https://afqqhpza2nbxrog73lqzju5r4y.appsync-api.ap-southeast-2.amazonaws.com";
+         //换成你们自己的apiKey
+         String apiKey="your personal apikey";
+        Map<String, Object> requestBody = new HashMap<>();
+        EventsDto eventsDto=new EventsDto();
+        WebClient.RequestBodySpec requestBodySpec = WebClient
+                .builder()
+                .baseUrl(apiUrl)
+                .defaultHeader("x-api-key", apiKey)
+                .build()
+                .method(HttpMethod.POST)
+                .uri("/graphql");
+            requestBody.put("query", "query ListEvents {"
+                    + " listEvents {"
+                    + "   items {"
+                    + "     id"
+                    + "     name"
+                    + "     where"
+                    + "     when"
+                    + "     description"
+                    + "   }"
+                    + " }"
+                    + "}");
+
+            WebClient.ResponseSpec response = requestBodySpec
+                    .body(BodyInserters.fromValue(requestBody))
+                    .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
+                    .acceptCharset(StandardCharsets.UTF_8)
+                    .retrieve();
+
+            log.info("queryAppsync has been called");
+             return response.bodyToMono(String.class).block();
+
     }
 }
