@@ -101,8 +101,12 @@ public class EmailService {
 
     private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String link,
                                               EmailType templateType, String receiverEmail) {
+        String userFirstName = userEntity.getName();
+        if (userFirstName.contains(" ")) {
+            userFirstName = userFirstName.substring(0, userFirstName.indexOf(" "));
+        }
         return EmailMessageDto.builder()
-                .userName(userEntity.getName())
+                .userName(userFirstName)
                 .verificationLink(link)
                 .templateType(templateType.toString())
                 .email(receiverEmail)
