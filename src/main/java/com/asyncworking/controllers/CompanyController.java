@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -76,6 +78,13 @@ public class CompanyController {
         log.info("Company ID: {}", companyId);
         List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId, userId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
+    }
+
+    @GetMapping("/{companyId}/contributions")
+    public ResponseEntity getContributionsTodoItemsCounts(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
+        log.info("get contributions counts of the current week for Company ID: {}, user ID: {}", companyId, userId);
+        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = companyService.findOneWeekCompletedTodoItemsCounts(companyId, userId);
+        return ResponseEntity.ok(oneWeekCompletedTodoItemsCounts);
     }
 
     @PostMapping("/{companyId}/invite-company-users")

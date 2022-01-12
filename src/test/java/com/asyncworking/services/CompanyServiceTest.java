@@ -20,14 +20,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -247,6 +250,16 @@ public class CompanyServiceTest {
         assertEquals(allTodoCardItemsList, todoItemCardList);
     }
 
+    @Test
+    public void shouldReturnOneWeekCompletedTodoItemsCounts() {
+        when(todoItemRepository.countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
+                (eq(1L), eq("1"), any(OffsetDateTime.class), any(OffsetDateTime.class))).thenReturn(6);
+
+        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = companyService.findOneWeekCompletedTodoItemsCounts(1L, 1L);
+
+        assertEquals(7, oneWeekCompletedTodoItemsCounts.size());
+        assertEquals(6, oneWeekCompletedTodoItemsCounts.get(DayOfWeek.MONDAY));
+    }
 
     @Test
     void throwNotFoundExceptionWhenIdNotExist() {

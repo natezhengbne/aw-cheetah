@@ -16,6 +16,9 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     List<TodoItem> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId, Long projectId,
                                                                                   @Param("todoListId") Long todoListId);
 
+    int countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
+            (Long companyId, String subscribersIds, OffsetDateTime start, OffsetDateTime end);
+
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 
     @Query(
@@ -25,7 +28,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
                     "and t.dueDate <= :afterSevenDays "
     )
     List<TodoItem> findByCompanyIdAndDueDate(@Param("companyId") Long companyId,
-                                                       @Param("afterSevenDays") OffsetDateTime afterSevenDays);
+                                             @Param("afterSevenDays") OffsetDateTime afterSevenDays);
 
     @Modifying
     @Query(value = "update TodoItem t set t.description=:description, t.priority=:priority, t.notes=:notes,t.originNotes=:originNotes," +

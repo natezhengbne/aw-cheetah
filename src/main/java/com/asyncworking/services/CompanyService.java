@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -193,7 +194,26 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public void sendCompanyInvitationToSQS (Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {
+    public Map<DayOfWeek, Integer> findOneWeekCompletedTodoItemsCounts(Long companyId, Long userId) {
+        OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
+        OffsetDateTime startDateOfWeek = today.minusDays
+                (today.getDayOfWeek() == DayOfWeek.SUNDAY ? 0 : today.getDayOfWeek().getValue());
+
+        OffsetDateTime start = startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
+        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
+
+        for (int i = 0; i < DayOfWeek.values().length; i++) {
+            OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
+            int completedTodoItemsCount = todoItemRepository
+                    .countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, end);
+            oneWeekCompletedTodoItemsCounts.put(start.getDayOfWeek(), completedTodoItemsCount);
+            start = start.plusDays(1);
+        }
+
+        return oneWeekCompletedTodoItemsCounts;
+    }
+
+    public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {
 
         UserEntity receiver = userRepository.findByEmail(invitedAccountDto.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email" + invitedAccountDto.getEmail()));
@@ -201,7 +221,7 @@ public class CompanyService {
                 .orElseThrow(() -> new CompanyNotFoundException("Cannot find company with id: " + companyId));
         log.info("Company Invitation Receiver Name: {}, Receiver Email: {}, Company Name: {}, Company Owner's Name: {}",
                 receiver.getName(), receiver.getEmail(), companyInfo.getCompanyName(), companyInfo.getCompanyOwnerName());
-        EmailSendRecord emailSendRecord =  emailService.saveCompanyInvitationEmailSendingRecord(
+        EmailSendRecord emailSendRecord = emailService.saveCompanyInvitationEmailSendingRecord(
                 receiver, EmailType.CompanyInvitation, invitedAccountDto.getEmail(), companyId);
 
         Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
