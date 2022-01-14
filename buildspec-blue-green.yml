@@ -40,7 +40,7 @@ phases:
       - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' ${AW_CONTAINER} ${REPOSITORY_URI}:${IMAGE_TAG} > imageDetail.json
       # $AW_CONTAINER defined in Build Environment 
-      - cat imagedefinitions.json
+      - cat imageDetail.json
 artifacts:
   files: 
     - 'image*.json'
