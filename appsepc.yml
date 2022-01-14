@@ -1,0 +1,9 @@
+version: 0.0
+Resources:
+ - TargetService:
+     Type: AWS::ECS::Service
+     Properties:
+       TaskDefinition: uat-cheetah-tf
+       LoadBalancerInfo:
+         ContainerName: uat-cheetah-tf # copy from task definition under containerDefinitions.name
+         ContainerPort: 8080 # an application container port 
