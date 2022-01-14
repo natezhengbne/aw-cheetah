@@ -1,211 +1,211 @@
 {
-    "ipcMode": null,
-    "executionRoleArn": "arn:aws:iam::245866473499:role/ecsTaskExecutionRole",
-    "containerDefinitions": [
-      {
-        "dnsSearchDomains": null,
-        "environmentFiles": null,
-        "logConfiguration": {
-          "logDriver": "awslogs",
-          "secretOptions": null,
-          "options": {
-            "awslogs-group": "/ecs/uat-cheetah-tf",
-            "awslogs-region": "ap-southeast-2",
-            "awslogs-stream-prefix": "ecs"
-          }
+  "ipcMode": null,
+  "executionRoleArn": "arn:aws:iam::245866473499:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": null,
+      "environmentFiles": null,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": null,
+        "options": {
+          "awslogs-group": "/ecs/uat-cheetah-tf",
+          "awslogs-region": "ap-southeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "entryPoint": null,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "protocol": "tcp",
+          "containerPort": 80
+        }
+      ],
+      "command": null,
+      "linuxParameters": null,
+      "cpu": 0,
+      "environment": [
+        {
+          "name": "CLOUD_AWS_ENDPOINT",
+          "value": "sqs.ap-southeast-2.amazonaws.com"
         },
-        "entryPoint": null,
-        "portMappings": [
-          {
-            "hostPort": 80,
-            "protocol": "tcp",
-            "containerPort": 80
-          }
-        ],
-        "command": null,
-        "linuxParameters": null,
-        "cpu": 0,
-        "environment": [
-          {
-            "name": "CLOUD_AWS_ENDPOINT",
-            "value": "sqs.ap-southeast-2.amazonaws.com"
-          },
-          {
-            "name": "CLOUD_AWS_S3_TEMPLATECOMPANYINVITATIONS3KEY",
-            "value": "company_invitation_email_template.html"
-          },
-          {
-            "name": "CLOUD_AWS_S3_TEMPLATERESETPASSWORDS3KEY",
-            "value": "reset_password_email_template.txt"
-          },
-          {
-            "name": "CLOUD_AWS_S3_TEMPLATES3BUCKET",
-            "value": "aw-uat-email-template"
-          },
-          {
-            "name": "CLOUD_AWS_S3_TEMPLATES3KEY",
-            "value": "verification_email_template_updated.txt"
-          },
-          {
-            "name": "CLOUD_AWS_SQS_INCOMINGQUEUE_NAME",
-            "value": "AW_UAT_RECEIVE_Q"
-          },
-          {
-            "name": "CLOUD_AWS_SQS_INCOMINGQUEUE_URL",
-            "value": "https://sqs.ap-southeast-2.amazonaws.com/245866473499/AW_UAT_RECEIVE_Q"
-          },
-          {
-            "name": "CLOUD_AWS_SQS_OUTGOINGQUEUE_NAME",
-            "value": "AwUatVerificationEmailBasicPP"
-          },
-          {
-            "name": "CLOUD_AWS_SQS_OUTGOINGQUEUE_URL",
-            "value": "https://sqs.ap-southeast-2.amazonaws.com/245866473499/AwUatVerificationEmailBasicPP"
-          },
-          {
-            "name": "SERVER_PORT",
-            "value": "80"
-          },
-          {
-            "name": "SPRING_FLYWAY_SCHEMA",
-            "value": "awcheetah"
-          },
-          {
-            "name": "SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA",
-            "value": "awcheetah"
-          },
-          {
-            "name": "URL",
-            "value": "https://uat.asyncworking.com"
-          }
-        ],
-        "resourceRequirements": null,
-        "ulimits": null,
-        "dnsServers": null,
-        "mountPoints": [],
-        "workingDirectory": null,
-        "secrets": [
-          {
-            "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_ECS_SQS_USER_KEY",
-            "name": "CLOUD_AWS_CREDENTIALS_ACCESSKEY"
-          },
-          {
-            "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_ECS_SQS_USER_ACCESS",
-            "name": "CLOUD_AWS_CREDENTIALS_SECRETKEY"
-          },
-          {
-            "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_CHEETAH_JWT_SECRET_KEY",
-            "name": "JWT_SECRETKEY"
-          },
-          {
-            "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_DBPASS_TF",
-            "name": "SPRING_DATASOURCE_PASSWORD"
-          },
-          {
-            "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_DB_URL_TF",
-            "name": "SPRING_DATASOURCE_URL"
-          }
-        ],
-        "dockerSecurityOptions": null,
-        "memory": null,
-        "memoryReservation": null,
-        "volumesFrom": [],
-        "stopTimeout": null,
-        "image": "IMAGE1_NAME",
-        "startTimeout": null,
-        "firelensConfiguration": null,
-        "dependsOn": null,
-        "disableNetworking": null,
-        "interactive": null,
-        "healthCheck": null,
-        "essential": true,
-        "links": null,
-        "hostname": null,
-        "extraHosts": null,
-        "pseudoTerminal": null,
-        "user": null,
-        "readonlyRootFilesystem": null,
-        "dockerLabels": null,
-        "systemControls": null,
-        "privileged": null,
-        "name": "uat-cheetah-tf"
-      }
-    ],
-    "placementConstraints": [],
-    "memory": "2048",
-    "taskRoleArn": "arn:aws:iam::245866473499:role/ecsTaskExecutionRole",
-    "compatibilities": [
-      "EC2",
-      "FARGATE"
-    ],
-    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-2:245866473499:task-definition/uat-cheetah-tf:26",
-    "family": "uat-cheetah-tf",
-    "requiresAttributes": [
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "ecs.capability.execution-role-awslogs"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "com.amazonaws.ecs.capability.ecr-auth"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "com.amazonaws.ecs.capability.task-iam-role"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "ecs.capability.execution-role-ecr-pull"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "ecs.capability.secrets.ssm.environment-variables"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-      },
-      {
-        "targetId": null,
-        "targetType": null,
-        "value": null,
-        "name": "ecs.capability.task-eni"
-      }
-    ],
-    "pidMode": null,
-    "requiresCompatibilities": [
-      "FARGATE"
-    ],
-    "networkMode": "awsvpc",
-    "runtimePlatform": null,
-    "cpu": "1024",
-    "revision": 26,
-    "status": "ACTIVE",
-    "inferenceAccelerators": null,
-    "proxyConfiguration": null,
-    "volumes": []
-  }
+        {
+          "name": "CLOUD_AWS_S3_TEMPLATECOMPANYINVITATIONS3KEY",
+          "value": "company_invitation_email_template.html"
+        },
+        {
+          "name": "CLOUD_AWS_S3_TEMPLATERESETPASSWORDS3KEY",
+          "value": "reset_password_email_template.txt"
+        },
+        {
+          "name": "CLOUD_AWS_S3_TEMPLATES3BUCKET",
+          "value": "aw-uat-email-template"
+        },
+        {
+          "name": "CLOUD_AWS_S3_TEMPLATES3KEY",
+          "value": "verification_email_template_updated.html"
+        },
+        {
+          "name": "CLOUD_AWS_SQS_INCOMINGQUEUE_NAME",
+          "value": "AW_UAT_RECEIVE_Q"
+        },
+        {
+          "name": "CLOUD_AWS_SQS_INCOMINGQUEUE_URL",
+          "value": "https://sqs.ap-southeast-2.amazonaws.com/245866473499/AW_UAT_RECEIVE_Q"
+        },
+        {
+          "name": "CLOUD_AWS_SQS_OUTGOINGQUEUE_NAME",
+          "value": "AwUatVerificationEmailBasicPP"
+        },
+        {
+          "name": "CLOUD_AWS_SQS_OUTGOINGQUEUE_URL",
+          "value": "https://sqs.ap-southeast-2.amazonaws.com/245866473499/AwUatVerificationEmailBasicPP"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "80"
+        },
+        {
+          "name": "SPRING_FLYWAY_SCHEMA",
+          "value": "awcheetah"
+        },
+        {
+          "name": "SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA",
+          "value": "awcheetah"
+        },
+        {
+          "name": "URL",
+          "value": "https://uat.asyncworking.com"
+        }
+      ],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
+      "mountPoints": [],
+      "workingDirectory": null,
+      "secrets": [
+        {
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_ECS_SQS_USER_KEY",
+          "name": "CLOUD_AWS_CREDENTIALS_ACCESSKEY"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_ECS_SQS_USER_ACCESS",
+          "name": "CLOUD_AWS_CREDENTIALS_SECRETKEY"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_CHEETAH_JWT_SECRET_KEY",
+          "name": "JWT_SECRETKEY"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_DBPASS_TF",
+          "name": "SPRING_DATASOURCE_PASSWORD"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:245866473499:parameter/AW_UAT_DB_URL_TF",
+          "name": "SPRING_DATASOURCE_URL"
+        }
+      ],
+      "dockerSecurityOptions": null,
+      "memory": null,
+      "memoryReservation": null,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "245866473499.dkr.ecr.ap-southeast-2.amazonaws.com/uat-cheetah-newdb:3e7e7c0",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null,
+      "name": "uat-cheetah-tf"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "2048",
+  "taskRoleArn": "arn:aws:iam::245866473499:role/ecsTaskExecutionRole",
+  "compatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-2:245866473499:task-definition/uat-cheetah-tf:35",
+  "family": "uat-cheetah-tf",
+  "requiresAttributes": [
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.secrets.ssm.environment-variables"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.task-eni"
+    }
+  ],
+  "pidMode": null,
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "runtimePlatform": null,
+  "cpu": "1024",
+  "revision": 35,
+  "status": "ACTIVE",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
+}
