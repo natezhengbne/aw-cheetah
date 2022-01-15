@@ -212,18 +212,19 @@ public class CompanyService {
         return oneWeekCompletedTodoItemsCounts;
     }
 
-    public Map<DayOfWeek, List<TodoItem>> findOneWeekCompletedTodoItemsList(Long companyId, Long userId){
+    public Map<DayOfWeek, List<ContributionActivitiesDto>> findOneWeekCompletedTodoItemsList(Long companyId, Long userId) {
         OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
         OffsetDateTime startDateOfWeek = today.minusDays
                 (today.getDayOfWeek() == DayOfWeek.SUNDAY ? 0 : today.getDayOfWeek().getValue());
 
         OffsetDateTime start = startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
-        Map<DayOfWeek, List<TodoItem>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
+        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
         for (int i = 0; i < DayOfWeek.values().length; i++) {
             OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
-            List<TodoItem> completedTodoItemsList = todoItemRepository
+            List<TodoItem> completedTodoItems = todoItemRepository
                     .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, end);
-            oneWeekCompletedTodoItemsList.put(start.getDayOfWeek(), completedTodoItemsList);
+            List<ContributionActivitiesDto> contributionActivitiesDtos = completedTodoItems.stream().map(completedTodoItem -> TodoMapper.mapContributionActivitiesDto(completedTodoItem)).collect(Collectors.toList());
+            oneWeekCompletedTodoItemsList.put(start.getDayOfWeek(), contributionActivitiesDtos);
             start = start.plusDays(1);
         }
         return oneWeekCompletedTodoItemsList;
