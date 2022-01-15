@@ -209,8 +209,25 @@ public class CompanyService {
             oneWeekCompletedTodoItemsCounts.put(start.getDayOfWeek(), completedTodoItemsCount);
             start = start.plusDays(1);
         }
-
         return oneWeekCompletedTodoItemsCounts;
+    }
+
+    public Map<DayOfWeek, List<TodoItem>> findOneWeekCompletedTodoItemsList(Long companyId, Long userId){
+        OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
+        OffsetDateTime startDateOfWeek = today.minusDays
+                (today.getDayOfWeek() == DayOfWeek.SUNDAY ? 0 : today.getDayOfWeek().getValue());
+
+        OffsetDateTime start = startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
+        Map<DayOfWeek, List<TodoItem>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
+        for (int i = 0; i < DayOfWeek.values().length; i++) {
+            OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
+            List<TodoItem> completedTodoItemsList = todoItemRepository
+                    .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, end);
+            oneWeekCompletedTodoItemsList.put(start.getDayOfWeek(), completedTodoItemsList);
+            start = start.plusDays(1);
+        }
+        return oneWeekCompletedTodoItemsList;
+
     }
 
     public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {

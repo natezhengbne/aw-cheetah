@@ -2,6 +2,7 @@ package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
+import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.CompanyService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.DayOfWeek;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -86,6 +88,15 @@ public class CompanyController {
         Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = companyService.findOneWeekCompletedTodoItemsCounts(companyId, userId);
         return ResponseEntity.ok(oneWeekCompletedTodoItemsCounts);
     }
+
+    @GetMapping("/{companyId}/contribution-activities")
+    public ResponseEntity getContributionActivitiesTodoItemList(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId){
+        log.info("get completed tasks of the current week for Company ID: {}, user ID: {}", companyId, userId);
+        Map<DayOfWeek, List<TodoItem>> oneWeekCompletedTodoItemsList = companyService.findOneWeekCompletedTodoItemsList(companyId, userId);
+        log.info("GetMapping: contribution-activities: "+ Arrays.asList(oneWeekCompletedTodoItemsList));
+        return ResponseEntity.ok(oneWeekCompletedTodoItemsList);
+    }
+
 
     @PostMapping("/{companyId}/invite-company-users")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
