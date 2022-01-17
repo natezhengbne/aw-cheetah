@@ -111,7 +111,7 @@
       "memoryReservation": null,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "245866473499.dkr.ecr.ap-southeast-2.amazonaws.com/uat-cheetah-newdb:3e7e7c0",
+      "image": "<IMAGE1_NAME>",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
