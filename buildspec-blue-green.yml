@@ -38,7 +38,7 @@ phases:
       - echo Pushing the Docker image...
       - docker push ${REPOSITORY_URI}:${IMAGE_TAG}
       - echo Writing image definitions file...
-      - printf '{"imageURI":"%s"}' ${REPOSITORY_URI}:${IMAGE_TAG} > imageDetail.json
+      - printf '{"ImageURI":"%s"}' ${REPOSITORY_URI}:${IMAGE_TAG} > imageDetail.json
       #- printf '[{"name":"%s","imageUri":"%s"}]' ${AW_CONTAINER} ${REPOSITORY_URI}:${IMAGE_TAG} > imageDetail.json
       # $AW_CONTAINER defined in Build Environment 
       - cat imageDetail.json
