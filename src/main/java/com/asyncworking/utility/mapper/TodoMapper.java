@@ -79,9 +79,8 @@ public interface TodoMapper {
 
     public static ContributionActivitiesDto mapContributionActivitiesDto(TodoItem todoItem) {
         return ContributionActivitiesDto.builder()
-                .taskTitle(todoItem.getTodoList().getTodoListTitle())
-                .taskDescription(todoItem.getDescription())
-                .completedTime(todoItem.getCompletedTime())
+                .taskName(todoItem.getDescription())
+                .dueDate(todoItem.getDueDate())
                 .build();
     }
 

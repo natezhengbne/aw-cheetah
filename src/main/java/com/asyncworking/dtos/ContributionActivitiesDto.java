@@ -9,7 +9,6 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @Builder
 public class ContributionActivitiesDto {
-    private String taskTitle;
-    private String taskDescription;
-    private OffsetDateTime completedTime;
+    private String taskName;
+    private OffsetDateTime dueDate;
 }
