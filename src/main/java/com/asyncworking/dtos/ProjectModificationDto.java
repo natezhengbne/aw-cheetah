@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class ProjectModificationDto {
 
-    @NotNull(message = "projectId can not be null.")
+    @NotNull(message = "Project id can not be null.")
     private Long projectId;
 
     @NotBlank(message = "Project name can not be blank.")
