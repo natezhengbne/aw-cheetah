@@ -29,13 +29,7 @@ public class EventController {
     @GetMapping("/events")
     public ResponseEntity<List<EventGetDto>> getAllEventForUserByDate(
             @PathVariable Long userId,
-            @RequestParam(name = "date", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") OffsetDateTime date){
-        if(date == null){
-            return ResponseEntity.ok(eventService.getAllEventForUser(userId));
-        }
-        else{
-            return ResponseEntity.ok(eventService.getAllEventForUserByDate(userId, date));
-        }
-
+            @RequestParam(name = "date")@DateTimeFormat(pattern="yyyy-MM-dd") OffsetDateTime date){
+        return ResponseEntity.ok(eventService.getAllEventForUserByDate(userId, date));
     }
 }

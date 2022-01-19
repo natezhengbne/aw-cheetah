@@ -31,13 +31,6 @@ public class EventService {
         return event.getId();
     }
 
-    public List<EventGetDto> getAllEventForUser(Long userId) {
-        UserEntity user = userService.findUserById(userId);
-        return user.getEvents().stream()
-                .map(eventMapper::eventToEventGetDto)
-                .collect(Collectors.toList());
-    }
-
     public List<EventGetDto> getAllEventForUserByDate(Long userId, OffsetDateTime date) {
         UserEntity user = userService.findUserById(userId);
         return user.getEvents().stream()
