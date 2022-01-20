@@ -5,7 +5,7 @@ CREATE TABLE "event" (
     "owner_id" BIGINT NOT NULL REFERENCES "user_info" (id),
     "title" VARCHAR(128) UNIQUE NOT NULL,
     "description" VARCHAR(2048) NOT NULL,
-    "is_all_day" BOOLEAN NOT NULL,
-    "start_date" TIMESTAMP WITH TIME ZONE NOT NULL,
-    "end_date" TIMESTAMP WITH TIME ZONE NOT NULL
+    "all_day_event" BOOLEAN NOT NULL,
+    "start_time" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "end_time" TIMESTAMP WITH TIME ZONE NOT NULL
 );

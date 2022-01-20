@@ -31,10 +31,10 @@ public class EventService {
         return event.getId();
     }
 
-    public List<EventGetDto> getAllEventForUserByDate(Long userId, OffsetDateTime date) {
+    public List<EventGetDto> getAllEventForUserByDate(Long userId, OffsetDateTime dayStartTime) {
         UserEntity user = userService.findUserById(userId);
         return user.getEvents().stream()
-                .filter(e -> e.isDateMatch(date))
+                .filter(e -> e.isWithinDay(dayStartTime))
                 .map(eventMapper::eventToEventGetDto)
                 .collect(Collectors.toList());
     }

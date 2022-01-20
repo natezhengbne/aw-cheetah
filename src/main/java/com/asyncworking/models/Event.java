@@ -23,17 +23,18 @@ public class Event {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "is_all_day")
-    private boolean isAllDay = false;
+    @Column(name = "all_day_event")
+    private boolean allDayEvent = false;
 
-    @Column(name = "start_date")
-    private OffsetDateTime startDate;
+    @Column(name = "start_time")
+    private OffsetDateTime startTime;
 
-    @Column(name = "end_date")
-    private OffsetDateTime endDate;
+    @Column(name = "end_time")
+    private OffsetDateTime endTime;
 
-    public boolean isDateMatch(OffsetDateTime date){
-        //todo: Current event with the given date, return true;
-        return true;
+    public boolean isWithinDay(OffsetDateTime dayStartTime){
+        final OffsetDateTime dayEndTime = dayStartTime.plusHours(24);
+        return  (!startTime.isBefore(dayStartTime) && startTime.isBefore(dayEndTime))
+                || (endTime.isAfter(dayStartTime) && !endTime.isAfter(dayEndTime));
     }
 }

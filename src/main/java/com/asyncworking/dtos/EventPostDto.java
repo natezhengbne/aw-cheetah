@@ -21,9 +21,9 @@ public class EventPostDto {
     @Size(max = 2048, message = "Event description can not be more than 2048 characters.")
     private String description;
 
-    private boolean isAllDay = false;
+    private boolean allDayEvent = false;
 
-    private OffsetDateTime startDate;
+    private OffsetDateTime startTime;
 
-    private OffsetDateTime endDate;
+    private OffsetDateTime endTime;
 }

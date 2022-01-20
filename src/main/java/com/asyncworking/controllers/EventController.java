@@ -27,9 +27,9 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<EventGetDto>> getAllEventForUserByDate(
+    public ResponseEntity<List<EventGetDto>> getEventsForUserByDate(
             @PathVariable Long userId,
-            @RequestParam(name = "date")@DateTimeFormat(pattern="yyyy-MM-dd") OffsetDateTime date){
-        return ResponseEntity.ok(eventService.getAllEventForUserByDate(userId, date));
+            @RequestParam(name = "dayStartAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dayStartTime){
+        return ResponseEntity.ok(eventService.getAllEventForUserByDate(userId, dayStartTime));
     }
 }

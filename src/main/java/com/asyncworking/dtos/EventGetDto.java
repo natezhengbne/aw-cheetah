@@ -17,9 +17,9 @@ public class EventGetDto {
 
     private String description;
 
-    private boolean isAllDay;
+    private boolean allDayEvent;
 
-    private OffsetDateTime startDate;
+    private OffsetDateTime startTime;
 
-    private OffsetDateTime endDate;
+    private OffsetDateTime endTime;
 }
