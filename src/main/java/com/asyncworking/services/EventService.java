@@ -20,21 +20,20 @@ import java.util.stream.Collectors;
 public class EventService {
     private final EventRepository eventRepository;
 
-    private final UserService userService;
-
     private final EventMapper eventMapper;
 
-    public Long createEvent(Long userId, EventPostDto eventPostDto) {
-        UserEntity user = userService.findUserById(userId);
-        Event event = eventMapper.eventPostDtoToEvent(eventPostDto, user);
+    public Long createEvent(EventPostDto eventPostDto) {
+        Event event = eventMapper.eventPostDtoToEvent(eventPostDto);
         eventRepository.save(event);
         return event.getId();
     }
 
-    public List<EventGetDto> getAllEventForUserByDate(Long userId, OffsetDateTime dayStartTime) {
-        UserEntity user = userService.findUserById(userId);
-        return user.getEvents().stream()
+    public List<EventGetDto> getEventsByDate(OffsetDateTime dayStartTime, Long userId, Long companyId, Long projectId) {
+        return eventRepository.findByCompanyIdAndProjectId(companyId, projectId).stream()
                 .filter(e -> e.isWithinDay(dayStartTime))
+                .filter(e -> e.getParticipants().stream()
+                        .map(UserEntity::getId)
+                        .anyMatch(userId::equals))
                 .map(eventMapper::eventToEventGetDto)
                 .collect(Collectors.toList());
     }

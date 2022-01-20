@@ -3,9 +3,14 @@ DROP TABLE IF EXISTS "event";
 CREATE TABLE "event" (
     "id" BIGSERIAL PRIMARY KEY,
     "owner_id" BIGINT NOT NULL REFERENCES "user_info" (id),
-    "title" VARCHAR(128) UNIQUE NOT NULL,
+    "company_id" BIGINT NOT NULL REFERENCES "company" (id),
+    "project_id" BIGINT NOT NULL REFERENCES "project" (id),
+    "title" VARCHAR(128) NOT NULL,
     "description" VARCHAR(2048) NOT NULL,
     "all_day_event" BOOLEAN NOT NULL,
     "start_time" TIMESTAMP WITH TIME ZONE NOT NULL,
-    "end_time" TIMESTAMP WITH TIME ZONE NOT NULL
+    "end_time" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "created_time" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "updated_time" TIMESTAMP WITH TIME ZONE NOT NULL
 );
+CREATE INDEX event_project_id_idx ON event(project_id);

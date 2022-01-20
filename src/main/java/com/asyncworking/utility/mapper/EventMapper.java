@@ -11,9 +11,7 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EventMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "owner", source = "user")
-    @Mapping(target = "title", source = "dto.title")
-    Event eventPostDtoToEvent(EventPostDto dto, UserEntity user);
+    Event eventPostDtoToEvent(EventPostDto dto);
 
     EventGetDto eventToEventGetDto(Event event);
 }
