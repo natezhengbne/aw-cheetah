@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.Set;
 
 @Entity
 @Data
@@ -28,9 +27,6 @@ public class Event {
 
     @Column(name = "description")
     private String description;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<UserEntity> participants;
 
     @Column(name = "all_day_event")
     private boolean allDayEvent = false;

@@ -6,7 +6,7 @@ CREATE TABLE "event" (
     "company_id" BIGINT NOT NULL REFERENCES "company" (id),
     "project_id" BIGINT NOT NULL REFERENCES "project" (id),
     "title" VARCHAR(128) NOT NULL,
-    "description" VARCHAR(2048) NOT NULL,
+    "description" VARCHAR(2048),
     "all_day_event" BOOLEAN NOT NULL,
     "start_time" TIMESTAMP WITH TIME ZONE NOT NULL,
     "end_time" TIMESTAMP WITH TIME ZONE NOT NULL,

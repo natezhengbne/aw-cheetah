@@ -3,9 +3,9 @@ package com.asyncworking.repositories;
 import com.asyncworking.models.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    Optional<Event> findByCompanyIdAndProjectId(Long companyId, Long projectId);
+    List<Event> findByCompanyIdAndProjectIdAndOwnerId(Long companyId, Long projectId, Long ownerId);
 }

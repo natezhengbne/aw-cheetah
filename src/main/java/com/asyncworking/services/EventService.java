@@ -3,7 +3,6 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.EventGetDto;
 import com.asyncworking.dtos.EventPostDto;
 import com.asyncworking.models.Event;
-import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EventRepository;
 import com.asyncworking.utility.mapper.EventMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +29,9 @@ public class EventService {
     }
 
     public List<EventGetDto> getEventsByDate(OffsetDateTime dayStartTime, Long userId, Long companyId, Long projectId) {
-        return eventRepository.findByCompanyIdAndProjectId(companyId, projectId).stream()
+        return eventRepository.findByCompanyIdAndProjectIdAndOwnerId(companyId, projectId, userId).stream()
                 .filter(e -> e.isWithinDay(dayStartTime))
-                .filter(e -> e.getParticipants().stream()
-                        .map(UserEntity::getId)
-                        .anyMatch(userId::equals))
+                .sorted(Comparator.comparing(Event::getStartTime))
                 .map(eventMapper::eventToEventGetDto)
                 .collect(Collectors.toList());
     }

@@ -13,6 +13,12 @@ public class EventGetDto {
 
     private Long id;
 
+    private Long companyId;
+
+    private Long projectId;
+
+    private Long ownerId;
+
     private String title;
 
     private String description;
@@ -22,4 +28,8 @@ public class EventGetDto {
     private OffsetDateTime startTime;
 
     private OffsetDateTime endTime;
+
+    private OffsetDateTime createdTime;
+
+    private OffsetDateTime updatedTime;
 }

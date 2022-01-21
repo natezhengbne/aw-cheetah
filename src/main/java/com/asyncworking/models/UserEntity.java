@@ -73,7 +73,4 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity",
             cascade = CascadeType.ALL)
     private Set<UserRole> userRoles;
-
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    private Set<Event> events;
 }
