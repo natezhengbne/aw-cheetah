@@ -90,9 +90,11 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}/contribution-activities")
-    public ResponseEntity getContributionActivitiesTodoItemList(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
+    public ResponseEntity getContributionActivitiesTodoItemList(@PathVariable Long companyId,
+                                                                @RequestParam("userId") @NotNull Long userId) {
         log.info("get completed tasks of the current week for Company ID: {}, user ID: {}", companyId, userId);
-        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = companyService.findOneWeekCompletedTodoItemsList(companyId, userId);
+        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = companyService
+                .findOneWeekCompletedTodoItemsList(companyId, userId);
         log.info("GetMapping: contribution-activities: " + Arrays.asList(oneWeekCompletedTodoItemsList));
         return ResponseEntity.ok(oneWeekCompletedTodoItemsList);
     }

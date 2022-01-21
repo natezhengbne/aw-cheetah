@@ -6,6 +6,7 @@ import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.ProjectService;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,7 +15,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -156,10 +159,42 @@ public class CompanyControllerTest extends ControllerHelper {
         when(companyService.findOneWeekCompletedTodoItemsCounts(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsCounts);
 
         mockMvc.perform(get("/companies/1/contributions")
-                .param("userId", String.valueOf(userId)))
+                        .param("userId", String.valueOf(userId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("SUNDAY").value(2));
     }
+
+    @Test
+    public void shouldGetContributionsTodoItemsList() throws Exception {
+        Long userId = 1L;
+        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
+        List<ContributionActivitiesDto> contributionActivitiesDtoList = new ArrayList<>();
+        OffsetDateTime offsetDT = OffsetDateTime.now();
+        contributionActivitiesDtoList.add(new ContributionActivitiesDto("Design a wireframe for dashboard", offsetDT));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.SUNDAY,
+                Arrays.asList(new ContributionActivitiesDto("Design a wireframe for dashboard", offsetDT)));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.MONDAY,
+                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.TUESDAY,
+                Arrays.asList(new ContributionActivitiesDto("Finding out the pain points from current product", offsetDT)));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.WEDNESDAY,
+                Arrays.asList(new ContributionActivitiesDto("Design a mockup for landing page", offsetDT)));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.THURSDAY,
+                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.FRIDAY,
+                Arrays.asList(new ContributionActivitiesDto("Playing video games", offsetDT)));
+        oneWeekCompletedTodoItemsList.put(DayOfWeek.SATURDAY,
+                Arrays.asList(new ContributionActivitiesDto("Study Java", offsetDT)));
+
+        when(companyService.findOneWeekCompletedTodoItemsList(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsList);
+
+        mockMvc.perform(get("/companies/1/contribution-activities")
+                        .param("userId", String.valueOf(userId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("SUNDAY").value(Arrays.asList(
+                        new ContributionActivitiesDto("Design a wireframe for dashboard", offsetDT))));
+    }
+
 
     @Test
     void updateCompanyDescription() throws Exception {

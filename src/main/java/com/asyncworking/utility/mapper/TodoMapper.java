@@ -83,6 +83,5 @@ public interface TodoMapper {
                 .dueDate(todoItem.getDueDate())
                 .build();
     }
-
 }
 

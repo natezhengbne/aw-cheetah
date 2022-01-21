@@ -223,7 +223,9 @@ public class CompanyService {
             OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
             List<TodoItem> completedTodoItems = todoItemRepository
                     .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, end);
-            List<ContributionActivitiesDto> contributionActivitiesDtos = completedTodoItems.stream().map(completedTodoItem -> TodoMapper.mapContributionActivitiesDto(completedTodoItem)).collect(Collectors.toList());
+            List<ContributionActivitiesDto> contributionActivitiesDtos = completedTodoItems.stream()
+                    .map(completedTodoItem -> TodoMapper.mapContributionActivitiesDto(completedTodoItem))
+                    .collect(Collectors.toList());
             oneWeekCompletedTodoItemsList.put(start.getDayOfWeek(), contributionActivitiesDtos);
             start = start.plusDays(1);
         }
