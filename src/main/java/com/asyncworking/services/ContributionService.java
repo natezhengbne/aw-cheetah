@@ -39,27 +39,10 @@ public class ContributionService {
     public Map<DayOfWeek, List<ContributionActivitiesDto>> findOneWeekCompletedTodoItemsList(Long companyId, Long userId) {
         OffsetDateTime start = getStartDateTime();
         OffsetDateTime endDate = start.plusDays(6).withHour(23).withMinute(59).withSecond(59);
-        List<TodoItem> completedTodoItems2 = todoItemRepository
+        List<TodoItem> completedTodoItems = todoItemRepository
                 .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, endDate);
-        return getDayTask(completedTodoItems2);
+        return getDayTask(completedTodoItems);
     }
-/*
-    public Map<DayOfWeek, List<ContributionActivitiesDto>> findOneWeekCompletedTodoItemsList(Long companyId, Long userId) {
-        OffsetDateTime start = getStartDateTime();
-        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
-        for (int i = 0; i < DayOfWeek.values().length; i++) {
-            OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
-            List<TodoItem> completedTodoItems = todoItemRepository
-                    .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, end);
-            List<ContributionActivitiesDto> contributionActivitiesDtos = completedTodoItems.stream()
-                    .map(TodoMapper::mapContributionActivitiesDto)
-                    .collect(Collectors.toList());
-            oneWeekCompletedTodoItemsList.put(start.getDayOfWeek(), contributionActivitiesDtos);
-            start = start.plusDays(1);
-        }
-        return oneWeekCompletedTodoItemsList;
-    }
-*/
 
     private OffsetDateTime getStartDateTime() {
         OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
@@ -68,12 +51,12 @@ public class ContributionService {
         return startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
     }
 
-    private Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems2) {
+    private Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsMap = new LinkedHashMap<>();
         List<DayOfWeek> dayList = List.of(
                 DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
                 DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
-        dayList.forEach(currentDay -> oneWeekCompletedTodoItemsMap.put(currentDay, filterListByDate(completedTodoItems2, currentDay)));
+        dayList.forEach(currentDay -> oneWeekCompletedTodoItemsMap.put(currentDay, filterListByDate(completedTodoItems, currentDay)));
         return oneWeekCompletedTodoItemsMap;
     }
 
