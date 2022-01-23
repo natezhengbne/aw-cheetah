@@ -143,57 +143,7 @@ public class CompanyControllerTest extends ControllerHelper {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void shouldGetContributionsTodoItemsCounts() throws Exception {
-        Long userId = 1L;
 
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SUNDAY, 2);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.MONDAY, 3);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.TUESDAY, 4);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.WEDNESDAY, 5);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.THURSDAY, 6);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.FRIDAY, 7);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SATURDAY, 8);
-
-        when(companyService.findOneWeekCompletedTodoItemsCounts(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsCounts);
-
-        mockMvc.perform(get("/companies/1/contributions")
-                        .param("userId", String.valueOf(userId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("SUNDAY").value(2));
-    }
-
-    @Test
-    public void shouldGetContributionsTodoItemsList() throws Exception {
-        Long userId = 1L;
-        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
-        List<ContributionActivitiesDto> contributionActivitiesDtoList = new ArrayList<>();
-        OffsetDateTime offsetDT = OffsetDateTime.now();
-        contributionActivitiesDtoList.add(new ContributionActivitiesDto("Design a wireframe for dashboard", offsetDT));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.SUNDAY,
-                Arrays.asList(new ContributionActivitiesDto("Design a wireframe for dashboard", offsetDT)));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.MONDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.TUESDAY,
-                Arrays.asList(new ContributionActivitiesDto("Finding out the pain points from current product", offsetDT)));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.WEDNESDAY,
-                Arrays.asList(new ContributionActivitiesDto("Design a mockup for landing page", offsetDT)));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.THURSDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.FRIDAY,
-                Arrays.asList(new ContributionActivitiesDto("Playing video games", offsetDT)));
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.SATURDAY,
-                Arrays.asList(new ContributionActivitiesDto("Study Java", offsetDT)));
-
-        when(companyService.findOneWeekCompletedTodoItemsList(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsList);
-
-        mockMvc.perform(get("/companies/1/contribution-activities")
-                        .param("userId", String.valueOf(userId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("SUNDAY").value(Arrays.asList(
-                        new ContributionActivitiesDto("Design a wireframe for dashboard", offsetDT))));
-    }
 
 
     @Test

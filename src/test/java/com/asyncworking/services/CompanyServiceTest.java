@@ -245,38 +245,6 @@ public class CompanyServiceTest {
         assertEquals(allTodoCardItemsList, todoItemCardList);
     }
 
-    @Test
-    public void shouldReturnOneWeekCompletedTodoItemsCounts() {
-        when(todoItemRepository.countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
-                (eq(1L), eq("1"), any(OffsetDateTime.class), any(OffsetDateTime.class))).thenReturn(6);
-
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = companyService.findOneWeekCompletedTodoItemsCounts(1L, 1L);
-
-        assertEquals(7, oneWeekCompletedTodoItemsCounts.size());
-        assertEquals(6, oneWeekCompletedTodoItemsCounts.get(DayOfWeek.MONDAY));
-    }
-
-    @Test
-    public void shouldReturnOneWeekCompletedTodoItemsList() {
-        Project mockProject = Project.builder().name("title").build();
-        TodoList mockTodoList = TodoList.builder().project(mockProject).build();
-        OffsetDateTime nowTime = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
-        TodoItem todoItem = new TodoItem().builder()
-                .id(1L)
-                .description("desc")
-                .todoList(mockTodoList)
-                .priority("Low")
-                .subscribersIds("1,3,4,9,10")
-                .dueDate(nowTime).build();
-        when(todoItemRepository.findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(
-                eq(1L), eq("1"), any(OffsetDateTime.class), any(OffsetDateTime.class)))
-                .thenReturn(Arrays.asList(todoItem));
-        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = companyService
-                .findOneWeekCompletedTodoItemsList(1L, 1L);
-        assertEquals(7, oneWeekCompletedTodoItemsList.size());
-        assertEquals(Arrays.asList(new ContributionActivitiesDto("desc", nowTime)), oneWeekCompletedTodoItemsList.get(DayOfWeek.SUNDAY));
-    }
-
 
     @Test
     void throwNotFoundExceptionWhenIdNotExist() {

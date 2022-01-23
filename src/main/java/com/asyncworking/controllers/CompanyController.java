@@ -82,23 +82,6 @@ public class CompanyController {
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 
-    @GetMapping("/{companyId}/contributions")
-    public ResponseEntity getContributionsTodoItemsCounts(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
-        log.info("get contributions counts of the current week for Company ID: {}, user ID: {}", companyId, userId);
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = companyService.findOneWeekCompletedTodoItemsCounts(companyId, userId);
-        return ResponseEntity.ok(oneWeekCompletedTodoItemsCounts);
-    }
-
-    @GetMapping("/{companyId}/contribution-activities")
-    public ResponseEntity getContributionActivitiesTodoItemList(@PathVariable Long companyId,
-                                                                @RequestParam("userId") @NotNull Long userId) {
-        log.info("get completed tasks of the current week for Company ID: {}, user ID: {}", companyId, userId);
-        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = companyService
-                .findOneWeekCompletedTodoItemsList(companyId, userId);
-        log.info("GetMapping: contribution-activities: " + Arrays.asList(oneWeekCompletedTodoItemsList));
-        return ResponseEntity.ok(oneWeekCompletedTodoItemsList);
-    }
-
 
     @PostMapping("/{companyId}/invite-company-users")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
