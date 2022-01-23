@@ -57,27 +57,32 @@ public class ContributionControllerTest extends ControllerHelper {
     public void shouldGetContributionsTodoItemsList() throws Exception {
         Long userId = 1L;
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
-
         OffsetDateTime offsetDT = OffsetDateTime.now();
+        ContributionActivitiesDto contributionActivitiesDto = ContributionActivitiesDto.builder()
+                .taskName("Enhance a batter guide user experience for user")
+                .dueDate(offsetDT)
+                .build();
+        List<ContributionActivitiesDto> contributionActivityList = new ArrayList<>();
+        contributionActivityList.add(contributionActivitiesDto);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.SUNDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+                contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.MONDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+                contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.TUESDAY,
-                Arrays.asList(new ContributionActivitiesDto("Finding out the pain points from current product", offsetDT)));
+                contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.WEDNESDAY,
-                Arrays.asList(new ContributionActivitiesDto("Design a mockup for landing page", offsetDT)));
+                contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.THURSDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+                contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.FRIDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+                contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.SATURDAY,
-                Arrays.asList(new ContributionActivitiesDto("Enhance a batter guide user experience for user", offsetDT)));
+                contributionActivityList);
 
         when(contributionService.findOneWeekCompletedTodoItemsList(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsList);
         mockMvc.perform(get("/contribution/company/1/activities")
                         .param("userId", String.valueOf(userId)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("SATURDAY").value(oneWeekCompletedTodoItemsList.get(DayOfWeek.SATURDAY)));
+                .andExpect(jsonPath("SATURDAY").isNotEmpty());
     }
 }
