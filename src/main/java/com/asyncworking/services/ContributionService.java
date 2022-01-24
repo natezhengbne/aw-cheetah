@@ -3,7 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.dtos.ContributionActivitiesDto;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.repositories.TodoItemRepository;
-import com.asyncworking.utility.mapper.TodoMapper;
+import com.asyncworking.utility.mapper.TodoItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ContributionService {
     private final TodoItemRepository todoItemRepository;
-
+    private final TodoItemMapper todoItemMapper;
     public Map<DayOfWeek, Integer> findOneWeekCompletedTodoItemsCounts(Long companyId, Long userId) {
         OffsetDateTime start = getStartDateTime();
         Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
-
         for (int i = 0; i < DayOfWeek.values().length; i++) {
             OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
             int completedTodoItemsCount = todoItemRepository
@@ -41,17 +41,18 @@ public class ContributionService {
         OffsetDateTime endDate = start.plusDays(6).withHour(23).withMinute(59).withSecond(59);
         List<TodoItem> completedTodoItems = todoItemRepository
                 .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, endDate);
+        System.out.println(Arrays.asList(getDayTask(completedTodoItems)));
         return getDayTask(completedTodoItems);
     }
 
-    private OffsetDateTime getStartDateTime() {
+    public OffsetDateTime getStartDateTime() {
         OffsetDateTime today = OffsetDateTime.now().truncatedTo(ChronoUnit.HOURS);
         OffsetDateTime startDateOfWeek = today.minusDays
                 (today.getDayOfWeek() == DayOfWeek.SUNDAY ? 0 : today.getDayOfWeek().getValue());
         return startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
     }
 
-    private Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
+    public Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsMap = new LinkedHashMap<>();
         List<DayOfWeek> dayList = List.of(
                 DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
@@ -60,8 +61,8 @@ public class ContributionService {
         return oneWeekCompletedTodoItemsMap;
     }
 
-    private List<ContributionActivitiesDto> filterListByDate(List<TodoItem> completedTodoItems, DayOfWeek dayOfWeek) {
+    public List<ContributionActivitiesDto> filterListByDate(List<TodoItem> completedTodoItems, DayOfWeek dayOfWeek) {
         return completedTodoItems.stream().filter(completeItem -> completeItem.getCompletedTime().getDayOfWeek().equals(dayOfWeek))
-                .map(TodoMapper::mapContributionActivitiesDto).collect(Collectors.toList());
+                .map(todoItem -> todoItemMapper.mapContributionActivitiesDto(todoItem)).collect(Collectors.toList());
     }
 }

@@ -77,11 +77,5 @@ public interface TodoMapper {
         return OffsetDateTime.now(UTC);
     }
 
-    public static ContributionActivitiesDto mapContributionActivitiesDto(TodoItem todoItem) {
-        return ContributionActivitiesDto.builder()
-                .taskName(todoItem.getDescription())
-                .dueDate(todoItem.getDueDate())
-                .build();
-    }
 }
 
