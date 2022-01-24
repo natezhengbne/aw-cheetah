@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class ContributionService {
     private final TodoItemRepository todoItemRepository;
     private final TodoItemMapper todoItemMapper;
+
     public Map<DayOfWeek, Integer> findOneWeekCompletedTodoItemsCounts(Long companyId, Long userId) {
         OffsetDateTime start = getStartDateTime();
         Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();

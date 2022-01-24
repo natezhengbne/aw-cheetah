@@ -1,6 +1,6 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.ContributionActivitiesDto;
 import com.asyncworking.services.ContributionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,10 +9,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
