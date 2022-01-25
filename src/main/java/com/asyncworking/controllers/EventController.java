@@ -15,6 +15,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("companies/{companyId}/projects/{projectId}")
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
@@ -26,10 +27,10 @@ public class EventController {
 
     @GetMapping("/events")
     public ResponseEntity<List<EventGetDto>> getEventsForUserByDate(
+            @PathVariable Long companyId,
+            @PathVariable Long projectId,
             @RequestParam(name = "dayStartAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dayStartTime,
-            @RequestParam(name = "userId") Long userId,
-            @RequestParam(name = "companyId") Long companyId,
-            @RequestParam(name = "projectId") Long projectId){
+            @RequestParam(name = "userId") Long userId){
         return ResponseEntity.ok(eventService.getEventsByDate(dayStartTime, userId, companyId, projectId));
     }
 }
