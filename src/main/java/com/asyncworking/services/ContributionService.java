@@ -42,7 +42,7 @@ public class ContributionService {
         OffsetDateTime endDate = start.plusDays(6).withHour(23).withMinute(59).withSecond(59);
         List<TodoItem> completedTodoItems = todoItemRepository
                 .findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, endDate);
-        System.out.println(Arrays.asList(getDayTask(completedTodoItems)));
+        // log.debug(String.valueOf(Arrays.asList(getDayTask(completedTodoItems))));
         return getDayTask(completedTodoItems);
     }
 
@@ -53,7 +53,7 @@ public class ContributionService {
         return startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
     }
 
-    public Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
+    public final Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsMap = new LinkedHashMap<>();
         List<DayOfWeek> dayList = List.of(
                 DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
