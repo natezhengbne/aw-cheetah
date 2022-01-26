@@ -24,8 +24,14 @@ public class EventController {
     private final JwtService jwtService;
 
     @PostMapping("/events")
-    public ResponseEntity<Long> createEvent(@Valid @RequestBody EventPostDto eventPostDto){
-        return ResponseEntity.ok(eventService.createEvent(eventPostDto));
+    public ResponseEntity<Long> createEvent(
+            @RequestHeader("Authorization") String auth,
+            @PathVariable Long companyId,
+            @PathVariable Long projectId,
+            @Valid @RequestBody EventPostDto eventPostDto){
+        Long userId = jwtService.getUserIdFromToken(auth);
+        log.debug("Create Event for user(userId = {}) about project(companyId = {}, projectId = {})", userId, companyId, projectId);
+        return ResponseEntity.ok(eventService.createEvent(companyId, projectId, userId, eventPostDto));
     }
 
     @GetMapping("/events")
@@ -38,6 +44,6 @@ public class EventController {
         Long userId = jwtService.getUserIdFromToken(auth);
         log.debug("Get Events for user(userId = {}) about project(companyId = {}, projectId = {}) on the day starts at {} ",
                 userId, companyId, projectId, dayStartTime);
-        return ResponseEntity.ok(eventService.getEventsByDate(dayStartTime, userId, companyId, projectId));
+        return ResponseEntity.ok(eventService.getOwnedEventsByDate(dayStartTime, userId, companyId, projectId));
     }
 }

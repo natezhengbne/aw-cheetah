@@ -16,7 +16,7 @@ public interface EventMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
-    Event eventPostDtoToEvent(EventPostDto dto);
+    Event eventPostDtoToEvent(Long companyId, Long projectId, Long ownerId, EventPostDto dto);
 
     EventGetDto eventToEventGetDto(Event event);
 

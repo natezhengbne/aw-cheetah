@@ -22,13 +22,13 @@ public class EventService {
 
     private final EventMapper eventMapper;
 
-    public Long createEvent(EventPostDto eventPostDto) {
-        Event event = eventMapper.eventPostDtoToEvent(eventPostDto);
+    public Long createEvent(Long companyId, Long projectId, Long ownerId, EventPostDto eventPostDto) {
+        Event event = eventMapper.eventPostDtoToEvent(companyId, projectId, ownerId, eventPostDto);
         eventRepository.save(event);
         return event.getId();
     }
 
-    public List<EventGetDto> getEventsByDate(OffsetDateTime dayStartTime, Long userId, Long companyId, Long projectId) {
+    public List<EventGetDto> getOwnedEventsByDate(OffsetDateTime dayStartTime, Long userId, Long companyId, Long projectId) {
         return eventRepository.findByCompanyIdAndProjectIdAndOwnerId(companyId, projectId, userId).stream()
                 .filter(e -> e.isWithinDay(dayStartTime))
                 .sorted(Comparator.comparing(Event::getStartTime))

@@ -14,15 +14,6 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class EventPostDto {
 
-    @NotNull(message = "Company id can not be null")
-    private Long companyId;
-
-    @NotNull(message = "Project id can not be null")
-    private Long projectId;
-
-    @NotNull(message = "Owner id title can not be null")
-    private Long ownerId;
-
     @NotNull(message = "Event title can not be null")
     @Size(max = 128, message = "Event title can not be more than than 128 characters.")
     private String title;

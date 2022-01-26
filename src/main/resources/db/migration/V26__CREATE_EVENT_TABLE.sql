@@ -13,4 +13,3 @@ CREATE TABLE "event" (
     "created_time" TIMESTAMP WITH TIME ZONE NOT NULL,
     "updated_time" TIMESTAMP WITH TIME ZONE NOT NULL
 );
-CREATE INDEX event_project_id_idx ON event(project_id);
