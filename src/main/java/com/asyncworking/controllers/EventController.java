@@ -1,14 +1,13 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.auth.AwcheetahAuthenticationToken;
 import com.asyncworking.dtos.EventGetDto;
 import com.asyncworking.dtos.EventPostDto;
+import com.asyncworking.jwt.JwtService;
 import com.asyncworking.services.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,6 +21,8 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
 
+    private final JwtService jwtService;
+
     @PostMapping("/events")
     public ResponseEntity<Long> createEvent(@Valid @RequestBody EventPostDto eventPostDto){
         return ResponseEntity.ok(eventService.createEvent(eventPostDto));
@@ -29,13 +30,14 @@ public class EventController {
 
     @GetMapping("/events")
     public ResponseEntity<List<EventGetDto>> getEventsForUserByDate(
+            @RequestHeader("Authorization") String auth,
             @PathVariable Long companyId,
             @PathVariable Long projectId,
             @RequestParam(name = "dayStartAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dayStartTime
     ){
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        AwcheetahAuthenticationToken token = (AwcheetahAuthenticationToken)authentication;
-        log.info("Current user name: {}, user Id: {}", token.getName(), token.getUserId());
-        return ResponseEntity.ok(eventService.getEventsByDate(dayStartTime, token.getUserId(), companyId, projectId));
+        Long userId = jwtService.getUserIdFromToken(auth);
+        log.debug("Get Events for user(userId = {}) about project(companyId = {}, projectId = {}) on the day starts at {} ",
+                userId, companyId, projectId, dayStartTime);
+        return ResponseEntity.ok(eventService.getEventsByDate(dayStartTime, userId, companyId, projectId));
     }
 }

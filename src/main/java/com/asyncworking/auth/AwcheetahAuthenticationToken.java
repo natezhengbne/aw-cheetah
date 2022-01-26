@@ -1,6 +1,5 @@
 package com.asyncworking.auth;
 
-import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -19,15 +18,11 @@ public class AwcheetahAuthenticationToken extends UsernamePasswordAuthentication
 
     private final Set<Long> projectIds;
 
-    @Getter
-    private final Long userId;
-
     public AwcheetahAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities,
-                                        Set<Long> companyIds, Set<Long> projectIds, Long userId) {
+                                        Set<Long> companyIds, Set<Long> projectIds) {
         super(principal, credentials, authorities);
         this.companyIds = companyIds;
         this.projectIds = projectIds;
-        this.userId = userId;
     }
 
     @Override

@@ -94,4 +94,16 @@ public class JwtService {
                 .message("JwtToken has already refreshed.")
                 .build();
     }
+
+    public Long getUserIdFromToken(String auth){
+        String oldToken = auth.replace(AUTHORIZATION_TYPE.value(), "");
+
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(oldToken);
+        Claims body = claimsJws.getBody();
+        Double userId = (Double)body.get(USER_ID.value());
+        return userId.longValue();
+    }
 }
