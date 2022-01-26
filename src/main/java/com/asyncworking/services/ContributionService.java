@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,9 @@ import java.util.stream.Collectors;
 public class ContributionService {
     private final TodoItemRepository todoItemRepository;
     private final TodoItemMapper todoItemMapper;
+    private final List<DayOfWeek> dayList = List.of(
+            DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
 
     public Map<DayOfWeek, Integer> findOneWeekCompletedTodoItemsCounts(Long companyId, Long userId) {
         OffsetDateTime start = getStartDateTime();
@@ -53,11 +55,8 @@ public class ContributionService {
         return startDateOfWeek.withHour(0).withMinute(0).withSecond(0);
     }
 
-    public final Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
+    public Map<DayOfWeek, List<ContributionActivitiesDto>> getDayTask(List<TodoItem> completedTodoItems) {
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsMap = new LinkedHashMap<>();
-        List<DayOfWeek> dayList = List.of(
-                DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
-                DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
         dayList.forEach(currentDay -> oneWeekCompletedTodoItemsMap.put(currentDay, filterListByDate(completedTodoItems, currentDay)));
         return oneWeekCompletedTodoItemsMap;
     }
