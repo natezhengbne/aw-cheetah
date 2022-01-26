@@ -46,6 +46,7 @@ public class JwtService {
                 .claim(AUTHORITIES.value(), user.getAuthorities())
                 .claim(COMPANY_IDS.value(), companyIds)
                 .claim(PROJECT_IDS.value(), projectIds)
+                .claim(USER_ID.value(), userEntity.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -60,6 +61,7 @@ public class JwtService {
                 .claim(AUTHORITIES.value(), authorities)
                 .claim(COMPANY_IDS.value(), companyIds)
                 .claim(PROJECT_IDS.value(), projectIds)
+                .claim(USER_ID.value(), userEntity.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -92,6 +94,4 @@ public class JwtService {
                 .message("JwtToken has already refreshed.")
                 .build();
     }
-
-
 }

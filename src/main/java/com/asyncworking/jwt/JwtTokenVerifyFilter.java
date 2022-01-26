@@ -49,13 +49,15 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
         Set<AwcheetahGrantedAuthority> grantedAuthorities = getAuthoritiesFromJwtBody(body);
         Set<Long> companyIds = getIdSetFromJwtBody(body, COMPANY_IDS.value());
         Set<Long> projectIds = getIdSetFromJwtBody(body, PROJECT_IDS.value());
+        Double userId = (Double)body.get(USER_ID.value());
 
         Authentication authentication = new AwcheetahAuthenticationToken(
                 email,
                 null,
                 grantedAuthorities,
                 companyIds,
-                projectIds
+                projectIds,
+                userId.longValue()
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
