@@ -46,6 +46,7 @@ public class JwtService {
                 .claim(AUTHORITIES.value(), user.getAuthorities())
                 .claim(COMPANY_IDS.value(), companyIds)
                 .claim(PROJECT_IDS.value(), projectIds)
+                .claim(USER_ID.value(), userEntity.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -60,6 +61,7 @@ public class JwtService {
                 .claim(AUTHORITIES.value(), authorities)
                 .claim(COMPANY_IDS.value(), companyIds)
                 .claim(PROJECT_IDS.value(), projectIds)
+                .claim(USER_ID.value(), userEntity.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
                 .signWith(secretKey)
@@ -93,5 +95,15 @@ public class JwtService {
                 .build();
     }
 
+    public Long getUserIdFromToken(String auth){
+        String oldToken = auth.replace(AUTHORIZATION_TYPE.value(), "");
 
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(oldToken);
+        Claims body = claimsJws.getBody();
+        Double userId = (Double)body.get(USER_ID.value());
+        return userId.longValue();
+    }
 }
