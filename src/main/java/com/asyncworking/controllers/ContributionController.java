@@ -15,12 +15,12 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/contribution")
+@RequestMapping("/companies/{companyId}")
 @RequiredArgsConstructor
 public class ContributionController {
     private final ContributionService contributionService;
 
-    @GetMapping("/company/{companyId}/contributions")
+    @GetMapping("/contributions/contributions")
     public ResponseEntity getContributionsTodoItemsCounts(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
         log.info("get contributions counts of the current week for Company ID: {}, user ID: {}", companyId, userId);
         Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = contributionService
@@ -28,7 +28,7 @@ public class ContributionController {
         return ResponseEntity.ok(oneWeekCompletedTodoItemsCounts);
     }
 
-    @GetMapping("/company/{companyId}/activities")
+    @GetMapping("/contributions/activities")
     public ResponseEntity getContributionActivitiesTodoItemList(@PathVariable Long companyId,
                                                                 @RequestParam("userId") @NotNull Long userId) {
         log.info("get completed tasks of the current week for Company ID: {}, user ID: {}", companyId, userId);
