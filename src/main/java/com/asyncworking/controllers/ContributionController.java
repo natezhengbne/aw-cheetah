@@ -19,8 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ContributionController {
     private final ContributionService contributionService;
-
-    @GetMapping("/contributions/contributions")
+    @GetMapping("/contributions")
     public ResponseEntity getContributionsTodoItemsCounts(@PathVariable Long companyId, @RequestParam("userId") @NotNull Long userId) {
         log.info("get contributions counts of the current week for Company ID: {}, user ID: {}", companyId, userId);
         Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = contributionService
