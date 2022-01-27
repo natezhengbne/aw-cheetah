@@ -95,7 +95,7 @@ public class JwtService {
                 .build();
     }
 
-    public Long getUserIdFromToken(String auth){
+    public Long getUserIdFromToken(String auth) {
         String oldToken = auth.replace(AUTHORIZATION_TYPE.value(), "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
@@ -103,7 +103,7 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(oldToken);
         Claims body = claimsJws.getBody();
-        Double userId = (Double)body.get(USER_ID.value());
+        Double userId = (Double) body.get(USER_ID.value());
         return userId.longValue();
     }
 }

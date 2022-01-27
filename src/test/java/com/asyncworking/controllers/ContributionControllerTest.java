@@ -1,6 +1,7 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.ContributionActivitiesDto;
+import com.asyncworking.jwt.JwtService;
 import com.asyncworking.services.ContributionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,22 +23,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ContributionControllerTest extends ControllerHelper {
     @Mock
     private ContributionService contributionService;
-
+    @Mock
+    private JwtService jwtService;
     private ContributionController contributionController;
 
     @BeforeEach
     public void setUp() {
         super.setUp();
-        contributionController = new ContributionController(contributionService);
+        contributionController = new ContributionController(contributionService, jwtService);
         mockMvc = MockMvcBuilders.standaloneSetup(
                 controllerExceptionHandler,
                 contributionController
         ).build();
     }
-
     @Test
     public void shouldGetContributionsTodoItemsCounts() throws Exception {
-        Long userId = 1L;
 
         Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
         oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SUNDAY, 2);
@@ -47,18 +47,17 @@ public class ContributionControllerTest extends ControllerHelper {
         oneWeekCompletedTodoItemsCounts.put(DayOfWeek.THURSDAY, 6);
         oneWeekCompletedTodoItemsCounts.put(DayOfWeek.FRIDAY, 7);
         oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SATURDAY, 8);
-
+        when(jwtService.getUserIdFromToken("auth")).thenReturn(1L);
         when(contributionService.findOneWeekCompletedTodoItemsCounts(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsCounts);
 
-        mockMvc.perform(get("/contribution/company/1/contributions")
-                        .param("userId", String.valueOf(userId)))
+        mockMvc.perform(get("/companies/1/contributions")
+                        .header("Authorization", "auth"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("SUNDAY").value(2));
     }
 
     @Test
     public void shouldGetContributionsTodoItemsList() throws Exception {
-        Long userId = 1L;
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
         OffsetDateTime offsetDT = OffsetDateTime.now();
         ContributionActivitiesDto contributionActivitiesDto = ContributionActivitiesDto.builder()
@@ -81,10 +80,10 @@ public class ContributionControllerTest extends ControllerHelper {
                 contributionActivityList);
         oneWeekCompletedTodoItemsList.put(DayOfWeek.SATURDAY,
                 contributionActivityList);
-
+        when(jwtService.getUserIdFromToken("auth")).thenReturn(1L);
         when(contributionService.findOneWeekCompletedTodoItemsList(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsList);
-        mockMvc.perform(get("/contribution/company/1/activities")
-                        .param("userId", String.valueOf(userId)))
+        mockMvc.perform(get("/companies/1/contributions/activities")
+                        .header("Authorization", "auth"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("SATURDAY").isNotEmpty());
     }
