@@ -1,6 +1,9 @@
 package com.asyncworking.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -8,6 +11,9 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @Table(name = "event")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,10 +48,4 @@ public class Event {
 
     @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
-
-    public boolean isWithinDay(OffsetDateTime dayStartTime){
-        final OffsetDateTime dayEndTime = dayStartTime.plusHours(24);
-        return  (!startTime.isBefore(dayStartTime) && startTime.isBefore(dayEndTime))
-                || (endTime.isAfter(dayStartTime) && !endTime.isAfter(dayEndTime));
-    }
 }

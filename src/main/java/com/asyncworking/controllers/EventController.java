@@ -44,6 +44,6 @@ public class EventController {
         Long userId = jwtService.getUserIdFromToken(auth);
         log.debug("Get Events for user(userId = {}) about project(companyId = {}, projectId = {}) on the day starts at {} ",
                 userId, companyId, projectId, dayStartTime);
-        return ResponseEntity.ok(eventService.getOwnedEventsByDate(dayStartTime, userId, companyId, projectId));
+        return ResponseEntity.ok(eventService.getOwnedEventsByDate(dayStartTime, userId, projectId, companyId));
     }
 }

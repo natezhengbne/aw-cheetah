@@ -103,7 +103,7 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(oldToken);
         Claims body = claimsJws.getBody();
-        Double userId = (Double)body.get(USER_ID.value());
+        Double userId = (Double) body.get(USER_ID.value());
         return userId.longValue();
     }
 }

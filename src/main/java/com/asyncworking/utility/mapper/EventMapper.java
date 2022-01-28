@@ -8,19 +8,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
-import static java.time.ZoneOffset.UTC;
-
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, imports = {OffsetDateTime.class, ZoneOffset.class})
 public interface EventMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
-    @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
+    @Mapping(target = "createdTime", expression = "java(OffsetDateTime.now(ZoneOffset.UTC))")
+    @Mapping(target = "updatedTime", expression = "java(OffsetDateTime.now(ZoneOffset.UTC))")
     Event eventPostDtoToEvent(Long companyId, Long projectId, Long ownerId, EventPostDto dto);
 
     EventGetDto eventToEventGetDto(Event event);
-
-    default OffsetDateTime getCurrentTime() {
-        return OffsetDateTime.now(UTC);
-    }
 }
