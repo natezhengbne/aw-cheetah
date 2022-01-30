@@ -7,3 +7,10 @@ Resources:
        LoadBalancerInfo:
          ContainerName: uat-cheetah-tf # copy from task definition under containerDefinitions.name
          ContainerPort: 80 # an application container port 
+
+Hooks:
+  - BeforeInstall: "BeforeInstallHookFunctionName"
+  - AfterInstall: "AfterInstallHookFunctionName"
+  - AfterAllowTestTraffic: "AfterAllowTestTrafficHookFunctionName"
+  - BeforeAllowTraffic: "BeforeAllowTrafficHookFunctionName"
+  - AfterAllowTraffic: "AfterAllowTrafficHookFunctionName"
