@@ -22,22 +22,10 @@ import java.util.stream.Collectors;
 public class ContributionService {
     private final TodoItemRepository todoItemRepository;
     private final TodoItemMapper todoItemMapper;
-    private final List<DayOfWeek> dayList = List.of(
+    private static final List<DayOfWeek> dayList = List.of(
             DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY,
             DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
 
-    public Map<DayOfWeek, Integer> findOneWeekCompletedTodoItemsCounts(Long companyId, Long userId) {
-        OffsetDateTime start = getStartDateTime();
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
-        for (int i = 0; i < DayOfWeek.values().length; i++) {
-            OffsetDateTime end = start.withHour(23).withMinute(59).withSecond(59);
-            int completedTodoItemsCount = todoItemRepository
-                    .countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween(companyId, userId.toString(), start, end);
-            oneWeekCompletedTodoItemsCounts.put(start.getDayOfWeek(), completedTodoItemsCount);
-            start = start.plusDays(1);
-        }
-        return oneWeekCompletedTodoItemsCounts;
-    }
 
     public Map<DayOfWeek, List<ContributionActivitiesDto>> findOneWeekCompletedTodoItemsList(Long companyId, Long userId) {
         OffsetDateTime start = getStartDateTime();

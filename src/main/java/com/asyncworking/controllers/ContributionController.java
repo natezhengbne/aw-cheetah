@@ -21,17 +21,6 @@ public class ContributionController {
     private final ContributionService contributionService;
     private final JwtService jwtService;
 
-    @GetMapping("/contributions")
-    public ResponseEntity<Map<DayOfWeek, Integer>> getContributionsTodoItemsCounts(
-            @RequestHeader("Authorization") String auth,
-            @PathVariable Long companyId) {
-        Long userId = jwtService.getUserIdFromToken(auth);
-        log.info("get contributions counts of the current week for Company ID: {}, user ID: {}", companyId, userId);
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = contributionService
-                .findOneWeekCompletedTodoItemsCounts(companyId, userId);
-        return ResponseEntity.ok(oneWeekCompletedTodoItemsCounts);
-    }
-
     @GetMapping("/contributions/activities")
     public ResponseEntity<Map<DayOfWeek, List<ContributionActivitiesDto>>> getContributionActivitiesTodoItemList(
             @RequestHeader("Authorization") String auth,
@@ -40,7 +29,7 @@ public class ContributionController {
         log.info("get completed tasks of the current week for Company ID: {}, user ID: {}", companyId, userId);
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = contributionService
                 .findOneWeekCompletedTodoItemsList(companyId, userId);
-        log.info("GetMapping: activities: " + Arrays.asList(oneWeekCompletedTodoItemsList));
+        log.debug("GetMapping: activities: {} ", Arrays.asList(oneWeekCompletedTodoItemsList));
         return ResponseEntity.ok(oneWeekCompletedTodoItemsList);
     }
 }

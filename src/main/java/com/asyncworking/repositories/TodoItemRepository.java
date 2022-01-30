@@ -19,8 +19,6 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     List<TodoItem> findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
             (Long companyId, String subscribersIds, OffsetDateTime start, OffsetDateTime end);
 
-    int countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
-            (Long companyId, String subscribersIds, OffsetDateTime start, OffsetDateTime end);
 
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
 

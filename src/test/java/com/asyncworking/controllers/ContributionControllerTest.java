@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,29 +35,9 @@ public class ContributionControllerTest extends ControllerHelper {
                 contributionController
         ).build();
     }
-    @Test
-    public void shouldGetContributionsTodoItemsCounts() throws Exception {
-
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SUNDAY, 2);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.MONDAY, 3);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.TUESDAY, 4);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.WEDNESDAY, 5);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.THURSDAY, 6);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.FRIDAY, 7);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SATURDAY, 8);
-        when(jwtService.getUserIdFromToken("auth")).thenReturn(1L);
-        when(contributionService.findOneWeekCompletedTodoItemsCounts(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsCounts);
-
-        mockMvc.perform(get("/companies/1/contributions")
-                        .header("Authorization", "auth"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("SUNDAY").value(2));
-    }
 
     @Test
     public void shouldGetContributionsTodoItemsList() throws Exception {
-        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = new LinkedHashMap<>();
         OffsetDateTime offsetDT = OffsetDateTime.now();
         ContributionActivitiesDto contributionActivitiesDto = ContributionActivitiesDto.builder()
                 .taskName("Enhance a batter guide user experience for user")
@@ -66,20 +45,17 @@ public class ContributionControllerTest extends ControllerHelper {
                 .build();
         List<ContributionActivitiesDto> contributionActivityList = new ArrayList<>();
         contributionActivityList.add(contributionActivitiesDto);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.SUNDAY,
-                contributionActivityList);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.MONDAY,
-                contributionActivityList);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.TUESDAY,
-                contributionActivityList);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.WEDNESDAY,
-                contributionActivityList);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.THURSDAY,
-                contributionActivityList);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.FRIDAY,
-                contributionActivityList);
-        oneWeekCompletedTodoItemsList.put(DayOfWeek.SATURDAY,
-                contributionActivityList);
+
+        Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = Map.of(
+                DayOfWeek.SUNDAY, contributionActivityList,
+                DayOfWeek.MONDAY, contributionActivityList,
+                DayOfWeek.TUESDAY, contributionActivityList,
+                DayOfWeek.WEDNESDAY, contributionActivityList,
+                DayOfWeek.THURSDAY, contributionActivityList,
+                DayOfWeek.FRIDAY, contributionActivityList,
+                DayOfWeek.SATURDAY, contributionActivityList
+        );
+
         when(jwtService.getUserIdFromToken("auth")).thenReturn(1L);
         when(contributionService.findOneWeekCompletedTodoItemsList(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsList);
         mockMvc.perform(get("/companies/1/contributions/activities")
