@@ -9,8 +9,6 @@ Resources:
          ContainerPort: 80 # an application container port 
 
 Hooks:
-  - BeforeInstall: "BeforeInstallHookFunctionName"
-  - AfterInstall: "AfterInstallHookFunctionName"
   - AfterAllowTestTraffic: "AfterAllowTestTrafficHookFunctionName"
-  - BeforeAllowTraffic: "BeforeAllowTrafficHookFunctionName"
-  - AfterAllowTraffic: "AfterAllowTrafficHookFunctionName"
+  # - BeforeAllowTraffic: "BeforeAllowTrafficHookFunctionName"
+  # - AfterAllowTraffic: "AfterAllowTrafficHookFunctionName"
