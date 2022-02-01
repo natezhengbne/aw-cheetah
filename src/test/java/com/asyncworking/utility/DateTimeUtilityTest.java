@@ -9,9 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class DateTimeUtilityTest {
-    private DateTimeUtility dateTimeUtility;
+
     private final OffsetDateTime dayStartTime = OffsetDateTime.now();
     private final OffsetDateTime nextDayStartTime = dayStartTime.plusHours(24);
+    private DateTimeUtility dateTimeUtility;
 
     @BeforeEach
     public void setup() {
@@ -19,7 +20,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void overlapWhenPeriodStartsAtStartTimeOfCurrentDay() {
+    public void testIsPeriodOverlapADayWhenPeriodStartsAtStartTimeOfCurrentDayThenReturnTrue() {
         OffsetDateTime periodStartTime = dayStartTime;
         OffsetDateTime periodEndTime = periodStartTime.plusHours(1);
 
@@ -29,7 +30,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void overlapWhenPeriodStartsInCurrentDay() {
+    public void testIsPeriodOverlapADayWhenPeriodStartsInCurrentDayThenReturnTrue() {
         OffsetDateTime periodStartTime = dayStartTime.plusHours(3);
         OffsetDateTime periodEndTime = periodStartTime.plusHours(1);
 
@@ -39,7 +40,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void notOverlapWhenPeriodStartsAtStartTimeOfNextDay() {
+    public void testIsPeriodOverlapADayWhenPeriodStartsAtStartTimeOfNextDayThenReturnFalse() {
         OffsetDateTime periodStartTime = nextDayStartTime;
         OffsetDateTime periodEndTime = periodStartTime.plusHours(1);
 
@@ -49,7 +50,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void overlapWhenPeriodEndsInCurrentDay() {
+    public void testIsPeriodOverlapADayWhenPeriodEndsInCurrentDayThenReturnTrue() {
         OffsetDateTime periodEndTime = dayStartTime.plusHours(12);
         OffsetDateTime periodStartTime = dayStartTime.minusHours(1);
 
@@ -59,7 +60,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void overlapWhenPeriodEndsAtTheStartTimeOfNextDay() {
+    public void testIsPeriodOverlapADayWhenPeriodEndsAtTheStartTimeOfNextDayThenReturnTrue() {
         OffsetDateTime periodEndTime = nextDayStartTime;
         OffsetDateTime periodStartTime = dayStartTime.minusHours(1);
 
@@ -69,7 +70,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void notOverlapWhenPeriodEndsAtTheStartTimeOfCurrentDay() {
+    public void testIsPeriodOverlapADayWhenPeriodEndsAtTheStartTimeOfCurrentDayThenReturnFalse() {
         OffsetDateTime periodEndTime = dayStartTime;
         OffsetDateTime periodStartTime = dayStartTime.minusHours(1);
 
@@ -79,7 +80,7 @@ public class DateTimeUtilityTest {
     }
 
     @Test
-    public void overlapWhenPeriodStartsBeforeStartTimeOfCurrentDayAndEndsAfterStartTimeOfNextDay() {
+    public void testIsPeriodOverlapADayWhenPeriodStartsBeforeStartTimeOfCurrentDayAndEndsAfterStartTimeOfNextDayThenReturnTrue() {
         OffsetDateTime periodStartTime = dayStartTime.minusHours(10);
         OffsetDateTime periodEndTime = nextDayStartTime.plusHours(8);
 

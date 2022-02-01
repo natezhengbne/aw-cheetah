@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class EventServiceTest {
+
     @Mock
     private EventRepository eventRepository;
 
@@ -41,7 +42,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void createEventSuccessWhenGivenProperArguments() {
+    public void testCreateEventWhenGivenProperArgumentsThenSucceed() {
         when(eventRepository.save(any(Event.class))).thenReturn(any());
 
         Long eventId = eventService.createEvent(1L, 1L, 1L, new EventPostDto());
@@ -50,7 +51,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void returnListWhenMatchedEventsFound() {
+    public void testGetOwnedEventsByDateWhenMatchedEventsFoundThenReturnList() {
         OffsetDateTime dayStartAt = OffsetDateTime.now();
         when(eventRepository.findByCompanyIdAndProjectIdAndOwnerId(anyLong(), anyLong(), anyLong()))
                 .thenReturn(List.of(new Event()));
@@ -65,7 +66,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void returnEmptyListWhenNoMatchedEventFound1() {
+    public void testGetOwnedEventsWhenNoMatchedEventFoundThenReturnEmptyList1() {
         OffsetDateTime dayStartAt = OffsetDateTime.now();
         when(eventRepository.findByCompanyIdAndProjectIdAndOwnerId(anyLong(), anyLong(), anyLong()))
                 .thenReturn(List.of(new Event()));
@@ -80,7 +81,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void returnEmptyListWhenNoMatchedEventFound2() {
+    public void testGetOwnedEventsWhenNoMatchedEventFoundThenReturnEmptyList2() {
         when(eventRepository.findByCompanyIdAndProjectIdAndOwnerId(anyLong(), anyLong(), anyLong()))
                 .thenReturn(List.of());
 
