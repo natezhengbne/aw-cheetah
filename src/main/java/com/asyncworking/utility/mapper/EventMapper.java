@@ -12,6 +12,7 @@ import java.time.ZoneOffset;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, imports = {OffsetDateTime.class, ZoneOffset.class})
 public interface EventMapper {
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdTime", expression = "java(OffsetDateTime.now(ZoneOffset.UTC))")
     @Mapping(target = "updatedTime", expression = "java(OffsetDateTime.now(ZoneOffset.UTC))")

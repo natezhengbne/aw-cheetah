@@ -13,3 +13,4 @@ CREATE TABLE "event" (
     "created_time" TIMESTAMP WITH TIME ZONE NOT NULL,
     "updated_time" TIMESTAMP WITH TIME ZONE NOT NULL
 );
+CREATE INDEX event_company_project_owner_idx ON event (company_id, project_id, owner_id);
