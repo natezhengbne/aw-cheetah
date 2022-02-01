@@ -48,7 +48,7 @@ public class EventController {
             @RequestHeader("Authorization") String auth,
             @PathVariable Long companyId,
             @PathVariable Long projectId,
-            @RequestParam(name = "dayStartAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dayStartTime
+            @RequestParam(name = "dayStartsAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dayStartTime
     ) {
         Long userId = jwtService.getUserIdFromToken(auth);
         log.debug("Get Events for user(userId = {}) about project(companyId = {}, projectId = {}) on the day starts at {} ",
