@@ -43,7 +43,7 @@ public class EventControllerTest extends ControllerHelper {
         EventPostDto eventPostDto = EventPostDto.builder().title("Test").build();
         Long ownId = 1L;
 
-        when(jwtService.getUserIdFromToken(anyString())).thenReturn(ownId);
+        when(jwtService.getUserIdFromJwt(anyString())).thenReturn(ownId);
         when(eventService.createEvent(1L, 1L, ownId, eventPostDto)).thenReturn(1L);
 
         mockMvc.perform(post("/companies/1/projects/1/events")
@@ -52,7 +52,7 @@ public class EventControllerTest extends ControllerHelper {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(jwtService, times(1)).getUserIdFromToken(anyString());
+        verify(jwtService, times(1)).getUserIdFromJwt(anyString());
         verify(eventService, times(1)).createEvent(1L, 1L, ownId, eventPostDto);
     }
 
@@ -61,7 +61,7 @@ public class EventControllerTest extends ControllerHelper {
         Long ownId = 1L;
         OffsetDateTime dayStartsAt = OffsetDateTime.now();
 
-        when(jwtService.getUserIdFromToken(anyString())).thenReturn(ownId);
+        when(jwtService.getUserIdFromJwt(anyString())).thenReturn(ownId);
         when(eventService.getOwnedEventsByDate(dayStartsAt, ownId, 1L, 1L))
                 .thenReturn(anyList());
 
@@ -70,7 +70,7 @@ public class EventControllerTest extends ControllerHelper {
                 .param("dayStartsAt", dayStartsAt.toString()))
                 .andExpect(status().isOk());
 
-        verify(jwtService, times(1)).getUserIdFromToken(anyString());
+        verify(jwtService, times(1)).getUserIdFromJwt(anyString());
         verify(eventService, times(1)).getOwnedEventsByDate(dayStartsAt, ownId, 1L, 1L);
     }
 }

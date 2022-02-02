@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -38,7 +37,7 @@ public class EventController {
             @PathVariable Long companyId,
             @PathVariable Long projectId,
             @Valid @RequestBody EventPostDto eventPostDto) {
-        Long userId = jwtService.getUserIdFromToken(auth);
+        Long userId = jwtService.getUserIdFromJwt(auth);
         log.debug("Create Event for user(userId = {}) about project(companyId = {}, projectId = {})", userId, companyId, projectId);
         return ResponseEntity.ok(eventService.createEvent(companyId, projectId, userId, eventPostDto));
     }
@@ -50,7 +49,7 @@ public class EventController {
             @PathVariable Long projectId,
             @RequestParam(name = "dayStartsAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime dayStartTime
     ) {
-        Long userId = jwtService.getUserIdFromToken(auth);
+        Long userId = jwtService.getUserIdFromJwt(auth);
         log.debug("Get Events for user(userId = {}) about project(companyId = {}, projectId = {}) on the day starts at {} ",
                 userId, companyId, projectId, dayStartTime);
         return ResponseEntity.ok(eventService.getOwnedEventsByDate(dayStartTime, userId, projectId, companyId));

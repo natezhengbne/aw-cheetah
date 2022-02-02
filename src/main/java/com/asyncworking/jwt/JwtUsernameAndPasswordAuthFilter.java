@@ -54,7 +54,7 @@ public class JwtUsernameAndPasswordAuthFilter extends UsernamePasswordAuthentica
         UserEntity user = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
 
-        String jwtToken = jwtService.creatJwtToken(user, authorities);
+        String jwtToken = jwtService.createJwtToken(user, authorities);
 
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .id(user.getId())

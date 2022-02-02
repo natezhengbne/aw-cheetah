@@ -91,7 +91,7 @@ public class UserService {
                 .build();
         employeeRepository.save(employee);
 
-        String token = jwtService.creatJwtToken(accountDto.getEmail());
+        String token = jwtService.createJwtToken(accountDto.getEmail());
 
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
