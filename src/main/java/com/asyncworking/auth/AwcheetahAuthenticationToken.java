@@ -32,5 +32,4 @@ public class AwcheetahAuthenticationToken extends UsernamePasswordAuthentication
         details.put(PROJECT_IDS, projectIds);
         return details;
     }
-
 }

@@ -99,7 +99,7 @@ public class JwtServiceTest {
         when(employeeRepository.findCompanyIdByUserId(1L)).thenReturn(companyIds);
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
 
-        String accessToken = jwtService.creatJwtToken(email);
+        String accessToken = jwtService.createJwtToken(email);
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey())
                 .build()
@@ -114,7 +114,7 @@ public class JwtServiceTest {
         when(employeeRepository.findCompanyIdByUserId(1L)).thenReturn(companyIds);
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
 
-        String accessToken = jwtService.creatJwtToken(mockUser, mockAuthorities);
+        String accessToken = jwtService.createJwtToken(mockUser, mockAuthorities);
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(secretKey())
                 .build()
@@ -130,7 +130,7 @@ public class JwtServiceTest {
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
         when(applicationUserService.loadUserByUsername(email)).thenReturn(mockUserDetails);
 
-        String accessToken = jwtService.creatJwtToken(mockUser, mockAuthorities);
+        String accessToken = jwtService.createJwtToken(mockUser, mockAuthorities);
         String auth = AUTHORIZATION_TYPE.value() + accessToken;
         JwtDto jwtDto = jwtService.refreshJwtToken(auth);
 
@@ -148,10 +148,20 @@ public class JwtServiceTest {
         when(projectUserRepository.findProjectIdByUserId(1L)).thenReturn(projectIds);
         when(applicationUserService.loadUserByUsername(email)).thenReturn(mockUserDetails);
 
-        String accessToken = jwtService.creatJwtToken(mockUser, mockAuthorities);
+        String accessToken = jwtService.createJwtToken(mockUser, mockAuthorities);
         String auth = AUTHORIZATION_TYPE.value() + accessToken;
         JwtDto jwtDto = jwtService.refreshJwtToken(auth);
 
         assertEquals(jwtDto.getMessage(), "JwtToken has already refreshed.");
+    }
+
+    @Test
+    public void testGetUserIdFromJwtShouldBeOK() {
+        String accessToken = jwtService.createJwtToken(mockUser, mockAuthorities);
+        String auth = AUTHORIZATION_TYPE.value() + accessToken;
+
+        long userId = jwtService.getUserIdFromJwt(auth);
+
+        assertEquals(mockUser.getId(), userId);
     }
 }

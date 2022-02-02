@@ -14,6 +14,8 @@ public enum JwtClaims {
 
     TARGET_ID("targetId"),
 
+    USER_ID("userId"),
+
     ROLE("role");
 
     private final String value;
