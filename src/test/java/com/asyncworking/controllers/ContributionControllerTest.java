@@ -56,7 +56,7 @@ public class ContributionControllerTest extends ControllerHelper {
                 DayOfWeek.SATURDAY, contributionActivityList
         );
 
-        when(jwtService.getUserIdFromToken("auth")).thenReturn(1L);
+        when(jwtService.getUserIdFromJwt("auth")).thenReturn(1L);
         when(contributionService.findOneWeekCompletedTodoItemsList(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsList);
         mockMvc.perform(get("/companies/1/contributions/activities")
                         .header("Authorization", "auth"))

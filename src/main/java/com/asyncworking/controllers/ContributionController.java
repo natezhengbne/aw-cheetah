@@ -25,7 +25,7 @@ public class ContributionController {
     public ResponseEntity<Map<DayOfWeek, List<ContributionActivitiesDto>>> getContributionActivitiesTodoItemList(
             @RequestHeader("Authorization") String auth,
             @PathVariable Long companyId) {
-        Long userId = jwtService.getUserIdFromToken(auth);
+        Long userId = jwtService.getUserIdFromJwt(auth);
         log.info("get completed tasks of the current week for Company ID: {}, user ID: {}", companyId, userId);
         Map<DayOfWeek, List<ContributionActivitiesDto>> oneWeekCompletedTodoItemsList = contributionService
                 .findOneWeekCompletedTodoItemsList(companyId, userId);
