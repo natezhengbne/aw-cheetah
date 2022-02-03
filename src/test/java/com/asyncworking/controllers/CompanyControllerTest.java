@@ -142,30 +142,6 @@ public class CompanyControllerTest extends ControllerHelper {
                 .andExpect(status().isOk());
     }
 
-
-
-
-    @Test
-    public void shouldGetContributionsTodoItemsCounts() throws Exception {
-        Long userId = 1L;
-
-        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = new LinkedHashMap<>();
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SUNDAY, 2);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.MONDAY, 3);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.TUESDAY, 4);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.WEDNESDAY, 5);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.THURSDAY, 6);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.FRIDAY, 7);
-        oneWeekCompletedTodoItemsCounts.put(DayOfWeek.SATURDAY, 8);
-
-        when(companyService.findOneWeekCompletedTodoItemsCounts(1L, 1L)).thenReturn(oneWeekCompletedTodoItemsCounts);
-
-        mockMvc.perform(get("/companies/1/contributions")
-                .param("userId", String.valueOf(userId)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("SUNDAY").value(2));
-    }
-
     @Test
     void updateCompanyDescription() throws Exception {
         CompanyModificationDto companyModificationDto = CompanyModificationDto.builder()
