@@ -22,11 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static com.asyncworking.jwt.JwtClaims.AUTHORITIES;
-import static com.asyncworking.jwt.JwtClaims.AUTHORIZATION_TYPE;
-import static com.asyncworking.jwt.JwtClaims.COMPANY_IDS;
-import static com.asyncworking.jwt.JwtClaims.PROJECT_IDS;
-import static com.asyncworking.jwt.JwtClaims.USER_ID;
+import static com.asyncworking.jwt.JwtClaims.*;
 
 @Service
 @RequiredArgsConstructor
@@ -98,6 +94,7 @@ public class JwtService {
                 .message("JwtToken has already refreshed.")
                 .build();
     }
+
 
     public long getUserIdFromJwt(String auth) {
         String oldToken = auth.replace(AUTHORIZATION_TYPE.value(), "");

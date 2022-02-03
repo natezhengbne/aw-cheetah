@@ -6,6 +6,7 @@ import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.ProjectService;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -139,6 +141,9 @@ public class CompanyControllerTest extends ControllerHelper {
                         .param("userId", String.valueOf(userId)))
                 .andExpect(status().isOk());
     }
+
+
+
 
     @Test
     public void shouldGetContributionsTodoItemsCounts() throws Exception {

@@ -16,7 +16,7 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     List<TodoItem> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId, Long projectId,
                                                                                   @Param("todoListId") Long todoListId);
 
-    int countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
+    List<TodoItem> findByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
             (Long companyId, String subscribersIds, OffsetDateTime start, OffsetDateTime end);
 
     Optional<TodoItem> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long id);
