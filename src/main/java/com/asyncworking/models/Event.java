@@ -1,51 +1,58 @@
 package com.asyncworking.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 import java.time.OffsetDateTime;
 
 @Entity
 @Data
 @Table(name = "event")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Event {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Long ownerId;
 
-    @Column(name = "company_id", nullable = false)
+    @Column(nullable = false)
     private Long companyId;
 
-    @Column(name = "project_id", nullable = false)
+    @Column(nullable = false)
     private Long projectId;
 
-    @Column(name = "title")
+    @Column
     private String title;
 
-    @Column(name = "description")
+    @Column
     private String description;
 
-    @Column(name = "all_day_event")
+    @Column
     private boolean allDayEvent = false;
 
-    @Column(name = "start_time")
+    @Column
     private OffsetDateTime startTime;
 
-    @Column(name = "end_time")
+    @Column
     private OffsetDateTime endTime;
 
-    @Column(name = "created_time", nullable = false)
+    @Column(nullable = false)
     private OffsetDateTime createdTime;
 
-    @Column(name = "updated_time", nullable = false)
+    @Column(nullable = false)
     private OffsetDateTime updatedTime;
-
-    public boolean isWithinDay(OffsetDateTime dayStartTime){
-        final OffsetDateTime dayEndTime = dayStartTime.plusHours(24);
-        return  (!startTime.isBefore(dayStartTime) && startTime.isBefore(dayEndTime))
-                || (endTime.isAfter(dayStartTime) && !endTime.isAfter(dayEndTime));
-    }
 }

@@ -35,7 +35,7 @@ public class JwtService {
     private final ProjectUserRepository projectUserRepository;
     private final UserRepository userRepository;
 
-    public String creatJwtToken(String email) {
+    public String createJwtToken(String email) {
         UserDetails user = applicationUserService.loadUserByUsername(email);
         UserEntity userEntity = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
@@ -53,7 +53,7 @@ public class JwtService {
                 .compact();
     }
 
-    public String creatJwtToken(UserEntity userEntity, Collection<? extends GrantedAuthority> authorities) {
+    public String createJwtToken(UserEntity userEntity, Collection<? extends GrantedAuthority> authorities) {
         Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
         Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         return Jwts.builder()
@@ -88,14 +88,15 @@ public class JwtService {
                     .build();
         }
 
-        String newToken = creatJwtToken(email);
+        String newToken = createJwtToken(email);
         return JwtDto.builder()
                 .accessToken(newToken)
                 .message("JwtToken has already refreshed.")
                 .build();
     }
 
-    public Long getUserIdFromToken(String auth) {
+
+    public long getUserIdFromJwt(String auth) {
         String oldToken = auth.replace(AUTHORIZATION_TYPE.value(), "");
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
