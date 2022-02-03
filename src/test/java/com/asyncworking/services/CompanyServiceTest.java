@@ -245,6 +245,16 @@ public class CompanyServiceTest {
         assertEquals(allTodoCardItemsList, todoItemCardList);
     }
 
+    @Test
+    public void shouldReturnOneWeekCompletedTodoItemsCounts() {
+        when(todoItemRepository.countByCompanyIdAndSubscribersIdsIsContainingAndCompletedTimeBetween
+                (eq(1L), eq("1"), any(OffsetDateTime.class), any(OffsetDateTime.class))).thenReturn(6);
+
+        Map<DayOfWeek, Integer> oneWeekCompletedTodoItemsCounts = companyService.findOneWeekCompletedTodoItemsCounts(1L, 1L);
+
+        assertEquals(7, oneWeekCompletedTodoItemsCounts.size());
+        assertEquals(6, oneWeekCompletedTodoItemsCounts.get(DayOfWeek.MONDAY));
+    }
 
     @Test
     void throwNotFoundExceptionWhenIdNotExist() {

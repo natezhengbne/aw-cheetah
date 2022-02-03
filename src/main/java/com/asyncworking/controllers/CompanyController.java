@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.DayOfWeek;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +81,6 @@ public class CompanyController {
         List<List<CardTodoItemDto>> upcomingTodoItemDtoList = companyService.findTodoItemCardList(companyId, userId);
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
-
 
     @PostMapping("/{companyId}/invite-company-users")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")

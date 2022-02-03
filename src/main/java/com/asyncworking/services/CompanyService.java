@@ -194,8 +194,6 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-
-
     public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {
 
         UserEntity receiver = userRepository.findByEmail(invitedAccountDto.getEmail())
