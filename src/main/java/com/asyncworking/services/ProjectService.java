@@ -4,6 +4,8 @@ import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
+import com.asyncworking.dtos.TodoListDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.ProjectUser;
@@ -57,6 +59,8 @@ public class ProjectService {
     private final RoleService roleService;
 
     private final MessageCategoryService messageCategoryService;
+
+    private final TodoService todoService;
 
     public ProjectInfoDto fetchProjectInfoByProjectIdAndCompanyId(Long companyId, Long projectId) {
         return projectRepository.findByCompanyIdAndId(companyId, projectId)
@@ -122,7 +126,10 @@ public class ProjectService {
 
         roleService.assignRole(selectedUserEntity, PROJECT_MANAGER, newProject.getId());
 
-        createDefaultMessageCategories(newProject);
+        todoService.createTodoList(
+                companyId,
+                newProject.getId(),
+                TodoListDto.builder().todoListTitle("Done").build());
 
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
