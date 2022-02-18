@@ -40,6 +40,8 @@ import static java.time.ZoneOffset.UTC;
 @RequiredArgsConstructor
 public class ProjectService {
 
+    public static final String DEFAULT_LIST_NAME = "Done";
+
     private final UserRepository userRepository;
 
     private final ProjectRepository projectRepository;
@@ -129,7 +131,7 @@ public class ProjectService {
         todoService.createTodoList(
                 companyId,
                 newProject.getId(),
-                TodoListDto.builder().todoListTitle("Done").build());
+                TodoListDto.builder().todoListTitle(ProjectService.DEFAULT_LIST_NAME).build());
 
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
