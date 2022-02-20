@@ -128,6 +128,8 @@ public class ProjectService {
 
         roleService.assignRole(selectedUserEntity, PROJECT_MANAGER, newProject.getId());
 
+        createDefaultMessageCategories(newProject);
+
         todoService.createTodoList(
                 companyId,
                 newProject.getId(),
