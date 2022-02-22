@@ -17,8 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.lang.reflect.Array;
-import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -48,6 +46,9 @@ public class CompanyServiceTest {
     private TodoItemRepository todoItemRepository;
 
     @Mock
+    private UserLoginInfoRepository userLoginInfoRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -74,6 +75,7 @@ public class CompanyServiceTest {
         userMapper = new UserMapper(passwordEncoder);
         companyService = new CompanyService(
                 userRepository,
+                userLoginInfoRepository,
                 companyRepository,
                 employeeRepository,
                 todoItemRepository,
@@ -339,5 +341,12 @@ public class CompanyServiceTest {
         assertEquals(invitationLink, linkCaptor.getValue());
         assertEquals(EmailType.CompanyInvitation, emailTypeCaptor.getValue());
     }
+    @Test
+    public void shouldReturnErrorWhenUserDoesNotBelongToCompany() {
+        Long companyId = 999L;
+        String email = "123@gmail.com";
+        List<Long> allCompanyIdsOfUser = userRepository.findUserCompanyIdList(email);
+        assertEquals(allCompanyIdsOfUser.contains(companyId), false);
 
+    }
 }

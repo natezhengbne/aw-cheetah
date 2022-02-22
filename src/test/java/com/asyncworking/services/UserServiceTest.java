@@ -8,10 +8,8 @@ import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.*;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.EmailSendRepository;
-import com.asyncworking.repositories.EmployeeRepository;
-import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.repositories.*;
+import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
@@ -29,7 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -57,22 +54,32 @@ public class UserServiceTest {
     private EmailSendRepository emailSendRepository;
 
     @Mock
+    private UserLoginInfoRepository userLoginInfoRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
     private JwtService jwtService;
 
+    @Mock
     private UserMapper userMapper;
+
     @Mock
     private EmployeeMapper employeeMapper;
 
+    @Mock
     private UserService userService;
 
+    @Mock
     private FrontEndUrlConfig frontEndUrlConfig;
 
     @Mock
     private EmailService emailService;
-    private String secretKey = "securesecuresecuresecuresecuresecuresecure";
+
+    @Mock
+    private CompanyMapper companyMapper;
+    private final String secretKey = "securesecuresecuresecuresecuresecuresecure";
 
     @BeforeEach()
     void setup() {
@@ -84,6 +91,7 @@ public class UserServiceTest {
                 companyRepository,
                 employeeRepository,
                 emailSendRepository,
+                userLoginInfoRepository,
                 jwtService,
                 userMapper,
                 employeeMapper,

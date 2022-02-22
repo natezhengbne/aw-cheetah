@@ -4,6 +4,7 @@ import com.asyncworking.dtos.*;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.CompanyService;
+import com.asyncworking.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,15 @@ public class CompanyController {
         log.info("email: {}", email);
         CompanyColleagueDto companyColleagueDto = companyService.getCompanyInfoDto(email);
         return ResponseEntity.ok(companyColleagueDto);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity getUserCompanyList(@RequestParam(value = "email") String email,
+                                             @RequestParam(value = "userId") Long userId,
+                                             @RequestParam(value = "companyId") Long companyId) {
+        log.info("email: {}, currenCompanyId: {}, userId: {}", email, companyId, userId);
+        companyService.updateUserLoginCompanyId(email, companyId, userId);
+        return ResponseEntity.ok(companyService.getUserCompanyListByEmail(email));
     }
 
     @GetMapping("/{companyId}/profile")

@@ -30,4 +30,5 @@ public class UserInfoDto {
     private String accessToken;
 
     private List<Long> projectId;
+
 }

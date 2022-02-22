@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -94,7 +95,7 @@ public class UserController {
     }
 
     @PostMapping("/password")
-    public ResponseEntity generateResetPasswordLink(@RequestParam(value = "email")  String email) {
+    public ResponseEntity generateResetPasswordLink(@RequestParam(value = "email") String email) {
         if (userService.ifUnverified(email)) {
             return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
         }

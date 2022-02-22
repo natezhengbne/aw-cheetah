@@ -208,4 +208,18 @@ public class UserRepositoryTest extends DBHelper {
         Optional<List<UserEntity>> userEntityList = userRepository.findByIdIn(List.of(savedMockUser1.getId(), savedMockUser2.getId()));
         assertEquals(2, userEntityList.get().size());
     }
+    @Test
+    public void shouldReturnUserCompanyIdList() {
+        UserEntity mockUser = UserEntity.builder()
+                .name("new")
+                .email("new@asyncworking.com")
+                .title("Developer")
+                .status(Status.ACTIVATED)
+                .password(passwordEncoder.encode("len123"))
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+        List<Long> userCompanyIdList = userRepository.findUserCompanyIdList(mockUser.getEmail());
+        assertEquals(0, userCompanyIdList.size());
+    }
 }

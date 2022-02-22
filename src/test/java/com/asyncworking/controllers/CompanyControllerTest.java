@@ -6,6 +6,7 @@ import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.EmployeeNotFoundException;
 import com.asyncworking.services.CompanyService;
 import com.asyncworking.services.ProjectService;
+import com.asyncworking.services.UserService;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -294,5 +295,25 @@ public class CompanyControllerTest extends ControllerHelper {
                         .content(objectMapper.writeValueAsString(accountDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnOkIfGetUserCompanyListSuccessful() throws Exception {
+        String email = "123@gmail.com";
+        Long userId = 1L;
+        Long companyId = 1L;
+        CompanyInfoDto infoDto = CompanyInfoDto.builder()
+                .id(1L)
+                .name("Test")
+                .description("Test")
+                .build();
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/companies/")
+                                .param("email", email)
+                                .param("userId", String.valueOf(userId))
+                                .param("companyId", String.valueOf(companyId))
+                                .content(objectMapper.writeValueAsString(infoDto))
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 }

@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -32,6 +31,8 @@ import static java.time.ZoneOffset.UTC;
 public class CompanyService {
 
     private final UserRepository userRepository;
+
+    private final UserLoginInfoRepository userLoginInfoRepository;
 
     private final CompanyRepository companyRepository;
 
@@ -85,6 +86,10 @@ public class CompanyService {
         log.info("find first company with company ID: {} by user's email: {}", companiesInfo.get(0).getId(), email);
         List<String> colleague = companyRepository.findNameById(companiesInfo.get(0).getId());
         return mapCompanyToCompanyDto(companiesInfo.get(0), colleague);
+    }
+
+    public List<ICompanyInfo> getUserCompanyListByEmail(String email){
+        return companyRepository.findCompanyInfoByEmail(email);
     }
 
     private CompanyColleagueDto mapCompanyToCompanyDto(ICompanyInfo companyInfo, List<String> colleague) {
@@ -220,5 +225,16 @@ public class CompanyService {
                 invitationLink,
                 EmailType.CompanyInvitation
         );
+    }
+
+   @Transactional(rollbackFor = CompanyNotFoundException.class)
+    public void updateUserLoginCompanyId(String email, Long companyId, Long userId) {
+        List<Long> userCompanyIdList = userRepository.findUserCompanyIdList(email);
+        OffsetDateTime loginTime = OffsetDateTime.now(UTC);
+        if (userCompanyIdList.contains(companyId)) {
+            userLoginInfoRepository.setUserLoginCompanyId(companyId, userId, loginTime);
+        } else {
+            throw new CompanyNotFoundException("This user does not belong to this company");
+        }
     }
 }

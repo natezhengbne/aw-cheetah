@@ -7,14 +7,8 @@ import com.asyncworking.dtos.*;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.models.Company;
-import com.asyncworking.models.Employee;
-import com.asyncworking.models.EmployeeId;
-import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.EmailSendRepository;
-import com.asyncworking.repositories.EmployeeRepository;
-import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.models.*;
+import com.asyncworking.repositories.*;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
@@ -30,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -42,12 +37,15 @@ public class UserService {
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
     private final EmailSendRepository emailSendRepository;
+    private final UserLoginInfoRepository userLoginInfoRepository;
+
     private final JwtService jwtService;
     private final UserMapper userMapper;
     private final EmployeeMapper employeeMapper;
     private final FrontEndUrlConfig frontEndUrlConfig;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -170,7 +168,7 @@ public class UserService {
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
-                .compact();;
+                .compact();
         log.info("companyInvitationLink: " + invitationLink);
         return invitationLink;
     }
@@ -217,7 +215,6 @@ public class UserService {
     }
 
     private String decodedEmail(String code) {
-
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .build()
@@ -237,7 +234,23 @@ public class UserService {
     }
 
     public Long fetchCompanyId(String email) {
-        return userRepository.findEmployeesByEmail(email).get(0).getId().getCompanyId();
+        List<Long> userCompanyIdList = userRepository.findUserCompanyIdList(email);
+        UserEntity loginUserEntity = findUserByEmail(email);
+        Company loginCompany = getCompanyInfo(userCompanyIdList.get(0));
+        if (!userLoginInfoRepository.findUserLoginInfoByUserId(loginUserEntity.getId()).isPresent()) {
+            UserLoginInfo userLoginInfo = creatUserLoginInfo(loginUserEntity.getId(), loginCompany.getId());
+            userLoginInfoRepository.save(userLoginInfo);
+        }
+        return userLoginInfoRepository.findUserLoginCompanyIdByUserId(loginUserEntity.getId());
+    }
+
+    private UserLoginInfo creatUserLoginInfo(Long userId, Long companyId) {
+        return UserLoginInfo.builder()
+                .userId(userId)
+                .companyId(companyId)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
     }
 
     public boolean ifUnverified(String email) {
@@ -267,4 +280,6 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
+
+
 }
