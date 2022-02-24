@@ -16,6 +16,7 @@ import static java.time.ZoneOffset.UTC;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EmailMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "userEntity", source = "userEntity")
     @Mapping(target = "receiver", source = "receiverEmail")
     @Mapping(target = "sendStatus", constant = "false")
