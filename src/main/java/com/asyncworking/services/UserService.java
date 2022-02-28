@@ -214,6 +214,18 @@ public class UserService {
         return numberOfActiveUser != 0;
     }
 
+    public Boolean isInvitedUser(String id, String code) {
+        String userEmail = userRepository.findEmailById(Long.parseLong(id));
+        String decodedEmail = this.decodedEmail(code);
+        // log.debug("userEmail: {}" + userEmail);
+        // log.debug("decodedEmail: {}" + decodedEmail);
+        // log.debug("equal: {}" + userEmail.equals(decodedEmail));
+        if(userEmail.equals(decodedEmail)){
+            return true;
+        }
+        return false;
+    }
+
     private String decodedEmail(String code) {
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
@@ -221,7 +233,7 @@ public class UserService {
                 .parseClaimsJws(code);
 
         Claims body = jws.getBody();
-
+        log.debug("Invited user's body: {}" + body);
         return body.get("email").toString();
     }
 
@@ -280,6 +292,5 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
-
 
 }
