@@ -132,7 +132,6 @@ public class UserService {
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
                 .compact();
         log.info("jwt token: " + jws);
-
         return jws;
     }
 
@@ -156,7 +155,7 @@ public class UserService {
         return invitationJwt;
     }
 
-    public String generateCompanyInvitationLink(Long companyId, String email, String name, Date expireDate) {
+    public String generateCompanyInvitationLink(Long companyId, String email, String name, String title, Date expireDate) {
         String invitationLink = frontEndUrlConfig.getFrontEndUrl()
                 + "/company-invitations/info?code="
                 + Jwts.builder()
@@ -164,6 +163,7 @@ public class UserService {
                 .claim("companyId", companyId)
                 .claim("email", email)
                 .claim("name", name)
+                .claim("title", title)
                 .claim("date", expireDate)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
@@ -220,10 +220,7 @@ public class UserService {
         // log.debug("userEmail: {}" + userEmail);
         // log.debug("decodedEmail: {}" + decodedEmail);
         // log.debug("equal: {}" + userEmail.equals(decodedEmail));
-        if(userEmail.equals(decodedEmail)){
-            return true;
-        }
-        return false;
+        return userEmail.equals(decodedEmail);
     }
 
     private String decodedEmail(String code) {
