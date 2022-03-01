@@ -215,12 +215,21 @@ public class UserService {
     }
 
     public Boolean isCompanyInvitedUser(String id, String code) {
-        String userEmail = userRepository.findEmailById(Long.parseLong(id));
-        String decodedEmail = decode(code).get("email").toString();
-        int numberOfEmails = emailSendRepository.findIfEmailExist(decodedEmail, "CompanyInvitation");
-        log.debug("decodedEmail: {}", decodedEmail);
-        log.debug("numberOfEmails: {}", numberOfEmails);
-        return userEmail.equals(decodedEmail);
+        Long userId = Long.parseLong(id);
+        String userEmail = userRepository.findEmailById(userId);
+        Claims decodedBody = decode(code);
+        String decodedEmail = decodedBody.get("email").toString();
+        int existedEmail = emailSendRepository.findExistEmail(decodedEmail, "CompanyInvitation");
+        Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
+        // log.debug("id: {}", id);
+        // log.debug("decodedCompanyId: {}", decodedCompanyId);
+        int existedMember = companyRepository.findExistMemberById(userId, decodedCompanyId);
+        // log.debug("decodedEmail: {}", decodedEmail);
+        // log.debug("emailExist: {}", existedEmail);
+        // log.debug("existedMember: {}", existedMember);
+
+        return (userEmail.equals(decodedEmail) && existedEmail > 0 && existedMember == 0);
+
     }
 
     private Claims decode(String code) {

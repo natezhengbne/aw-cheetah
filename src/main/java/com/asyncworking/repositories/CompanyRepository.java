@@ -41,11 +41,9 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     boolean existsById(Long id);
 
     @Query(nativeQuery = true, value =
-            "select ui.name from user_info ui, company_user cu " +
-                    "where ui.id = cu.user_id " +
-                    "and cu.company_id = :id " +
-                    "and ui.status = 'ACTIVATED' " +
-                    "order by ui.name " +
-                    "LIMIT 6")
-    List<String> findNameById(@Param("id") Long id);
+            "SELECT COUNT (*) " +
+                    "FROM company_user cu " +
+                    "WHERE cu.user_id = :id " +
+                    "AND cu.company_id = :companyId ")
+    int findExistMemberById(@Param("id") Long id, @Param("companyId") Long companyId);
 }

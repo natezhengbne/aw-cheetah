@@ -42,7 +42,7 @@ public interface EmailSendRepository extends JpaRepository<EmailSendRecord, Long
                     "FROM email_send es \n" +
                     "WHERE es.receiver = :receiver \n" +
                     "AND es.email_type = :email_type")
-    int findIfEmailExist(@NotNull @Param("receiver") String receiver,
+    int findExistEmail(@NotNull @Param("receiver") String receiver,
                          @NotNull @Param("email_type") String email_type);
 
 }
