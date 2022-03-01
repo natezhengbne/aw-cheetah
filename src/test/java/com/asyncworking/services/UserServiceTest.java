@@ -344,7 +344,7 @@ public class UserServiceTest {
         String expectedLink = frontEndUrlConfig.getFrontEndUrl()
                 .concat("/company-invitations/info?code=")
                 .concat("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIsImNvbXBhbn");
-        String actual = userService.generateCompanyInvitationLink(1L, "user2@gmail", "user2", new Date());
+        String actual = userService.generateCompanyInvitationLink(1L, "user2@gmail", "user2", "member", new Date());
         assertEquals(expectedLink.substring(0, 70), actual.substring(0, 70));
     }
 }

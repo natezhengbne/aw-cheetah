@@ -212,7 +212,7 @@ public class CompanyService {
 
         Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
         String invitationLink = userService.generateCompanyInvitationLink(
-                companyId, invitedAccountDto.getEmail(), invitedAccountDto.getName(), expireDate);
+                companyId, invitedAccountDto.getEmail(), invitedAccountDto.getName(), invitedAccountDto.getTitle(), expireDate);
         if (invitedAccountDto.getName().contains(" ")) {
             invitedAccountDto.setName(invitedAccountDto.getName().substring(0, invitedAccountDto.getName().indexOf(" ")));
         }

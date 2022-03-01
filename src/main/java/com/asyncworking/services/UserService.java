@@ -132,7 +132,6 @@ public class UserService {
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
                 .compact();
         log.info("jwt token: " + jws);
-
         return jws;
     }
 
@@ -156,7 +155,7 @@ public class UserService {
         return invitationJwt;
     }
 
-    public String generateCompanyInvitationLink(Long companyId, String email, String name, Date expireDate) {
+    public String generateCompanyInvitationLink(Long companyId, String email, String name, String title, Date expireDate) {
         String invitationLink = frontEndUrlConfig.getFrontEndUrl()
                 + "/company-invitations/info?code="
                 + Jwts.builder()
@@ -164,6 +163,7 @@ public class UserService {
                 .claim("companyId", companyId)
                 .claim("email", email)
                 .claim("name", name)
+                .claim("title", title)
                 .claim("date", expireDate)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
@@ -214,6 +214,15 @@ public class UserService {
         return numberOfActiveUser != 0;
     }
 
+    public Boolean isInvitedUser(String id, String code) {
+        String userEmail = userRepository.findEmailById(Long.parseLong(id));
+        String decodedEmail = this.decodedEmail(code);
+        // log.debug("userEmail: {}" + userEmail);
+        // log.debug("decodedEmail: {}" + decodedEmail);
+        // log.debug("equal: {}" + userEmail.equals(decodedEmail));
+        return userEmail.equals(decodedEmail);
+    }
+
     private String decodedEmail(String code) {
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
@@ -221,7 +230,7 @@ public class UserService {
                 .parseClaimsJws(code);
 
         Claims body = jws.getBody();
-
+        log.debug("Invited user's body: {}" + body);
         return body.get("email").toString();
     }
 
@@ -280,6 +289,5 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
-
 
 }

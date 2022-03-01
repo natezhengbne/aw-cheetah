@@ -315,7 +315,7 @@ public class CompanyServiceTest {
         when(userRepository.findByEmail(any())).thenReturn(Optional.ofNullable(receiver));
         when(emailSendRepository.findCompanyInfo(any())).thenReturn(Optional.ofNullable(companyInfo));
         when(emailService.saveCompanyInvitationEmailSendingRecord(any(), any(), any(), any())).thenReturn(emailSendRecord);
-        when(userService.generateCompanyInvitationLink(any(), any(), any(), any())).thenReturn(invitationLink);
+        when(userService.generateCompanyInvitationLink(any(), any(), any(), any(), any())).thenReturn(invitationLink);
         companyService.sendCompanyInvitationToSQS(companyId, accountDto);
 
         ArgumentCaptor<Long> emailRecordIdCaptor = ArgumentCaptor.forClass(Long.class);

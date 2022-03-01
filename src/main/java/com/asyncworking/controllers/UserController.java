@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -117,5 +117,16 @@ public class UserController {
     public ResponseEntity resetPassword(@Valid @RequestBody UserInfoDto userInfoDto) {
         userService.resetPassword(userInfoDto);
         return ResponseEntity.ok("reset");
+    }
+
+    @PostMapping("/accept-company-invitation")
+    public ResponseEntity addNewCompanyMember(@RequestBody CompanyInvitationCodeDto companyInvitationCodeDto) {
+        log.info("INVITATION CodeDTO: {}", companyInvitationCodeDto.code);
+        log.info("INVITATION ID: {}", Long.parseLong(companyInvitationCodeDto.userId));
+        Boolean isInvitedSuccess = userService.isInvitedUser(companyInvitationCodeDto.userId, companyInvitationCodeDto.code);
+        if (isInvitedSuccess) {
+            return ResponseEntity.ok("success");
+        }
+        return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
     }
 }
