@@ -98,15 +98,4 @@ public class UserMapper {
                 .name(userEntity.getName())
                 .build();
     }
-
-    public UserEntity mapNewCompanyMemberDtoToEntity(String email, String name, String password) {
-        return UserEntity.builder()
-                .email(email)
-                .name(name)
-                .password(password)
-                .status(Status.ACTIVATED)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-    }
 }

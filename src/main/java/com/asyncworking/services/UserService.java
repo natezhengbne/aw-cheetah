@@ -220,45 +220,35 @@ public class UserService {
 
         Claims decodedBody = decode(code);
         String decodedEmail = decodedBody.get("email").toString();
-        int existedEmail = emailSendRepository.findExistEmail(decodedEmail, "CompanyInvitation");
+        // int existedEmail = emailSendRepository.findExistEmail(decodedEmail, "CompanyInvitation");
 
         Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
+        // check user_info
+        // UserEntity
         int existedMember = employeeRepository.findExistMemberById(userId, decodedCompanyId);
+        UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
+
         String decodedTitle = decodedBody.get("title").toString();
-        String decodedName = decodedBody.get("name").toString();
-        String password = userLoginInfoRepository.findPasswordById(userId);
+        // add try/ catch
 
-        if (userEmail.equals(decodedEmail) && existedEmail > 0 && existedMember == 0) {
-            NewCompanyMemberDto newCompanyMemberDto = NewCompanyMemberDto.builder()
-                    .userId(userId)
-                    .companyId(1L)  // EDIT TO decodedCompanyId, the company id was from uat
-                    .title(decodedTitle)
-                    .createdTime(OffsetDateTime.now(UTC))
-                    .updatedTime(OffsetDateTime.now(UTC))
-                    .build();
-            log.debug("companyInvitationMemberDto:{}", newCompanyMemberDto);
-            UserEntity userEntity = userMapper.mapNewCompanyMemberDtoToEntity(decodedEmail, decodedName, password);
+        Company company = getCompanyInfo(2L); // TO EDIT: decodedCompanyId
 
-            Company company = getCompanyInfo(1L); // TO EDIT: decodedCompanyId
+        EmployeeId employeeId = EmployeeId.builder()
+                .userId(userId)
+                .companyId(company.getId())
+                .build();
 
-            EmployeeId employeeId = EmployeeId.builder()
-                    .userId(userId)
-                    .companyId(company.getId())
-                    .build();
+        Employee employee = Employee.builder()
+                .id(employeeId)
+                .userEntity(userEntity)
+                .company(company)
+                .title(decodedTitle)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
 
-            Employee employee = Employee.builder()
-                    .id(employeeId)
-                    .userEntity(userEntity)
-                    .company(company)
-                    .title(decodedTitle)
-                    .createdTime(OffsetDateTime.now(UTC))
-                    .updatedTime(OffsetDateTime.now(UTC))
-                    .build();
-
-            employeeRepository.save(employee);
-            return true;
-        }
-        return false;
+        employeeRepository.save(employee);
+        return true;
     }
 
     private Claims decode(String code) {
