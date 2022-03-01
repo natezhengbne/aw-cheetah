@@ -214,24 +214,27 @@ public class UserService {
         return numberOfActiveUser != 0;
     }
 
-    public Boolean isInvitedUser(String id, String code) {
+    public Boolean isCompanyInvitedUser(String id, String code) {
         String userEmail = userRepository.findEmailById(Long.parseLong(id));
-        String decodedEmail = this.decodedEmail(code);
-        // log.debug("userEmail: {}" + userEmail);
-        // log.debug("decodedEmail: {}" + decodedEmail);
-        // log.debug("equal: {}" + userEmail.equals(decodedEmail));
+        String decodedEmail = decode(code).get("email").toString();
+        int numberOfEmails = emailSendRepository.findIfEmailExist(decodedEmail, "CompanyInvitation");
+        log.debug("decodedEmail: {}", decodedEmail);
+        log.debug("numberOfEmails: {}", numberOfEmails);
         return userEmail.equals(decodedEmail);
     }
 
-    private String decodedEmail(String code) {
+    private Claims decode(String code) {
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .build()
                 .parseClaimsJws(code);
-
         Claims body = jws.getBody();
-        log.debug("Invited user's body: {}" + body);
-        return body.get("email").toString();
+        log.debug("Invited user's body: {}", body);
+        return body;
+    }
+
+    private String decodedEmail(String code) {
+        return decode(code).get("email").toString();
     }
 
     public int activeUser(String email) {

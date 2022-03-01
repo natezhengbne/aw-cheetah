@@ -36,4 +36,13 @@ public interface EmailSendRepository extends JpaRepository<EmailSendRecord, Long
             "WHERE e.id = :emailRecordId")
     int updateEmailRecordStatus(@NotNull @Param("emailRecordId") Long emailRecordId,
                                 @NotNull @Param("receiveTime") OffsetDateTime receiveTime);
+
+    @Query(nativeQuery = true,
+            value = "SELECT COUNT (*) \n" +
+                    "FROM email_send es \n" +
+                    "WHERE es.receiver = :receiver \n" +
+                    "AND es.email_type = :email_type")
+    int findIfEmailExist(@NotNull @Param("receiver") String receiver,
+                         @NotNull @Param("email_type") String email_type);
+
 }

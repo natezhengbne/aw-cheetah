@@ -123,7 +123,7 @@ public class UserController {
     public ResponseEntity addNewCompanyMember(@RequestBody CompanyInvitationCodeDto companyInvitationCodeDto) {
         log.info("INVITATION CodeDTO: {}", companyInvitationCodeDto.code);
         log.info("INVITATION ID: {}", Long.parseLong(companyInvitationCodeDto.userId));
-        Boolean isInvitedSuccess = userService.isInvitedUser(companyInvitationCodeDto.userId, companyInvitationCodeDto.code);
+        Boolean isInvitedSuccess = userService.isCompanyInvitedUser(companyInvitationCodeDto.userId, companyInvitationCodeDto.code);
         if (isInvitedSuccess) {
             return ResponseEntity.ok("success");
         }
