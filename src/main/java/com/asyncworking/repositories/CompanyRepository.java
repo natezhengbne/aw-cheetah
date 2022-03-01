@@ -40,10 +40,4 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     boolean existsById(Long id);
 
-    @Query(nativeQuery = true, value =
-            "SELECT COUNT (*) " +
-                    "FROM company_user cu " +
-                    "WHERE cu.user_id = :id " +
-                    "AND cu.company_id = :companyId ")
-    int findExistMemberById(@Param("id") Long id, @Param("companyId") Long companyId);
 }
