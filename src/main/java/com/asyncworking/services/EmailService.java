@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.field.OffsetDateTimeField;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
@@ -59,12 +58,22 @@ public class EmailService {
         emailType.put(EmailType.CompanyInvitation, s3CompanyInvitationTemplateKey);
     }
 
-    public void sendMessageToSQS(UserEntity userEntity, String verificationLink, EmailType templateType, String receiverEmail) {
+    public void sendMessageToSQS(EmailSendRecord emailSendRecord, UserEntity userEntity, String verificationLink) {
         try {
-            queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(
-                    objectMapper.writeValueAsString(
-                            toEmailMessageDto(userEntity, verificationLink, templateType, receiverEmail))
-            ).build());
+            EmailMessageDto messageDto = EmailMessageDto.builder()
+                    .emailRecordId(emailSendRecord.getId())
+                    .userName(userEntity.getName())
+                    .verificationLink(verificationLink)
+                    .templateType(emailSendRecord.getEmailType().toString())
+                    .email(emailSendRecord.getReceiver())
+                    .templateS3Bucket(s3Bucket)
+                    .templateS3Key(emailType.get(emailSendRecord.getEmailType()))
+                    .build();
+
+            queueMessagingTemplate.send(
+                    endPoint,
+                    MessageBuilder.withPayload(objectMapper.writeValueAsString(messageDto)).build()
+            );
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -99,21 +108,21 @@ public class EmailService {
         );
     }
 
-    private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String link,
-                                              EmailType templateType, String receiverEmail) {
-        String userFirstName = userEntity.getName();
-        if (userFirstName.contains(" ")) {
-            userFirstName = userFirstName.substring(0, userFirstName.indexOf(" "));
-        }
-        return EmailMessageDto.builder()
-                .userName(userFirstName)
-                .verificationLink(link)
-                .templateType(templateType.toString())
-                .email(receiverEmail)
-                .templateS3Bucket(s3Bucket)
-                .templateS3Key(emailType.get(templateType))
-                .build();
-    }
+//    private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String link,
+//                                              EmailType templateType, String receiverEmail) {
+//        String userFirstName = userEntity.getName();
+//        if (userFirstName.contains(" ")) {
+//            userFirstName = userFirstName.substring(0, userFirstName.indexOf(" "));
+//        }
+//        return EmailMessageDto.builder()
+//                .userName(userFirstName)
+//                .verificationLink(link)
+//                .templateType(templateType.toString())
+//                .email(receiverEmail)
+//                .templateS3Bucket(s3Bucket)
+//                .templateS3Key(emailType.get(templateType))
+//                .build();
+//    }
 
     @Transactional
     public int updateEmailRecordSendStatus(Long emailRecordId) {

@@ -1,12 +1,28 @@
 package com.asyncworking.services;
 
 import com.asyncworking.constants.EmailType;
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AvailableEmployeesGetDto;
+import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyInvitedAccountDto;
+import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
-import com.asyncworking.models.*;
-import com.asyncworking.repositories.*;
+import com.asyncworking.models.Company;
+import com.asyncworking.models.EmailSendRecord;
+import com.asyncworking.models.Employee;
+import com.asyncworking.models.EmployeeId;
+import com.asyncworking.models.ICompanyInfo;
+import com.asyncworking.models.ICompanyInvitationEmailCompanyInfo;
+import com.asyncworking.models.TodoItem;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
+import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.TodoItemRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
@@ -17,10 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.asyncworking.models.RoleNames.COMPANY_MANAGER;
@@ -188,9 +207,9 @@ public class CompanyService {
 
         List<List<CardTodoItemDto>> cardList = Arrays.asList(upcomingItems, expiringItems, overdueItems);
         return cardList.stream().map(list -> list.stream().sorted(Comparator
-                        .comparing(CardTodoItemDto::getDueDate)
-                        .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
-                        .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()))
+                .comparing(CardTodoItemDto::getDueDate)
+                .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
+                .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
 

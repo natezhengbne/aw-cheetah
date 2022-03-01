@@ -2,12 +2,18 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.MessageGetDto;
 import com.asyncworking.dtos.MessagePostDto;
-import com.asyncworking.exceptions.*;
+import com.asyncworking.exceptions.MessageCategoryNotFoundException;
+import com.asyncworking.exceptions.MessageNotFoundException;
+import com.asyncworking.exceptions.ProjectNotFoundException;
+import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Message;
 import com.asyncworking.models.MessageCategory;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.UserEntity;
-import com.asyncworking.repositories.*;
+import com.asyncworking.repositories.MessageCategoryRepository;
+import com.asyncworking.repositories.MessageRepository;
+import com.asyncworking.repositories.ProjectRepository;
+import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.MessageMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +55,9 @@ public class MessageService {
     public void verifyMessagePostDto(Long companyId, Long projectId, MessagePostDto messagePostDto) {
         Project project = projectRepository.findById(projectId).orElseThrow(() ->
                 new ProjectNotFoundException("There is no project: " + projectId));
-       if (project.getCompanyId() != companyId) {
-           throw new ProjectNotFoundException("There is no project: " + projectId + "in this company: " + companyId);
-       }
+        if (project.getCompanyId() != companyId) {
+            throw new ProjectNotFoundException("There is no project: " + projectId + "in this company: " + companyId);
+        }
         if (!userRepository.existsById(messagePostDto.getPosterUserId())) {
             throw new UserNotFoundException("Cannot find user by id: " + messagePostDto.getPosterUserId());
         }

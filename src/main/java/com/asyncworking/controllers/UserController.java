@@ -51,7 +51,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) throws JsonProcessingException {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndSendMessageToSQS(accountDto);
+        userService.createUserAndSendVerificationMessageToSQS(accountDto);
         return ResponseEntity.ok("success");
     }
 
@@ -79,7 +79,7 @@ public class UserController {
 
     @PostMapping("/resend")
     public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) throws JsonProcessingException {
-        userService.resendMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
+        userService.resendVerificationMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
         return ResponseEntity.ok("success");
     }
 

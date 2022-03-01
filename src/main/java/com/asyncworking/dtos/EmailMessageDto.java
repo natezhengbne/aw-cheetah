@@ -3,6 +3,7 @@ package com.asyncworking.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailMessageDto {
+    private Long emailRecordId;
     private String email;
     private String userName;
     private String verificationLink;

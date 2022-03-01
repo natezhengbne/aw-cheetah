@@ -29,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -191,7 +190,7 @@ public class UserServiceTest {
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
 
-        userService.createUserAndSendMessageToSQS(accountDto);
+        userService.createUserAndSendVerificationMessageToSQS(accountDto);
 
         verify(userRepository).save(captor.capture());
         UserEntity savedUser = captor.getValue();
