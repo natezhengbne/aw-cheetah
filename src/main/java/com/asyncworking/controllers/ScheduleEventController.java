@@ -1,9 +1,9 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.EventGetDto;
-import com.asyncworking.dtos.EventPostDto;
+import com.asyncworking.dtos.ScheduleEventGetDto;
+import com.asyncworking.dtos.ScheduleEventPostDto;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.services.EventService;
+import com.asyncworking.services.ScheduleEventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,9 +25,9 @@ import java.util.List;
 @RestController
 @RequestMapping("companies/{companyId}/projects/{projectId}")
 @RequiredArgsConstructor
-public class EventController {
+public class ScheduleEventController {
 
-    private final EventService eventService;
+    private final ScheduleEventService scheduleEventService;
 
     private final JwtService jwtService;
 
@@ -36,14 +36,14 @@ public class EventController {
             @RequestHeader("Authorization") String auth,
             @PathVariable Long companyId,
             @PathVariable Long projectId,
-            @Valid @RequestBody EventPostDto eventPostDto) {
+            @Valid @RequestBody ScheduleEventPostDto scheduleEventPostDto) {
         Long userId = jwtService.getUserIdFromJwt(auth);
-        log.debug("Create Event for user(userId = {}) about project(companyId = {}, projectId = {})", userId, companyId, projectId);
-        return ResponseEntity.ok(eventService.createEvent(companyId, projectId, userId, eventPostDto));
+        log.debug("Create ScheduleEvent for user(userId = {}) about project(companyId = {}, projectId = {})", userId, companyId, projectId);
+        return ResponseEntity.ok(scheduleEventService.createEvent(companyId, projectId, userId, scheduleEventPostDto));
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<EventGetDto>> getEventsForUserByDate(
+    public ResponseEntity<List<ScheduleEventGetDto>> getEventsForUserByDate(
             @RequestHeader("Authorization") String auth,
             @PathVariable Long companyId,
             @PathVariable Long projectId,
@@ -52,6 +52,6 @@ public class EventController {
         Long userId = jwtService.getUserIdFromJwt(auth);
         log.debug("Get Events for user(userId = {}) about project(companyId = {}, projectId = {}) on the day starts at {} ",
                 userId, companyId, projectId, dayStartTime);
-        return ResponseEntity.ok(eventService.getOwnedEventsByDate(dayStartTime, userId, projectId, companyId));
+        return ResponseEntity.ok(scheduleEventService.getOwnedEventsByDate(dayStartTime, userId, projectId, companyId));
     }
 }

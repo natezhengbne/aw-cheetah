@@ -1,6 +1,6 @@
 CREATE SCHEMA if not exists "awcheetah";
-DROP TABLE IF EXISTS "event";
-CREATE TABLE "event" (
+DROP TABLE IF EXISTS "scheduleEvent";
+CREATE TABLE "scheduleEvent" (
     "id" BIGSERIAL PRIMARY KEY,
     "owner_id" BIGINT NOT NULL REFERENCES "user_info" (id),
     "company_id" BIGINT NOT NULL REFERENCES "company" (id),
@@ -13,4 +13,4 @@ CREATE TABLE "event" (
     "created_time" TIMESTAMP WITH TIME ZONE NOT NULL,
     "updated_time" TIMESTAMP WITH TIME ZONE NOT NULL
 );
-CREATE INDEX event_company_project_owner_idx ON event (company_id, project_id, owner_id);
+CREATE INDEX event_company_project_owner_idx ON scheduleEvent (company_id, project_id, owner_id);
