@@ -120,13 +120,12 @@ public class UserController {
     }
 
     @PostMapping("/accept-company-invitation")
-    public ResponseEntity addNewCompanyMember(@RequestBody CompanyInvitationCodeDto companyInvitationCodeDto) {
-        log.info("INVITATION CodeDTO: {}", companyInvitationCodeDto.code);
-        log.info("INVITATION ID: {}", Long.parseLong(companyInvitationCodeDto.userId));
-        Boolean isInvitedSuccess = userService.isCompanyInvitedUser(companyInvitationCodeDto.userId, companyInvitationCodeDto.code);
+    public ResponseEntity addNewCompanyMember(@RequestParam(value = "code") String code) {
+        log.info("INVITATION CodeDTO: {}", code);
+        Boolean isInvitedSuccess = userService.isCompanyInvitationSuccess(code);
         if (isInvitedSuccess) {
             return ResponseEntity.ok("success");
         }
-        return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        return new ResponseEntity<>("The user already joined the company", HttpStatus.CONFLICT);
     }
 }

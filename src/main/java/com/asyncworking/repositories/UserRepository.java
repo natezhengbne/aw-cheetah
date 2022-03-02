@@ -100,4 +100,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(nativeQuery = true, value = "SELECT ui.email FROM user_info ui " +
             "WHERE ui.id = :id")
     String findEmailById(@Param("id") Long id);
+
+    @Query(nativeQuery = true, value = "SELECT ui.id FROM user_info ui " +
+            "WHERE ui.email = :email")
+    Long findIdByEmail(@Param("email") String email);
 }

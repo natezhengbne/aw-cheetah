@@ -214,41 +214,39 @@ public class UserService {
         return numberOfActiveUser != 0;
     }
 
-    public Boolean isCompanyInvitedUser(String id, String code) {
-        Long userId = Long.parseLong(id);
-        String userEmail = userRepository.findEmailById(userId);
-
+    public Boolean isCompanyInvitationSuccess(String code) {
         Claims decodedBody = decode(code);
         String decodedEmail = decodedBody.get("email").toString();
-        // int existedEmail = emailSendRepository.findExistEmail(decodedEmail, "CompanyInvitation");
-
         Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
-        // check user_info
-        // UserEntity
-        int existedMember = employeeRepository.findExistMemberById(userId, decodedCompanyId);
+        Long userId = userRepository.findIdByEmail(decodedEmail);
+        // int existedMember = employeeRepository.findExistMemberById(userId, decodedCompanyId);
         UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
-
         String decodedTitle = decodedBody.get("title").toString();
-        // add try/ catch
+        Company company = getCompanyInfo(5L); // TO EDIT: decodedCompanyId
 
-        Company company = getCompanyInfo(2L); // TO EDIT: decodedCompanyId
-
-        EmployeeId employeeId = EmployeeId.builder()
-                .userId(userId)
-                .companyId(company.getId())
-                .build();
-
-        Employee employee = Employee.builder()
-                .id(employeeId)
-                .userEntity(userEntity)
-                .company(company)
-                .title(decodedTitle)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
+        EmployeeId employeeId = createEmployeeId(userId, company.getId());
+        Employee employee = createEmployee(employeeId, userEntity, company, decodedTitle);
 
         employeeRepository.save(employee);
         return true;
+    }
+
+    private EmployeeId createEmployeeId(Long userId, Long companyId) {
+        return EmployeeId.builder()
+                .userId(userId)
+                .companyId(companyId)
+                .build();
+    }
+
+    private Employee createEmployee(EmployeeId employeeId, UserEntity userEntity, Company company, String title) {
+        return Employee.builder()
+                .id(employeeId)
+                .userEntity(userEntity)
+                .company(company)
+                .title(title)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
     }
 
     private Claims decode(String code) {
