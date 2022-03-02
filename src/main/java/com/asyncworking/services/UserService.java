@@ -215,7 +215,13 @@ public class UserService {
     }
 
     public Boolean isCompanyInvitationSuccess(String code) {
-        Claims decodedBody = decode(code);
+        Claims decodedBody;
+        try {
+            decodedBody = decode(code);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
         String decodedEmail = decodedBody.get("email").toString();
         Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
         Long userId = userRepository.findIdByEmail(decodedEmail);
@@ -226,9 +232,14 @@ public class UserService {
 
         EmployeeId employeeId = createEmployeeId(userId, company.getId());
         Employee employee = createEmployee(employeeId, userEntity, company, decodedTitle);
+        try {
+            employeeRepository.save(employee);
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
 
-        employeeRepository.save(employee);
-        return true;
     }
 
     private EmployeeId createEmployeeId(Long userId, Long companyId) {

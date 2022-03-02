@@ -126,6 +126,6 @@ public class UserController {
         if (isInvitedSuccess) {
             return ResponseEntity.ok("success");
         }
-        return new ResponseEntity<>("The user already joined the company", HttpStatus.CONFLICT);
+        return new ResponseEntity<>("The user already joined the company or the link is expired", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
