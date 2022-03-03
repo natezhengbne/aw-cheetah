@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.asyncworking.jwt.JwtClaims.*;
 
@@ -79,9 +80,13 @@ public class JwtService {
         String email = body.getSubject();
 
         var authorities = (List<LinkedTreeMap<String, Object>>) body.get(AUTHORITIES.value());
-
+        UserEntity userEntity = userRepository.findUserEntityByEmail(email).get();
+        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
+        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
         UserDetails user = applicationUserService.loadUserByUsername(email);
-        if (authorities.size() == user.getAuthorities().size()) {
+        if (authorities.size() == user.getAuthorities().size()
+                && getIdSetFromJwtBody(body, COMPANY_IDS.value()).equals(companyIds)
+                && getIdSetFromJwtBody(body, PROJECT_IDS.value()).equals(projectIds)) {
             return JwtDto.builder()
                     .accessToken(oldToken)
                     .message("No need to refresh the jwtToken.")
@@ -93,6 +98,13 @@ public class JwtService {
                 .accessToken(newToken)
                 .message("JwtToken has already refreshed.")
                 .build();
+    }
+
+    private Set<Long> getIdSetFromJwtBody(Claims body, String idType) {
+        var doubleIdSet = (List<Double>) body.get(idType);
+        return doubleIdSet.stream().
+                map(Double::longValue)
+                .collect(Collectors.toSet());
     }
 
 
