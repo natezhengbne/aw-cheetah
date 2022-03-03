@@ -41,18 +41,7 @@ public class JwtService {
         UserDetails user = applicationUserService.loadUserByUsername(email);
         UserEntity userEntity = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with email: " + email));
-        Set<Long> companyIds = employeeRepository.findCompanyIdByUserId(userEntity.getId());
-        Set<Long> projectIds = projectUserRepository.findProjectIdByUserId(userEntity.getId());
-        return Jwts.builder()
-                .setSubject(email)
-                .claim(AUTHORITIES.value(), user.getAuthorities())
-                .claim(COMPANY_IDS.value(), companyIds)
-                .claim(PROJECT_IDS.value(), projectIds)
-                .claim(USER_ID.value(), userEntity.getId())
-                .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .signWith(secretKey)
-                .compact();
+        return createJwtToken(userEntity, user.getAuthorities());
     }
 
     public String createJwtToken(UserEntity userEntity, Collection<? extends GrantedAuthority> authorities) {

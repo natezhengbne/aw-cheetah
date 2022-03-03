@@ -74,6 +74,7 @@ public class Guard {
                 .map(grantedAuthority -> (AwcheetahGrantedAuthority) grantedAuthority)
                 .collect(Collectors.toSet());
 
-        return authorities.stream().anyMatch(authority -> authority.getAuthority().equals(COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId));
+        return authorities.stream().anyMatch(authority ->
+                authority.getAuthority().equals(COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId));
     }
 }

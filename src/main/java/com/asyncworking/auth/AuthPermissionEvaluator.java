@@ -22,7 +22,8 @@ public class AuthPermissionEvaluator implements PermissionEvaluator {
                 .map(grantedAuthority -> (AwcheetahGrantedAuthority) grantedAuthority)
                 .collect(Collectors.toSet());
 
-        return authorities.stream().anyMatch(authority -> authority.getAuthority().equals(permission.toString()) && authority.getTargetId().equals(targetId));
+        return authorities.stream().anyMatch(authority ->
+                authority.getAuthority().equals(permission.toString()) && authority.getTargetId().equals(targetId));
     }
 
     @Override
