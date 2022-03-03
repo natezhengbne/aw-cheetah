@@ -347,4 +347,15 @@ public class UserServiceTest {
         String actual = userService.generateCompanyInvitationLink(1L, "user2@gmail", "user2", "member", new Date());
         assertEquals(expectedLink.substring(0, 70), actual.substring(0, 70));
     }
+
+    @Test
+    public void shouldReturnTrueifCompanyInvitationSuccess() {
+        String code = "code=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIs" +
+                "ImNvbXBhbnlJZCI6MzcsImVtYWlsIjoiZXJpYzguMTVAaG90bWFpbC5jb20iLCJuYW1lIjo" +
+                "iRXJpYyIsInRpdGxlIjoiTWFuYWdlciIsImRhdGUiOiJNYXIgMiwgMjAyMiwgMTI6MjI6NTEg" +
+                "UE0iLCJpYXQiOjE2NDYxMzczNzEsImV4cCI6MTY0NjIyMzc3MX0.XwrlcsP7jmq0HPjpkboIsW" +
+                "cMobfXHBVEhztyKolh2tQWEj4EnibXNC5ftLF-4J6QnpwIfTCRkGSkJSVzPsahMg";
+
+        assertTrue(!userService.isCompanyInvitationSuccess(code));
+    }
 }

@@ -12,10 +12,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, EmployeeId> 
     @Query(nativeQuery = true, value = " select company_id from company_user where user_id = :userId")
     Set<Long> findCompanyIdByUserId(@Param("userId") Long userId);
 
-    @Query(nativeQuery = true, value =
-            "SELECT COUNT (*) " +
-                    "FROM company_user cu " +
-                    "WHERE cu.user_id = :id " +
-                    "AND cu.company_id = :companyId ")
-    int findExistMemberById(@Param("id") Long id, @Param("companyId") Long companyId);
 }

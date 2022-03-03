@@ -310,5 +310,18 @@ class UserControllerTest extends ControllerHelper{
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldReturnSuccessWhenUserAcceptCompanyInvitation() throws Exception {
+        String code = "xxxxxxx";
+        when(userService.isCompanyInvitationSuccess(code)).thenReturn(true);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/accept-company-invitation")
+                                .param("code", code)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
+    }
 }
 

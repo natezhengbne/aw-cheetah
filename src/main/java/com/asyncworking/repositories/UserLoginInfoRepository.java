@@ -20,8 +20,4 @@ public interface UserLoginInfoRepository extends JpaRepository<UserLoginInfo, Lo
     Long findUserLoginCompanyIdByUserId(@Param("userId") Long userId);
 
     Optional<UserLoginInfo> findUserLoginInfoByUserId(Long userId);
-
-    @Query(nativeQuery = true, value = "SELECT ui.password FROM user_info ui " +
-            "WHERE ui.id = :id")
-    String findPasswordById(@Param("id") Long id);
 }

@@ -223,14 +223,15 @@ public class UserService {
             return false;
         }
         String decodedEmail = decodedBody.get("email").toString();
-        Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
-        Long userId = userRepository.findIdByEmail(decodedEmail);
-        // int existedMember = employeeRepository.findExistMemberById(userId, decodedCompanyId);
-        UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
-        String decodedTitle = decodedBody.get("title").toString();
-        Company company = getCompanyInfo(5L); // TO EDIT: decodedCompanyId
 
+        UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
+
+        Long userId = userRepository.findIdByEmail(decodedEmail);
+        Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
+        Company company = getCompanyInfo(decodedCompanyId); // IN LOCAL: use 1L as company ID
         EmployeeId employeeId = createEmployeeId(userId, company.getId());
+
+        String decodedTitle = decodedBody.get("title").toString();
         Employee employee = createEmployee(employeeId, userEntity, company, decodedTitle);
         try {
             employeeRepository.save(employee);
@@ -266,7 +267,6 @@ public class UserService {
                 .build()
                 .parseClaimsJws(code);
         Claims body = jws.getBody();
-        log.debug("Invited user's body: {}", body);
         return body;
     }
 
