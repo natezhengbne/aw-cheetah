@@ -2,7 +2,6 @@ package com.asyncworking.jwt;
 
 import com.asyncworking.auth.AwcheetahAuthenticationToken;
 import com.asyncworking.auth.AwcheetahGrantedAuthority;
-import com.google.gson.internal.LinkedTreeMap;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -17,17 +16,19 @@ import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.asyncworking.jwt.JwtClaims.*;
+import static com.asyncworking.jwt.JwtClaims.AUTHORIZATION;
+import static com.asyncworking.jwt.JwtClaims.AUTHORIZATION_TYPE;
+import static com.asyncworking.jwt.JwtClaims.COMPANY_IDS;
+import static com.asyncworking.jwt.JwtClaims.PROJECT_IDS;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenVerifyFilter extends OncePerRequestFilter {
 
     private final SecretKey secretKey;
+    private final JwtService jwtService;
 
     @Override
     @SneakyThrows
@@ -46,9 +47,9 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
         Claims body = claimsJws.getBody();
 
         String email = body.getSubject();
-        Set<AwcheetahGrantedAuthority> grantedAuthorities = getAuthoritiesFromJwtBody(body);
-        Set<Long> companyIds = getIdSetFromJwtBody(body, COMPANY_IDS.value());
-        Set<Long> projectIds = getIdSetFromJwtBody(body, PROJECT_IDS.value());
+        Set<AwcheetahGrantedAuthority> grantedAuthorities = jwtService.getAuthoritiesFromJwtBody(body);
+        Set<Long> companyIds = jwtService.getIdSetFromJwtBody(body, COMPANY_IDS);
+        Set<Long> projectIds = jwtService.getIdSetFromJwtBody(body, PROJECT_IDS);
 
         Authentication authentication = new AwcheetahAuthenticationToken(
                 email,
@@ -62,18 +63,4 @@ public class JwtTokenVerifyFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Set<AwcheetahGrantedAuthority> getAuthoritiesFromJwtBody(Claims body) {
-        var authorities = (List<LinkedTreeMap<String, Object>>) body.get(AUTHORITIES.value());
-        return authorities.stream()
-                .map(map -> new AwcheetahGrantedAuthority(map.get(ROLE.value()).toString(),
-                        ((Double) map.get(TARGET_ID.value())).longValue()))
-                .collect(Collectors.toSet());
-    }
-
-    private Set<Long> getIdSetFromJwtBody(Claims body, String idType) {
-        var doubleIdSet =  (List<Double>) body.get(idType);
-        return doubleIdSet.stream().
-                map(Double::longValue)
-                .collect(Collectors.toSet());
-    }
 }

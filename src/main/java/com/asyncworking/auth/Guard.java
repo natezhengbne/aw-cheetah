@@ -43,7 +43,7 @@ public class Guard {
 
     private boolean ifNotAnonymousAuthentication(Authentication authentication) {
         if (authentication.getPrincipal().equals("anonymousUser")) {
-            log.info("Anonymous user, access denied");
+            log.debug("Anonymous user, access denied");
             return false;
         }
         return true;
@@ -53,7 +53,7 @@ public class Guard {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
         Set<Long> companyIds = details.get(COMPANY_IDS);
         if (!companyIds.contains(companyId)) {
-            log.info("User does not belong to this company, access denied.");
+            log.debug("User does not belong to this company, access denied.");
             return false;
         }
         return true;
@@ -63,7 +63,7 @@ public class Guard {
         var details = (Map<String, Set<Long>>) authentication.getDetails();
         Set<Long> projectIds = details.get(PROJECT_IDS);
         if (!projectIds.contains(projectId)) {
-            log.info("User does not belong to this project, access denied");
+            log.debug("User does not belong to this project, access denied");
             return false;
         }
         return true;
@@ -74,11 +74,6 @@ public class Guard {
                 .map(grantedAuthority -> (AwcheetahGrantedAuthority) grantedAuthority)
                 .collect(Collectors.toSet());
 
-        for (AwcheetahGrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals(COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId)) {
-                return true;
-            }
-        }
-        return false;
+        return authorities.stream().anyMatch(authority -> authority.getAuthority().equals(COMPANY_MANAGER.value()) && authority.getTargetId().equals(companyId));
     }
 }
