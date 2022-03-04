@@ -82,12 +82,12 @@ public class CompanyController {
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 
-    @PostMapping("/{companyId}/invite-company-users")
-    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
-    public ResponseEntity sendCompanyInvitationSQSMessage(@PathVariable Long companyId,
-                                                          @Valid @RequestBody CompanyInvitedAccountDto accountDto)
-            throws JsonProcessingException {
-        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
-        return ResponseEntity.ok("success");
-    }
+//    @PostMapping("/{companyId}/invite-company-users")
+//    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
+//    public ResponseEntity sendCompanyInvitationSQSMessage(@PathVariable Long companyId,
+//                                                          @Valid @RequestBody CompanyInvitedAccountDto accountDto)
+//            throws JsonProcessingException {
+//        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
+//        return ResponseEntity.ok("success");
+//    }
 }

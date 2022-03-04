@@ -213,31 +213,31 @@ public class CompanyService {
                 .collect(Collectors.toList());
     }
 
-    public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {
-
-        UserEntity receiver = userRepository.findByEmail(invitedAccountDto.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email" + invitedAccountDto.getEmail()));
-        ICompanyInvitationEmailCompanyInfo companyInfo = emailSendRepository.findCompanyInfo(companyId)
-                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company with id: " + companyId));
-        log.info("Company Invitation Receiver Name: {}, Receiver Email: {}, Company Name: {}, Company Owner's Name: {}",
-                receiver.getName(), receiver.getEmail(), companyInfo.getCompanyName(), companyInfo.getCompanyOwnerName());
-        EmailSendRecord emailSendRecord = emailService.saveCompanyInvitationEmailSendingRecord(
-                receiver, EmailType.CompanyInvitation, invitedAccountDto.getEmail(), companyId);
-
-        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
-        String invitationLink = userService.generateCompanyInvitationLink(
-                companyId, invitedAccountDto.getEmail(), invitedAccountDto.getName(), expireDate);
-        if (invitedAccountDto.getName().contains(" ")) {
-            invitedAccountDto.setName(invitedAccountDto.getName().substring(0, invitedAccountDto.getName().indexOf(" ")));
-        }
-        emailService.sendCompanyInvitationMessageToSQS(
-                emailSendRecord.getId(),
-                invitedAccountDto.getName(),
-                invitedAccountDto.getEmail(),
-                companyInfo.getCompanyName(),
-                companyInfo.getCompanyOwnerName(),
-                invitationLink,
-                EmailType.CompanyInvitation
-        );
-    }
+//    public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {
+//
+//        UserEntity receiver = userRepository.findByEmail(invitedAccountDto.getEmail())
+//                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email" + invitedAccountDto.getEmail()));
+//        ICompanyInvitationEmailCompanyInfo companyInfo = emailSendRepository.findCompanyInfo(companyId)
+//                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company with id: " + companyId));
+//        log.info("Company Invitation Receiver Name: {}, Receiver Email: {}, Company Name: {}, Company Owner's Name: {}",
+//                receiver.getName(), receiver.getEmail(), companyInfo.getCompanyName(), companyInfo.getCompanyOwnerName());
+//        EmailSendRecord emailSendRecord = emailService.saveCompanyInvitationEmailSendingRecord(
+//                receiver, EmailType.CompanyInvitation, invitedAccountDto.getEmail(), companyId);
+//
+//        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+//        String invitationLink = userService.generateCompanyInvitationLink(
+//                companyId, invitedAccountDto.getEmail(), invitedAccountDto.getName(), expireDate);
+//        if (invitedAccountDto.getName().contains(" ")) {
+//            invitedAccountDto.setName(invitedAccountDto.getName().substring(0, invitedAccountDto.getName().indexOf(" ")));
+//        }
+//        emailService.sendCompanyInvitationMessageToSQS(
+//                emailSendRecord.getId(),
+//                invitedAccountDto.getName(),
+//                invitedAccountDto.getEmail(),
+//                companyInfo.getCompanyName(),
+//                companyInfo.getCompanyOwnerName(),
+//                invitationLink,
+//                EmailType.CompanyInvitation
+//        );
+//    }
 }

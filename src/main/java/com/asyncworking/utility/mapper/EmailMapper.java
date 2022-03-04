@@ -17,11 +17,11 @@ import static java.time.ZoneOffset.UTC;
 public interface EmailMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userEntity", source = "userEntity")
+    @Mapping(target = "userId", source = "receiverId")
     @Mapping(target = "receiver", source = "receiverEmail")
     @Mapping(target = "sendStatus", constant = "false")
     @Mapping(target = "sendTime", expression = "java(getCurrentTime())")
-    EmailSendRecord toEmailSendRecord(UserEntity userEntity, EmailType emailType, String receiverEmail);
+    EmailSendRecord toEmailSendRecord(Long receiverId, EmailType emailType, String receiverEmail);
 
     default OffsetDateTime getCurrentTime() {
         return OffsetDateTime.now(UTC);

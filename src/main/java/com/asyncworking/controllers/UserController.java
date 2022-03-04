@@ -1,9 +1,11 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.*;
+import com.asyncworking.services.EmailService;
 import com.asyncworking.services.UserService;
+import com.asyncworking.services.LinkService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,10 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+
+    private final EmailService emailService;
+
+    private final LinkService linkService;
 
     @GetMapping("/login")
     public ResponseEntity verifyStatus(@RequestParam(value = "email") String email) {
@@ -41,6 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/signup")
+    @ApiOperation(value = "Check if the email is already exist in system")
     public ResponseEntity<String> verifyEmailExists(@RequestParam(value = "email") String email) {
         if (userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
@@ -49,9 +56,24 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) throws JsonProcessingException {
+    @ApiOperation(value = "Create a user and send verification mail to the user's email address")
+    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndSendVerificationMessageToSQS(accountDto);
+        userService.createUserAndSendVerificationEmail(accountDto);
+        return ResponseEntity.ok("success");
+    }
+
+    @PostMapping("/resend")
+    @ApiOperation(value = "Resend verification link by email provided")
+    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
+        String userEmail = userInfoDto.getEmail();
+        if(!userService.ifEmailExists(userEmail)) {
+            return new ResponseEntity<>("Email does not exist", HttpStatus.NOT_FOUND);
+        }
+        if(!userService.ifUnverified(userEmail)) {
+            return new ResponseEntity<>("Email has already been verified!", HttpStatus.CONFLICT);
+        }
+        emailService.sendVerificationEmail(userEmail);
         return ResponseEntity.ok("success");
     }
 
@@ -61,7 +83,7 @@ public class UserController {
                                             @RequestParam(value = "email") String email,
                                             @RequestParam(value = "name") String name,
                                             @RequestParam(value = "title") String title) {
-        return ResponseEntity.ok(userService.generateInvitationLink(companyId, email, name, title));
+        return ResponseEntity.ok(linkService.generateInvitationLink(companyId, email, name, title));
     }
 
     @GetMapping("/invitations/info")
@@ -77,13 +99,8 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) throws JsonProcessingException {
-        userService.resendVerificationMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
-        return ResponseEntity.ok("success");
-    }
-
     @PostMapping("/verify")
+    @ApiOperation(value = "Verify the user according to the verification code")
     public ResponseEntity verifyActiveUser(@RequestParam(value = "code") String code) {
         log.info(code);
         boolean isVerified = userService.isAccountActivated(code);
@@ -94,6 +111,7 @@ public class UserController {
     }
 
     @PostMapping("/password")
+    @ApiOperation(value = "Send password reset link to the email provided")
     public ResponseEntity generateResetPasswordLink(@RequestParam(value = "email")  String email) {
         if (userService.ifUnverified(email)) {
             return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
@@ -101,7 +119,7 @@ public class UserController {
         if (!userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
         }
-        userService.generateResetPasswordLink(email);
+        emailService.sendPasswordResetEmail(email);
         return ResponseEntity.ok("sent");
     }
 
