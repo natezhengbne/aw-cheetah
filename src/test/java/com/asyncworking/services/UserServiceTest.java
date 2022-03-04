@@ -350,7 +350,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldReturnTrueifCompanyInvitationSuccess() {
-        String code = "code=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIs" +
+        String code = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIs" +
                 "ImNvbXBhbnlJZCI6MzcsImVtYWlsIjoiZXJpYzguMTVAaG90bWFpbC5jb20iLCJuYW1lIjo" +
                 "iRXJpYyIsInRpdGxlIjoiTWFuYWdlciIsImRhdGUiOiJNYXIgMiwgMjAyMiwgMTI6MjI6NTEg" +
                 "UE0iLCJpYXQiOjE2NDYxMzczNzEsImV4cCI6MTY0NjIyMzc3MX0.XwrlcsP7jmq0HPjpkboIsW" +
