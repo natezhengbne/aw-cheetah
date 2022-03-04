@@ -121,7 +121,7 @@ public class UserController {
 
     @PostMapping("/accept-company-invitation")
     public ResponseEntity addNewCompanyMember(@RequestParam(value = "code") String code) {
-        log.info("INVITATION CodeDTO: {}", code);
+        log.info("Company Invitation code: {}", code);
         Boolean isInvitedSuccess = userService.isCompanyInvitationSuccess(code);
         if (isInvitedSuccess) {
             return ResponseEntity.ok("success");
