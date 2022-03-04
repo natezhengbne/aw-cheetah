@@ -32,6 +32,16 @@ import static java.time.ZoneOffset.UTC;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private static final String SIGN_UP = "signUp";
+    private static final String RESET_PASSWORD = "reset-password";
+    private static final String INVITATION = "invitation";
+    private static final String COMPANY_INVITATION = "companyInvitation";
+
+    private static final String EMAIL = "email";
+    private static final String COMPANY_ID = "companyId";
+    private static final String NAME = "name";
+    private static final String TITLE = "title";
+    private static final String DATE = "date";
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
@@ -62,7 +72,7 @@ public class UserService {
         userRepository.save(userEntity);
         emailService.sendMessageToSQS(userEntity, generateLink(userEntity.getEmail(),
                         "/verifylink/verify?code=",
-                        "signUp", expireDate),
+                        SIGN_UP, expireDate),
                 EmailType.Verification, userEntity.getEmail());
     }
 
@@ -100,7 +110,7 @@ public class UserService {
         UserEntity emailSender = findUnVerifiedUserByEmail(email);
         emailService.saveEmailSendingRecord(emailSender, EmailType.Verification, email);
         emailService.sendMessageToSQS(emailSender,
-                generateLink(email, "/verifylink/verify?code=", "signUp", expireDate),
+                generateLink(email, "/verifylink/verify?code=", SIGN_UP, expireDate),
                 emailType, emailSender.getEmail());
     }
 
@@ -117,7 +127,7 @@ public class UserService {
 
     public void generateResetPasswordLink(String email) {
         Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 10); //Expires in 10 minutes
-        String resetPasswordLink = generateLink(email, "/reset-password?code=", "reset-password", expireDate);
+        String resetPasswordLink = generateLink(email, "/reset-password?code=", RESET_PASSWORD, expireDate);
         UserEntity userEntity = findUserByEmail(email);
         emailService.saveEmailSendingRecord(userEntity, EmailType.ForgetPassword, email);
         emailService.sendMessageToSQS(userEntity, resetPasswordLink, EmailType.ForgetPassword, userEntity.getEmail());
@@ -126,7 +136,7 @@ public class UserService {
     private String generateJws(String email, String subject, Date expireDate) {
         String jws = Jwts.builder()
                 .setSubject(subject)
-                .claim("email", email)
+                .claim(EMAIL, email)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
@@ -144,11 +154,11 @@ public class UserService {
 
     private String encodeInvitation(Long companyId, String email, String name, String title) {
         String invitationJwt = Jwts.builder()
-                .setSubject("invitation")
-                .claim("companyId", companyId)
-                .claim("email", email)
-                .claim("name", name)
-                .claim("title", title)
+                .setSubject(INVITATION)
+                .claim(COMPANY_ID, companyId)
+                .claim(EMAIL, email)
+                .claim(NAME, name)
+                .claim(TITLE, title)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .compact();
         log.info("invitationJwt: " + invitationJwt);
@@ -159,12 +169,12 @@ public class UserService {
         String invitationLink = frontEndUrlConfig.getFrontEndUrl()
                 + "/company-invitations/info?code="
                 + Jwts.builder()
-                .setSubject("companyInvitation")
-                .claim("companyId", companyId)
-                .claim("email", email)
-                .claim("name", name)
-                .claim("title", title)
-                .claim("date", expireDate)
+                .setSubject(COMPANY_INVITATION)
+                .claim(COMPANY_ID, companyId)
+                .claim(EMAIL, email)
+                .claim(NAME, name)
+                .claim(TITLE, title)
+                .claim(DATE, expireDate)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
@@ -193,13 +203,13 @@ public class UserService {
                 .parseClaimsJws(code);
 
         Claims body = jws.getBody();
-        Long companyId = (long) Double.parseDouble(body.get("companyId").toString());
+        Long companyId = (long) Double.parseDouble(body.get(COMPANY_ID).toString());
         String companyName = getCompanyInfo(companyId).getName();
         return ExternalEmployeeDto.builder()
                 .companyId(companyId)
-                .email(body.get("email").toString())
-                .name(body.get("name").toString())
-                .title(body.get("title").toString())
+                .email(body.get(EMAIL).toString())
+                .name(body.get(NAME).toString())
+                .title(body.get(TITLE).toString())
                 .companyName(companyName)
                 .build();
     }
@@ -222,16 +232,16 @@ public class UserService {
             log.error(e.getMessage(), e);
             return false;
         }
-        String decodedEmail = decodedBody.get("email").toString();
+        String decodedEmail = decodedBody.get(EMAIL).toString();
 
         UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
 
         Long userId = userRepository.findIdByEmail(decodedEmail);
-        Long decodedCompanyId = Long.parseLong(decodedBody.get("companyId").toString().replaceFirst(".0", ""));
+        Long decodedCompanyId = Long.parseLong(decodedBody.get(COMPANY_ID).toString().replaceFirst(".0", ""));
         Company company = getCompanyInfo(decodedCompanyId); // IN LOCAL: use 1L as company ID
         EmployeeId employeeId = createEmployeeId(userId, company.getId());
 
-        String decodedTitle = decodedBody.get("title").toString();
+        String decodedTitle = decodedBody.get(TITLE).toString();
         Employee employee = createEmployee(employeeId, userEntity, company, decodedTitle);
         try {
             employeeRepository.save(employee);
@@ -271,7 +281,7 @@ public class UserService {
     }
 
     private String decodedEmail(String code) {
-        return decode(code).get("email").toString();
+        return decode(code).get(EMAIL).toString();
     }
 
     public int activeUser(String email) {
