@@ -236,9 +236,9 @@ public class UserService {
 
         UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
 
-        Long userId = userRepository.findIdByEmail(decodedEmail);
+        Long userId = userEntity.getId();
         Long decodedCompanyId = Long.parseLong(decodedBody.get(COMPANY_ID).toString().replaceFirst(".0", ""));
-        Company company = getCompanyInfo(decodedCompanyId); // IN LOCAL: use 1L as company ID
+        Company company = getCompanyInfo(decodedCompanyId);
         EmployeeId employeeId = buildEmployeeId(userId, company.getId());
 
         String decodedTitle = decodedBody.get(TITLE).toString();
