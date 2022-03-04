@@ -313,7 +313,12 @@ class UserControllerTest extends ControllerHelper{
 
     @Test
     public void shouldReturnSuccessWhenUserAcceptCompanyInvitation() throws Exception {
-        String code = "xxxxxxx";
+        String code = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIsImNvbX" +
+                "BhbnlJZCI6MzcsImVtYWlsIjoiZXJpYzguMTVAaG90bWFpbC5jb20iLCJuYW1lIjoiZXJ" +
+                "pYyIsInRpdGxlIjoiMjIyIiwiZGF0ZSI6Ik1hciA1LCAyMDIyLCA5OjAxOjQxIEFNIiwi" +
+                "aWF0IjoxNjQ2Mzg0NTAxLCJleHAiOjE2NDY0NzA5MDF9.VMzs7iwY3KlYCnNGOT_5EY0o" +
+                "seWFwzzS0l3s4SKSwdnMJ-G_LVL8jGY27tr5hpJvNodrcliqP3TpEBZQZDMNcg";
+
         when(userService.isCompanyInvitationSuccess(code)).thenReturn(true);
 
         mockMvc.perform(

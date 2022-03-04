@@ -239,10 +239,10 @@ public class UserService {
         Long userId = userRepository.findIdByEmail(decodedEmail);
         Long decodedCompanyId = Long.parseLong(decodedBody.get(COMPANY_ID).toString().replaceFirst(".0", ""));
         Company company = getCompanyInfo(decodedCompanyId); // IN LOCAL: use 1L as company ID
-        EmployeeId employeeId = createEmployeeId(userId, company.getId());
+        EmployeeId employeeId = buildEmployeeId(userId, company.getId());
 
         String decodedTitle = decodedBody.get(TITLE).toString();
-        Employee employee = createEmployee(employeeId, userEntity, company, decodedTitle);
+        Employee employee = buildEmployee(employeeId, userEntity, company, decodedTitle);
         try {
             employeeRepository.save(employee);
             return true;
@@ -250,17 +250,16 @@ public class UserService {
             log.error(e.getMessage(), e);
             return false;
         }
-
     }
 
-    private EmployeeId createEmployeeId(Long userId, Long companyId) {
+    private EmployeeId buildEmployeeId(Long userId, Long companyId) {
         return EmployeeId.builder()
                 .userId(userId)
                 .companyId(companyId)
                 .build();
     }
 
-    private Employee createEmployee(EmployeeId employeeId, UserEntity userEntity, Company company, String title) {
+    private Employee buildEmployee(EmployeeId employeeId, UserEntity userEntity, Company company, String title) {
         return Employee.builder()
                 .id(employeeId)
                 .userEntity(userEntity)
