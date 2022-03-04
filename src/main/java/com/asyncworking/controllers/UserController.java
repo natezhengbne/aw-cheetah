@@ -1,10 +1,13 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.ExternalEmployeeDto;
+import com.asyncworking.dtos.InvitedAccountGetDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.services.EmailService;
-import com.asyncworking.services.UserService;
 import com.asyncworking.services.LinkService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.asyncworking.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -47,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/signup")
-    @ApiOperation(value = "Check if the email is already exist in system")
+    @ApiOperation(value = "Check if the email has already signed up in system")
     public ResponseEntity<String> verifyEmailExists(@RequestParam(value = "email") String email) {
         if (userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
@@ -56,35 +64,53 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    @ApiOperation(value = "Create a user and send verification mail to the user's email address")
-    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) {
+    @ApiOperation(value = "Create a user and send verification link to the user's email address")
+    public ResponseEntity createUserAndVerificationLink(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
         userService.createUserAndSendVerificationEmail(accountDto);
-        return ResponseEntity.ok("success");
+        return ResponseEntity.ok("Email has been sent");
     }
 
     @PostMapping("/resend")
     @ApiOperation(value = "Resend verification link by email provided")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
+    public ResponseEntity resendVerificationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
         String userEmail = userInfoDto.getEmail();
-        if(!userService.ifEmailExists(userEmail)) {
+        if (!userService.ifEmailExists(userEmail)) {
             return new ResponseEntity<>("Email does not exist", HttpStatus.NOT_FOUND);
         }
-        if(!userService.ifUnverified(userEmail)) {
+        if (!userService.ifUnverified(userEmail)) {
             return new ResponseEntity<>("Email has already been verified!", HttpStatus.CONFLICT);
         }
-        emailService.sendVerificationEmail(userEmail);
-        return ResponseEntity.ok("success");
+        userService.sendVerificationEmail(userEmail);
+        return ResponseEntity.ok("Email has been sent");
     }
 
-    @GetMapping("/invitations/companies")
-    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
-    public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
-                                            @RequestParam(value = "email") String email,
-                                            @RequestParam(value = "name") String name,
-                                            @RequestParam(value = "title") String title) {
-        return ResponseEntity.ok(linkService.generateInvitationLink(companyId, email, name, title));
+    @PostMapping("/password")
+    @ApiOperation(value = "Send password reset link to the email provided")
+    public ResponseEntity sendPasswordResetLink(@RequestParam(value = "email") String email) {
+        if (userService.ifUnverified(email)) {
+            return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
+        }
+        if (!userService.ifEmailExists(email)) {
+            return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
+        }
+        userService.sendPasswordResetEmail(email);
+        return ResponseEntity.ok("Email has been sent");
     }
+
+//    @GetMapping("/invitations/companies")
+//    @ApiOperation(value = "Return an invitation for user to join a company")
+//    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
+//    public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
+//                                            @RequestParam(value = "email") String email,
+//                                            @RequestParam(value = "name") String name,
+//                                            @RequestParam(value = "title") String title,
+//                                            @RequestParam(required = false) String sendEmail
+//    ) {
+//        return ResponseEntity.ok(companyS.generateInvitationLink(companyId, email, name, title));
+//    }
+
+
 
     @GetMapping("/invitations/info")
     public ResponseEntity getInvitationInfo(@RequestParam(value = "code") String code) {
@@ -108,19 +134,6 @@ public class UserController {
             return ResponseEntity.ok("success");
         }
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
-    }
-
-    @PostMapping("/password")
-    @ApiOperation(value = "Send password reset link to the email provided")
-    public ResponseEntity generateResetPasswordLink(@RequestParam(value = "email")  String email) {
-        if (userService.ifUnverified(email)) {
-            return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
-        }
-        if (!userService.ifEmailExists(email)) {
-            return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
-        }
-        emailService.sendPasswordResetEmail(email);
-        return ResponseEntity.ok("sent");
     }
 
     @GetMapping("/password-reset/info")

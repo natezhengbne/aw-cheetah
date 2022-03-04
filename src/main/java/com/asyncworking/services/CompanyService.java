@@ -23,6 +23,7 @@ import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
@@ -73,6 +74,8 @@ public class CompanyService {
     private final EmailService emailService;
 
     private final UserService userService;
+
+    private final LinkService linkService;
 
     @Transactional
     public Long createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
@@ -211,6 +214,36 @@ public class CompanyService {
                 .thenComparing(CardTodoItemDto::getPriority, CardTodoItemDto::comparePriority)
                 .thenComparing(CardTodoItemDto::getProjectTitle)).collect(Collectors.toList()))
                 .collect(Collectors.toList());
+    }
+
+    public void sendInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto) {
+
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id: " + companyId));
+
+        UserEntity owner = userRepository.findById(company.getAdminId())
+                .orElseThrow(() -> new UserNotFoundException("Cannot find admin for company"));
+
+        String invitationLink = generateInvitationLink(companyId, accountDto);
+
+        emailService.sendLinkByEmail(
+                EmailType.CompanyInvitation,
+                invitationLink,
+                accountDto.getName(),
+                accountDto.getEmail(),
+                company.getName(),
+                owner.getName()
+        );
+    }
+
+    public String generateInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto){
+        String invitationLink = linkService.generateCompanyInvitationLink(
+                companyId,
+                accountDto.getEmail(),
+                accountDto.getName(),
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
+        return invitationLink;
     }
 
 //    public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {

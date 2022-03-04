@@ -32,48 +32,7 @@ public class EmailService {
 
     private final EmailSendRepository emailSendRepository;
 
-    private final UserRepository userRepository;
-
-    private final LinkService linkService;
-
     private final AmazonSQSSender amazonSQSSender;
-
-    public void sendVerificationEmail(String email) {
-        UserEntity unverifiedUserEntity = userRepository
-                .findUnverifiedStatusByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
-
-        sendVerificationEmail(unverifiedUserEntity);
-    }
-
-    public void sendVerificationEmail(UserEntity userEntity){
-        String userVerificationLink = linkService.generateUserVerificationLink(
-                userEntity.getEmail(),
-                DateTimeUtility.MILLISECONDS_IN_DAY
-        );
-
-        sendLinkByEmail(
-                EmailType.Verification,
-                userVerificationLink,
-                userEntity
-        );
-    }
-
-    public void sendPasswordResetEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
-
-        String passwordRestLink = linkService.generateResetPasswordLink(
-                email,
-                DateTimeUtility.MILLISECONDS_IN_DAY
-        );
-
-        sendLinkByEmail(
-                EmailType.Verification,
-                passwordRestLink,
-                userEntity
-        );
-    }
 
     @Transactional
     public void sendLinkByEmail(EmailType emailType, String linkToSend, UserEntity receiverEntity) {

@@ -64,7 +64,8 @@ public class LinkService {
         return invitationLink;
     }
 
-    public String generateCompanyInvitationLink(Long companyId, String email, String name, Date expireDate) {
+    public String generateCompanyInvitationLink(Long companyId, String email, String name, long expiryTimeInMilliseconds) {
+        Date expireDate = new Date(System.currentTimeMillis() + expiryTimeInMilliseconds);
         String invitationJwt = Jwts.builder()
                 .setSubject("companyInvitation")
                 .claim("companyId", companyId)

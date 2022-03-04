@@ -5,6 +5,7 @@ import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.CompanyService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -90,4 +91,21 @@ public class CompanyController {
 //        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
 //        return ResponseEntity.ok("success");
 //    }
+
+    @PostMapping("/{companyId}/invitations")
+    @ApiOperation(value = "Generate an invitation for user to join a company, if email given, send the link by email")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
+    public ResponseEntity getInvitationLink(@PathVariable Long companyId,
+                                            @Valid @RequestBody CompanyInvitedAccountDto accountDto,
+                                            @RequestParam(required = false) String email
+    ) {
+        if(email == null){
+            return ResponseEntity.ok(companyService.generateInvitationLink(companyId, accountDto));
+        }
+        else {
+            companyService.sendInvitationLink(companyId, accountDto);
+            return ResponseEntity.ok("Email has been sent");
+        }
+    }
+
 }
