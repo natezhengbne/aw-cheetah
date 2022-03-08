@@ -224,13 +224,13 @@ public class UserService {
         return numberOfActiveUser != 0;
     }
 
-    public Boolean isCompanyInvitationSuccess(String code) {
+    public String isCompanyInvitationSuccess(String code) {
         Claims decodedBody;
         try {
             decodedBody = decode(code);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return false;
+            return null;
         }
         String decodedEmail = decodedBody.get(EMAIL).toString();
 
@@ -245,10 +245,10 @@ public class UserService {
         Employee employee = buildEmployee(employeeId, userEntity, company, decodedTitle);
         try {
             employeeRepository.save(employee);
-            return true;
+            return Long.toString(decodedCompanyId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return false;
+            return null;
         }
     }
 
@@ -270,7 +270,7 @@ public class UserService {
                 .build();
     }
 
-    private Claims decode(String code) {
+    public Claims decode(String code) {
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .build()

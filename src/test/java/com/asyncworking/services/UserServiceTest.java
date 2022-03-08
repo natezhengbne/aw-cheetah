@@ -81,6 +81,8 @@ public class UserServiceTest {
     private CompanyMapper companyMapper;
     private final String secretKey = "securesecuresecuresecuresecuresecuresecure";
 
+    private static final String COMPANY_ID = "companyId";
+
     @BeforeEach()
     void setup() {
         userMapper = new UserMapper(passwordEncoder);
@@ -349,13 +351,17 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCompanyInvitationSuccess() {
-        String code = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIs" +
-                "ImNvbXBhbnlJZCI6MzcsImVtYWlsIjoiZXJpYzguMTVAaG90bWFpbC5jb20iLCJuYW1lIjo" +
-                "iRXJpYyIsInRpdGxlIjoiTWFuYWdlciIsImRhdGUiOiJNYXIgMiwgMjAyMiwgMTI6MjI6NTEg" +
-                "UE0iLCJpYXQiOjE2NDYxMzczNzEsImV4cCI6MTY0NjIyMzc3MX0.XwrlcsP7jmq0HPjpkboIsW" +
-                "cMobfXHBVEhztyKolh2tQWEj4EnibXNC5ftLF-4J6QnpwIfTCRkGSkJSVzPsahMg";
+    public void shouldReturnNewCompanyIdWhenUserAcceptCompanyInvitation() throws Exception {
+        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+        String CompanyinvitationLink = userService.generateCompanyInvitationLink(
+                1L,
+                "bigdog@gmail.com",
+                "bigdog",
+                "manager",
+                expireDate);
 
-        assertTrue(!userService.isCompanyInvitationSuccess(code));
+        String code = CompanyinvitationLink.split("code=")[1];
+        String decodedCompanyId = userService.decode(code).get(COMPANY_ID).toString();
+        assertEquals(decodedCompanyId.replaceFirst(".0", ""), "1");
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.net.URI;
+import java.util.Date;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -319,7 +320,7 @@ class UserControllerTest extends ControllerHelper{
                 "aWF0IjoxNjQ2Mzg0NTAxLCJleHAiOjE2NDY0NzA5MDF9.VMzs7iwY3KlYCnNGOT_5EY0o" +
                 "seWFwzzS0l3s4SKSwdnMJ-G_LVL8jGY27tr5hpJvNodrcliqP3TpEBZQZDMNcg";
 
-        when(userService.isCompanyInvitationSuccess(code)).thenReturn(true);
+        when(userService.isCompanyInvitationSuccess(code)).thenReturn("1");
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/accept-company-invitation")
