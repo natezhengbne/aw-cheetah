@@ -3,15 +3,10 @@ package com.asyncworking.services;
 import com.asyncworking.aws.AmazonSQSSender;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailMessageDto;
-import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
-import com.asyncworking.repositories.UserRepository;
-import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.EmailMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,8 +21,6 @@ import static java.time.ZoneOffset.UTC;
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final QueueMessagingTemplate queueMessagingTemplate;
-    private final ObjectMapper objectMapper;
     private final EmailMapper emailMapper;
 
     private final EmailSendRepository emailSendRepository;
@@ -71,45 +64,6 @@ public class EmailService {
         amazonSQSSender.sendEmailMessage(messageDto);
     }
 
-//    public void sendCompanyInvitationMessageToSQS(
-//            Long emailRecordId,
-//            String receiverName,
-//            String receiverEmail,
-//            String companyName,
-//            String companyOwnerName,
-//            String invitationLink,
-//            EmailType templateType
-//    ) throws JsonProcessingException {
-//        CompanyInvitationEmailMessageDto messageDto = toCompanyInvitationEmailMessageDto(
-//                emailRecordId,
-//                receiverName,
-//                receiverEmail,
-//                companyName,
-//                companyOwnerName,
-//                invitationLink,
-//                templateType);
-//        log.info("Company Email Message Record Id: {}", emailRecordId);
-//        amazonSQSSender.sendEmailMessage(messageDto);
-//        String payload = objectMapper.writeValueAsString(messageDto);
-//        queueMessagingTemplate.send(endPoint, MessageBuilder.withPayload(payload).build());
-//    }
-
-//    private EmailMessageDto toEmailMessageDto(UserEntity userEntity, String link,
-//                                              EmailType templateType, String receiverEmail) {
-//        String userFirstName = userEntity.getName();
-//        if (userFirstName.contains(" ")) {
-//            userFirstName = userFirstName.substring(0, userFirstName.indexOf(" "));
-//        }
-//        return EmailMessageDto.builder()
-//                .userName(userFirstName)
-//                .verificationLink(link)
-//                .templateType(templateType.toString())
-//                .email(receiverEmail)
-//                .templateS3Bucket(s3Bucket)
-//                .templateS3Key(emailType.get(templateType))
-//                .build();
-//    }
-
     @Transactional
     public EmailSendRecord saveEmailSendingRecord(Long userId, EmailType templateType, String receiverEmail) {
         return emailSendRepository.save(
@@ -121,29 +75,4 @@ public class EmailService {
     public int updateEmailRecordSendStatus(Long emailRecordId) {
         return emailSendRepository.updateEmailRecordStatus(emailRecordId, OffsetDateTime.now(UTC));
     }
-
-//    private CompanyInvitationEmailMessageDto toCompanyInvitationEmailMessageDto(
-//            Long emailRecordId, String receiverName, String receiverEmail,
-//            String companyName, String companyOwnerName, String link, EmailType templateType) {
-//        return CompanyInvitationEmailMessageDto.builder()
-//                .emailRecordId(emailRecordId)
-//                .email(receiverEmail)
-//                .userName(receiverName)
-//                .companyName(companyName)
-//                .companyOwnerName(companyOwnerName)
-//                .invitationLink(link)
-//                .templateType(templateType)
-//                .templateS3Bucket(s3Bucket)
-//                .templateS3Key(emailType.get(templateType))
-//                .build();
-//    }
-
-//    @Transactional
-//    public EmailSendRecord saveCompanyInvitationEmailSendingRecord(
-//            UserEntity receiver, EmailType templateType, String receiverEmail, Long companyId) {
-//        EmailSendRecord emailSendRecord = toEmailSendRecordWithCompanyId(
-//                receiver, templateType, receiverEmail, companyId);
-//        log.info("Email Sending Record id: {}, Receiver Email: {}", emailSendRecord.getId(), emailSendRecord.getReceiver());
-//        return emailSendRepository.save(emailSendRecord);
-//    }
 }

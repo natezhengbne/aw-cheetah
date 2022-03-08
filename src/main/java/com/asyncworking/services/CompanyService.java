@@ -11,15 +11,12 @@ import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
 import com.asyncworking.models.Company;
-import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.Employee;
 import com.asyncworking.models.EmployeeId;
 import com.asyncworking.models.ICompanyInfo;
-import com.asyncworking.models.ICompanyInvitationEmailCompanyInfo;
 import com.asyncworking.models.TodoItem;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
-import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
@@ -28,7 +25,6 @@ import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +34,6 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,8 +54,6 @@ public class CompanyService {
 
     private final TodoItemRepository todoItemRepository;
 
-    private final EmailSendRepository emailSendRepository;
-
     private final CompanyMapper companyMapper;
 
     private final UserMapper userMapper;
@@ -72,8 +65,6 @@ public class CompanyService {
     private final RoleService roleService;
 
     private final EmailService emailService;
-
-    private final UserService userService;
 
     private final LinkService linkService;
 
@@ -217,7 +208,6 @@ public class CompanyService {
     }
 
     public void sendInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto) {
-
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new CompanyNotFoundException("Cannot find company by id: " + companyId));
 
@@ -236,7 +226,7 @@ public class CompanyService {
         );
     }
 
-    public String generateInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto){
+    public String generateInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto) {
         String invitationLink = linkService.generateCompanyInvitationLink(
                 companyId,
                 accountDto.getEmail(),
@@ -245,32 +235,4 @@ public class CompanyService {
         );
         return invitationLink;
     }
-
-//    public void sendCompanyInvitationToSQS(Long companyId, CompanyInvitedAccountDto invitedAccountDto) throws JsonProcessingException {
-//
-//        UserEntity receiver = userRepository.findByEmail(invitedAccountDto.getEmail())
-//                .orElseThrow(() -> new UserNotFoundException("Cannot find user with email" + invitedAccountDto.getEmail()));
-//        ICompanyInvitationEmailCompanyInfo companyInfo = emailSendRepository.findCompanyInfo(companyId)
-//                .orElseThrow(() -> new CompanyNotFoundException("Cannot find company with id: " + companyId));
-//        log.info("Company Invitation Receiver Name: {}, Receiver Email: {}, Company Name: {}, Company Owner's Name: {}",
-//                receiver.getName(), receiver.getEmail(), companyInfo.getCompanyName(), companyInfo.getCompanyOwnerName());
-//        EmailSendRecord emailSendRecord = emailService.saveCompanyInvitationEmailSendingRecord(
-//                receiver, EmailType.CompanyInvitation, invitedAccountDto.getEmail(), companyId);
-//
-//        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
-//        String invitationLink = userService.generateCompanyInvitationLink(
-//                companyId, invitedAccountDto.getEmail(), invitedAccountDto.getName(), expireDate);
-//        if (invitedAccountDto.getName().contains(" ")) {
-//            invitedAccountDto.setName(invitedAccountDto.getName().substring(0, invitedAccountDto.getName().indexOf(" ")));
-//        }
-//        emailService.sendCompanyInvitationMessageToSQS(
-//                emailSendRecord.getId(),
-//                invitedAccountDto.getName(),
-//                invitedAccountDto.getEmail(),
-//                companyInfo.getCompanyName(),
-//                companyInfo.getCompanyOwnerName(),
-//                invitationLink,
-//                EmailType.CompanyInvitation
-//        );
-//    }
 }

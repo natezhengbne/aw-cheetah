@@ -142,50 +142,6 @@ public class UserService {
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
 
-//    private UserEntity findUnVerifiedUserByEmail(String email) {
-//        return userRepository.findUnverifiedStatusByEmail(email)
-//                .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
-//    }
-
-//    public String generateLink(String email, String subApi, String subject, Date expireDate) {
-//        String link = frontEndUrlConfig.getFrontEndUrl() + subApi + this.generateJws(email, subject, expireDate);
-//        log.info(subApi + "Link: {}", link);
-//        return link;
-//    }
-
-//    private String generateJws(String email, String subject, Date expireDate) {
-//        String jws = Jwts.builder()
-//                .setSubject(subject)
-//                .claim("email", email)
-//                .setIssuedAt(new Date())
-//                .setExpiration(expireDate)
-//                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
-//                .compact();
-//        log.info("jwt token: " + jws);
-//
-//        return jws;
-//    }
-
-//    public String generateInvitationLink(Long companyId, String email, String name, String title) {
-//        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
-//                + "/invitations/info?code=" + this.encodeInvitation(companyId, email, name, title);
-//        log.info("invitationLink: " + invitationLink);
-//        return invitationLink;
-//    }
-//
-//    private String encodeInvitation(Long companyId, String email, String name, String title) {
-//        String invitationJwt = Jwts.builder()
-//                .setSubject("invitation")
-//                .claim("companyId", companyId)
-//                .claim("email", email)
-//                .claim("name", name)
-//                .claim("title", title)
-//                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
-//                .compact();
-//        log.info("invitationJwt: " + invitationJwt);
-//        return invitationJwt;
-//    }
-
     public String generateCompanyInvitationLink(Long companyId, String email, String name, Date expireDate) {
         String invitationLink = frontEndUrlConfig.getFrontEndUrl()
                 + "/company-invitations/info?code="
@@ -277,11 +233,6 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
     }
 
-//    public UserEntity findUserByEmail(String email) {
-//        return userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
-//    }
-
     @Transactional(rollbackFor = UserNotFoundException.class)
     public void updateEmailSent(String email) throws UserNotFoundException {
         if (emailSendRepository.updateVerificationEmailSent(email, OffsetDateTime.now(UTC)) < 1) {
@@ -295,5 +246,4 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
-
 }
