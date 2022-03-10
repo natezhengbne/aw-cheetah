@@ -21,26 +21,26 @@ public class EmailMapperRepositoryTest extends DBHelper{
 
     private EmailSendRecord mockEmailSendRecord;
 
-    @BeforeEach
-    public void createMockData() {
-        clearDb();
-
-        mockUserEntity = UserEntity.builder()
-                .email("test0@gmail.com")
-                .password("Iampassword")
-                .name("GJFJH")
-                .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
-
-        mockEmailSendRecord = EmailSendRecord.builder()
-                .emailType(EmailType.Verification)
-                .userEntity(mockUserEntity)
-                .receiver("test0@gmail.com")
-                .sendTime(OffsetDateTime.now(UTC))
-                .build();
-    }
+//    @BeforeEach
+//    public void createMockData() {
+//        clearDb();
+//
+//        mockUserEntity = UserEntity.builder()
+//                .email("test0@gmail.com")
+//                .password("Iampassword")
+//                .name("GJFJH")
+//                .status(Status.UNVERIFIED)
+//                .createdTime(OffsetDateTime.now(UTC))
+//                .updatedTime(OffsetDateTime.now(UTC))
+//                .build();
+//
+//        mockEmailSendRecord = EmailSendRecord.builder()
+//                .emailType(EmailType.Verification)
+//                .userEntity(mockUserEntity)
+//                .receiver("test0@gmail.com")
+//                .sendTime(OffsetDateTime.now(UTC))
+//                .build();
+//    }
 
     @Test
     public void giveEmailInfo_whenSavedAndRetrievesRecord_thenOk() {

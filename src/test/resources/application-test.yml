@@ -43,3 +43,6 @@ localstack:
 
 sqs:
   enable: false
+
+#local env
+url: http://localhost:3000

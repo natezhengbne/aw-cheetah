@@ -54,7 +54,7 @@ public class UserService {
     private final FrontEndUrlConfig frontEndUrlConfig;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-    private final LinkService linkService;
+    private final LinkGenerator linkGenerator;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -68,7 +68,7 @@ public class UserService {
         UserEntity newUserEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(newUserEntity);
 
-        String userVerificationLink = linkService.generateUserVerificationLink(
+        String userVerificationLink = linkGenerator.generateUserVerificationLink(
                 newUserEntity.getEmail(),
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
@@ -86,7 +86,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
 
 
-        String userVerificationLink = linkService.generateUserVerificationLink(
+        String userVerificationLink = linkGenerator.generateUserVerificationLink(
                 unverifiedUserEntity.getEmail(),
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
@@ -102,7 +102,7 @@ public class UserService {
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
 
-        String passwordRestLink = linkService.generateResetPasswordLink(
+        String passwordRestLink = linkGenerator.generateResetPasswordLink(
                 email,
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );

@@ -29,7 +29,7 @@ public class EmailService {
 
     @Transactional
     public void sendLinkByEmail(EmailType emailType, String linkToSend, UserEntity receiverEntity) {
-        EmailSendRecord emailSendRecord = saveEmailSendingRecord(
+        EmailSendRecord emailSendRecord = saveEmailSendRecord(
                 receiverEntity.getId(),
                 emailType,
                 receiverEntity.getEmail());
@@ -50,7 +50,7 @@ public class EmailService {
             String receiverName, String receiverEmail,
             String companyName, String companyOwnerName
     ) {
-        EmailSendRecord emailSendRecord = saveEmailSendingRecord(null, emailType, receiverEmail);
+        EmailSendRecord emailSendRecord = saveEmailSendRecord(null, emailType, receiverEmail);
 
         EmailMessageDto messageDto = EmailMessageDto.builder()
                 .emailRecordId(emailSendRecord.getId())
@@ -65,7 +65,7 @@ public class EmailService {
     }
 
     @Transactional
-    public EmailSendRecord saveEmailSendingRecord(Long userId, EmailType templateType, String receiverEmail) {
+    public EmailSendRecord saveEmailSendRecord(Long userId, EmailType templateType, String receiverEmail) {
         return emailSendRepository.save(
                 emailMapper.toEmailSendRecord(userId, templateType, receiverEmail)
         );

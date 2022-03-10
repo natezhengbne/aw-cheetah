@@ -66,7 +66,7 @@ public class CompanyService {
 
     private final EmailService emailService;
 
-    private final LinkService linkService;
+    private final LinkGenerator linkGenerator;
 
     @Transactional
     public Long createCompanyAndEmployee(CompanyModificationDto companyModificationDto) {
@@ -227,7 +227,7 @@ public class CompanyService {
     }
 
     public String generateInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto) {
-        String invitationLink = linkService.generateCompanyInvitationLink(
+        String invitationLink = linkGenerator.generateCompanyInvitationLink(
                 companyId,
                 accountDto.getEmail(),
                 accountDto.getName(),

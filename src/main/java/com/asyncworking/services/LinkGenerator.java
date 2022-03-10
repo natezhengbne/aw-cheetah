@@ -12,7 +12,7 @@ import java.util.Date;
 @Slf4j
 @Component
 @NoArgsConstructor
-public class LinkService {
+public class LinkGenerator {
 
     @Value("${url}")
     private String baseUrl;
@@ -48,7 +48,7 @@ public class LinkService {
         return link;
     }
 
-    public String generateInvitationLink(Long companyId, String email, String name, String title) {
+    public String generateUserInvitationLink(Long companyId, String email, String name, String title) {
         String invitationJwt = Jwts.builder()
                 .setSubject("invitation")
                 .claim("companyId", companyId)
