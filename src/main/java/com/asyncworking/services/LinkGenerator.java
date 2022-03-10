@@ -2,16 +2,18 @@ package com.asyncworking.services;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Slf4j
-@Component
+@Service
 @NoArgsConstructor
+@AllArgsConstructor
 public class LinkGenerator {
 
     @Value("${url}")
@@ -55,7 +57,7 @@ public class LinkGenerator {
                 .claim("email", email)
                 .claim("name", name)
                 .claim("title", title)
-                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
                 .compact();
         log.info("invitationJwt=" + invitationJwt);
 

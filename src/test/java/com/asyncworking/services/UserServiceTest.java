@@ -129,21 +129,6 @@ public class UserServiceTest {
         assertFalse(userService.ifUnverified(email));
     }
 
-
-//    @Test
-//    public void shouldGenerateInvitationLinkGivenDetail() {
-//        String siteUrl = frontEndUrlConfig.getFrontEndUrl();
-//        String invitationLink = userService.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
-//        assertEquals(
-//                siteUrl.concat("/invitations/info?code=")
-//                        .concat("eyJhbGciOiJIUzI1NiJ9." +
-//                                "eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFueUlkIjoxLCJlbWFpbCI6InVz" +
-//                                "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
-//                                "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU"),
-//                invitationLink
-//        );
-//    }
-
     @Test
     public void shouldDecodeInvitationLink() {
         String code = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnZpdGF0aW9uIiwiY29tcGFue" +
@@ -333,14 +318,5 @@ public class UserServiceTest {
 
         List<IEmployeeInfo> employeeInfo = userRepository.findAllEmployeeByCompanyId(id);
         assertEquals("p", employeeInfo.get(0).getName());
-    }
-
-    @Test
-    public void shouldReturnInvitationLink() {
-        String expectedLink = frontEndUrlConfig.getFrontEndUrl()
-                .concat("/company-invitations/info?code=")
-                .concat("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIsImNvbXBhbn");
-        String actual = userService.generateCompanyInvitationLink(1L, "user2@gmail", "user2", new Date());
-        assertEquals(expectedLink.substring(0, 70), actual.substring(0, 70));
     }
 }

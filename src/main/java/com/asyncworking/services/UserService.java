@@ -27,6 +27,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -142,22 +144,6 @@ public class UserService {
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
 
-    public String generateCompanyInvitationLink(Long companyId, String email, String name, Date expireDate) {
-        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
-                + "/company-invitations/info?code="
-                + Jwts.builder()
-                .setSubject("companyInvitation")
-                .claim("companyId", companyId)
-                .claim("email", email)
-                .claim("name", name)
-                .claim("date", expireDate)
-                .setIssuedAt(new Date())
-                .setExpiration(expireDate)
-                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
-                .compact();
-        log.info("companyInvitationLink: " + invitationLink);
-        return invitationLink;
-    }
 
     public ExternalEmployeeDto getUserInfo(String code) {
         ExternalEmployeeDto externalEmployeeDto = decodedInvitationLink(code);
