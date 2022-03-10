@@ -81,6 +81,8 @@ public class UserServiceTest {
     private CompanyMapper companyMapper;
     private final String secretKey = "securesecuresecuresecuresecuresecuresecure";
 
+    private static final String COMPANY_ID = "companyId";
+
     @BeforeEach()
     void setup() {
         userMapper = new UserMapper(passwordEncoder);
@@ -346,5 +348,20 @@ public class UserServiceTest {
                 .concat("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIsImNvbXBhbn");
         String actual = userService.generateCompanyInvitationLink(1L, "user2@gmail", "user2", "member", new Date());
         assertEquals(expectedLink.substring(0, 70), actual.substring(0, 70));
+    }
+
+    @Test
+    public void shouldReturnNewCompanyIdWhenUserAcceptCompanyInvitation() throws Exception {
+        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+        String CompanyinvitationLink = userService.generateCompanyInvitationLink(
+                1L,
+                "bigdog@gmail.com",
+                "bigdog",
+                "manager",
+                expireDate);
+
+        String code = CompanyinvitationLink.split("code=")[1];
+        String decodedCompanyId = userService.decode(code).get(COMPANY_ID).toString();
+        assertEquals(decodedCompanyId.replaceFirst(".0", ""), "1");
     }
 }

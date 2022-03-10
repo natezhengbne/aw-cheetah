@@ -36,4 +36,5 @@ public interface EmailSendRepository extends JpaRepository<EmailSendRecord, Long
             "WHERE e.id = :emailRecordId")
     int updateEmailRecordStatus(@NotNull @Param("emailRecordId") Long emailRecordId,
                                 @NotNull @Param("receiveTime") OffsetDateTime receiveTime);
+
 }
