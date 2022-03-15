@@ -84,6 +84,4 @@ public class LinkGenerator {
         log.info("Company Invitation Link={}", invitationLink);
         return invitationLink;
     }
-
-
 }

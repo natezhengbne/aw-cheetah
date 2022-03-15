@@ -2,8 +2,10 @@ package com.asyncworking.aws;
 
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailMessageDto;
+import com.asyncworking.exceptions.EmailSendFailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@AllArgsConstructor
 @ConditionalOnProperty(value = "sqs.enable",
         havingValue = "true",
         matchIfMissing = true)
@@ -60,7 +63,7 @@ public class AmazonSQSSender {
                     MessageBuilder.withPayload(objectMapper.writeValueAsString(messageDto)).build()
             );
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            throw new EmailSendFailException(e);
         }
     }
 }
