@@ -3,21 +3,20 @@ package com.asyncworking.services;
 import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.AccountDto;
-import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.models.*;
+import com.asyncworking.models.Company;
+import com.asyncworking.models.Employee;
+import com.asyncworking.models.IEmployeeInfo;
+import com.asyncworking.models.IEmployeeInfoImpl;
+import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,11 +28,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -75,7 +76,7 @@ public class UserServiceTest {
     @Mock
     private LinkGenerator linkGenerator;
 
-    private String secretKey = "securesecuresecuresecuresecuresecuresecure";
+    private final String secretKey = "securesecuresecuresecuresecuresecuresecure";
 
     @BeforeEach()
     void setup() {
@@ -153,40 +154,6 @@ public class UserServiceTest {
 
     }
 
-//    @Test
-//    public void shouldGenerateActivationLinkGivenUserEmail() {
-//        String siteUrl = frontEndUrlConfig.getFrontEndUrl();
-//        String verifyLink = userService.generateLink("user0001@test.com",
-//                "/verifylink/verify?code=",
-//                "signUp",
-//                new Date(System.currentTimeMillis() + 1000000));
-//        String jwtToken = verifyLink.replace("https://www.asyncworking.com/verifylink/verify?code=", "");
-//        Jws<Claims> claimsJws = Jwts.parserBuilder()
-//                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-//                .build()
-//                .parseClaimsJws(jwtToken);
-//
-//        assertEquals(claimsJws.getBody().getSubject(), "signUp");
-//    }
-
-//    @Test
-//    public void shouldCreateUserAndGenerateActivationLinkGivenProperUserDto() {
-//        AccountDto accountDto = AccountDto.builder()
-//                .email("user@gmail.com")
-//                .password("len123")
-//                .name("user")
-//                .title("dev")
-//                .build();
-//
-//        ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
-//
-//        userService.createUserAndSendVerificationMessageToSQS(accountDto);
-//
-//        verify(userRepository).save(captor.capture());
-//        UserEntity savedUser = captor.getValue();
-//        assertEquals("user@gmail.com", savedUser.getEmail());
-//        assertEquals("user", savedUser.getName());
-//    }
 
     @Test
     public void shouldCreateNewUserViaInvitationLink() {
@@ -238,39 +205,6 @@ public class UserServiceTest {
 
         assertTrue(userService.isAccountActivated(code));
     }
-
-//    @Test
-//    public void shouldReturnSetterInfoWhenGivenCode() {
-//        UserEntity mockReturnedUserEntity = UserEntity.builder()
-//                .id(1L)
-//                .email("plus@gmail.com")
-//                .name("aName")
-//                .title("title")
-//                .build();
-//        EmployeeGetDto employeeGetDto = EmployeeGetDto.builder()
-//                .id(1L)
-//                .email("plus@gmail.com")
-//                .name("aName")
-//                .title("title")
-//                .build();
-//        when(userRepository.findByEmail(any())).thenReturn(Optional.ofNullable(mockReturnedUserEntity));
-//        when(employeeMapper.mapEntityToDto(mockReturnedUserEntity)).thenReturn(employeeGetDto);
-//
-//        String verifyLink = userService.generateLink("plus@gmail.com",
-//                "/verifylink/verify?code=",
-//                "passwordReset",
-//                new Date(System.currentTimeMillis() + 1000000));
-//        String jwtToken = verifyLink.replace("https://www.asyncworking.com/verifylink/verify?code=", "");
-//
-//        EmployeeGetDto mockUser = userService.getResetterInfo(jwtToken);
-//
-//        Jws<Claims> claimsJws = Jwts.parserBuilder()
-//                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-//                .build()
-//                .parseClaimsJws(jwtToken);
-//
-//        assertEquals(mockUser.getEmail(), claimsJws.getBody().get("email"));
-//    }
 
     @Test
     public void throwExceptionWhenUserDatabaseWrong() {
