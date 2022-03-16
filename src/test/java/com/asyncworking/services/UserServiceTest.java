@@ -57,17 +57,24 @@ public class UserServiceTest {
     private EmailSendRepository emailSendRepository;
 
     @Mock
+    private UserLoginInfoRepository userLoginInfoRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
     private JwtService jwtService;
 
+    @Mock
     private UserMapper userMapper;
+
     @Mock
     private EmployeeMapper employeeMapper;
 
+    @Mock
     private UserService userService;
 
+    @Mock
     private FrontEndUrlConfig frontEndUrlConfig;
 
     @Mock
@@ -88,6 +95,7 @@ public class UserServiceTest {
                 companyRepository,
                 employeeRepository,
                 emailSendRepository,
+                userLoginInfoRepository,
                 jwtService,
                 userMapper,
                 employeeMapper,

@@ -11,4 +11,5 @@ import java.util.Set;
 public interface EmployeeRepository extends JpaRepository<Employee, EmployeeId> {
     @Query(nativeQuery = true, value = " select company_id from company_user where user_id = :userId")
     Set<Long> findCompanyIdByUserId(@Param("userId") Long userId);
+
 }

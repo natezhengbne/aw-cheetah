@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -126,5 +127,16 @@ public class UserController {
     public ResponseEntity resetPassword(@Valid @RequestBody UserInfoDto userInfoDto) {
         userService.resetPassword(userInfoDto);
         return ResponseEntity.ok("reset");
+    }
+
+    @PostMapping("/accept-company-invitation")
+    public ResponseEntity addNewCompanyMember(@RequestParam(value = "code") String code) {
+        log.info("Company Invitation code: {}", code);
+        String newCompanyId = userService.isCompanyInvitationSuccess(code);
+        if (newCompanyId != null) {
+            log.debug("invitedUserId " + newCompanyId);
+            return ResponseEntity.ok(newCompanyId);
+        }
+        return new ResponseEntity<>("The user already joined the company or the link is expired", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

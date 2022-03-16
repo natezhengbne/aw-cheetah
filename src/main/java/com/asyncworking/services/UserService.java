@@ -35,18 +35,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private static final String SIGN_UP = "signUp";
+    private static final String RESET_PASSWORD = "reset-password";
+    private static final String INVITATION = "invitation";
+    private static final String COMPANY_INVITATION = "companyInvitation";
+
+    private static final String EMAIL = "email";
+    private static final String COMPANY_ID = "companyId";
+    private static final String NAME = "name";
+    private static final String TITLE = "title";
+    private static final String DATE = "date";
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
     private final EmailSendRepository emailSendRepository;
+    private final UserLoginInfoRepository userLoginInfoRepository;
+
     private final JwtService jwtService;
     private final UserMapper userMapper;
     private final EmployeeMapper employeeMapper;
@@ -54,6 +65,7 @@ public class UserService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final LinkGenerator linkGenerator;
+
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -141,7 +153,6 @@ public class UserService {
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
 
-
     public ExternalEmployeeDto getUserInfo(String code) {
         ExternalEmployeeDto externalEmployeeDto = decodedInvitationLink(code);
         log.debug("User Info: " + externalEmployeeDto.toString());
@@ -163,13 +174,13 @@ public class UserService {
                 .parseClaimsJws(code);
 
         Claims body = jws.getBody();
-        Long companyId = (long) Double.parseDouble(body.get("companyId").toString());
+        Long companyId = (long) Double.parseDouble(body.get(COMPANY_ID).toString());
         String companyName = getCompanyInfo(companyId).getName();
         return ExternalEmployeeDto.builder()
                 .companyId(companyId)
-                .email(body.get("email").toString())
-                .name(body.get("name").toString())
-                .title(body.get("title").toString())
+                .email(body.get(EMAIL).toString())
+                .name(body.get(NAME).toString())
+                .title(body.get(TITLE).toString())
                 .companyName(companyName)
                 .build();
     }
@@ -184,15 +195,63 @@ public class UserService {
         return numberOfActiveUser != 0;
     }
 
-    private String decodedEmail(String code) {
+    public String isCompanyInvitationSuccess(String code) {
+        Claims decodedBody;
+        try {
+            decodedBody = decode(code);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+        String decodedEmail = decodedBody.get(EMAIL).toString();
+
+        UserEntity userEntity = userRepository.findUserEntityByEmail(decodedEmail).get();
+
+        Long userId = userEntity.getId();
+        Long decodedCompanyId = Long.parseLong(decodedBody.get(COMPANY_ID).toString().replaceFirst(".0", ""));
+        Company company = getCompanyInfo(decodedCompanyId);
+        EmployeeId employeeId = buildEmployeeId(userId, company.getId());
+
+        String decodedTitle = decodedBody.get(TITLE).toString();
+        Employee employee = buildEmployee(employeeId, userEntity, company, decodedTitle);
+        try {
+            employeeRepository.save(employee);
+            return Long.toString(decodedCompanyId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private EmployeeId buildEmployeeId(Long userId, Long companyId) {
+        return EmployeeId.builder()
+                .userId(userId)
+                .companyId(companyId)
+                .build();
+    }
+
+    private Employee buildEmployee(EmployeeId employeeId, UserEntity userEntity, Company company, String title) {
+        return Employee.builder()
+                .id(employeeId)
+                .userEntity(userEntity)
+                .company(company)
+                .title(title)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
+    }
+
+    public Claims decode(String code) {
         Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .build()
                 .parseClaimsJws(code);
-
         Claims body = jws.getBody();
+        return body;
+    }
 
-        return body.get("email").toString();
+    private String decodedEmail(String code) {
+        return decode(code).get(EMAIL).toString();
     }
 
     public int activeUser(String email) {
@@ -204,7 +263,24 @@ public class UserService {
     }
 
     public Long fetchCompanyId(String email) {
-        return userRepository.findEmployeesByEmail(email).get(0).getId().getCompanyId();
+        List<Long> userCompanyIdList = userRepository.findUserCompanyIdList(email);
+        UserEntity loginUserEntity = findUserByEmail(email);
+        Company loginCompany = getCompanyInfo(userCompanyIdList.get(0));
+        if (!userLoginInfoRepository.findUserLoginInfoByUserId(loginUserEntity.getId()).isPresent()) {
+            UserLoginInfo userLoginInfo = creatUserLoginInfo(loginUserEntity.getId(), loginCompany.getId());
+            userLoginInfoRepository.save(userLoginInfo);
+        }
+        return userLoginInfoRepository.findUserLoginCompanyIdByUserId(loginUserEntity.getId());
+    }
+
+
+    private UserLoginInfo creatUserLoginInfo(Long userId, Long companyId) {
+        return UserLoginInfo.builder()
+                .userId(userId)
+                .companyId(companyId)
+                .createdTime(OffsetDateTime.now(UTC))
+                .updatedTime(OffsetDateTime.now(UTC))
+                .build();
     }
 
     public boolean ifUnverified(String email) {
@@ -229,4 +305,5 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
+
 }

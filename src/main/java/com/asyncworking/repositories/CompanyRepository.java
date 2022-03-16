@@ -39,4 +39,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<String> findNameById(@Param("id") Long id);
 
     boolean existsById(Long id);
+
 }

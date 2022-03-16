@@ -303,4 +303,24 @@ public class CompanyControllerTest extends ControllerHelper {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         ).andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldReturnOkIfGetUserCompanyListSuccessful() throws Exception {
+        String email = "123@gmail.com";
+        Long userId = 1L;
+        Long companyId = 1L;
+        CompanyInfoDto infoDto = CompanyInfoDto.builder()
+                .id(1L)
+                .name("Test")
+                .description("Test")
+                .build();
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/companies/")
+                                .param("email", email)
+                                .param("userId", String.valueOf(userId))
+                                .param("companyId", String.valueOf(companyId))
+                                .content(objectMapper.writeValueAsString(infoDto))
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
 }

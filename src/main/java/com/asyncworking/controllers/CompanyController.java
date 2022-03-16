@@ -46,6 +46,15 @@ public class CompanyController {
         return ResponseEntity.ok(companyColleagueDto);
     }
 
+    @GetMapping("/")
+    public ResponseEntity getUserCompanyList(@RequestParam(value = "email") String email,
+                                             @RequestParam(value = "userId") Long userId,
+                                             @RequestParam(value = "companyId") Long companyId) {
+        log.info("email: {}, currenCompanyId: {}, userId: {}", email, companyId, userId);
+        companyService.updateUserLoginCompanyId(email, companyId, userId);
+        return ResponseEntity.ok(companyService.getUserCompanyListByEmail(email));
+    }
+
     @GetMapping("/{companyId}/profile")
     public ResponseEntity<CompanyModificationDto> fetchCompanyProfile(@PathVariable("companyId")
                                                                       @NotNull Long companyId) {

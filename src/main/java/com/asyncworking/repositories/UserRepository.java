@@ -55,7 +55,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                     "and pu.project_id = :id " +
                     "and u.status = 'ACTIVATED' " +
                     "order by u.id")
-    List<IEmployeeInfo> findAllMembersByCompanyIdAndProjectId(@Param("companyId")Long companyId, @Param("id") Long id);
+    List<IEmployeeInfo> findAllMembersByCompanyIdAndProjectId(@Param("companyId") Long companyId, @Param("id") Long id);
 
     @Query(nativeQuery = true,
             value = "select u.id, u.name, u.email\n" +
@@ -94,4 +94,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                           @NotNull @Param("password") String password,
                           @NotNull @Param("receiveTime") OffsetDateTime receiveTime
     );
+
+    @Query(nativeQuery = true, value = "SELECT cu.company_id FROM company_user cu, user_info ui " +
+            "WHERE cu.user_id = ui.id AND ui.email = :email")
+    List<Long> findUserCompanyIdList(@Param("email") String email);
+
 }

@@ -71,6 +71,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             cors.setAllowedOrigins(List.of("http://localhost:3000",
                     "http://www.asyncworking.com",
                     "https://www.asyncworking.com",
+                    "http://member.asyncworking.com",
+                    "https://member.asyncworking.com",
                     "https://uat.asyncworking.com",
                     "https://uat2.asyncworking.com"
             ));
@@ -82,7 +84,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtService, userRepository))
-                .addFilterAfter(new JwtTokenVerifyFilter(secretKey), JwtUsernameAndPasswordAuthFilter.class)
+                .addFilterAfter(new JwtTokenVerifyFilter(secretKey, jwtService), JwtUsernameAndPasswordAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers(GET, "/companies/{companyId:^[1-9]\\d*$}/projects/{projectId:^[1-9]\\d*$}/**")
                 .access("@guard.checkProjectAccessGetMethod(authentication, #companyId, #projectId)")

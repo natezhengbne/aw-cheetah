@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.net.URI;
+import java.util.Date;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -309,6 +310,24 @@ class UserControllerTest extends ControllerHelper{
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnSuccessWhenUserAcceptCompanyInvitation() throws Exception {
+        String code = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjb21wYW55SW52aXRhdGlvbiIsImNvbX" +
+                "BhbnlJZCI6MzcsImVtYWlsIjoiZXJpYzguMTVAaG90bWFpbC5jb20iLCJuYW1lIjoiZXJ" +
+                "pYyIsInRpdGxlIjoiMjIyIiwiZGF0ZSI6Ik1hciA1LCAyMDIyLCA5OjAxOjQxIEFNIiwi" +
+                "aWF0IjoxNjQ2Mzg0NTAxLCJleHAiOjE2NDY0NzA5MDF9.VMzs7iwY3KlYCnNGOT_5EY0o" +
+                "seWFwzzS0l3s4SKSwdnMJ-G_LVL8jGY27tr5hpJvNodrcliqP3TpEBZQZDMNcg";
+
+        when(userService.isCompanyInvitationSuccess(code)).thenReturn("1");
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/accept-company-invitation")
+                                .param("code", code)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+
     }
 }
 

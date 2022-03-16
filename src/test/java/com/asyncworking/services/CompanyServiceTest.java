@@ -71,6 +71,9 @@ public class CompanyServiceTest {
     private TodoItemRepository todoItemRepository;
 
     @Mock
+    private UserLoginInfoRepository userLoginInfoRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -100,6 +103,7 @@ public class CompanyServiceTest {
         userMapper = new UserMapper(passwordEncoder);
         companyService = new CompanyService(
                 userRepository,
+                userLoginInfoRepository,
                 companyRepository,
                 employeeRepository,
                 todoItemRepository,
@@ -304,6 +308,13 @@ public class CompanyServiceTest {
         List<AvailableEmployeesGetDto> result = companyService.findAvailableEmployees(1L, 1L);
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
     }
+  
+    @Test
+    public void shouldReturnErrorWhenUserDoesNotBelongToCompany() {
+        Long companyId = 999L;
+        String email = "123@gmail.com";
+        List<Long> allCompanyIdsOfUser = userRepository.findUserCompanyIdList(email);
+        assertEquals(allCompanyIdsOfUser.contains(companyId), false);
 
     @Test
     public void test_sendInvitationLink_ok() {
@@ -383,7 +394,7 @@ public class CompanyServiceTest {
         assertThrows(UserNotFoundException.class,
                 () -> companyService.sendInvitationLink(companyId, any(CompanyInvitedAccountDto.class)));
     }
-
+  
     @Test
     public void test_generateInvitationLink_thenReturnLinkString() {
         long companyId = 1L;
