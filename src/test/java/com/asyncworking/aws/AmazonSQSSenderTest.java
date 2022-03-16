@@ -48,10 +48,10 @@ public class AmazonSQSSenderTest {
         mockMessageDto = EmailMessageDto.builder()
                 .emailRecordId(1L)
                 .userName("Test")
-                .receiverEmail("test@gmail.com")
+                .email("test@gmail.com")
                 .companyOwnerName("Joe Doe")
                 .companyName("AW")
-                .linkToSend("http://test")
+                .verificationLink("http://test")
                 .templateType(EmailType.CompanyInvitation.toString())
                 .build();
     }

@@ -47,7 +47,7 @@ public class LinkGeneratorTest {
 
         String invitationLink = linkGenerator.generateResetPasswordLink("user1@gmail.com", DateTimeUtility.MILLISECONDS_IN_DAY);
 
-        assertEquals(expectedLink.substring(0, 146), invitationLink.substring(0, 146));
+        assertEquals(expectedLink.substring(0, 70), invitationLink.substring(0, 70));
     }
 
     @Test

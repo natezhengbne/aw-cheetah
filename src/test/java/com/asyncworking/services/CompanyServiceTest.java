@@ -22,6 +22,7 @@ import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.TodoItemRepository;
+import com.asyncworking.repositories.UserLoginInfoRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.CompanyMapper;
@@ -315,6 +316,7 @@ public class CompanyServiceTest {
         String email = "123@gmail.com";
         List<Long> allCompanyIdsOfUser = userRepository.findUserCompanyIdList(email);
         assertEquals(allCompanyIdsOfUser.contains(companyId), false);
+    }
 
     @Test
     public void test_sendInvitationLink_ok() {

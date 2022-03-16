@@ -37,8 +37,8 @@ public class EmailService {
         EmailMessageDto messageDto = EmailMessageDto.builder()
                 .emailRecordId(emailSendRecord.getId())
                 .userName(receiverEntity.getName())
-                .receiverEmail(emailSendRecord.getReceiver())
-                .linkToSend(linkToSend)
+                .email(emailSendRecord.getReceiver())
+                .verificationLink(linkToSend)
                 .templateType(emailSendRecord.getEmailType().toString())
                 .build();
         amazonSQSSender.sendEmailMessage(messageDto);
@@ -55,10 +55,10 @@ public class EmailService {
         EmailMessageDto messageDto = EmailMessageDto.builder()
                 .emailRecordId(emailSendRecord.getId())
                 .userName(receiverName)
-                .receiverEmail(receiverEmail)
+                .email(receiverEmail)
                 .companyName(companyName)
                 .companyOwnerName(companyOwnerName)
-                .linkToSend(linkToSend)
+                .verificationLink(linkToSend)
                 .templateType(emailType.toString())
                 .build();
         amazonSQSSender.sendEmailMessage(messageDto);

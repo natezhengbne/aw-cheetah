@@ -11,12 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmailMessageDto {
     private Long emailRecordId;
-    private String receiverEmail;
+    private String email;
     private String userName;
     private String companyName;
     private String companyOwnerName;
-    private String linkToSend;
+    private String verificationLink;
     private String templateType;
     private String templateS3Bucket;
     private String templateS3Key;
+
 }
