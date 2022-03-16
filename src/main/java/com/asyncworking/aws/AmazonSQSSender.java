@@ -5,8 +5,8 @@ import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.exceptions.EmailSendFailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,7 +20,6 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@AllArgsConstructor
 @ConditionalOnProperty(value = "sqs.enable",
         havingValue = "true",
         matchIfMissing = true)
@@ -32,18 +31,23 @@ public class AmazonSQSSender {
 
     private final Map<EmailType, String> emailType = new HashMap<>();
 
+    @Setter
     @Value("${cloud.aws.sqs.outgoingqueue.url}")
     private String endPoint;
 
+    @Setter
     @Value("${cloud.aws.S3.templateS3Bucket}")
     private String s3Bucket;
 
+    @Setter
     @Value("${cloud.aws.S3.templateS3Key}")
     private String s3Key;
 
+    @Setter
     @Value("${cloud.aws.S3.templateResetPasswordS3Key}")
     private String s3resetPasswordTemplateKey;
 
+    @Setter
     @Value("${cloud.aws.S3.templateCompanyInvitationS3Key}")
     private String s3CompanyInvitationTemplateKey;
 

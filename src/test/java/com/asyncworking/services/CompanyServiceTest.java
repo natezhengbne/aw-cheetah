@@ -1,7 +1,9 @@
 package com.asyncworking.services;
 
+import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.AvailableEmployeesGetDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyInvitedAccountDto;
 import com.asyncworking.dtos.CompanyModificationDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
@@ -21,6 +23,7 @@ import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.TodoItemRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.CompanyMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
@@ -43,6 +46,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -297,5 +303,110 @@ public class CompanyServiceTest {
                 .thenReturn(List.of(mockIEmployeeInfo));
         List<AvailableEmployeesGetDto> result = companyService.findAvailableEmployees(1L, 1L);
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
+    }
+
+    @Test
+    public void test_sendInvitationLink_ok() {
+        long companyId = 1L;
+        long companyAdminId = 1L;
+        String companyName = "AW";
+        String link = "http://localhost:3000/test";
+        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
+                .email("test@gmail.com")
+                .name("test")
+                .build();
+        Company company = Company.builder()
+                .adminId(companyAdminId)
+                .name(companyName)
+                .build();
+        UserEntity owner = UserEntity.builder()
+                .name("Joe Doe")
+                .build();
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+        when(userRepository.findById(companyAdminId)).thenReturn(Optional.of(owner));
+        doNothing().when(emailService).sendLinkByEmail(
+                EmailType.CompanyInvitation,
+                link,
+                "test",
+                "test@gmail.com",
+                companyName,
+                "Joe Doe"
+        );
+        when(linkGenerator.generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        )).thenReturn(link);
+
+        companyService.sendInvitationLink(companyId, accountDto);
+
+        verify(companyRepository, times(1)).findById(companyId);
+        verify(userRepository, times(1)).findById(companyAdminId);
+        verify(emailService, times(1)).sendLinkByEmail(
+                EmailType.CompanyInvitation,
+                link,
+                "test",
+                "test@gmail.com",
+                companyName,
+                "Joe Doe"
+        );
+        verify(linkGenerator, times(1)).generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
+    }
+
+    @Test
+    public void test_sendInvitationLink_whenCompanyNotFound_thenThrowCompanyNotFoundException() {
+        long companyId = 1L;
+        when(companyRepository.findById(companyId)).thenReturn(Optional.empty());
+
+        assertThrows(CompanyNotFoundException.class,
+                () -> companyService.sendInvitationLink(companyId, any(CompanyInvitedAccountDto.class)));
+    }
+
+    @Test
+    public void test_sendInvitationLink_whenAdminNotFound_thenThrowUserNotFoundException() {
+        long companyId = 1L;
+        long companyAdminId = 1L;
+        Company company = Company.builder()
+                .adminId(companyAdminId)
+                .name("AW")
+                .build();
+
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+        when(userRepository.findById(companyAdminId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> companyService.sendInvitationLink(companyId, any(CompanyInvitedAccountDto.class)));
+    }
+
+    @Test
+    public void test_generateInvitationLink_thenReturnLinkString() {
+        long companyId = 1L;
+        String link = "http://localhost:3000/test";
+        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
+                .email("test@gmail.com")
+                .name("test")
+                .build();
+        when(linkGenerator.generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        )).thenReturn(link);
+
+        String actualLink = companyService.generateInvitationLink(companyId, accountDto);
+
+        assertEquals(link, actualLink);
+        verify(linkGenerator, times(1)).generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
     }
 }

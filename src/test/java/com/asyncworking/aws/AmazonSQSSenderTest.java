@@ -9,6 +9,7 @@ import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.Message;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class AmazonSQSSenderTest {
 
+    @InjectMocks
     private AmazonSQSSender sqsSender;
 
     @Mock
@@ -37,15 +39,12 @@ public class AmazonSQSSenderTest {
 
     @BeforeEach
     public void setUp() {
-        sqsSender = new AmazonSQSSender(
-                queueMessagingTemplate,
-                objectMapper,
-                "http://localhost:4566/000000000000/AWVerificationEmailBasicPP",
-                "aw-email-template",
-                "verification_email_template_updated.html",
-                "reset_password_email_template.txt",
-                "company_invitation_email_template.html"
-        );
+        sqsSender.setEndPoint("http://localhost:4566/000000000000/AWVerificationEmailBasicPP");
+        sqsSender.setS3Bucket("aw-email-template");
+        sqsSender.setS3Key("verification_email_template_updated.html");
+        sqsSender.setS3resetPasswordTemplateKey("reset_password_email_template.txt");
+        sqsSender.setS3CompanyInvitationTemplateKey("company_invitation_email_template.html");
+
         mockMessageDto = EmailMessageDto.builder()
                 .emailRecordId(1L)
                 .userName("Test")
