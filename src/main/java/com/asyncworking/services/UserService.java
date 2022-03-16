@@ -16,9 +16,11 @@ import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
 import com.asyncworking.models.EmployeeId;
 import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.UserLoginInfo;
 import com.asyncworking.repositories.CompanyRepository;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.UserLoginInfoRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.EmployeeMapper;
@@ -35,6 +37,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+
 import static java.time.ZoneOffset.UTC;
 
 @Slf4j
@@ -290,6 +294,11 @@ public class UserService {
     public UserEntity findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + userId));
+    }
+
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
     }
 
     @Transactional(rollbackFor = UserNotFoundException.class)
