@@ -108,9 +108,8 @@ public class CompanyController {
     ) {
         if (email == null) {
             return ResponseEntity.ok(companyService.generateInvitationLink(companyId, accountDto));
-        } else {
-            companyService.sendInvitationLink(companyId, accountDto);
-            return ResponseEntity.ok("Email has been sent");
         }
+        companyService.sendInvitationLink(companyId, accountDto);
+        return ResponseEntity.ok("Email has been sent");
     }
 }

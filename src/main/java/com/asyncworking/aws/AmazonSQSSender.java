@@ -6,7 +6,6 @@ import com.asyncworking.exceptions.EmailSendFailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -54,12 +53,21 @@ public class AmazonSQSSender {
     }
 
     public void sendEmailMessage(EmailMessageDto messageDto) {
+        EmailMessageDto dtoToSend = EmailMessageDto.builder()
+                .emailRecordId(messageDto.getEmailRecordId())
+                .email(messageDto.getEmail())
+                .userName(messageDto.getUserName())
+                .companyName(messageDto.getCompanyName())
+                .companyOwnerName(messageDto.getCompanyOwnerName())
+                .verificationLink(messageDto.getVerificationLink())
+                .templateType(messageDto.getTemplateType())
+                .templateS3Bucket(s3Bucket)
+                .templateS3Key(emailType.get(EmailType.valueOf(messageDto.getTemplateType())))
+                .build();
         try {
-            messageDto.setTemplateS3Bucket(s3Bucket);
-            messageDto.setTemplateS3Key(emailType.get(EmailType.valueOf(messageDto.getTemplateType())));
             queueMessagingTemplate.send(
                     endPoint,
-                    MessageBuilder.withPayload(objectMapper.writeValueAsString(messageDto)).build()
+                    MessageBuilder.withPayload(objectMapper.writeValueAsString(dtoToSend)).build()
             );
         } catch (Exception e) {
             throw new EmailSendFailException(e);

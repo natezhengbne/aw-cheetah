@@ -16,20 +16,23 @@ import java.util.Date;
 @AllArgsConstructor
 public class LinkGenerator {
 
+    private static final String VERIFICATION_SUBJECT = "signUp";
+    private static final String PASSWORD_RESET_SUBJECT = "reset-password";
+    private static final String VERIFICATION_LINK_PREFIX = "/verifylink/verify?code=";
+    private static final String PASSWORD_RESET_LINK_PREFIX = "/reset-password?code=";
     @Value("${url}")
     private String baseUrl;
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     public String generateUserVerificationLink(String email, long expiryTimeInMilliseconds) {
-        String link = generateLink(email, "/verifylink/verify?code=", "signUp", expiryTimeInMilliseconds);
+        String link = generateLink(email, VERIFICATION_LINK_PREFIX, VERIFICATION_SUBJECT, expiryTimeInMilliseconds);
         log.info("User Verification Link={}", link);
         return link;
     }
 
     public String generateResetPasswordLink(String email, long expiryTimeInMilliseconds) {
-        String link = generateLink(email, "/reset-password?code=", "reset-password", expiryTimeInMilliseconds);
+        String link = generateLink(email, PASSWORD_RESET_LINK_PREFIX, PASSWORD_RESET_SUBJECT, expiryTimeInMilliseconds);
         log.info("Password Reset Link={}", link);
         return link;
     }

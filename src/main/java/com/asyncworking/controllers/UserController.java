@@ -62,7 +62,7 @@ public class UserController {
     public ResponseEntity createUserAndVerificationLink(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
         userService.createUserAndSendVerificationEmail(accountDto);
-        return ResponseEntity.ok("Email has been sent");
+        return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/resend")
@@ -76,7 +76,7 @@ public class UserController {
             return new ResponseEntity<>("Email has already been verified!", HttpStatus.CONFLICT);
         }
         userService.sendVerificationEmail(userEmail);
-        return ResponseEntity.ok("Email has been sent");
+        return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/password")
@@ -89,7 +89,7 @@ public class UserController {
             return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
         }
         userService.sendPasswordResetEmail(email);
-        return ResponseEntity.ok("Email has been sent");
+        return ResponseEntity.ok("Success");
     }
 
     @GetMapping("/invitations/info")

@@ -3,13 +3,11 @@ package com.asyncworking.aws;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.exceptions.EmailSendFailException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.Message;
@@ -22,24 +20,20 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AmazonSQSSenderTest {
 
-    @InjectMocks
     private AmazonSQSSender sqsSender;
 
     @Mock
     private QueueMessagingTemplate queueMessagingTemplate;
 
-    @Mock
-    private ObjectMapper objectMapper;
-
     private EmailMessageDto mockMessageDto;
 
     @BeforeEach
     public void setUp() {
+        sqsSender = new AmazonSQSSender(queueMessagingTemplate, new ObjectMapper());
         ReflectionTestUtils.setField(sqsSender, "endPoint", "http://localhost:4566/000000000000/AWVerificationEmailBasicPP");
         ReflectionTestUtils.setField(sqsSender, "s3Bucket", "aw-email-template");
         ReflectionTestUtils.setField(sqsSender, "s3Key", "verification_email_template_updated.html");
@@ -58,43 +52,23 @@ public class AmazonSQSSenderTest {
     }
 
     @Test
-    public void test_sendEmailMessage_OK() throws JsonProcessingException {
+    public void test_sendEmailMessage_OK() {
         doNothing().when(queueMessagingTemplate).send(anyString(), any(Message.class));
-        when(objectMapper.writeValueAsString(mockMessageDto)).thenReturn("TestString");
 
         sqsSender.sendEmailMessage(mockMessageDto);
 
         verify(queueMessagingTemplate, times(1))
                 .send(anyString(), any(Message.class));
-        verify(objectMapper, times(1)).writeValueAsString(mockMessageDto);
     }
 
     @Test
-    public void test_sendEmailMessage_whenJsonConversionFail() throws JsonProcessingException {
-        doNothing().when(queueMessagingTemplate).send(anyString(), any(Message.class));
-        when(objectMapper.writeValueAsString(new EmailMessageDto())).thenReturn("TestString");
-
-        assertThrows(EmailSendFailException.class,
-                () -> sqsSender.sendEmailMessage(mockMessageDto)
-        );
-
-        verify(queueMessagingTemplate, times(0))
-                .send(anyString(), any(Message.class));
-        verify(objectMapper, times(1)).writeValueAsString(mockMessageDto);
-    }
-
-    @Test
-    public void test_sendEmailMessage_whenMessageSendFail() throws JsonProcessingException {
-
+    public void test_sendEmailMessage_whenMessageSendFail() {
         doThrow(new RuntimeException()).when(queueMessagingTemplate).send(anyString(), any(Message.class));
-        when(objectMapper.writeValueAsString(mockMessageDto)).thenReturn("TestString");
 
         assertThrows(EmailSendFailException.class,
                 () -> sqsSender.sendEmailMessage(mockMessageDto)
         );
 
-        verify(queueMessagingTemplate, times(1))
-                .send(anyString(), any(Message.class));
-        verify(objectMapper, times(1)).writeValueAsString(mockMessageDto);
+        verify(queueMessagingTemplate, times(1)).send(anyString(), any(Message.class));
     }
 }
