@@ -25,6 +25,8 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
             "tl.companyId=:companyId order by tl.createdTime desc")
     List<TodoList> findTodolistWithTodoItems(@Param("companyId") long companyId, @Param("projectId") Long projectId, Pageable pageable);
 
+    TodoList findTodoListByCompanyIdAndProjectIdAndTodoListTitle(Long companyId, Long projectId, String todoListTitle);
+
     Optional<TodoList> findByCompanyIdAndProjectIdAndId(Long companyId, Long projectId, Long todoListId);
 
     @Modifying
