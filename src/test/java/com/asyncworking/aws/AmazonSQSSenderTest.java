@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.Message;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,11 +40,11 @@ public class AmazonSQSSenderTest {
 
     @BeforeEach
     public void setUp() {
-        sqsSender.setEndPoint("http://localhost:4566/000000000000/AWVerificationEmailBasicPP");
-        sqsSender.setS3Bucket("aw-email-template");
-        sqsSender.setS3Key("verification_email_template_updated.html");
-        sqsSender.setS3resetPasswordTemplateKey("reset_password_email_template.txt");
-        sqsSender.setS3CompanyInvitationTemplateKey("company_invitation_email_template.html");
+        ReflectionTestUtils.setField(sqsSender, "endPoint", "http://localhost:4566/000000000000/AWVerificationEmailBasicPP");
+        ReflectionTestUtils.setField(sqsSender, "s3Bucket", "aw-email-template");
+        ReflectionTestUtils.setField(sqsSender, "s3Key", "verification_email_template_updated.html");
+        ReflectionTestUtils.setField(sqsSender, "s3resetPasswordTemplateKey", "reset_password_email_template.txt");
+        ReflectionTestUtils.setField(sqsSender, "s3CompanyInvitationTemplateKey", "company_invitation_email_template.html");
 
         mockMessageDto = EmailMessageDto.builder()
                 .emailRecordId(1L)

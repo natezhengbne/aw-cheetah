@@ -31,23 +31,18 @@ public class AmazonSQSSender {
 
     private final Map<EmailType, String> emailType = new HashMap<>();
 
-    @Setter
     @Value("${cloud.aws.sqs.outgoingqueue.url}")
     private String endPoint;
 
-    @Setter
     @Value("${cloud.aws.S3.templateS3Bucket}")
     private String s3Bucket;
 
-    @Setter
     @Value("${cloud.aws.S3.templateS3Key}")
     private String s3Key;
 
-    @Setter
     @Value("${cloud.aws.S3.templateResetPasswordS3Key}")
     private String s3resetPasswordTemplateKey;
 
-    @Setter
     @Value("${cloud.aws.S3.templateCompanyInvitationS3Key}")
     private String s3CompanyInvitationTemplateKey;
 
