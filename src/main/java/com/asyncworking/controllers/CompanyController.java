@@ -99,17 +99,26 @@ public class CompanyController {
         return ResponseEntity.ok(upcomingTodoItemDtoList);
     }
 
-    @PostMapping("/{companyId}/invitation")
+    @PostMapping("/{companyId}/invite-company-users")
     @ApiOperation(value = "Generate an invitation for user to join a company, if email given, send the link by email")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
-    public ResponseEntity getInvitationLink(@PathVariable Long companyId,
+    public ResponseEntity createCompanyInvitationLink(@PathVariable Long companyId,
                                             @Valid @RequestBody CompanyInvitedAccountDto accountDto,
                                             @RequestParam(required = false) String email
     ) {
         if (email == null) {
-            return ResponseEntity.ok(companyService.generateInvitationLink(companyId, accountDto));
+            return ResponseEntity.ok(companyService.generateCompanyInvitationLink(companyId, accountDto));
         }
         companyService.sendInvitationLink(companyId, accountDto);
         return ResponseEntity.ok("Email has been sent");
+    }
+
+    @GetMapping("/invitations/companies")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
+    public ResponseEntity createInvitationLink(@RequestParam(value = "companyId") Long companyId,
+                                            @RequestParam(value = "email") String email,
+                                            @RequestParam(value = "name") String name,
+                                            @RequestParam(value = "title") String title) {
+        return ResponseEntity.ok(companyService.generateInvitationLink(companyId, email, name, title));
     }
 }

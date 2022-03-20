@@ -221,7 +221,7 @@ public class CompanyService {
         UserEntity owner = userRepository.findById(company.getAdminId())
                 .orElseThrow(() -> new UserNotFoundException("Cannot find admin for company"));
 
-        String invitationLink = generateInvitationLink(companyId, accountDto);
+        String invitationLink = generateCompanyInvitationLink(companyId, accountDto);
 
         emailService.sendLinkByEmail(
                 EmailType.CompanyInvitation,
@@ -233,11 +233,22 @@ public class CompanyService {
         );
     }
 
-    public String generateInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto) {
+    public String generateInvitationLink(Long companyId, String email, String name, String title) {
+        String invitationLink = linkGenerator.generateInvitationLink(
+                companyId,
+                email,
+                name,
+                title
+        );
+        return invitationLink;
+    }
+
+    public String generateCompanyInvitationLink(Long companyId, CompanyInvitedAccountDto accountDto) {
         String invitationLink = linkGenerator.generateCompanyInvitationLink(
                 companyId,
                 accountDto.getEmail(),
                 accountDto.getName(),
+                accountDto.getTitle(),
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
         return invitationLink;

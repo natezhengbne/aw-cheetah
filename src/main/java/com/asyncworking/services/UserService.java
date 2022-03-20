@@ -11,6 +11,7 @@ import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
+import com.asyncworking.exceptions.UserStatusUnexpectedException;
 import com.asyncworking.jwt.JwtService;
 import com.asyncworking.models.Company;
 import com.asyncworking.models.Employee;
@@ -100,7 +101,6 @@ public class UserService {
                 .findUnverifiedStatusByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
 
-
         String userVerificationLink = linkGenerator.generateUserVerificationLink(
                 unverifiedUserEntity.getEmail(),
                 DateTimeUtility.MILLISECONDS_IN_DAY
@@ -116,6 +116,10 @@ public class UserService {
     public void sendPasswordResetEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
+
+        if (userEntity.getStatus() == Status.UNVERIFIED) {
+            throw new UserStatusUnexpectedException(Status.ACTIVATED, Status.UNVERIFIED);
+        }
 
         String passwordRestLink = linkGenerator.generateResetPasswordLink(
                 email,

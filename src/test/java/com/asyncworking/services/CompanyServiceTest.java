@@ -327,6 +327,7 @@ public class CompanyServiceTest {
         CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
                 .email("test@gmail.com")
                 .name("test")
+                .title("title")
                 .build();
         Company company = Company.builder()
                 .adminId(companyAdminId)
@@ -349,6 +350,7 @@ public class CompanyServiceTest {
                 companyId,
                 "test@gmail.com",
                 "test",
+                "title",
                 DateTimeUtility.MILLISECONDS_IN_DAY
         )).thenReturn(link);
 
@@ -368,6 +370,7 @@ public class CompanyServiceTest {
                 companyId,
                 "test@gmail.com",
                 "test",
+                "title",
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
     }
@@ -404,21 +407,24 @@ public class CompanyServiceTest {
         CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
                 .email("test@gmail.com")
                 .name("test")
+                .title("title")
                 .build();
         when(linkGenerator.generateCompanyInvitationLink(
                 companyId,
                 "test@gmail.com",
                 "test",
+                "title",
                 DateTimeUtility.MILLISECONDS_IN_DAY
         )).thenReturn(link);
 
-        String actualLink = companyService.generateInvitationLink(companyId, accountDto);
+        String actualLink = companyService.generateCompanyInvitationLink(companyId, accountDto);
 
         assertEquals(link, actualLink);
         verify(linkGenerator, times(1)).generateCompanyInvitationLink(
                 companyId,
                 "test@gmail.com",
                 "test",
+                "title",
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
     }

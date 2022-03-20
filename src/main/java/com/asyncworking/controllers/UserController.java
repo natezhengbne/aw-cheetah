@@ -68,26 +68,13 @@ public class UserController {
     @PostMapping("/resend")
     @ApiOperation(value = "Resend verification link by email provided")
     public ResponseEntity resendVerificationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
-        String userEmail = userInfoDto.getEmail();
-        if (!userService.ifEmailExists(userEmail)) {
-            return new ResponseEntity<>("Email does not exist", HttpStatus.NOT_FOUND);
-        }
-        if (!userService.ifUnverified(userEmail)) {
-            return new ResponseEntity<>("Email has already been verified!", HttpStatus.CONFLICT);
-        }
-        userService.sendVerificationEmail(userEmail);
+        userService.sendVerificationEmail(userInfoDto.getEmail());
         return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/password")
     @ApiOperation(value = "Send password reset link to the email provided")
     public ResponseEntity sendPasswordResetLink(@RequestParam(value = "email") String email) {
-        if (userService.ifUnverified(email)) {
-            return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
-        }
-        if (!userService.ifEmailExists(email)) {
-            return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
-        }
         userService.sendPasswordResetEmail(email);
         return ResponseEntity.ok("Success");
     }

@@ -51,7 +51,7 @@ public class LinkGeneratorTest {
     }
 
     @Test
-    public void test_GenerateUserInvitationLink_ok() {
+    public void test_GenerateInvitationLink_ok() {
         String expectedLink = siteUrl
                 .concat("/invitations/info?code=")
                 .concat("eyJhbGciOiJIUzI1NiJ9." +
@@ -59,7 +59,7 @@ public class LinkGeneratorTest {
                         "ZXIxQGdtYWlsLmNvbSIsIm5hbWUiOiJ1c2VyMSIsInRpdGxlIjoiZGV2ZWxvcGVyIn0." +
                         "FsfFrxlLeCjcSBV1cWp6D_VstygnaSr9EWSqZKKX1dU");
 
-        String invitationLink = linkGenerator.generateUserInvitationLink(1L, "user1@gmail.com", "user1", "developer");
+        String invitationLink = linkGenerator.generateInvitationLink(1L, "user1@gmail.com", "user1", "developer");
 
         assertEquals(expectedLink, invitationLink);
     }
@@ -74,6 +74,7 @@ public class LinkGeneratorTest {
                 1L,
                 "user2@gmail",
                 "user2",
+                "title",
                 DateTimeUtility.MILLISECONDS_IN_DAY);
 
         assertEquals(expectedLink.substring(0, 70), companyInvitationLink.substring(0, 70));

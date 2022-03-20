@@ -323,4 +323,20 @@ public class CompanyControllerTest extends ControllerHelper {
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void shouldCreateInvitationLinkSuccessful() throws Exception {
+        Long companyId = 1L;
+        String title = "developer";
+        String name = "user1";
+        String email = "user1@gmail.com";
+
+        mockMvc.perform(get("/invitations/companies")
+                .param("companyId", String.valueOf(companyId))
+                .param("title", title)
+                .param("name", name)
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
+    }
 }

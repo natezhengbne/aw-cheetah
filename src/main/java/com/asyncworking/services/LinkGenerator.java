@@ -53,7 +53,7 @@ public class LinkGenerator {
         return link;
     }
 
-    public String generateUserInvitationLink(Long companyId, String email, String name, String title) {
+    public String generateInvitationLink(Long companyId, String email, String name, String title) {
         String invitationJwt = Jwts.builder()
                 .setSubject("invitation")
                 .claim("companyId", companyId)
@@ -69,7 +69,7 @@ public class LinkGenerator {
         return invitationLink;
     }
 
-    public String generateCompanyInvitationLink(Long companyId, String email, String name, long expiryTimeInMilliseconds) {
+    public String generateCompanyInvitationLink(Long companyId, String email, String name, String title, long expiryTimeInMilliseconds) {
         Date expireDate = new Date(System.currentTimeMillis() + expiryTimeInMilliseconds);
         String invitationJwt = Jwts.builder()
                 .setSubject("companyInvitation")
@@ -77,6 +77,7 @@ public class LinkGenerator {
                 .claim("email", email)
                 .claim("name", name)
                 .claim("date", expireDate)
+                .claim("title", title)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
