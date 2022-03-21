@@ -35,6 +35,7 @@ import static java.time.ZoneOffset.UTC;
 @RequiredArgsConstructor
 @Slf4j
 public class TodoService {
+    private static final String DONE = "Done";
 
     private final TodoListRepository todoListRepository;
 
@@ -100,18 +101,12 @@ public class TodoService {
 
     public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
-        todoItem.setTodoList(todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(companyId, projectId, "Done"));
+        todoItem.setTodoList(todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(companyId, projectId, DONE));
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
-    }
-
-    public TodoListDto findByCompanyIdAndProjectIdAndTodoListTitle(Long companyId, Long projectId, String todoListTitle){
-        TodoList todoList = todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(companyId,projectId,todoListTitle);
-        return  todoMapper.fromTodoListEntity( todoList,
-                    todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems()));
     }
 
     public List<TodoItemGetDto> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId,
