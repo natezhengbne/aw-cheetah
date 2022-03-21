@@ -3,9 +3,11 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.LinkGenerator;
 import com.asyncworking.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,12 +26,15 @@ class UserControllerTest extends ControllerHelper{
     @Mock
     private UserService userService;
 
+    @Mock
+    private LinkGenerator linkGenerator;
+
+    @InjectMocks
     private UserController userController;
 
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        userController = new UserController(userService);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
@@ -300,6 +305,22 @@ class UserControllerTest extends ControllerHelper{
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void shouldCreateInvitationLinkSuccessful() throws Exception {
+        Long companyId = 1L;
+        String title = "developer";
+        String name = "user1";
+        String email = "user1@gmail.com";
+
+        mockMvc.perform(get("/invitations/companies")
+                .param("companyId", String.valueOf(companyId))
+                .param("title", title)
+                .param("name", name)
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 }
 

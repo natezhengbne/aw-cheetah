@@ -18,8 +18,14 @@ public class LinkGenerator {
 
     private static final String VERIFICATION_SUBJECT = "signUp";
     private static final String PASSWORD_RESET_SUBJECT = "reset-password";
+    private static final String INVITATION_SUBJECT = "invitation";
+    private static final String COMPANY_INVITATION_SUBJECT = "companyInvitation";
+
     private static final String VERIFICATION_LINK_PREFIX = "/verifylink/verify?code=";
     private static final String PASSWORD_RESET_LINK_PREFIX = "/reset-password?code=";
+    private static final String INVITATION_LINK_PREFIX = "/invitations/info?code=";
+    private static final String COMPANY_INVITATION__LINK_PREFIX = "/company-invitations/info?code=";
+
     @Value("${url}")
     private String baseUrl;
     @Value("${jwt.secret}")
@@ -55,7 +61,7 @@ public class LinkGenerator {
 
     public String generateInvitationLink(Long companyId, String email, String name, String title) {
         String invitationJwt = Jwts.builder()
-                .setSubject("invitation")
+                .setSubject(INVITATION_SUBJECT)
                 .claim("companyId", companyId)
                 .claim("email", email)
                 .claim("name", name)
@@ -64,7 +70,7 @@ public class LinkGenerator {
                 .compact();
         log.info("invitationJwt=" + invitationJwt);
 
-        String invitationLink = baseUrl + "/invitations/info?code=" + invitationJwt;
+        String invitationLink = baseUrl + INVITATION_LINK_PREFIX + invitationJwt;
         log.info("User Invitation Link={}", invitationLink);
         return invitationLink;
     }
@@ -72,7 +78,7 @@ public class LinkGenerator {
     public String generateCompanyInvitationLink(Long companyId, String email, String name, String title, long expiryTimeInMilliseconds) {
         Date expireDate = new Date(System.currentTimeMillis() + expiryTimeInMilliseconds);
         String invitationJwt = Jwts.builder()
-                .setSubject("companyInvitation")
+                .setSubject(COMPANY_INVITATION_SUBJECT)
                 .claim("companyId", companyId)
                 .claim("email", email)
                 .claim("name", name)
@@ -84,7 +90,7 @@ public class LinkGenerator {
                 .compact();
         log.info("invitationJwt=" + invitationJwt);
 
-        String invitationLink = baseUrl + "/company-invitations/info?code=" + invitationJwt;
+        String invitationLink = baseUrl + COMPANY_INVITATION__LINK_PREFIX + invitationJwt;
         log.info("Company Invitation Link={}", invitationLink);
         return invitationLink;
     }

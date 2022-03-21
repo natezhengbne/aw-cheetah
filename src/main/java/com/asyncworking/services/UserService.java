@@ -24,6 +24,7 @@ import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserLoginInfoRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.DateTimeUtility;
+import com.asyncworking.utility.mapper.EmailMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
@@ -46,16 +47,11 @@ import static java.time.ZoneOffset.UTC;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private static final String SIGN_UP = "signUp";
-    private static final String RESET_PASSWORD = "reset-password";
-    private static final String INVITATION = "invitation";
-    private static final String COMPANY_INVITATION = "companyInvitation";
 
     private static final String EMAIL = "email";
     private static final String COMPANY_ID = "companyId";
     private static final String NAME = "name";
     private static final String TITLE = "title";
-    private static final String DATE = "date";
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
@@ -66,11 +62,11 @@ public class UserService {
     private final JwtService jwtService;
     private final UserMapper userMapper;
     private final EmployeeMapper employeeMapper;
-    private final FrontEndUrlConfig frontEndUrlConfig;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final LinkGenerator linkGenerator;
 
+    private final EmailMapper emailMapper;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -89,11 +85,11 @@ public class UserService {
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
 
-        emailService.sendLinkByEmail(
-                EmailType.Verification,
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.Verification.toString(),
                 userVerificationLink,
                 newUserEntity
-        );
+        ));
     }
 
     public void sendVerificationEmail(String email) {
@@ -106,11 +102,11 @@ public class UserService {
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
 
-        emailService.sendLinkByEmail(
-                EmailType.Verification,
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.Verification.toString(),
                 userVerificationLink,
                 unverifiedUserEntity
-        );
+        ));
     }
 
     public void sendPasswordResetEmail(String email) {
@@ -126,11 +122,11 @@ public class UserService {
                 DateTimeUtility.MILLISECONDS_IN_DAY
         );
 
-        emailService.sendLinkByEmail(
-                EmailType.Verification,
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.Verification.toString(),
                 passwordRestLink,
                 userEntity
-        );
+        ));
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -318,5 +314,4 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
-
 }

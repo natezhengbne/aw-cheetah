@@ -5,12 +5,14 @@ import com.asyncworking.dtos.ExternalEmployeeDto;
 import com.asyncworking.dtos.InvitedAccountGetDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.LinkGenerator;
 import com.asyncworking.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,8 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+
+    private final LinkGenerator linkGenerator;
 
     @GetMapping("/login")
     public ResponseEntity verifyStatus(@RequestParam(value = "email") String email) {
@@ -77,6 +81,15 @@ public class UserController {
     public ResponseEntity sendPasswordResetLink(@RequestParam(value = "email") String email) {
         userService.sendPasswordResetEmail(email);
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/invitations/companies")
+    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
+    public ResponseEntity createInvitationLink(@RequestParam(value = "companyId") Long companyId,
+                                               @RequestParam(value = "email") String email,
+                                               @RequestParam(value = "name") String name,
+                                               @RequestParam(value = "title") String title) {
+        return ResponseEntity.ok(linkGenerator.generateInvitationLink(companyId, email, name, title));
     }
 
     @GetMapping("/invitations/info")

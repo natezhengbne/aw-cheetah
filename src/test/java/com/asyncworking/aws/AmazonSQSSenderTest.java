@@ -1,8 +1,10 @@
 package com.asyncworking.aws;
 
 import com.asyncworking.constants.EmailType;
+import com.asyncworking.dtos.EmailContentDto;
 import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.exceptions.EmailSendFailException;
+import com.asyncworking.utility.mapper.EmailMapperImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,19 +31,18 @@ public class AmazonSQSSenderTest {
     @Mock
     private QueueMessagingTemplate queueMessagingTemplate;
 
-    private EmailMessageDto mockMessageDto;
+    private EmailContentDto mockEmailContentDto;
 
     @BeforeEach
     public void setUp() {
-        sqsSender = new AmazonSQSSender(queueMessagingTemplate, new ObjectMapper());
+        sqsSender = new AmazonSQSSender(queueMessagingTemplate, new ObjectMapper(), new EmailMapperImpl());
         ReflectionTestUtils.setField(sqsSender, "endPoint", "http://localhost:4566/000000000000/AWVerificationEmailBasicPP");
         ReflectionTestUtils.setField(sqsSender, "s3Bucket", "aw-email-template");
         ReflectionTestUtils.setField(sqsSender, "s3Key", "verification_email_template_updated.html");
         ReflectionTestUtils.setField(sqsSender, "s3resetPasswordTemplateKey", "reset_password_email_template.txt");
         ReflectionTestUtils.setField(sqsSender, "s3CompanyInvitationTemplateKey", "company_invitation_email_template.html");
 
-        mockMessageDto = EmailMessageDto.builder()
-                .emailRecordId(1L)
+        mockEmailContentDto = EmailContentDto.builder()
                 .userName("Test")
                 .email("test@gmail.com")
                 .companyOwnerName("Joe Doe")
@@ -55,7 +56,7 @@ public class AmazonSQSSenderTest {
     public void test_sendEmailMessage_OK() {
         doNothing().when(queueMessagingTemplate).send(anyString(), any(Message.class));
 
-        sqsSender.sendEmailMessage(mockMessageDto);
+        sqsSender.sendEmailMessage(mockEmailContentDto, 1L);
 
         verify(queueMessagingTemplate, times(1))
                 .send(anyString(), any(Message.class));
@@ -66,7 +67,7 @@ public class AmazonSQSSenderTest {
         doThrow(new RuntimeException()).when(queueMessagingTemplate).send(anyString(), any(Message.class));
 
         assertThrows(EmailSendFailException.class,
-                () -> sqsSender.sendEmailMessage(mockMessageDto)
+                () -> sqsSender.sendEmailMessage(mockEmailContentDto, 1L)
         );
 
         verify(queueMessagingTemplate, times(1)).send(anyString(), any(Message.class));

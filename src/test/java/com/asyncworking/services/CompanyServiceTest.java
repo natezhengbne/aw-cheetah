@@ -5,6 +5,7 @@ import com.asyncworking.dtos.AvailableEmployeesGetDto;
 import com.asyncworking.dtos.CompanyColleagueDto;
 import com.asyncworking.dtos.CompanyInvitedAccountDto;
 import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.EmailContentDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
@@ -26,6 +27,8 @@ import com.asyncworking.repositories.UserLoginInfoRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.CompanyMapper;
+import com.asyncworking.utility.mapper.EmailMapper;
+import com.asyncworking.utility.mapper.EmailMapperImpl;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.TodoMapperImpl;
@@ -93,6 +96,7 @@ public class CompanyServiceTest {
     private CompanyMapper companyMapper;
     private UserMapper userMapper;
     private TodoMapper todoMapper;
+    private EmailMapper emailMapper = new EmailMapperImpl();
     private CompanyService companyService;
 
 
@@ -114,6 +118,7 @@ public class CompanyServiceTest {
                 todoMapper,
                 roleService,
                 emailService,
+                emailMapper,
                 linkGenerator
         );
     }
@@ -336,16 +341,27 @@ public class CompanyServiceTest {
         UserEntity owner = UserEntity.builder()
                 .name("Joe Doe")
                 .build();
+        EmailContentDto emailContentDto = emailMapper.toEmailContentDto(
+                EmailType.CompanyInvitation.toString(),
+                link,
+                accountDto,
+                company.getName(),
+                owner.getName()
+        );
         when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
         when(userRepository.findById(companyAdminId)).thenReturn(Optional.of(owner));
-        doNothing().when(emailService).sendLinkByEmail(
-                EmailType.CompanyInvitation,
-                link,
-                "test",
-                "test@gmail.com",
-                companyName,
-                "Joe Doe"
-        );
+        doNothing().when(emailService).sendLinkByEmail(emailContentDto);
+//                emailMapper.toEmailContentDto(
+//                EmailType.CompanyInvitation,
+//
+//                )
+//                EmailType.CompanyInvitation,
+//                link,
+//                "test",
+//                "test@gmail.com",
+//                companyName,
+//                "Joe Doe"
+//        );
         when(linkGenerator.generateCompanyInvitationLink(
                 companyId,
                 "test@gmail.com",
@@ -358,14 +374,7 @@ public class CompanyServiceTest {
 
         verify(companyRepository, times(1)).findById(companyId);
         verify(userRepository, times(1)).findById(companyAdminId);
-        verify(emailService, times(1)).sendLinkByEmail(
-                EmailType.CompanyInvitation,
-                link,
-                "test",
-                "test@gmail.com",
-                companyName,
-                "Joe Doe"
-        );
+        verify(emailService, times(1)).sendLinkByEmail(emailContentDto);
         verify(linkGenerator, times(1)).generateCompanyInvitationLink(
                 companyId,
                 "test@gmail.com",

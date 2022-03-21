@@ -1,8 +1,10 @@
 package com.asyncworking.aws;
 
 import com.asyncworking.constants.EmailType;
+import com.asyncworking.dtos.EmailContentDto;
 import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.exceptions.EmailSendFailException;
+import com.asyncworking.utility.mapper.EmailMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,8 @@ public class AmazonSQSSender {
 
     private final ObjectMapper objectMapper;
 
+    private final EmailMapper emailMapper;
+
     private final Map<EmailType, String> emailType = new HashMap<>();
 
     @Value("${cloud.aws.sqs.outgoingqueue.url}")
@@ -52,18 +56,13 @@ public class AmazonSQSSender {
         emailType.put(EmailType.CompanyInvitation, s3CompanyInvitationTemplateKey);
     }
 
-    public void sendEmailMessage(EmailMessageDto messageDto) {
-        EmailMessageDto dtoToSend = EmailMessageDto.builder()
-                .emailRecordId(messageDto.getEmailRecordId())
-                .email(messageDto.getEmail())
-                .userName(messageDto.getUserName())
-                .companyName(messageDto.getCompanyName())
-                .companyOwnerName(messageDto.getCompanyOwnerName())
-                .verificationLink(messageDto.getVerificationLink())
-                .templateType(messageDto.getTemplateType())
-                .templateS3Bucket(s3Bucket)
-                .templateS3Key(emailType.get(EmailType.valueOf(messageDto.getTemplateType())))
-                .build();
+    public void sendEmailMessage(EmailContentDto messageContentDto, Long emailSendRecordId) {
+        EmailMessageDto dtoToSend = emailMapper.toEmailMessageDto(
+                messageContentDto,
+                emailSendRecordId,
+                s3Bucket,
+                emailType.get((EmailType.valueOf(messageContentDto.getTemplateType())))
+        );
         try {
             queueMessagingTemplate.send(
                     endPoint,

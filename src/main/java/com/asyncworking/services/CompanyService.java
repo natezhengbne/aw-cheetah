@@ -23,6 +23,7 @@ import com.asyncworking.repositories.UserLoginInfoRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.DateTimeUtility;
 import com.asyncworking.utility.mapper.CompanyMapper;
+import com.asyncworking.utility.mapper.EmailMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
@@ -68,6 +69,8 @@ public class CompanyService {
     private final RoleService roleService;
 
     private final EmailService emailService;
+
+    private final EmailMapper emailMapper;
 
     private final LinkGenerator linkGenerator;
 
@@ -223,14 +226,13 @@ public class CompanyService {
 
         String invitationLink = generateCompanyInvitationLink(companyId, accountDto);
 
-        emailService.sendLinkByEmail(
-                EmailType.CompanyInvitation,
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.CompanyInvitation.toString(),
                 invitationLink,
-                accountDto.getName(),
-                accountDto.getEmail(),
+                accountDto,
                 company.getName(),
                 owner.getName()
-        );
+        ));
     }
 
     public String generateInvitationLink(Long companyId, String email, String name, String title) {

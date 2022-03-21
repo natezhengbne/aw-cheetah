@@ -112,13 +112,4 @@ public class CompanyController {
         companyService.sendInvitationLink(companyId, accountDto);
         return ResponseEntity.ok("Email has been sent");
     }
-
-    @GetMapping("/invitations/companies")
-    @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
-    public ResponseEntity createInvitationLink(@RequestParam(value = "companyId") Long companyId,
-                                            @RequestParam(value = "email") String email,
-                                            @RequestParam(value = "name") String name,
-                                            @RequestParam(value = "title") String title) {
-        return ResponseEntity.ok(companyService.generateInvitationLink(companyId, email, name, title));
-    }
 }

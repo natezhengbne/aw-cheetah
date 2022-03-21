@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.ExternalEmployeeDto;
@@ -16,6 +15,7 @@ import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.repositories.EmployeeRepository;
 import com.asyncworking.repositories.UserLoginInfoRepository;
 import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.mapper.EmailMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -45,52 +45,37 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class UserServiceTest {
+    private final String secretKey = "securesecuresecuresecuresecuresecuresecure";
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private CompanyRepository companyRepository;
-
     @Mock
     private EmployeeRepository employeeRepository;
-
     @Mock
     private EmailSendRepository emailSendRepository;
-
     @Mock
     private UserLoginInfoRepository userLoginInfoRepository;
-
     @Mock
     private PasswordEncoder passwordEncoder;
-
     @Mock
     private JwtService jwtService;
-
     @Mock
     private UserMapper userMapper;
-
     @Mock
     private EmployeeMapper employeeMapper;
 
-    @Mock
     private UserService userService;
-
-    @Mock
-    private FrontEndUrlConfig frontEndUrlConfig;
-
     @Mock
     private EmailService emailService;
-
     @Mock
     private LinkGenerator linkGenerator;
-
-    private final String secretKey = "securesecuresecuresecuresecuresecuresecure";
+    @Mock
+    private EmailMapper emailMapper;
 
     @BeforeEach()
     void setup() {
         userMapper = new UserMapper(passwordEncoder);
-        frontEndUrlConfig = new FrontEndUrlConfig();
-        frontEndUrlConfig.setFrontEndUrl("https://www.asyncworking.com");
         userService = new UserService(
                 userRepository,
                 companyRepository,
@@ -100,10 +85,10 @@ public class UserServiceTest {
                 jwtService,
                 userMapper,
                 employeeMapper,
-                frontEndUrlConfig,
                 emailService,
                 passwordEncoder,
-                linkGenerator);
+                linkGenerator,
+                emailMapper);
         ReflectionTestUtils.setField(userService, "jwtSecret", secretKey);
     }
 
@@ -160,9 +145,7 @@ public class UserServiceTest {
         assertEquals("user1", externalEmployeeDto.getName());
         assertEquals("user1@gmail.com", externalEmployeeDto.getEmail());
         assertEquals("developer", externalEmployeeDto.getTitle());
-
     }
-
 
     @Test
     public void shouldCreateNewUserViaInvitationLink() {
