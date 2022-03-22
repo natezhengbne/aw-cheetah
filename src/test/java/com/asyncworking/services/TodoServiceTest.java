@@ -129,6 +129,7 @@ public class TodoServiceTest {
                 .subscribersIds("1,2,3")
                 .companyId(todoList.getCompanyId())
                 .projectId(project.getId())
+                .completed(false)
                 .build();
 
         todoItem1 = buildTodoItem(todoList, "test1", "High", "des1", "1,2,3");
@@ -315,15 +316,6 @@ public class TodoServiceTest {
                 .thenReturn(0);
         assertThrows(TodoListNotFoundException.class, () ->
                 todoService.updateTodoListTitle(1L, 1L, 1L, title));
-    }
-
-    @Test
-    @Transactional
-    public void returnTrueIfchangeTodoItemCompletedSuccessfully() {
-        String title = "xxx";
-        when(todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(eq(1L), eq(1L), eq(title)))
-                .thenReturn(todoList);
-        assertTrue(todoService.changeTodoItemCompleted(1L, 1L, 1L, true));
     }
 
     private TodoItem buildTodoItem(TodoList todoList, String notes, String priority, String description, String subscribersIds) {
