@@ -108,12 +108,6 @@ public class TodoService {
         return todoItem.getCompleted();
     }
 
-    public TodoListDto findByCompanyIdAndProjectIdAndTodoListTitle(Long companyId, Long projectId, String todoListTitle){
-        TodoList todoList = todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(companyId,projectId,todoListTitle);
-        return  todoMapper.fromTodoListEntity( todoList,
-                    todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems()));
-    }
-
     public List<TodoItemGetDto> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId,
                                                                                                Long projectId, Long todoListId) {
         return todoItemRepository.findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(companyId, projectId, todoListId)
