@@ -39,4 +39,8 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
     );
 
     TodoList findTodoListByCompanyIdAndProjectIdAndTodoListTitle(Long companyId, Long projectId, String todoListTitle);
+
+    @Query("select t from TodoList t"+
+            " where t.companyId =:companyId and t.project.id =:projectId and t.isDoneList =true")
+    TodoList findDoneListByCompanyIdAndProjectId(@Param("companyId") Long companyId, @Param("projectId") Long projectId);
 }

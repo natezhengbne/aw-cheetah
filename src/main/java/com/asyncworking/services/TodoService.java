@@ -101,7 +101,9 @@ public class TodoService {
 
     public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
-        todoItem.setTodoList(todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(companyId, projectId, DONE));
+        TodoList todolist = todoListRepository.findDoneListByCompanyIdAndProjectId(companyId, projectId);
+//        todoItem.setTodoList(todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(companyId, projectId, DONE));
+        todoItem.setTodoList(todolist);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
