@@ -31,8 +31,8 @@ public class TodoController {
 
     @PutMapping("/todolists/{todolistId}")
     public ResponseEntity updateTodoListTitle(@PathVariable Long companyId, @PathVariable Long projectId,
-                                         @PathVariable Long todolistId,
-                                         @Valid @RequestBody TodoListDto todoListDto) {
+                                              @PathVariable Long todolistId,
+                                              @Valid @RequestBody TodoListDto todoListDto) {
         todoService.updateTodoListTitle(companyId, projectId, todolistId, todoListDto.getTodoListTitle());
         return ResponseEntity.ok("success");
     }
@@ -85,4 +85,5 @@ public class TodoController {
                                                     @PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
     }
+
 }
