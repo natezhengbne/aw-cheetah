@@ -88,7 +88,7 @@ public class LinkGenerator {
                 .setExpiration(expireDate)
                 .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
                 .compact();
-        log.info("invitationJwt=" + invitationJwt);
+        log.info("companyInvitationLink=" + invitationJwt);
 
         String invitationLink = baseUrl + COMPANY_INVITATION__LINK_PREFIX + invitationJwt;
         log.info("Company Invitation Link={}", invitationLink);

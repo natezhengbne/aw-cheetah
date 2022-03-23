@@ -224,6 +224,8 @@ public class CompanyService {
         UserEntity owner = userRepository.findById(company.getAdminId())
                 .orElseThrow(() -> new UserNotFoundException("Cannot find admin for company"));
 
+        UserEntity user = userRepository.findByEmail(accountDto.getEmail()).orElse(null);
+
         String invitationLink = generateCompanyInvitationLink(companyId, accountDto);
 
         emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
@@ -232,7 +234,7 @@ public class CompanyService {
                 accountDto,
                 company.getName(),
                 owner.getName()
-        ));
+        ), user != null ? user.getId() : null);
     }
 
     public String generateInvitationLink(Long companyId, String email, String name, String title) {

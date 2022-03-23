@@ -1,6 +1,5 @@
 package com.asyncworking.services;
 
-import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.AccountDto;
@@ -75,7 +74,6 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    @Transactional
     public void createUserAndSendVerificationEmail(AccountDto accountDto) {
         UserEntity newUserEntity = userMapper.mapInfoDtoToEntity(accountDto);
         userRepository.save(newUserEntity);
@@ -89,7 +87,7 @@ public class UserService {
                 EmailType.Verification.toString(),
                 userVerificationLink,
                 newUserEntity
-        ));
+        ), newUserEntity.getId());
     }
 
     public void sendVerificationEmail(String email) {
@@ -106,7 +104,7 @@ public class UserService {
                 EmailType.Verification.toString(),
                 userVerificationLink,
                 unverifiedUserEntity
-        ));
+        ), unverifiedUserEntity.getId());
     }
 
     public void sendPasswordResetEmail(String email) {
@@ -123,10 +121,10 @@ public class UserService {
         );
 
         emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
-                EmailType.Verification.toString(),
+                EmailType.ForgetPassword.toString(),
                 passwordRestLink,
                 userEntity
-        ));
+        ), userEntity.getId());
     }
 
     private Company getCompanyInfo(Long companyId) {

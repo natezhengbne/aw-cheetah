@@ -35,15 +35,13 @@ public interface EmailMapper {
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "userName", source = "user.name")
     @Mapping(target = "verificationLink", source = "link")
-    @Mapping(target = "templateType", constant = "emailTypeString")
-    EmailContentDto toEmailContentDto(String emailTypeString, String link, UserEntity user);
+    EmailContentDto toEmailContentDto(String templateType, String link, UserEntity user);
 
     @Mapping(target = "email", source = "accountDto.email")
     @Mapping(target = "userName", source = "accountDto.name")
     @Mapping(target = "verificationLink", source = "link")
-    @Mapping(target = "templateType", constant = "emailTypeString")
     EmailContentDto toEmailContentDto(
-            String emailTypeString,
+            String templateType,
             String link,
             CompanyInvitedAccountDto accountDto,
             String companyName,

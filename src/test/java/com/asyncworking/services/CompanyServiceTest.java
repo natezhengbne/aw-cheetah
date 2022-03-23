@@ -96,7 +96,7 @@ public class CompanyServiceTest {
     private CompanyMapper companyMapper;
     private UserMapper userMapper;
     private TodoMapper todoMapper;
-    private EmailMapper emailMapper = new EmailMapperImpl();
+    private final EmailMapper emailMapper = new EmailMapperImpl();
     private CompanyService companyService;
 
 
@@ -314,7 +314,7 @@ public class CompanyServiceTest {
         List<AvailableEmployeesGetDto> result = companyService.findAvailableEmployees(1L, 1L);
         assertEquals(result.get(0).getName(), mockIEmployeeInfo.getName());
     }
-  
+
     @Test
     public void shouldReturnErrorWhenUserDoesNotBelongToCompany() {
         Long companyId = 999L;
@@ -350,18 +350,7 @@ public class CompanyServiceTest {
         );
         when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
         when(userRepository.findById(companyAdminId)).thenReturn(Optional.of(owner));
-        doNothing().when(emailService).sendLinkByEmail(emailContentDto);
-//                emailMapper.toEmailContentDto(
-//                EmailType.CompanyInvitation,
-//
-//                )
-//                EmailType.CompanyInvitation,
-//                link,
-//                "test",
-//                "test@gmail.com",
-//                companyName,
-//                "Joe Doe"
-//        );
+        doNothing().when(emailService).sendLinkByEmail(emailContentDto, null);
         when(linkGenerator.generateCompanyInvitationLink(
                 companyId,
                 "test@gmail.com",
@@ -374,7 +363,7 @@ public class CompanyServiceTest {
 
         verify(companyRepository, times(1)).findById(companyId);
         verify(userRepository, times(1)).findById(companyAdminId);
-        verify(emailService, times(1)).sendLinkByEmail(emailContentDto);
+        verify(emailService, times(1)).sendLinkByEmail(emailContentDto, null);
         verify(linkGenerator, times(1)).generateCompanyInvitationLink(
                 companyId,
                 "test@gmail.com",
@@ -408,7 +397,7 @@ public class CompanyServiceTest {
         assertThrows(UserNotFoundException.class,
                 () -> companyService.sendInvitationLink(companyId, any(CompanyInvitedAccountDto.class)));
     }
-  
+
     @Test
     public void test_generateInvitationLink_thenReturnLinkString() {
         long companyId = 1L;

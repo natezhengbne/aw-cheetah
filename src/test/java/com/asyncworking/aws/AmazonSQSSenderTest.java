@@ -2,8 +2,6 @@ package com.asyncworking.aws;
 
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailContentDto;
-import com.asyncworking.dtos.EmailMessageDto;
-import com.asyncworking.exceptions.EmailSendFailException;
 import com.asyncworking.utility.mapper.EmailMapperImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
@@ -15,11 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.Message;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -62,14 +58,4 @@ public class AmazonSQSSenderTest {
                 .send(anyString(), any(Message.class));
     }
 
-    @Test
-    public void test_sendEmailMessage_whenMessageSendFail() {
-        doThrow(new RuntimeException()).when(queueMessagingTemplate).send(anyString(), any(Message.class));
-
-        assertThrows(EmailSendFailException.class,
-                () -> sqsSender.sendEmailMessage(mockEmailContentDto, 1L)
-        );
-
-        verify(queueMessagingTemplate, times(1)).send(anyString(), any(Message.class));
-    }
 }

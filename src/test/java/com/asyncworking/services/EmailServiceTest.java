@@ -4,7 +4,6 @@ import com.asyncworking.aws.AmazonSQSSender;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.EmailContentDto;
-import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.models.EmailSendRecord;
 import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
@@ -21,7 +20,6 @@ import java.time.OffsetDateTime;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -82,27 +80,11 @@ public class EmailServiceTest {
         doNothing().when(amazonSQSSender).sendEmailMessage(mockEmailContentDto, 1L);
         when(emailSendRepository.save(any(EmailSendRecord.class))).thenReturn(mockEmailSendRecord);
 
-        emailService.sendLinkByEmail(mockEmailContentDto);
+        emailService.sendLinkByEmail(mockEmailContentDto, 1L);
 
         verify(emailSendRepository, times(1)).save(any(EmailSendRecord.class));
         verify(amazonSQSSender, times(1)).sendEmailMessage(mockEmailContentDto, 1L);
     }
-
-//    @Test
-//    public void test_sendLinkByEmail2_ok() {
-//        doNothing().when(amazonSQSSender).sendEmailMessage(mockEmailContentDto, 1L);
-//        when(emailSendRepository.save(any(EmailSendRecord.class))).thenReturn(mockEmailSendRecord);
-//
-//        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
-//                EmailType.CompanyInvitation, anyString(),
-//                "tester", "test@gmail.com",
-//                "Async Working", "John Doe"
-//        );
-//
-//        verify(emailSendRepository, times(1)).save(any(EmailSendRecord.class));
-//        verify(amazonSQSSender, times(1)).sendEmailMessage(mockEmailContentDto, 1L);
-//
-//    }
 
     @Test
     public void test_saveEmailSendRecord_ok() {

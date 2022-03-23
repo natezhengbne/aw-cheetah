@@ -3,9 +3,7 @@ package com.asyncworking.services;
 import com.asyncworking.aws.AmazonSQSSender;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailContentDto;
-import com.asyncworking.dtos.EmailMessageDto;
 import com.asyncworking.models.EmailSendRecord;
-import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.utility.mapper.EmailMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,47 +26,10 @@ public class EmailService {
 
     private final AmazonSQSSender amazonSQSSender;
 
-//    @Transactional
-//    public void sendLinkByEmail(EmailType emailType, String linkToSend, UserEntity receiverEntity) {
-//        EmailSendRecord emailSendRecord = saveEmailSendRecord(
-//                receiverEntity.getId(),
-//                emailType,
-//                receiverEntity.getEmail());
-//
-//        EmailMessageDto messageDto = EmailMessageDto.builder()
-//                .emailRecordId(emailSendRecord.getId())
-//                .userName(receiverEntity.getName())
-//                .email(emailSendRecord.getReceiver())
-//                .verificationLink(linkToSend)
-//                .templateType(emailSendRecord.getEmailType().toString())
-//                .build();
-//        amazonSQSSender.sendEmailMessage(messageDto, emailSendRecord);
-//    }
-//
-//    @Transactional
-//    public void sendLinkByEmail(
-//            EmailType emailType, String linkToSend,
-//            String receiverName, String receiverEmail,
-//            String companyName, String companyOwnerName
-//    ) {
-//        EmailSendRecord emailSendRecord = saveEmailSendRecord(null, emailType, receiverEmail);
-//
-//        EmailMessageDto messageDto = EmailMessageDto.builder()
-//                .emailRecordId(emailSendRecord.getId())
-//                .userName(receiverName)
-//                .email(receiverEmail)
-//                .companyName(companyName)
-//                .companyOwnerName(companyOwnerName)
-//                .verificationLink(linkToSend)
-//                .templateType(emailType.toString())
-//                .build();
-//        amazonSQSSender.sendEmailMessage(messageDto, emailSendRecord);
-//    }
-
     @Transactional
-    public void sendLinkByEmail(EmailContentDto emailContentDto) {
+    public void sendLinkByEmail(EmailContentDto emailContentDto, Long userId) {
         EmailSendRecord emailSendRecord = saveEmailSendRecord(
-                null,
+                userId,
                 EmailType.valueOf(emailContentDto.getTemplateType()),
                 emailContentDto.getEmail()
         );

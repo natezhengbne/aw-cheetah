@@ -3,7 +3,6 @@ package com.asyncworking.aws;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.dtos.EmailContentDto;
 import com.asyncworking.dtos.EmailMessageDto;
-import com.asyncworking.exceptions.EmailSendFailException;
 import com.asyncworking.utility.mapper.EmailMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
@@ -69,7 +68,7 @@ public class AmazonSQSSender {
                     MessageBuilder.withPayload(objectMapper.writeValueAsString(dtoToSend)).build()
             );
         } catch (Exception e) {
-            throw new EmailSendFailException(e);
+            log.error(e.getMessage(), e);
         }
     }
 }
