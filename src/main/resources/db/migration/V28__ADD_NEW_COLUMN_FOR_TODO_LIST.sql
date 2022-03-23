@@ -1,0 +1,1 @@
+ALTER TABLE "todo_list" ADD "is_done" BOOLEAN;
