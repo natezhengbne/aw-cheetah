@@ -34,4 +34,6 @@ public class TodoListDto {
     private String docUrl;
 
     List<TodoItemGetDto> todoItems;
+
+    private Boolean isDoneList;
 }

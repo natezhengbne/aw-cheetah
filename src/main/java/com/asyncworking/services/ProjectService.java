@@ -133,7 +133,10 @@ public class ProjectService {
         todoService.createTodoList(
                 companyId,
                 newProject.getId(),
-                TodoListDto.builder().todoListTitle(ProjectService.DEFAULT_LIST_NAME).build());
+                TodoListDto.builder().
+                        isDoneList(true).
+                        todoListTitle(ProjectService.DEFAULT_LIST_NAME).
+                        build());
 
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
