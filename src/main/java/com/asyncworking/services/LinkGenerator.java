@@ -24,7 +24,7 @@ public class LinkGenerator {
     private static final String VERIFICATION_LINK_PREFIX = "/verifylink/verify?code=";
     private static final String PASSWORD_RESET_LINK_PREFIX = "/reset-password?code=";
     private static final String INVITATION_LINK_PREFIX = "/invitations/info?code=";
-    private static final String COMPANY_INVITATION__LINK_PREFIX = "/company-invitations/info?code=";
+    private static final String COMPANY_INVITATION_LINK_PREFIX = "/company-invitations/info?code=";
 
     @Value("${url}")
     private String baseUrl;
@@ -90,7 +90,7 @@ public class LinkGenerator {
                 .compact();
         log.info("companyInvitationLink=" + invitationJwt);
 
-        String invitationLink = baseUrl + COMPANY_INVITATION__LINK_PREFIX + invitationJwt;
+        String invitationLink = baseUrl + COMPANY_INVITATION_LINK_PREFIX + invitationJwt;
         log.info("Company Invitation Link={}", invitationLink);
         return invitationLink;
     }

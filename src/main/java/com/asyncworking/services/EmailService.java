@@ -26,7 +26,6 @@ public class EmailService {
 
     private final AmazonSQSSender amazonSQSSender;
 
-    @Transactional
     public void sendLinkByEmail(EmailContentDto emailContentDto, Long userId) {
         EmailSendRecord emailSendRecord = saveEmailSendRecord(
                 userId,

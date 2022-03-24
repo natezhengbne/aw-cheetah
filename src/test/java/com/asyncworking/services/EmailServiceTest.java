@@ -37,8 +37,6 @@ public class EmailServiceTest {
 
     private EmailContentDto mockEmailContentDto;
 
-    private UserEntity mockUserEntity;
-
     private EmailMapper emailMapper;
 
     @Mock
@@ -51,16 +49,6 @@ public class EmailServiceTest {
                 emailMapper,
                 emailSendRepository,
                 amazonSQSSender);
-
-        mockUserEntity = UserEntity.builder()
-                .id(1L)
-                .email("test0@gmail.com")
-                .password("Iampassword")
-                .name("Mail Test")
-                .status(Status.UNVERIFIED)
-                .createdTime(OffsetDateTime.now(UTC))
-                .updatedTime(OffsetDateTime.now(UTC))
-                .build();
 
         mockEmailContentDto = EmailContentDto.builder()
                 .templateType(EmailType.Verification.toString())
