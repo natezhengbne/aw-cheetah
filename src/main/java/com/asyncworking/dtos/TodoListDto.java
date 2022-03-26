@@ -35,5 +35,4 @@ public class TodoListDto {
 
     List<TodoItemGetDto> todoItems;
 
-    private Boolean isDoneList;
 }

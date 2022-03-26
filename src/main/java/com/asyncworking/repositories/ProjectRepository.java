@@ -26,4 +26,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
                           @Param("description") String description,
                           @Param("updatedTime") OffsetDateTime updatedTime,
                           @Param("companyId")Long companyId);
+
+    @Modifying
+    @Query("update Project p set p.doneListId =:doneListId " +
+            "where p.id =:id and p.companyId =:companyId")
+    int updateProjectDoneList(@Param("id") Long id, @Param("companyId") Long companyId, @Param("doneListId") Long doneListId);
 }

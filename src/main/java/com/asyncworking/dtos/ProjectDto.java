@@ -31,4 +31,6 @@ public class ProjectDto {
 
     private String defaultView;
 
+    private Long doneListId;
+
 }

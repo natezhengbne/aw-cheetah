@@ -67,7 +67,4 @@ public class TodoList {
     @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
 
-    @Column(name = "is_done_list")
-    private Boolean isDoneList;
-
 }

@@ -87,4 +87,7 @@ public class Project {
     @OneToMany(mappedBy = "project",
             cascade = CascadeType.ALL)
     private Set<TodoList> todoLists;
+
+    @Column(name = "done_list_id")
+    private Long doneListId;
 }

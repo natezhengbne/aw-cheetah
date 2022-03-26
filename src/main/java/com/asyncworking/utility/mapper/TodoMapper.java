@@ -31,7 +31,6 @@ public interface TodoMapper {
     @Mapping(target = "docUrl", source = "todoListDto.docUrl")
     @Mapping(target = "createdTime", expression = "java(getCurrentTime())")
     @Mapping(target = "updatedTime", expression = "java(getCurrentTime())")
-    @Mapping(target = "isDoneList", expression = "java(Boolean.FALSE)")
     TodoList toTodoListEntity(TodoListDto todoListDto, Project project);
 
     @Mapping(target = "projectId", expression = "java(getProject(todoList).getId())")
