@@ -40,6 +40,7 @@ public class ProjectMapper {
                         .map(projectUser -> projectUser.getUserEntity().getName())
                         .collect(Collectors.toList()))
                 .doneListId(project.getDoneListId())
+                .doneListId(project.getDoneListId())
                 .build();
     }
 }
