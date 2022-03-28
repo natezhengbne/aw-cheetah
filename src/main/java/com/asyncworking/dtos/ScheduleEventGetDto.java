@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventGetDto {
+public class ScheduleEventGetDto {
 
     private Long id;
 

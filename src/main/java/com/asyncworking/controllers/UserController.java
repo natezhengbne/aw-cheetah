@@ -1,16 +1,25 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.constants.EmailType;
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.ExternalEmployeeDto;
+import com.asyncworking.dtos.InvitedAccountGetDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
+import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.LinkGenerator;
 import com.asyncworking.services.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -22,6 +31,8 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+
+    private final LinkGenerator linkGenerator;
 
     @GetMapping("/login")
     public ResponseEntity verifyStatus(@RequestParam(value = "email") String email) {
@@ -42,6 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/signup")
+    @ApiOperation(value = "Check if the email has already signed up in system")
     public ResponseEntity<String> verifyEmailExists(@RequestParam(value = "email") String email) {
         if (userService.ifEmailExists(email)) {
             return new ResponseEntity<>("Email has taken", HttpStatus.CONFLICT);
@@ -50,19 +62,34 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity createUser(@Valid @RequestBody AccountDto accountDto) throws JsonProcessingException {
+    @ApiOperation(value = "Create a user and send verification link to the user's email address")
+    public ResponseEntity createUserAndVerificationLink(@Valid @RequestBody AccountDto accountDto) {
         log.info("email: {}, name: {}", accountDto.getEmail(), accountDto.getName());
-        userService.createUserAndSendMessageToSQS(accountDto);
-        return ResponseEntity.ok("success");
+        userService.createUserAndSendVerificationEmail(accountDto);
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/resend")
+    @ApiOperation(value = "Resend verification link by email provided")
+    public ResponseEntity resendVerificationLink(@Valid @RequestBody UserInfoDto userInfoDto) {
+        userService.sendVerificationEmail(userInfoDto.getEmail());
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/password")
+    @ApiOperation(value = "Send password reset link to the email provided")
+    public ResponseEntity sendPasswordResetLink(@RequestParam(value = "email") String email) {
+        userService.sendPasswordResetEmail(email);
+        return ResponseEntity.ok("Success");
     }
 
     @GetMapping("/invitations/companies")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
-    public ResponseEntity getInvitationLink(@RequestParam(value = "companyId") Long companyId,
-                                            @RequestParam(value = "email") String email,
-                                            @RequestParam(value = "name") String name,
-                                            @RequestParam(value = "title") String title) {
-        return ResponseEntity.ok(userService.generateInvitationLink(companyId, email, name, title));
+    public ResponseEntity createInvitationLink(@RequestParam(value = "companyId") Long companyId,
+                                               @RequestParam(value = "email") String email,
+                                               @RequestParam(value = "name") String name,
+                                               @RequestParam(value = "title") String title) {
+        return ResponseEntity.ok(linkGenerator.generateInvitationLink(companyId, email, name, title));
     }
 
     @GetMapping("/invitations/info")
@@ -78,13 +105,8 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/resend")
-    public ResponseEntity resendActivationLink(@Valid @RequestBody UserInfoDto userInfoDto) throws JsonProcessingException {
-        userService.resendMessageToSQS(userInfoDto.getEmail(), EmailType.Verification);
-        return ResponseEntity.ok("success");
-    }
-
     @PostMapping("/verify")
+    @ApiOperation(value = "Verify the user according to the verification code")
     public ResponseEntity verifyActiveUser(@RequestParam(value = "code") String code) {
         log.info(code);
         boolean isVerified = userService.isAccountActivated(code);
@@ -92,18 +114,6 @@ public class UserController {
             return ResponseEntity.ok("success");
         }
         return new ResponseEntity<>("Inactivated", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
-    }
-
-    @PostMapping("/password")
-    public ResponseEntity generateResetPasswordLink(@RequestParam(value = "email") String email) {
-        if (userService.ifUnverified(email)) {
-            return new ResponseEntity<>("Email is unactivated", HttpStatus.CONFLICT);
-        }
-        if (!userService.ifEmailExists(email)) {
-            return new ResponseEntity<>("Email is not exist", HttpStatus.NOT_FOUND);
-        }
-        userService.generateResetPasswordLink(email);
-        return ResponseEntity.ok("sent");
     }
 
     @GetMapping("/password-reset/info")

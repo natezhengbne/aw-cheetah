@@ -22,9 +22,8 @@ public class EmailSendRecord {
     @Type(type = "long")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private UserEntity userEntity;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "receiver")
     private String receiver;

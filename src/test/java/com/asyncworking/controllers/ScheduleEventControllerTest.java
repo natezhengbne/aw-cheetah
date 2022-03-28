@@ -1,8 +1,8 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.EventPostDto;
+import com.asyncworking.dtos.ScheduleEventPostDto;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.services.EventService;
+import com.asyncworking.services.ScheduleEventService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,16 +21,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class EventControllerTest extends ControllerHelper {
+public class ScheduleEventControllerTest extends ControllerHelper {
 
     @Mock
     private JwtService jwtService;
 
     @Mock
-    private EventService eventService;
+    private ScheduleEventService scheduleEventService;
 
     @InjectMocks
-    private EventController eventController;
+    private ScheduleEventController eventController;
 
     @BeforeEach
     protected void setUp() {
@@ -40,20 +40,20 @@ public class EventControllerTest extends ControllerHelper {
 
     @Test
     public void testCreateEventWhenPostDtoGivenThenSucceed() throws Exception {
-        EventPostDto eventPostDto = EventPostDto.builder().title("Test").build();
+        ScheduleEventPostDto scheduleEventPostDto = ScheduleEventPostDto.builder().title("Test").build();
         Long ownId = 1L;
 
         when(jwtService.getUserIdFromJwt(anyString())).thenReturn(ownId);
-        when(eventService.createEvent(1L, 1L, ownId, eventPostDto)).thenReturn(1L);
+        when(scheduleEventService.createEvent(1L, 1L, ownId, scheduleEventPostDto)).thenReturn(1L);
 
         mockMvc.perform(post("/companies/1/projects/1/events")
                 .header("Authorization", "auth")
-                .content(objectMapper.writeValueAsString(eventPostDto))
+                .content(objectMapper.writeValueAsString(scheduleEventPostDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         verify(jwtService, times(1)).getUserIdFromJwt(anyString());
-        verify(eventService, times(1)).createEvent(1L, 1L, ownId, eventPostDto);
+        verify(scheduleEventService, times(1)).createEvent(1L, 1L, ownId, scheduleEventPostDto);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class EventControllerTest extends ControllerHelper {
         OffsetDateTime dayStartsAt = OffsetDateTime.now();
 
         when(jwtService.getUserIdFromJwt(anyString())).thenReturn(ownId);
-        when(eventService.getOwnedEventsByDate(dayStartsAt, ownId, 1L, 1L))
+        when(scheduleEventService.getOwnedEventsByDate(dayStartsAt, ownId, 1L, 1L))
                 .thenReturn(anyList());
 
         mockMvc.perform(get("/companies/1/projects/1/events")
@@ -71,6 +71,6 @@ public class EventControllerTest extends ControllerHelper {
                 .andExpect(status().isOk());
 
         verify(jwtService, times(1)).getUserIdFromJwt(anyString());
-        verify(eventService, times(1)).getOwnedEventsByDate(dayStartsAt, ownId, 1L, 1L);
+        verify(scheduleEventService, times(1)).getOwnedEventsByDate(dayStartsAt, ownId, 1L, 1L);
     }
 }

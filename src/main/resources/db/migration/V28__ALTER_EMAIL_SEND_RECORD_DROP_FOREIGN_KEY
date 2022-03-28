@@ -1,0 +1,1 @@
+ALTER TABLE "email_send" DROP CONSTRAINT "user_id";

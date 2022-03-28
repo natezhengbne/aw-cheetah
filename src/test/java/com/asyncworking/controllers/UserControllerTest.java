@@ -3,9 +3,11 @@ package com.asyncworking.controllers;
 import com.asyncworking.dtos.AccountDto;
 import com.asyncworking.dtos.InvitedAccountPostDto;
 import com.asyncworking.dtos.UserInfoDto;
+import com.asyncworking.services.LinkGenerator;
 import com.asyncworking.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.net.URI;
 import java.util.Date;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,12 +26,15 @@ class UserControllerTest extends ControllerHelper{
     @Mock
     private UserService userService;
 
+    @Mock
+    private LinkGenerator linkGenerator;
+
+    @InjectMocks
     private UserController userController;
 
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        userController = new UserController(userService);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
@@ -99,22 +105,6 @@ class UserControllerTest extends ControllerHelper{
         mockMvc.perform(post("/signup")
                 .content(objectMapper.writeValueAsString(accountDto))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void shouldCreateInvitationLinkSuccessful() throws Exception {
-        Long companyId = 1L;
-        String title = "developer";
-        String name = "user1";
-        String email = "user1@gmail.com";
-
-        mockMvc.perform(get("/invitations/companies")
-                .param("companyId", String.valueOf(companyId))
-                .param("title", title)
-                .param("name", name)
-                .param("email", email)
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
     }
 
@@ -253,8 +243,6 @@ class UserControllerTest extends ControllerHelper{
     @Test
     public void shouldReturnOkIfEmailIsValid() throws Exception {
         String email = "test@gmail.com";
-        when(userService.ifEmailExists(email)).thenReturn(true);
-        when(userService.ifUnverified(email)).thenReturn(false);
 
         mockMvc.perform(post("/password")
                 .param("email", email)
@@ -263,25 +251,14 @@ class UserControllerTest extends ControllerHelper{
     }
 
     @Test
-    public void shouldReturnErrorIfEmailIsNotExist() throws Exception {
+    public void shouldReturnOk() throws Exception {
         String email = "test@gmail.com";
-        when(userService.ifEmailExists(email)).thenReturn(false);
+        doNothing().when(userService).sendPasswordResetEmail(email);
 
         mockMvc.perform(post("/password")
                 .param("email", email)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void shouldReturnErrorIfEmailIsUnactivated() throws Exception {
-        String email = "test@gmail.com";
-        when(userService.ifUnverified(email)).thenReturn(true);
-
-        mockMvc.perform(post("/password")
-                .param("email", email)
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -328,6 +305,22 @@ class UserControllerTest extends ControllerHelper{
                                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void shouldCreateInvitationLinkSuccessful() throws Exception {
+        Long companyId = 1L;
+        String title = "developer";
+        String name = "user1";
+        String email = "user1@gmail.com";
+
+        mockMvc.perform(get("/invitations/companies")
+                .param("companyId", String.valueOf(companyId))
+                .param("title", title)
+                .param("name", name)
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 }
 
