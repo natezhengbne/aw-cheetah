@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -39,6 +40,7 @@ import static java.time.ZoneOffset.UTC;
 @RequiredArgsConstructor
 @Slf4j
 public class TodoService {
+    private static final String DONE = "Done";
 
     private final TodoListRepository todoListRepository;
 
@@ -104,6 +106,9 @@ public class TodoService {
 
     public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
+        Project project = findProjectByCompanyIdAndProjectId(companyId, projectId);
+        TodoList todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, project.getDoneListId());
+        todoItem.setTodoList(todoList);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
@@ -157,6 +162,11 @@ public class TodoService {
         return todoItemRepository
                 .findByCompanyIdAndProjectIdAndId(companyId, projectId, todoItemId)
                 .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
+    }
+
+    private Project findProjectByCompanyIdAndProjectId(Long companyId, Long projectId){
+        return projectRepository.findByCompanyIdAndId(companyId, projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id: " + projectId));
     }
 
 

@@ -37,7 +37,6 @@ import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -130,6 +129,7 @@ public class TodoServiceTest {
                 .subscribersIds("1,2,3")
                 .companyId(todoList.getCompanyId())
                 .projectId(project.getId())
+                .completed(false)
                 .build();
 
         todoItem1 = buildTodoItem(todoList, "test1", "High", "des1", "1,2,3");
@@ -156,6 +156,7 @@ public class TodoServiceTest {
         verify(todoListRepository).save(todoListCaptor.capture());
         assertEquals(project, todoListCaptor.getValue().getProject());
     }
+
     @Test
     public void createTodoItemSuccess() {
         when(todoListRepository.findByCompanyIdAndProjectIdAndId(1L, 1L, 1L))

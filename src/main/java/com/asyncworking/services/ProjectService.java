@@ -124,19 +124,21 @@ public class ProjectService {
 
         Project newProject = projectMapper.mapProjectDtoToProject(companyId, projectDto);
         projectRepository.save(newProject);
-
         roleService.assignRole(selectedUserEntity, PROJECT_MANAGER, newProject.getId());
 
         createDefaultMessageCategories(newProject);
 
-        todoService.createTodoList(
+        Long doneListId = todoService.createTodoList(
                 companyId,
                 newProject.getId(),
-                TodoListDto.builder().todoListTitle(ProjectService.DEFAULT_LIST_NAME).build());
+                TodoListDto.builder().
+                        todoListTitle(ProjectService.DEFAULT_LIST_NAME).
+                        build());
+        log.info("Donelist ID: {}", doneListId);
 
         ProjectUser newProjectUser = addProjectUsers(selectedUserEntity, newProject);
         projectUserRepository.save(newProjectUser);
-
+        projectRepository.updateProjectDoneList(newProject.getId(), companyId, doneListId);
         return newProject.getId();
     }
 
