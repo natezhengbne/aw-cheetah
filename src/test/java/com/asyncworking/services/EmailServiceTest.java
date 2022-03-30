@@ -2,10 +2,8 @@ package com.asyncworking.services;
 
 import com.asyncworking.aws.AmazonSQSSender;
 import com.asyncworking.constants.EmailType;
-import com.asyncworking.constants.Status;
 import com.asyncworking.dtos.EmailContentDto;
 import com.asyncworking.models.EmailSendRecord;
-import com.asyncworking.models.UserEntity;
 import com.asyncworking.repositories.EmailSendRepository;
 import com.asyncworking.utility.mapper.EmailMapper;
 import com.asyncworking.utility.mapper.EmailMapperImpl;
