@@ -1,14 +1,38 @@
 package com.asyncworking.services;
 
 import com.asyncworking.constants.EmailType;
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AvailableEmployeesGetDto;
+import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyInvitedAccountDto;
+import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.EmailContentDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
-import com.asyncworking.models.*;
-import com.asyncworking.repositories.*;
-import com.asyncworking.utility.mapper.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.asyncworking.models.Company;
+import com.asyncworking.models.Employee;
+import com.asyncworking.models.IAvailableEmployeeInfo;
+import com.asyncworking.models.IAvailableEmployeeInfoImpl;
+import com.asyncworking.models.ICompanyInfo;
+import com.asyncworking.models.ICompanyInfoImpl;
+import com.asyncworking.models.Project;
+import com.asyncworking.models.TodoItem;
+import com.asyncworking.models.TodoList;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
+import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.TodoItemRepository;
+import com.asyncworking.repositories.UserLoginInfoRepository;
+import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.DateTimeUtility;
+import com.asyncworking.utility.mapper.CompanyMapper;
+import com.asyncworking.utility.mapper.EmailMapper;
+import com.asyncworking.utility.mapper.EmailMapperImpl;
+import com.asyncworking.utility.mapper.EmployeeMapper;
+import com.asyncworking.utility.mapper.TodoMapper;
+import com.asyncworking.utility.mapper.TodoMapperImpl;
+import com.asyncworking.utility.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,11 +43,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -60,10 +89,14 @@ public class CompanyServiceTest {
     @Mock
     private EmailSendRepository emailSendRepository;
 
+    @Mock
+    private LinkGenerator linkGenerator;
+
     private EmployeeMapper employeeMapper;
     private CompanyMapper companyMapper;
     private UserMapper userMapper;
     private TodoMapper todoMapper;
+    private final EmailMapper emailMapper = new EmailMapperImpl();
     private CompanyService companyService;
 
 
@@ -79,14 +112,14 @@ public class CompanyServiceTest {
                 companyRepository,
                 employeeRepository,
                 todoItemRepository,
-                emailSendRepository,
                 companyMapper,
                 userMapper,
                 employeeMapper,
                 todoMapper,
                 roleService,
                 emailService,
-                userService
+                emailMapper,
+                linkGenerator
         );
     }
 
@@ -283,70 +316,114 @@ public class CompanyServiceTest {
     }
 
     @Test
-    public void shouldSaveEmailRecordAndSendSQSMessage() throws JsonProcessingException {
-        String receiverEmail = "test@gmail.com";
-        String receiverName = "Alice S";
-        String receiverTitle = "CEO";
-        Long companyId = 1L;
-        String companyName = "CompanyA";
-        String companyOwnerName = "OwnerB";
-        String invitationLink = "link";
-        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
-                .title(receiverTitle)
-                .name(receiverName)
-                .email(receiverEmail)
-                .build();
-        UserEntity receiver = UserEntity.builder()
-                .name(receiverName)
-                .email(receiverEmail)
-                .build();
-        ICompanyInvitationEmailCompanyInfo companyInfo = ICompanyInvitationEmailCompanyInfoImpl.builder()
-                .companyId(companyId)
-                .companyName(companyName)
-                .companyOwnerName(companyOwnerName)
-                .build();
-        EmailSendRecord emailSendRecord = EmailSendRecord.builder()
-                .companyId(companyId)
-                .userEntity(receiver)
-                .receiver(receiverEmail)
-                .emailType(EmailType.CompanyInvitation)
-                .sendStatus(false)
-                .build();
-        when(userRepository.findByEmail(any())).thenReturn(Optional.ofNullable(receiver));
-        when(emailSendRepository.findCompanyInfo(any())).thenReturn(Optional.ofNullable(companyInfo));
-        when(emailService.saveCompanyInvitationEmailSendingRecord(any(), any(), any(), any())).thenReturn(emailSendRecord);
-        when(userService.generateCompanyInvitationLink(any(), any(), any(), any(), any())).thenReturn(invitationLink);
-        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
-
-        ArgumentCaptor<Long> emailRecordIdCaptor = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<String> receiverNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> receiverEmailCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> companyNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> companyOwnerNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> linkCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<EmailType> emailTypeCaptor = ArgumentCaptor.forClass(EmailType.class);
-        verify(emailService).sendCompanyInvitationMessageToSQS(
-                emailRecordIdCaptor.capture(),
-                receiverNameCaptor.capture(),
-                receiverEmailCaptor.capture(),
-                companyNameCaptor.capture(),
-                companyOwnerNameCaptor.capture(),
-                linkCaptor.capture(),
-                emailTypeCaptor.capture());
-
-        assertEquals("Alice", receiverNameCaptor.getValue());
-        assertEquals(receiverEmail, receiverEmailCaptor.getValue());
-        assertEquals(companyName, companyNameCaptor.getValue());
-        assertEquals(companyOwnerName, companyOwnerNameCaptor.getValue());
-        assertEquals(invitationLink, linkCaptor.getValue());
-        assertEquals(EmailType.CompanyInvitation, emailTypeCaptor.getValue());
-    }
-    @Test
     public void shouldReturnErrorWhenUserDoesNotBelongToCompany() {
         Long companyId = 999L;
         String email = "123@gmail.com";
         List<Long> allCompanyIdsOfUser = userRepository.findUserCompanyIdList(email);
         assertEquals(allCompanyIdsOfUser.contains(companyId), false);
+    }
 
+    @Test
+    public void test_sendInvitationLink_ok() {
+        long companyId = 1L;
+        long companyAdminId = 1L;
+        String companyName = "AW";
+        String link = "http://localhost:3000/test";
+        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
+                .email("test@gmail.com")
+                .name("test")
+                .title("title")
+                .build();
+        Company company = Company.builder()
+                .adminId(companyAdminId)
+                .name(companyName)
+                .build();
+        UserEntity owner = UserEntity.builder()
+                .name("Joe Doe")
+                .build();
+        EmailContentDto emailContentDto = emailMapper.toEmailContentDto(
+                EmailType.CompanyInvitation.toString(),
+                link,
+                accountDto,
+                company.getName(),
+                owner.getName()
+        );
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+        when(userRepository.findById(companyAdminId)).thenReturn(Optional.of(owner));
+        doNothing().when(emailService).sendLinkByEmail(emailContentDto, null);
+        when(linkGenerator.generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                "title",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        )).thenReturn(link);
+
+        companyService.sendInvitationLink(companyId, accountDto);
+
+        verify(companyRepository, times(1)).findById(companyId);
+        verify(userRepository, times(1)).findById(companyAdminId);
+        verify(emailService, times(1)).sendLinkByEmail(emailContentDto, null);
+        verify(linkGenerator, times(1)).generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                "title",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
+    }
+
+    @Test
+    public void test_sendInvitationLink_whenCompanyNotFound_thenThrowCompanyNotFoundException() {
+        long companyId = 1L;
+        when(companyRepository.findById(companyId)).thenReturn(Optional.empty());
+
+        assertThrows(CompanyNotFoundException.class,
+                () -> companyService.sendInvitationLink(companyId, any(CompanyInvitedAccountDto.class)));
+    }
+
+    @Test
+    public void test_sendInvitationLink_whenAdminNotFound_thenThrowUserNotFoundException() {
+        long companyId = 1L;
+        long companyAdminId = 1L;
+        Company company = Company.builder()
+                .adminId(companyAdminId)
+                .name("AW")
+                .build();
+
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+        when(userRepository.findById(companyAdminId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> companyService.sendInvitationLink(companyId, any(CompanyInvitedAccountDto.class)));
+    }
+
+    @Test
+    public void test_generateInvitationLink_thenReturnLinkString() {
+        long companyId = 1L;
+        String link = "http://localhost:3000/test";
+        CompanyInvitedAccountDto accountDto = CompanyInvitedAccountDto.builder()
+                .email("test@gmail.com")
+                .name("test")
+                .title("title")
+                .build();
+        when(linkGenerator.generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                "title",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        )).thenReturn(link);
+
+        String actualLink = companyService.generateCompanyInvitationLink(companyId, accountDto);
+
+        assertEquals(link, actualLink);
+        verify(linkGenerator, times(1)).generateCompanyInvitationLink(
+                companyId,
+                "test@gmail.com",
+                "test",
+                "title",
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
     }
 }

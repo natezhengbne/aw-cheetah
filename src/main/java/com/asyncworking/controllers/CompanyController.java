@@ -1,23 +1,30 @@
 package com.asyncworking.controllers;
 
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AvailableEmployeesGetDto;
+import com.asyncworking.dtos.CompanyColleagueDto;
+import com.asyncworking.dtos.CompanyInfoDto;
+import com.asyncworking.dtos.CompanyInvitedAccountDto;
+import com.asyncworking.dtos.CompanyModificationDto;
+import com.asyncworking.dtos.EmployeeGetDto;
 import com.asyncworking.dtos.todoitem.CardTodoItemDto;
-import com.asyncworking.models.TodoItem;
 import com.asyncworking.services.CompanyService;
-import com.asyncworking.services.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.DayOfWeek;
-
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -93,11 +100,12 @@ public class CompanyController {
     }
 
     @PostMapping("/{companyId}/invite-company-users")
+    @ApiOperation(value = "Generate an invitation for user to join a company")
     @PreAuthorize("hasPermission(#companyId, 'Company Manager')")
-    public ResponseEntity sendCompanyInvitationSQSMessage(@PathVariable Long companyId,
-                                                          @Valid @RequestBody CompanyInvitedAccountDto accountDto)
-            throws JsonProcessingException {
-        companyService.sendCompanyInvitationToSQS(companyId, accountDto);
+    public ResponseEntity createCompanyInvitationLink(@PathVariable Long companyId,
+                                            @Valid @RequestBody CompanyInvitedAccountDto accountDto
+    ) {
+        companyService.sendInvitationLink(companyId, accountDto);
         return ResponseEntity.ok("success");
     }
 }

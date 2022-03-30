@@ -1,14 +1,29 @@
 package com.asyncworking.services;
 
-import com.asyncworking.config.FrontEndUrlConfig;
 import com.asyncworking.constants.EmailType;
 import com.asyncworking.constants.Status;
-import com.asyncworking.dtos.*;
+import com.asyncworking.dtos.AccountDto;
+import com.asyncworking.dtos.EmployeeGetDto;
+import com.asyncworking.dtos.ExternalEmployeeDto;
+import com.asyncworking.dtos.InvitedAccountGetDto;
+import com.asyncworking.dtos.InvitedAccountPostDto;
+import com.asyncworking.dtos.UserInfoDto;
 import com.asyncworking.exceptions.CompanyNotFoundException;
 import com.asyncworking.exceptions.UserNotFoundException;
+import com.asyncworking.exceptions.UserStatusUnexpectedException;
 import com.asyncworking.jwt.JwtService;
-import com.asyncworking.models.*;
-import com.asyncworking.repositories.*;
+import com.asyncworking.models.Company;
+import com.asyncworking.models.Employee;
+import com.asyncworking.models.EmployeeId;
+import com.asyncworking.models.UserEntity;
+import com.asyncworking.models.UserLoginInfo;
+import com.asyncworking.repositories.CompanyRepository;
+import com.asyncworking.repositories.EmailSendRepository;
+import com.asyncworking.repositories.EmployeeRepository;
+import com.asyncworking.repositories.UserLoginInfoRepository;
+import com.asyncworking.repositories.UserRepository;
+import com.asyncworking.utility.DateTimeUtility;
+import com.asyncworking.utility.mapper.EmailMapper;
 import com.asyncworking.utility.mapper.EmployeeMapper;
 import com.asyncworking.utility.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
@@ -23,7 +38,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -32,16 +46,11 @@ import static java.time.ZoneOffset.UTC;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private static final String SIGN_UP = "signUp";
-    private static final String RESET_PASSWORD = "reset-password";
-    private static final String INVITATION = "invitation";
-    private static final String COMPANY_INVITATION = "companyInvitation";
 
     private static final String EMAIL = "email";
     private static final String COMPANY_ID = "companyId";
     private static final String NAME = "name";
     private static final String TITLE = "title";
-    private static final String DATE = "date";
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
@@ -52,10 +61,11 @@ public class UserService {
     private final JwtService jwtService;
     private final UserMapper userMapper;
     private final EmployeeMapper employeeMapper;
-    private final FrontEndUrlConfig frontEndUrlConfig;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final LinkGenerator linkGenerator;
 
+    private final EmailMapper emailMapper;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -64,16 +74,57 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void createUserAndSendMessageToSQS(AccountDto accountDto) {
-        //Expires in 1 day
-        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
-        UserEntity userEntity = userMapper.mapInfoDtoToEntity(accountDto);
-        emailService.saveEmailSendingRecord(userEntity, EmailType.Verification, accountDto.getEmail());
-        userRepository.save(userEntity);
-        emailService.sendMessageToSQS(userEntity, generateLink(userEntity.getEmail(),
-                        "/verifylink/verify?code=",
-                        SIGN_UP, expireDate),
-                EmailType.Verification, userEntity.getEmail());
+    public void createUserAndSendVerificationEmail(AccountDto accountDto) {
+        UserEntity newUserEntity = userMapper.mapInfoDtoToEntity(accountDto);
+        userRepository.save(newUserEntity);
+
+        String userVerificationLink = linkGenerator.generateUserVerificationLink(
+                newUserEntity.getEmail(),
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
+
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.Verification.toString(),
+                userVerificationLink,
+                newUserEntity
+        ), newUserEntity.getId());
+    }
+
+    public void sendVerificationEmail(String email) {
+        UserEntity unverifiedUserEntity = userRepository
+                .findUnverifiedStatusByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
+
+        String userVerificationLink = linkGenerator.generateUserVerificationLink(
+                unverifiedUserEntity.getEmail(),
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
+
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.Verification.toString(),
+                userVerificationLink,
+                unverifiedUserEntity
+        ), unverifiedUserEntity.getId());
+    }
+
+    public void sendPasswordResetEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
+
+        if (userEntity.getStatus() == Status.UNVERIFIED) {
+            throw new UserStatusUnexpectedException(Status.ACTIVATED, Status.UNVERIFIED);
+        }
+
+        String passwordRestLink = linkGenerator.generateResetPasswordLink(
+                email,
+                DateTimeUtility.MILLISECONDS_IN_DAY
+        );
+
+        emailService.sendLinkByEmail(emailMapper.toEmailContentDto(
+                EmailType.ForgetPassword.toString(),
+                passwordRestLink,
+                userEntity
+        ), userEntity.getId());
     }
 
     private Company getCompanyInfo(Long companyId) {
@@ -104,85 +155,6 @@ public class UserService {
         return userMapper.mapEntityToInvitedDto(returnedUser, token);
     }
 
-    public void resendMessageToSQS(String email, EmailType emailType) {
-        //Expires in 1 day
-        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
-        UserEntity emailSender = findUnVerifiedUserByEmail(email);
-        emailService.saveEmailSendingRecord(emailSender, EmailType.Verification, email);
-        emailService.sendMessageToSQS(emailSender,
-                generateLink(email, "/verifylink/verify?code=", SIGN_UP, expireDate),
-                emailType, emailSender.getEmail());
-    }
-
-    private UserEntity findUnVerifiedUserByEmail(String email) {
-        return userRepository.findUnverifiedStatusByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Cannot find unverified user with email: " + email));
-    }
-
-    public String generateLink(String email, String subApi, String subject, Date expireDate) {
-        String link = frontEndUrlConfig.getFrontEndUrl() + subApi + this.generateJws(email, subject, expireDate);
-        log.info(subApi + "Link: {}", link);
-        return link;
-    }
-
-    public void generateResetPasswordLink(String email) {
-        Date expireDate = new Date(System.currentTimeMillis() + 1000 * 60 * 10); //Expires in 10 minutes
-        String resetPasswordLink = generateLink(email, "/reset-password?code=", RESET_PASSWORD, expireDate);
-        UserEntity userEntity = findUserByEmail(email);
-        emailService.saveEmailSendingRecord(userEntity, EmailType.ForgetPassword, email);
-        emailService.sendMessageToSQS(userEntity, resetPasswordLink, EmailType.ForgetPassword, userEntity.getEmail());
-    }
-
-    private String generateJws(String email, String subject, Date expireDate) {
-        String jws = Jwts.builder()
-                .setSubject(subject)
-                .claim(EMAIL, email)
-                .setIssuedAt(new Date())
-                .setExpiration(expireDate)
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
-                .compact();
-        log.info("jwt token: " + jws);
-        return jws;
-    }
-
-    public String generateInvitationLink(Long companyId, String email, String name, String title) {
-        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
-                + "/invitations/info?code=" + this.encodeInvitation(companyId, email, name, title);
-        log.info("invitationLink: " + invitationLink);
-        return invitationLink;
-    }
-
-    private String encodeInvitation(Long companyId, String email, String name, String title) {
-        String invitationJwt = Jwts.builder()
-                .setSubject(INVITATION)
-                .claim(COMPANY_ID, companyId)
-                .claim(EMAIL, email)
-                .claim(NAME, name)
-                .claim(TITLE, title)
-                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
-                .compact();
-        log.info("invitationJwt: " + invitationJwt);
-        return invitationJwt;
-    }
-
-    public String generateCompanyInvitationLink(Long companyId, String email, String name, String title, Date expireDate) {
-        String invitationLink = frontEndUrlConfig.getFrontEndUrl()
-                + "/company-invitations/info?code="
-                + Jwts.builder()
-                .setSubject(COMPANY_INVITATION)
-                .claim(COMPANY_ID, companyId)
-                .claim(EMAIL, email)
-                .claim(NAME, name)
-                .claim(TITLE, title)
-                .claim(DATE, expireDate)
-                .setIssuedAt(new Date())
-                .setExpiration(expireDate)
-                .signWith(Keys.hmacShaKeyFor(this.jwtSecret.getBytes()))
-                .compact();
-        log.info("companyInvitationLink: " + invitationLink);
-        return invitationLink;
-    }
-
     public ExternalEmployeeDto getUserInfo(String code) {
         ExternalEmployeeDto externalEmployeeDto = decodedInvitationLink(code);
         log.debug("User Info: " + externalEmployeeDto.toString());
@@ -191,7 +163,8 @@ public class UserService {
 
     public EmployeeGetDto getResetterInfo(String code) {
         String email = decodedEmail(code);
-        UserEntity user = findUserByEmail(email);
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + email));
         EmployeeGetDto userDto = employeeMapper.mapEntityToDto(user);
         return userDto;
     }
@@ -339,5 +312,4 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userInfoDto.getPassword());
         userRepository.resetPasswordById(userDto.getEmail(), encodedPassword, OffsetDateTime.now(UTC));
     }
-
 }

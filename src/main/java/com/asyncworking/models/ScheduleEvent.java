@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Event {
+public class ScheduleEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -28,6 +28,16 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {UserStatusUnexpectedException.class})
+    public ResponseEntity<ErrorDto> handleUserConflictsException(UserStatusUnexpectedException e) {
+        log.info(e.getMessage());
+
+        List<String> details = new ArrayList<>();
+        details.add(e.getLocalizedMessage());
+        ErrorDto error = new ErrorDto("Expected user status", details);
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(value = {CompanyNotFoundException.class})
     public ResponseEntity<ErrorDto> handleCompanyNotFoundException(CompanyNotFoundException e) {
         log.info("Company is not found.", e);
@@ -110,6 +120,4 @@ public class ControllerExceptionHandler {
         ErrorDto error = new ErrorDto("Server Error", details);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
 }

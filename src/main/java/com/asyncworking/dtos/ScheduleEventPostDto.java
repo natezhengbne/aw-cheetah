@@ -13,13 +13,13 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EventPostDto {
+public class ScheduleEventPostDto {
 
-    @NotNull(message = "Event title can not be null")
-    @Size(max = 128, message = "Event title can not be more than than 128 characters.")
+    @NotNull(message = "ScheduleEvent title can not be null")
+    @Size(max = 128, message = "ScheduleEvent title can not be more than than 128 characters.")
     private String title;
 
-    @Size(max = 2048, message = "Event description can not be more than 2048 characters.")
+    @Size(max = 2048, message = "ScheduleEvent description can not be more than 2048 characters.")
     private String description;
 
     private boolean allDayEvent = false;

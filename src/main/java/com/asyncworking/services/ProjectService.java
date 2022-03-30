@@ -5,7 +5,6 @@ import com.asyncworking.dtos.ProjectDto;
 import com.asyncworking.dtos.ProjectInfoDto;
 import com.asyncworking.dtos.ProjectModificationDto;
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.models.Project;
 import com.asyncworking.models.ProjectUser;
