@@ -70,7 +70,7 @@ class TodoListRepositoryTest extends DBHelper {
         saveMockData();
         Optional<TodoList> todoList = todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(todoList1.getCompanyId(),
                 todoList1.getProject().getId(), todoList1.getTodoListTitle());
-        assertEquals(todoList, todoList1);
+        assertEquals(todoList.get(), todoList1);
     }
 
     void saveMockData() {

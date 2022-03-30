@@ -41,3 +41,6 @@ jwt:
 localstack:
   host: localhost
 
+sqs:
+  enable: false
+

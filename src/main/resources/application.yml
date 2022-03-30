@@ -63,3 +63,5 @@ cloud:
       templateCompanyInvitationS3Key: company_invitation_email_template.html
     endpoint: http://localhost:4566
 
+sqs:
+  enable: true
