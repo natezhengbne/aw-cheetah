@@ -63,15 +63,6 @@ class TodoListRepositoryTest extends DBHelper {
         assertEquals(1, count);
     }
 
-    @Test
-    @Transactional
-    public void shouldReturnTodoListCompanyIdAndProjectIdAndTodoListTitle() {
-        saveMockData();
-        Optional<TodoList> todoList = todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(todoList1.getCompanyId(),
-                todoList1.getProject().getId(), todoList1.getTodoListTitle());
-        assertEquals(todoList, todoList1);
-    }
-
     void saveMockData() {
         project = Project.builder()
                 .name("AWProject")
