@@ -38,6 +38,4 @@ public interface TodoListRepository extends JpaRepository<TodoList, Long> {
             @Param("updatedTime") OffsetDateTime updatedTime
     );
 
-    Optional<TodoList> findTodoListByCompanyIdAndProjectIdAndTodoListTitle(Long companyId, Long projectId, String todoListTitle);
-
 }

@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @Slf4j
@@ -62,15 +61,6 @@ class TodoListRepositoryTest extends DBHelper {
                 "New Title xxx",
                 OffsetDateTime.now(UTC));
         assertEquals(1, count);
-    }
-
-    @Test
-    @Transactional
-    public void shouldReturnTodoListCompanyIdAndProjectIdAndTodoListTitle() {
-        saveMockData();
-        Optional<TodoList> todoList = todoListRepository.findTodoListByCompanyIdAndProjectIdAndTodoListTitle(todoList1.getCompanyId(),
-                todoList1.getProject().getId(), todoList1.getTodoListTitle());
-        assertEquals(todoList, todoList1);
     }
 
     void saveMockData() {
