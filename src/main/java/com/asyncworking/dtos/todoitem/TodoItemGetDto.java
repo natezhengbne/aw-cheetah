@@ -4,13 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+
 import java.time.OffsetDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TodoItemGetDto {
+public class TodoItemGetDto implements Comparable<TodoItemGetDto> {
 
     private Long todoItemId;
 
@@ -36,4 +38,11 @@ public class TodoItemGetDto {
 
     private OffsetDateTime completedTime;
 
+    @Override
+    public int compareTo(@NotNull TodoItemGetDto todoItemGetDto) {
+        if (getCompletedTime() == null || todoItemGetDto.getCompletedTime() == null) {
+            return -1;
+        }
+        return getCompletedTime().compareTo(todoItemGetDto.getCompletedTime());
+    }
 }

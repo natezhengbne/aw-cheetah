@@ -1,11 +1,7 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
-import com.asyncworking.dtos.todoitem.TodoItemGetDto;
-import com.asyncworking.dtos.todoitem.TodoItemPageDto;
-import com.asyncworking.dtos.todoitem.TodoItemPostDto;
-import com.asyncworking.dtos.todoitem.TodoItemPutDto;
+import com.asyncworking.dtos.todoitem.*;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
@@ -30,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -82,9 +79,22 @@ public class TodoService {
     }
 
     public List<TodoListDto> findRequiredNumberTodoListsByCompanyIdAndProjectId(Long companyId, Long projectId, Integer quantity) {
-        return todoListRepository.findTodolistWithTodoItems(companyId, projectId, PageRequest.of(0, quantity)).stream()
+        List<TodoListDto> todoListDtos = todoListRepository.
+                findTodolistWithTodoItems(
+                        companyId,
+                        projectId,
+                        PageRequest.of(0, quantity)).stream()
                 .map(todoList -> todoMapper.fromTodoListEntity(todoList, todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems())))
                 .collect(Collectors.toList());
+        Optional<Project> project = projectRepository.findByCompanyIdAndId(companyId, projectId);
+        for (TodoListDto todoListDto : todoListDtos) {
+            if (project.isPresent() && todoListDto.getId().longValue() == project.get().getDoneListId().longValue()) {
+                List<TodoItemGetDto> todoItems = todoListDto.getTodoItems();
+                Collections.sort(todoItems);
+                Collections.reverse(todoItems);
+            }
+        }
+        return todoListDtos;
     }
 
     public TodoListDto fetchSingleTodoList(Long companyId, Long projectId, Long id) {
@@ -164,7 +174,7 @@ public class TodoService {
                 .orElseThrow(() -> new TodoItemNotFoundException("Cannot find TodoItem by id: " + todoItemId));
     }
 
-    private Project findProjectByCompanyIdAndProjectId(Long companyId, Long projectId){
+    private Project findProjectByCompanyIdAndProjectId(Long companyId, Long projectId) {
         return projectRepository.findByCompanyIdAndId(companyId, projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id: " + projectId));
     }
