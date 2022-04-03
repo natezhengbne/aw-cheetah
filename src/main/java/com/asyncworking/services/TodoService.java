@@ -201,7 +201,7 @@ public class TodoService {
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
 
-    public void moveTodoItem (Long todoItemId, Long originalTodoListId, Long targetTodoListId, Long targetTodoItemIndex){
+    public void moveTodoItem (Long todoItemId, Long targetTodoListId, Long targetTodoItemIndex){
         TodoItem todoItem = findTodoItemById(todoItemId);
         Long targetIndex = targetTodoItemIndex;
         TodoList targetTodoList = findTodoListById(targetTodoListId);
