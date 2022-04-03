@@ -2,6 +2,7 @@ package com.asyncworking.repositories;
 
 import com.asyncworking.models.IProjectProgressInfo;
 import com.asyncworking.models.TodoItem;
+import com.asyncworking.models.TodoList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,4 +53,5 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     @Query(value = "SELECT ti.projectId as id, ti.completed as status, COUNT(ti) as todoItemStatusNum FROM TodoItem ti  " +
             "WHERE ti.projectId in :projectIdList GROUP BY ti.projectId, ti.completed")
     List<IProjectProgressInfo> findProgressInfoByProjectId(@Param("projectIdList") Collection<Long> projectIdList);
+
 }

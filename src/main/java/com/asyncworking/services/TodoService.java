@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -179,6 +176,17 @@ public class TodoService {
                 .orElseThrow(() -> new ProjectNotFoundException("Cannot find project by id: " + projectId));
     }
 
+    private TodoList findTodoListById(Long todoListId){
+        return todoListRepository.findById(todoListId)
+                .orElseThrow(() -> new ProjectNotFoundException("Cannot find TodoList by id: " + todoListId));
+    }
+
+    private TodoItem findTodoItemById(Long todoItemId){
+        return todoItemRepository.findById(todoItemId)
+                .orElseThrow(() -> new ProjectNotFoundException("Cannot find TodoItem by id: " + todoItemId));
+    }
+
+
 
     public List<AssignedPeopleGetDto> findAssignedPeople(Long companyId, Long projectId, Long todoItemId) {
 
@@ -191,6 +199,32 @@ public class TodoService {
         List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
+    }
+
+    public void moveTodoItem (Long todoItemId, Long originalTodoListId, Long targetTodoListId, Long targetTodoItemIndex){
+        TodoItem todoItem = findTodoItemById(todoItemId);
+        Long targetIndex = targetTodoItemIndex;
+        TodoList targetTodoList = findTodoListById(targetTodoListId);
+        List<TodoItem> targetTodoItemList = targetTodoList.getTodoItems();
+        LinkedList<TodoItem> linkedList = new LinkedList<>();
+        linkedList.addAll(targetTodoItemList);
+        int linkedListSize = linkedList.size();
+        for(int i = 0; i < linkedListSize; i++){
+            if(targetIndex == linkedList.get(i).getId()){
+                linkedList.add(i,todoItem);
+            }
+        }
+        List<TodoItem> newTodoItems = linkedList;
+        targetTodoList.setTodoItems(newTodoItems);
+        for(int i = 0; i < linkedList.size(); i++){
+            TodoItem item = linkedList.get(i);
+            item.setTodoList(targetTodoList);
+            item.setItemOrder((long) i);
+            todoItemRepository.save(item);
+        }
+//        targetTodoList.setTodoItems(newTodoItems);
+//        todoListRepository.save(targetTodoList);
+        log.info(linkedList.toString());
     }
 
 }

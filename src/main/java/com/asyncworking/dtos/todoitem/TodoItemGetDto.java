@@ -38,6 +38,8 @@ public class TodoItemGetDto implements Comparable<TodoItemGetDto> {
 
     private OffsetDateTime completedTime;
 
+    private Long order;
+
     @Override
     public int compareTo(@NotNull TodoItemGetDto todoItemGetDto) {
         if (getCompletedTime() == null || todoItemGetDto.getCompletedTime() == null) {

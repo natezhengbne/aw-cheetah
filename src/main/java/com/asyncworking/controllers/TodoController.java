@@ -86,4 +86,13 @@ public class TodoController {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
     }
 
+    @PutMapping("/todoitems/{todoitemId}/moving")
+    public ResponseEntity<?> moveTodoItem(@PathVariable Long todoitemId,
+                                          @RequestParam(value = "originalTodoList") Long originalTodoListId,
+                                          @RequestParam(value = "targetTodoList") Long targetTodoListId,
+                                          @RequestParam(value = "targetTodoItemIndex") Long targetTodoItemIndex)  {
+        todoService.moveTodoItem(todoitemId, originalTodoListId, targetTodoListId, targetTodoItemIndex);
+        return ResponseEntity.ok("move success");
+    }
+
 }
