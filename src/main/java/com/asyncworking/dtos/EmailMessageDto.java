@@ -16,6 +16,7 @@ public class EmailMessageDto {
     private String companyName;
     private String companyOwnerName;
     private String verificationLink;
+    private String invitationLink;
     private String templateType;
     private String templateS3Bucket;
     private String templateS3Key;

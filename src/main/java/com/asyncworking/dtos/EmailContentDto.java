@@ -15,5 +15,6 @@ public class EmailContentDto {
     private String companyName;
     private String companyOwnerName;
     private String verificationLink;
+    private String invitationLink;
     private String templateType;
 }
