@@ -2,6 +2,7 @@ package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.*;
+import com.asyncworking.dtos.todolist.TodoListPutDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
 import com.asyncworking.exceptions.TodoListNotFoundException;
@@ -201,30 +202,9 @@ public class TodoService {
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
 
-    public void moveTodoItem (Long todoItemId, Long targetTodoListId, Long targetTodoItemIndex){
-        TodoItem todoItem = findTodoItemById(todoItemId);
-        Long targetIndex = targetTodoItemIndex;
-        TodoList targetTodoList = findTodoListById(targetTodoListId);
-        List<TodoItem> targetTodoItemList = targetTodoList.getTodoItems();
-        LinkedList<TodoItem> linkedList = new LinkedList<>();
-        linkedList.addAll(targetTodoItemList);
-        int linkedListSize = linkedList.size();
-        for(int i = 0; i < linkedListSize; i++){
-            if(targetIndex == linkedList.get(i).getId()){
-                linkedList.add(i,todoItem);
-            }
-        }
-        List<TodoItem> newTodoItems = linkedList;
-        targetTodoList.setTodoItems(newTodoItems);
-        for(int i = 0; i < linkedList.size(); i++){
-            TodoItem item = linkedList.get(i);
-            item.setTodoList(targetTodoList);
-            item.setItemOrder((long) i);
-            todoItemRepository.save(item);
-        }
-//        targetTodoList.setTodoItems(newTodoItems);
-//        todoListRepository.save(targetTodoList);
-        log.info(linkedList.toString());
+    public void moveTodoItem (List<TodoListPutDto> moveLists){
+        log.info("move");
+        System.out.println(moveLists);
     }
 
 }
