@@ -5,6 +5,7 @@ import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.dtos.todolist.MoveTodoListDto;
+import com.asyncworking.dtos.todolist.MovedItemsListDto;
 import com.asyncworking.dtos.todolist.TodoListPutDto;
 import com.asyncworking.models.TodoList;
 import com.asyncworking.services.TodoService;
@@ -89,10 +90,24 @@ public class TodoController {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
     }
 
-    @PutMapping("/todoitems/moving")
-    public ResponseEntity<?> moveTodoItem( @Valid @RequestBody MoveTodoListDto moveLists )  {
+    @PutMapping("/todoitems/update-todolists")
+    public ResponseEntity<?> reorderTodoLists( @Valid @RequestBody MoveTodoListDto moveLists )  {
         System.out.println(moveLists);
         return ResponseEntity.ok("move success");
     }
 
+    @PutMapping("/todoitems/update-todoitems")
+    public ResponseEntity<?> reorderTodoItems( @Valid @RequestBody MovedItemsListDto movedItemsList )  {
+        System.out.println(movedItemsList);
+        return ResponseEntity.ok("move success");
+    }
+/*
+    @PutMapping("/todoitems/update-two-todolists")
+    public ResponseEntity<?> reorderTodoItems( @Valid @RequestBody MoveTodoListDto movedItemsList1, @Valid @RequestBody MoveTodoListDto movedItemsList2 )  {
+        System.out.println(movedItemsList1);
+        System.out.println(movedItemsList2);
+        return ResponseEntity.ok("move success");
+    }
+
+ */
 }
