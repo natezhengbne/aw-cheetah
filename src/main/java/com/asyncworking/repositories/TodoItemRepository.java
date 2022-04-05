@@ -52,4 +52,9 @@ public interface TodoItemRepository extends JpaRepository<TodoItem, Long> {
     @Query(value = "SELECT ti.projectId as id, ti.completed as status, COUNT(ti) as todoItemStatusNum FROM TodoItem ti  " +
             "WHERE ti.projectId in :projectIdList GROUP BY ti.projectId, ti.completed")
     List<IProjectProgressInfo> findProgressInfoByProjectId(@Param("projectIdList") Collection<Long> projectIdList);
+
+    @Modifying
+    @Query("update TodoItem ti set ti.pendingId=:listId where ti.id = :id")
+    int updatePendingId(@Param("id") Long id, @Param("listId") Long listId);
+
 }

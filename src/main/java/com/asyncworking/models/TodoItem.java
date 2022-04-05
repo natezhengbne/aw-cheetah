@@ -73,4 +73,7 @@ public class TodoItem {
             this.completedTime = null;
         }
     }
+
+    @Column(name = "pending_id")
+    private Long pendingId;
 }
