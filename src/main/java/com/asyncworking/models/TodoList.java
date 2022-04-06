@@ -46,7 +46,7 @@ public class TodoList {
     private Project project;
 
     @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL)
-    @OrderBy("createdTime DESC")
+    @OrderBy("itemOrder")
     private List<TodoItem> todoItems;
 
     @Column(name = "todo_list_title", nullable = false)
@@ -67,4 +67,6 @@ public class TodoList {
     @Column(name = "updated_time", nullable = false)
     private OffsetDateTime updatedTime;
 
+    @Column(name = "list_order")
+    private int listOrder;
 }

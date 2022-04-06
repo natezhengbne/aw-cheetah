@@ -67,7 +67,7 @@ public class TodoItem {
     private String priority;
 
     @Column(name = "item_order")
-    private Long itemOrder;
+    private int itemOrder;
 
 
     public void setCompletedTime() {

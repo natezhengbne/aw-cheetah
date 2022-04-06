@@ -82,6 +82,7 @@ public class TodoService {
                         companyId,
                         projectId,
                         PageRequest.of(0, quantity)).stream()
+                .sorted(Comparator.comparingInt(TodoList::getListOrder).reversed())
                 .map(todoList -> todoMapper.fromTodoListEntity(todoList, todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems())))
                 .collect(Collectors.toList());
         Optional<Project> project = projectRepository.findByCompanyIdAndId(companyId, projectId);
@@ -202,9 +203,45 @@ public class TodoService {
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
 
-    public void moveTodoItem (List<TodoListPutDto> moveLists){
+    public void updateTodoLists (TodoListPutDto[] moveLists){
         log.info("move");
         System.out.println(moveLists);
+        int listOrder = 0;
+        for (TodoListPutDto moveList : moveLists){
+            TodoList todoList = findTodoListById(moveList.getId());
+            List<TodoItem> todoItems = new LinkedList<>();
+            int itemOrder = 0;
+            for(TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
+                TodoItem todoTtem = findTodoItemById(moveTodoTtem.getTodoItemId());
+                todoTtem.setTodoList(todoList);
+                todoTtem.setItemOrder(itemOrder);
+                todoItems.add(todoTtem);
+                itemOrder++;
+            }
+            todoList.setTodoItems(todoItems);
+            todoList.setUpdatedTime(OffsetDateTime.now(UTC));
+            todoList.setListOrder(listOrder);
+            todoListRepository.save(todoList);
+            listOrder++;
+        }
+        log.info("finish");
     }
 
+    public void reorderTodoItems (TodoListPutDto moveList){
+        log.info("reorder");
+        TodoList todoList = findTodoListById(moveList.getId());
+        int itemOrder = 0;
+        List<TodoItem> todoItems = new LinkedList<>();
+        for(TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
+            TodoItem todoTtem = findTodoItemById(moveTodoTtem.getTodoItemId());
+            todoTtem.setTodoList(todoList);
+            todoTtem.setItemOrder(itemOrder);
+            todoItems.add(todoTtem);
+            itemOrder++;
+        }
+        todoList.setTodoItems(todoItems);
+        todoList.setUpdatedTime(OffsetDateTime.now(UTC));
+        todoListRepository.save(todoList);
+        log.info("finish");
+    }
 }
