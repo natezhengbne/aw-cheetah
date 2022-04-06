@@ -93,7 +93,7 @@ public class TodoController {
     @PutMapping("/todoitems/update-todolists")
     public ResponseEntity<?> reorderTodoLists( @Valid @RequestBody MoveTodoListDto movedLists )  {
         System.out.println(movedLists);
-        todoService.updateTodoLists(movedLists.getTodoLists());
+        todoService.reorderTodoList(movedLists.getTodoLists());
         return ResponseEntity.ok("move success");
     }
 
