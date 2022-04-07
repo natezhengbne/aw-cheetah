@@ -91,22 +91,31 @@ public class TodoController {
     }
 
     @PutMapping("/todoitems/update-todolists")
-    public ResponseEntity<?> reorderTodoLists( @Valid @RequestBody MoveTodoListDto movedLists )  {
+    public ResponseEntity<?> reorderTodoLists(@Valid @RequestBody MoveTodoListDto movedLists)  {
         System.out.println(movedLists);
+        if (movedLists.getTodoLists().length == 0) {
+            return ResponseEntity.badRequest().body("TodoList is empty");
+        }
         todoService.reorderTodoList(movedLists.getTodoLists());
         return ResponseEntity.ok("move success");
     }
 
     @PutMapping("/todoitems/update-todoitems")
-    public ResponseEntity<?> reorderTodoItems( @Valid @RequestBody MovedItemsListDto movedItemsList )  {
+    public ResponseEntity<?> reorderTodoItems(@Valid @RequestBody MovedItemsListDto movedItemsList)  {
         System.out.println(movedItemsList.getMovedItemsList());
+        if (movedItemsList.getMovedItemsList().getTodoItems().size() == 0) {
+            return ResponseEntity.badRequest().body("TodoItems is empty");
+        }
         todoService.reorderTodoItems(movedItemsList.getMovedItemsList());
         return ResponseEntity.ok("move success");
     }
 
     @PutMapping("/todoitems/update-two-todolists")
-    public ResponseEntity<?> reorderTodoItems( @Valid @RequestBody MoveTodoListDto movedLists )  {
+    public ResponseEntity<?> moveTodoItems(@Valid @RequestBody MoveTodoListDto movedLists)  {
         System.out.println(movedLists);
+        if (movedLists.getTodoLists().length == 0) {
+            return ResponseEntity.badRequest().body("TodoList is empty");
+        }
         todoService.updateTodoLists(movedLists.getTodoLists());
         return ResponseEntity.ok("move success");
     }

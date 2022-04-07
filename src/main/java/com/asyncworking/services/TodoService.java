@@ -204,19 +204,16 @@ public class TodoService {
     }
 
     public void reorderTodoList (TodoListPutDto[] moveLists){
-        log.info("move");
+        log.info("reorderTodoList");
         System.out.println(moveLists);
         int listOrder = 0;
         for (TodoListPutDto moveList : moveLists){
             TodoList todoList = findTodoListById(moveList.getId());
             List<TodoItem> todoItems = new LinkedList<>();
-            int itemOrder = 0;
-            for(TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
+            for (TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
                 TodoItem todoTtem = findTodoItemById(moveTodoTtem.getTodoItemId());
                 todoTtem.setTodoList(todoList);
-                todoTtem.setItemOrder(itemOrder);
                 todoItems.add(todoTtem);
-                itemOrder++;
             }
             todoList.setTodoItems(todoItems);
             todoList.setUpdatedTime(OffsetDateTime.now(UTC));
@@ -234,7 +231,7 @@ public class TodoService {
             TodoList todoList = findTodoListById(moveList.getId());
             List<TodoItem> todoItems = new LinkedList<>();
             int itemOrder = 0;
-            for(TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
+            for (TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
                 TodoItem todoItem = findTodoItemById(moveTodoTtem.getTodoItemId());
                 todoItem.setTodoList(todoList);
                 todoItem.setItemOrder(itemOrder);
@@ -253,7 +250,7 @@ public class TodoService {
         TodoList todoList = findTodoListById(moveList.getId());
         int itemOrder = 0;
         List<TodoItem> todoItems = new LinkedList<>();
-        for(TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
+        for (TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
             TodoItem todoItem = findTodoItemById(moveTodoTtem.getTodoItemId());
             todoItem.setTodoList(todoList);
             todoItem.setItemOrder(itemOrder);
