@@ -6,8 +6,6 @@ import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.dtos.todolist.MoveTodoListDto;
 import com.asyncworking.dtos.todolist.MovedItemsListDto;
-import com.asyncworking.dtos.todolist.TodoListPutDto;
-import com.asyncworking.models.TodoList;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,30 +90,21 @@ public class TodoController {
 
     @PutMapping("/todoitems/update-todolists")
     public ResponseEntity<?> reorderTodoLists(@Valid @RequestBody MoveTodoListDto movedLists)  {
-        System.out.println(movedLists);
-        if (movedLists.getTodoLists().length == 0) {
-            return ResponseEntity.badRequest().body("TodoList is empty");
-        }
+        log.info(movedLists.toString());
         todoService.reorderTodoList(movedLists.getTodoLists());
         return ResponseEntity.ok("move success");
     }
 
     @PutMapping("/todoitems/update-todoitems")
     public ResponseEntity<?> reorderTodoItems(@Valid @RequestBody MovedItemsListDto movedItemsList)  {
-        System.out.println(movedItemsList.getMovedItemsList());
-        if (movedItemsList.getMovedItemsList().getTodoItems().size() == 0) {
-            return ResponseEntity.badRequest().body("TodoItems is empty");
-        }
+        log.info(movedItemsList.toString());
         todoService.reorderTodoItems(movedItemsList.getMovedItemsList());
         return ResponseEntity.ok("move success");
     }
 
     @PutMapping("/todoitems/update-two-todolists")
     public ResponseEntity<?> moveTodoItems(@Valid @RequestBody MoveTodoListDto movedLists)  {
-        System.out.println(movedLists);
-        if (movedLists.getTodoLists().length == 0) {
-            return ResponseEntity.badRequest().body("TodoList is empty");
-        }
+        log.info(movedLists.toString());
         todoService.updateTodoLists(movedLists.getTodoLists());
         return ResponseEntity.ok("move success");
     }

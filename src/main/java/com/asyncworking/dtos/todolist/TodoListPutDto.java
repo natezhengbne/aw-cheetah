@@ -4,7 +4,8 @@ import com.asyncworking.dtos.todoitem.TodoItemMoveDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;;
+import lombok.NoArgsConstructor;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 public class TodoListPutDto {
     private Long id;
+    @Size(min = 1, message = "todoItems should not empty")
     List<TodoItemMoveDto> todoItems;
     private Long prjectid;
     private String todoListTitle;

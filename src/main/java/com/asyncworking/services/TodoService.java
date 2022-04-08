@@ -85,14 +85,6 @@ public class TodoService {
                 .sorted(Comparator.comparingInt(TodoList::getListOrder))
                 .map(todoList -> todoMapper.fromTodoListEntity(todoList, todoMapper.todoItemsToTodoItemGetDtos(todoList.getTodoItems())))
                 .collect(Collectors.toList());
-        Optional<Project> project = projectRepository.findByCompanyIdAndId(companyId, projectId);
-//        for (TodoListDto todoListDto : todoListDtos) {
-//            if (project.isPresent() && todoListDto.getId().longValue() == project.get().getDoneListId().longValue()) {
-//                List<TodoItemGetDto> todoItems = todoListDto.getTodoItems();
-//                Collections.sort(todoItems);
-//                Collections.reverse(todoItems);
-//            }
-//        }
         return todoListDtos;
     }
 
@@ -202,59 +194,88 @@ public class TodoService {
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
         return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
     }
+    private List<TodoItem> findTodoItemByGivenMoveItems(List<TodoItemMoveDto> moveItems){
+        List<Long> moveItemsIds = new ArrayList<>();
+        for (TodoItemMoveDto todoItemMoveDto: moveItems){
+            moveItemsIds.add(todoItemMoveDto.getTodoItemId());
+        }
+        return todoItemRepository.findAllById(moveItemsIds);
+    }
+    private List<TodoList> findTodoListByGivenMoveLists( List<TodoListPutDto> moveLists){
+        List<Long> moveListIds = new ArrayList<>();
+        for (TodoListPutDto moveList : moveLists){
+            moveListIds.add(moveList.getId());
+        }
+        List<TodoList> moveTodoLists = todoListRepository.findAllById(moveListIds);
+        return moveTodoLists;
+    }
 
-    public void reorderTodoList (TodoListPutDto[] moveLists){
+    public void reorderTodoList (List<TodoListPutDto> moveLists){
         log.info("reorderTodoList");
         System.out.println(moveLists);
+        //get TodoLists
+        List<TodoList> todoLists = findTodoListByGivenMoveLists(moveLists);
+        log.info(todoLists.toString());
+        //end getTodoLists
+
         int listOrder = 0;
-        for (TodoListPutDto moveList : moveLists){
-            TodoList todoList = findTodoListById(moveList.getId());
-            List<TodoItem> todoItems = new LinkedList<>();
-            for (TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
-                TodoItem todoTtem = findTodoItemById(moveTodoTtem.getTodoItemId());
-                todoTtem.setTodoList(todoList);
-                todoItems.add(todoTtem);
+        for(TodoListPutDto moveList :moveLists) {
+          for (TodoList todoList: todoLists){
+              if(moveList.getId() == todoList.getId()){
+                  todoList.setUpdatedTime(OffsetDateTime.now(UTC));
+                  todoList.setListOrder(listOrder);
+              }
             }
-            todoList.setTodoItems(todoItems);
-            todoList.setUpdatedTime(OffsetDateTime.now(UTC));
-            todoList.setListOrder(listOrder);
-            todoListRepository.save(todoList);
-            listOrder++;
+          listOrder++;
         }
+        log.info(todoLists.toString());
+        todoListRepository.saveAll(todoLists);
         log.info("finish");
     }
 
-    public void updateTodoLists (TodoListPutDto[] moveLists){
+    public void updateTodoLists (List<TodoListPutDto>  moveLists){
         log.info("move");
-        System.out.println(moveLists);
+        log.info(moveLists.toString());
+        List<TodoList> todoLists = findTodoListByGivenMoveLists(moveLists);
+
         for (TodoListPutDto moveList : moveLists){
-            TodoList todoList = findTodoListById(moveList.getId());
-            List<TodoItem> todoItems = new LinkedList<>();
-            int itemOrder = 0;
-            for (TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
-                TodoItem todoItem = findTodoItemById(moveTodoTtem.getTodoItemId());
-                todoItem.setTodoList(todoList);
-                todoItem.setItemOrder(itemOrder);
-                todoItems.add(todoItem);
+            for(TodoList todoList: todoLists){
+                int itemOrder = 0;
+                if(todoList.getId() == moveList.getId()){
+                    List<TodoItemMoveDto> moveItems = moveList.getTodoItems();
+                    List<TodoItem> todoItems = findTodoItemByGivenMoveItems(moveItems);
+                    for(TodoItemMoveDto moveItem: moveItems) {
+                        for (TodoItem todoItem : todoItems) {
+                            if(todoItem.getId() == moveItem.getTodoItemId()) {
+                                todoItem.setTodoList(todoList);
+                                todoItem.setItemOrder(itemOrder);
+                            }
+                        }
+                        itemOrder++;
+                    }
+                    todoList.setTodoItems(todoItems);
+                    todoList.setUpdatedTime(OffsetDateTime.now(UTC));
+                }
                 itemOrder++;
             }
-            todoList.setTodoItems(todoItems);
-            todoList.setUpdatedTime(OffsetDateTime.now(UTC));
-            todoListRepository.save(todoList);
         }
+        todoListRepository.saveAll(todoLists);
         log.info("finish");
     }
 
     public void reorderTodoItems (TodoListPutDto moveList){
         log.info("reorder");
         TodoList todoList = findTodoListById(moveList.getId());
+        List<TodoItemMoveDto> moveItems = moveList.getTodoItems();
+        List<TodoItem> todoItems = findTodoItemByGivenMoveItems(moveItems);
         int itemOrder = 0;
-        List<TodoItem> todoItems = new LinkedList<>();
-        for (TodoItemMoveDto moveTodoTtem: moveList.getTodoItems()){
-            TodoItem todoItem = findTodoItemById(moveTodoTtem.getTodoItemId());
-            todoItem.setTodoList(todoList);
-            todoItem.setItemOrder(itemOrder);
-            todoItems.add(todoItem);
+        for(TodoItemMoveDto moveItem: moveItems) {
+            for (TodoItem todoItem : todoItems) {
+                if(todoItem.getId() == moveItem.getTodoItemId()) {
+                    todoItem.setTodoList(todoList);
+                    todoItem.setItemOrder(itemOrder);
+                }
+            }
             itemOrder++;
         }
         todoList.setTodoItems(todoItems);
