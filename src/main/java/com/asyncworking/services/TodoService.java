@@ -115,8 +115,15 @@ public class TodoService {
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
+        todoItem.setItemOrder(findHigestOrder(todoList)+1);
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
+    }
+
+    private int findHigestOrder(TodoList todoList){
+        TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
+                           .orElseThrow(() -> new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
+        return todoItem.getItemOrder();
     }
 
     public List<TodoItemGetDto> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId,
@@ -208,33 +215,32 @@ public class TodoService {
         List<TodoList> todoLists = findTodoListByGivenMoveLists(moveLists);
         log.info(todoLists.toString());
         //end getTodoLists
+        Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
+                .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
 
-        int listOrder = 0;
-        for (TodoListPutDto moveList : moveLists) {
-            int finalListOrder = listOrder;
-            todoLists.stream().filter(todoList -> moveList.getId() == todoList.getId())
-                    .forEach(todoList -> {
-                        todoList.setUpdatedTime(OffsetDateTime.now(UTC));
-                        todoList.setListOrder(finalListOrder);
-                    });
-            listOrder++;
-        }
+        final int[] listOrder = {0};
+        moveLists.stream().forEach(moveList->{
+            TodoList todoList = todoListMap.get(moveList.getId());
+            todoList.setUpdatedTime(OffsetDateTime.now(UTC));
+            todoList.setListOrder(listOrder[0]);
+            listOrder[0]++;
+        });
+
         log.info(todoLists.toString());
         todoListRepository.saveAll(todoLists);
         log.info("finish");
     }
 
     private List<TodoItem> updateTodoItems(List<TodoItem> todoItems, List<TodoItemMoveDto> moveItems, TodoList todoList) {
-        int itemOrder = 0;
-        for (TodoItemMoveDto moveItem : moveItems) {
-            int finalItemOrder = itemOrder;
-            todoItems.stream().filter(todoItem -> todoItem.getId() == moveItem.getTodoItemId())
-                    .forEach(todoItem -> {
-                        todoItem.setTodoList(todoList);
-                        todoItem.setItemOrder(finalItemOrder);
-                    });
-            itemOrder++;
-        }
+        Map<Long, TodoItem> todoItemsMap = todoItems.stream()
+                .collect(Collectors.toMap(TodoItem::getId, TodoItem -> TodoItem));
+        final int[] itemOrder = {moveItems.size()};
+        moveItems.stream().forEach(moveItem->{
+            TodoItem todoItem = todoItemsMap.get(moveItem.getTodoItemId());
+            todoItem.setTodoList(todoList);
+            todoItem.setItemOrder(itemOrder[0]);
+            itemOrder[0]--;
+        });
         return todoItems;
     }
 
@@ -253,11 +259,12 @@ public class TodoService {
         Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
                 .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
 
-        for (TodoListPutDto moveList : moveLists) {
+        moveLists.stream().forEach(moveList->{
             TodoList todoList = todoListMap.get(moveList.getId());
             TodoList updatedTodoList = updateTodoList(todoList, moveList);
             todoListMap.put(moveList.getId(), updatedTodoList);
-        }
+        });
+
         List<TodoList> todoLists = new ArrayList<>(todoListMap.values());
         todoListRepository.saveAll(todoLists);
         log.info("finish");

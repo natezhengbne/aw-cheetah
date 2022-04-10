@@ -46,7 +46,7 @@ public class TodoList {
     private Project project;
 
     @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL)
-    @OrderBy("itemOrder")
+    @OrderBy("itemOrder DESC ")
     private List<TodoItem> todoItems;
 
     @Column(name = "todo_list_title", nullable = false)

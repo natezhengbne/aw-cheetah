@@ -92,21 +92,21 @@ public class TodoController {
     public ResponseEntity<?> reorderTodoLists(@Valid @RequestBody MoveTodoListDto movedLists)  {
         log.info(movedLists.toString());
         todoService.reorderTodoList(movedLists.getTodoLists());
-        return ResponseEntity.ok("move success");
+        return ResponseEntity.ok("success");
     }
 
     @PutMapping("/todoitems/update-todoitems")
     public ResponseEntity<?> reorderTodoItems(@Valid @RequestBody MovedItemsListDto movedItemsList)  {
         log.info(movedItemsList.toString());
         todoService.reorderTodoItems(movedItemsList.getMovedItemsList());
-        return ResponseEntity.ok("move success");
+        return ResponseEntity.ok("success");
     }
 
     @PutMapping("/todoitems/update-two-todolists")
     public ResponseEntity<?> moveTodoItems(@Valid @RequestBody MoveTodoListDto movedLists)  {
         log.info(movedLists.toString());
         todoService.updateTodoLists(movedLists.getTodoLists());
-        return ResponseEntity.ok("move success");
+        return ResponseEntity.ok("success");
     }
 
 
