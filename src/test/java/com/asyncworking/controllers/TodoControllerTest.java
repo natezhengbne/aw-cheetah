@@ -196,8 +196,8 @@ class TodoControllerTest extends ControllerHelper {
                                        .todoListTitle("1")
                                        .build();
 
-        TodoListPutDto[] todoListPutDtos = new TodoListPutDto[5];
-        todoListPutDtos[0] = todoListPutDto;
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
+        todoListPutDtos.add(todoListPutDto);
 
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                         .todoLists(todoListPutDtos)
@@ -211,7 +211,7 @@ class TodoControllerTest extends ControllerHelper {
 
     @Test
     public void throwBadRequestIfMovedListsIsEmpty() throws Exception {
-        TodoListPutDto[] todoListPutDtos = new TodoListPutDto[0];
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                 .todoLists(todoListPutDtos)
                 .build();
@@ -242,10 +242,8 @@ class TodoControllerTest extends ControllerHelper {
 
     @Test
     public void throwBadRequestIfReorderTodoItemsIsEmpty() throws Exception {
-        List<TodoItemMoveDto> todoItemMoveDtos = new ArrayList<>();
         TodoListPutDto todoListPutDto = TodoListPutDto.builder()
                 .id(1L)
-                .todoItems(todoItemMoveDtos)
                 .todoListTitle("1")
                 .build();
         MovedItemsListDto movedItemsList = MovedItemsListDto.builder().movedItemsList(todoListPutDto).build();
@@ -267,8 +265,8 @@ class TodoControllerTest extends ControllerHelper {
                 .todoListTitle("1")
                 .build();
 
-        TodoListPutDto[] todoListPutDtos = new TodoListPutDto[5];
-        todoListPutDtos[0] = todoListPutDto;
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
+        todoListPutDtos.add(todoListPutDto);
 
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                 .todoLists(todoListPutDtos)
@@ -282,7 +280,7 @@ class TodoControllerTest extends ControllerHelper {
 
     @Test
     public void throwBadRequestIfmoveTodoItemsIsEmpty() throws Exception {
-        TodoListPutDto[] todoListPutDtos = new TodoListPutDto[0];
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                 .todoLists(todoListPutDtos)
                 .build();

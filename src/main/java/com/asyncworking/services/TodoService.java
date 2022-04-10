@@ -115,14 +115,15 @@ public class TodoService {
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
-        todoItem.setItemOrder(findHigestOrder(todoList)+1);
+        todoItem.setItemOrder(findHigestOrder(todoList) + 1);
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }
 
     private int findHigestOrder(TodoList todoList){
         TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
-                           .orElseThrow(() -> new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
+                           .orElseThrow(() ->
+                                   new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
         return todoItem.getItemOrder();
     }
 
