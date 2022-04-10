@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MoveTodoListDto {
-//   TodoListPutDto[] todoLists;
    @Size(min = 1, message = "todoItems should not empty")
    List<TodoListPutDto> todoLists;
 }

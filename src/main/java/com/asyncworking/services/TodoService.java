@@ -209,7 +209,6 @@ public class TodoService {
     }
 
     public void reorderTodoList(List<TodoListPutDto> moveLists) {
-        log.info("reorderTodoList");
         System.out.println(moveLists);
         //get TodoLists
         List<TodoList> todoLists = findTodoListByGivenMoveLists(moveLists);
@@ -228,7 +227,6 @@ public class TodoService {
 
         log.info(todoLists.toString());
         todoListRepository.saveAll(todoLists);
-        log.info("finish");
     }
 
     private List<TodoItem> updateTodoItems(List<TodoItem> todoItems, List<TodoItemMoveDto> moveItems, TodoList todoList) {
@@ -254,7 +252,6 @@ public class TodoService {
     }
 
     public void updateTodoLists(List<TodoListPutDto> moveLists) {
-        log.info("move");
         log.info(moveLists.toString());
         Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
                 .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
@@ -267,14 +264,11 @@ public class TodoService {
 
         List<TodoList> todoLists = new ArrayList<>(todoListMap.values());
         todoListRepository.saveAll(todoLists);
-        log.info("finish");
     }
 
     public void reorderTodoItems(TodoListPutDto moveList) {
-        log.info("reorder");
         TodoList todoList = findTodoListById(moveList.getId());
         TodoList updateTodoList = updateTodoList(todoList, moveList);
         todoListRepository.save(updateTodoList);
-        log.info("finish");
     }
 }
