@@ -1,7 +1,13 @@
 package com.asyncworking.services;
 
 import com.asyncworking.dtos.TodoListDto;
-import com.asyncworking.dtos.todoitem.*;
+
+import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
+import com.asyncworking.dtos.todoitem.TodoItemGetDto;
+import com.asyncworking.dtos.todoitem.TodoItemMoveDto;
+import com.asyncworking.dtos.todoitem.TodoItemPageDto;
+import com.asyncworking.dtos.todoitem.TodoItemPostDto;
+import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.dtos.todolist.TodoListPutDto;
 import com.asyncworking.exceptions.ProjectNotFoundException;
 import com.asyncworking.exceptions.TodoItemNotFoundException;
@@ -26,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -209,36 +216,39 @@ public class TodoService {
         return todoListRepository.findAllById(moveListIds);
     }
 
-    public void reorderTodoList(List<TodoListPutDto> moveLists) {
+    public List<Long> reorderTodoList(List<TodoListPutDto> moveLists) {
         System.out.println(moveLists);
-        //get TodoLists
         List<TodoList> todoLists = findTodoListByGivenMoveLists(moveLists);
         log.info(todoLists.toString());
-        //end getTodoLists
         Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
                 .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
 
-        final int[] listOrder = {0};
-        moveLists.stream().forEach(moveList->{
+        final List<Integer> listOrder = new ArrayList<>();
+        listOrder.add(0);
+        moveLists.stream().forEach(moveList -> {
             TodoList todoList = todoListMap.get(moveList.getId());
             todoList.setUpdatedTime(OffsetDateTime.now(UTC));
-            todoList.setListOrder(listOrder[0]);
-            listOrder[0]++;
+            todoList.setListOrder(listOrder.get(0));
+            int order = listOrder.get(0);
+            listOrder.set(0, ++order);
         });
 
         log.info(todoLists.toString());
         todoListRepository.saveAll(todoLists);
+        return todoLists.stream().map(todoList -> todoList.getId() ).collect(Collectors.toList());
     }
 
     private List<TodoItem> updateTodoItems(List<TodoItem> todoItems, List<TodoItemMoveDto> moveItems, TodoList todoList) {
         Map<Long, TodoItem> todoItemsMap = todoItems.stream()
                 .collect(Collectors.toMap(TodoItem::getId, TodoItem -> TodoItem));
-        final int[] itemOrder = {moveItems.size()};
-        moveItems.stream().forEach(moveItem->{
+        final List<Integer> itemOrder = new ArrayList<>();
+        itemOrder.add(todoItems.size());
+        moveItems.stream().forEach(moveItem -> {
             TodoItem todoItem = todoItemsMap.get(moveItem.getTodoItemId());
             todoItem.setTodoList(todoList);
-            todoItem.setItemOrder(itemOrder[0]);
-            itemOrder[0]--;
+            todoItem.setItemOrder(itemOrder.get(0));
+            int order = itemOrder.get(0);
+            itemOrder.set(0, --order);
         });
         return todoItems;
     }
@@ -252,24 +262,27 @@ public class TodoService {
         return todoList;
     }
 
-    public void updateTodoLists(List<TodoListPutDto> moveLists) {
+    public List<Long> updateTodoLists(List<TodoListPutDto> moveLists) {
         log.info(moveLists.toString());
         Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
                 .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
 
-        moveLists.stream().forEach(moveList->{
+        moveLists.stream().forEach(moveList -> {
             TodoList todoList = todoListMap.get(moveList.getId());
             TodoList updatedTodoList = updateTodoList(todoList, moveList);
             todoListMap.put(moveList.getId(), updatedTodoList);
         });
 
-        List<TodoList> todoLists = new ArrayList<>(todoListMap.values());
-        todoListRepository.saveAll(todoLists);
+        todoListRepository.saveAll(todoListMap.values());
+        return todoListMap.entrySet().stream()
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
-    public void reorderTodoItems(TodoListPutDto moveList) {
+    public Long reorderTodoItems(TodoListPutDto moveList) {
         TodoList todoList = findTodoListById(moveList.getId());
         TodoList updateTodoList = updateTodoList(todoList, moveList);
         todoListRepository.save(updateTodoList);
+        return updateTodoList.getId();
     }
 }
