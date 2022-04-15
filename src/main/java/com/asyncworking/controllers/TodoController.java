@@ -88,24 +88,16 @@ public class TodoController {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
     }
 
-    @PutMapping("/todoitems/todolists")
+    @PutMapping("/todolists")
     public ResponseEntity<?> reorderTodoLists(@Valid @RequestBody MoveTodoListDto movedLists)  {
         log.info(movedLists.toString());
         return ResponseEntity.ok(todoService.reorderTodoList(movedLists.getTodoLists()));
     }
 
-    @PutMapping("/todoitems/todolist")
-    public ResponseEntity<?> reorderTodoItems(@Valid @RequestBody MovedItemsListDto movedItemsList)  {
-        log.info(movedItemsList.toString());
-
-        return ResponseEntity.ok(todoService.reorderTodoItems(movedItemsList.getMovedItemsList()));
-    }
-
-    @PutMapping("/todoitems/two-todolists")
+    @PutMapping("/todoitems/todolists")
     public ResponseEntity<?> moveTodoItems(@Valid @RequestBody MoveTodoListDto movedLists)  {
         log.info(movedLists.toString());
-        return ResponseEntity.ok(todoService.updateTodoLists(movedLists.getTodoLists()));
+        return ResponseEntity.ok(todoService.moveTodoItems(movedLists.getTodoLists()));
     }
-
 
 }

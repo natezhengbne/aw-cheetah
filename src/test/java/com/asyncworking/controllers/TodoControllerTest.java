@@ -207,7 +207,7 @@ class TodoControllerTest extends ControllerHelper {
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                         .todoLists(todoListPutDtos)
                         .build();
-        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolists")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists")
                         .content(objectMapper.writeValueAsString(moveTodoListDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -220,37 +220,8 @@ class TodoControllerTest extends ControllerHelper {
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                 .todoLists(todoListPutDtos)
                 .build();
-        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolists")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists")
                         .content(objectMapper.writeValueAsString(moveTodoListDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-
-    }
-
-    @Test
-    public void  shouldReturnOkIfReorderTodoItemsIsSuccessful() throws Exception {
-        TodoItemMoveDto todoItemMoveDto = TodoItemMoveDto.builder().todoItemId(1L).build();
-        List<TodoItemMoveDto> todoItemMoveDtos = new ArrayList<>();
-        todoItemMoveDtos.add(todoItemMoveDto);
-        TodoListPutDto todoListPutDto = TodoListPutDto.builder()
-                .id(1L)
-                .todoItems(todoItemMoveDtos)
-                .todoListTitle("1")
-                .build();
-        MovedItemsListDto movedItemsList = MovedItemsListDto.builder().movedItemsList(todoListPutDto).build();
-        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolist")
-                        .content(objectMapper.writeValueAsString(movedItemsList))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-    }
-
-    @Test
-    public void throwBadRequestIfReorderTodoItemsIsEmpty() throws Exception {
-        TodoListPutDto todoListPutDto = null;
-        MovedItemsListDto movedItemsList = MovedItemsListDto.builder().movedItemsList(todoListPutDto).build();
-        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolist")
-                        .content(objectMapper.writeValueAsString(movedItemsList))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
@@ -270,7 +241,7 @@ class TodoControllerTest extends ControllerHelper {
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                 .todoLists(todoListPutDtos)
                 .build();
-        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/two-todolists")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolists")
                         .content(objectMapper.writeValueAsString(moveTodoListDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -283,7 +254,7 @@ class TodoControllerTest extends ControllerHelper {
         MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
                 .todoLists(todoListPutDtos)
                 .build();
-        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/two-todolists")
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolists")
                         .content(objectMapper.writeValueAsString(moveTodoListDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());

@@ -34,6 +34,7 @@ import javax.validation.Valid;
 import java.time.OffsetDateTime;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneOffset.UTC;
@@ -122,17 +123,17 @@ public class TodoService {
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
-        todoItem.setItemOrder(findHigestOrder(todoList) + 1);
+//        todoItem.setItemOrder(findHigestOrder(todoList) + 1);
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }
 
-    private int findHigestOrder(TodoList todoList){
-        TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
-                           .orElseThrow(() ->
-                                   new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
-        return todoItem.getItemOrder();
-    }
+//    private int findHigestOrder(TodoList todoList){
+//        TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
+//                           .orElseThrow(() ->
+//                                   new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
+//        return todoItem.getItemOrder();
+//    }
 
     public List<TodoItemGetDto> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId,
                                                                                                Long projectId, Long todoListId) {
@@ -223,32 +224,30 @@ public class TodoService {
         Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
                 .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
 
-        final List<Integer> listOrder = new ArrayList<>();
-        listOrder.add(0);
+        AtomicReference<Integer> listOrderRef = new AtomicReference<>(0);
         moveLists.stream().forEach(moveList -> {
             TodoList todoList = todoListMap.get(moveList.getId());
             todoList.setUpdatedTime(OffsetDateTime.now(UTC));
-            todoList.setListOrder(listOrder.get(0));
-            int order = listOrder.get(0);
-            listOrder.set(0, ++order);
+            todoList.setListOrder(listOrderRef.get());
+            int order = listOrderRef.get() + 1;
+            listOrderRef.set(order);
         });
 
         log.info(todoLists.toString());
         todoListRepository.saveAll(todoLists);
-        return todoLists.stream().map(todoList -> todoList.getId() ).collect(Collectors.toList());
+        return todoLists.stream().map(todoList -> todoList.getId()).collect(Collectors.toList());
     }
 
     private List<TodoItem> updateTodoItems(List<TodoItem> todoItems, List<TodoItemMoveDto> moveItems, TodoList todoList) {
         Map<Long, TodoItem> todoItemsMap = todoItems.stream()
                 .collect(Collectors.toMap(TodoItem::getId, TodoItem -> TodoItem));
-        final List<Integer> itemOrder = new ArrayList<>();
-        itemOrder.add(todoItems.size());
+        AtomicReference<Integer> itemOrderRef = new AtomicReference<>(todoItems.size());
         moveItems.stream().forEach(moveItem -> {
             TodoItem todoItem = todoItemsMap.get(moveItem.getTodoItemId());
             todoItem.setTodoList(todoList);
-            todoItem.setItemOrder(itemOrder.get(0));
-            int order = itemOrder.get(0);
-            itemOrder.set(0, --order);
+            todoItem.setItemOrder(itemOrderRef.get());
+            int order = itemOrderRef.get();
+            itemOrderRef.set(--order);
         });
         return todoItems;
     }
@@ -262,7 +261,7 @@ public class TodoService {
         return todoList;
     }
 
-    public List<Long> updateTodoLists(List<TodoListPutDto> moveLists) {
+    private List<Long> updateTodoLists(List<TodoListPutDto> moveLists) {
         log.info(moveLists.toString());
         Map<Long, TodoList> todoListMap = findTodoListByGivenMoveLists(moveLists).stream()
                 .collect(Collectors.toMap(TodoList::getId, todoList -> todoList));
@@ -279,10 +278,21 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    public Long reorderTodoItems(TodoListPutDto moveList) {
+    private Long reorderTodoItems(TodoListPutDto moveList) {
         TodoList todoList = findTodoListById(moveList.getId());
         TodoList updateTodoList = updateTodoList(todoList, moveList);
         todoListRepository.save(updateTodoList);
         return updateTodoList.getId();
     }
+
+    public List<Long> moveTodoItems(List<TodoListPutDto> moveLists){
+        if (moveLists.size() == 1){
+            log.info("reorder todoItem");
+            return Collections.singletonList(reorderTodoItems(moveLists.get(0)));
+        } else {
+            log.info("move todoItem");
+            return updateTodoLists(moveLists);
+        }
+    }
+
 }
