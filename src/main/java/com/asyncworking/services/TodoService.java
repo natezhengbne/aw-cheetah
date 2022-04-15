@@ -123,17 +123,20 @@ public class TodoService {
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
         todoItem.setCompletedTime();
-//        todoItem.setItemOrder(findHigestOrder(todoList) + 1);
+        todoItem.setItemOrder(findHigestOrder(todoList) + 1);
         todoItemRepository.save(todoItem);
         return todoItem.getCompleted();
     }
 
-//    private int findHigestOrder(TodoList todoList){
-//        TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
-//                           .orElseThrow(() ->
-//                                   new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
-//        return todoItem.getItemOrder();
-//    }
+    private int findHigestOrder(TodoList todoList){
+        if (todoList.getTodoItems().size() == 0) {
+            return -1;
+        }
+        TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
+                           .orElseThrow(() ->
+                                   new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
+        return todoItem.getItemOrder();
+    }
 
     public List<TodoItemGetDto> findByCompanyIdAndProjectIdAndTodoListIdOrderByCreatedTimeDesc(Long companyId,
                                                                                                Long projectId, Long todoListId) {
