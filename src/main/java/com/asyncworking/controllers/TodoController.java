@@ -4,6 +4,8 @@ import com.asyncworking.dtos.TodoListDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
+import com.asyncworking.dtos.todolist.MoveTodoListDto;
+import com.asyncworking.dtos.todolist.MovedItemsListDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +86,18 @@ public class TodoController {
     public ResponseEntity<?> findAssignedPeopleById(@PathVariable Long companyId, @PathVariable Long projectId,
                                                     @PathVariable Long todoitemId) {
         return ResponseEntity.ok(todoService.findAssignedPeople(companyId, projectId, todoitemId));
+    }
+
+    @PutMapping("/todolists")
+    public ResponseEntity<?> reorderTodoLists(@Valid @RequestBody MoveTodoListDto movedLists)  {
+        log.info(movedLists.toString());
+        return ResponseEntity.ok(todoService.reorderTodoList(movedLists.getTodoLists()));
+    }
+
+    @PutMapping("/todoitems/todolists")
+    public ResponseEntity<?> moveTodoItems(@Valid @RequestBody MoveTodoListDto movedLists)  {
+        log.info(movedLists.toString());
+        return ResponseEntity.ok(todoService.moveTodoItems(movedLists.getTodoLists()));
     }
 
 }

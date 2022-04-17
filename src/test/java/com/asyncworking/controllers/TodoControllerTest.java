@@ -1,10 +1,15 @@
 package com.asyncworking.controllers;
 
 import com.asyncworking.dtos.TodoListDto;
+
 import com.asyncworking.dtos.todoitem.AssignedPeopleGetDto;
+import com.asyncworking.dtos.todoitem.TodoItemMoveDto;
 import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
+import com.asyncworking.dtos.todolist.MoveTodoListDto;
+import com.asyncworking.dtos.todolist.MovedItemsListDto;
+import com.asyncworking.dtos.todolist.TodoListPutDto;
 import com.asyncworking.exceptions.TodoListNotFoundException;
 import com.asyncworking.services.TodoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -180,6 +185,77 @@ class TodoControllerTest extends ControllerHelper {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists/1")
                         .content(objectMapper.writeValueAsString(todolistDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void  shouldReturnOkIfMovedListsIsSuccessful() throws Exception {
+        TodoItemMoveDto todoItemMoveDto = TodoItemMoveDto.builder().todoItemId(1L).build();
+        List<TodoItemMoveDto> todoItemMoveDtos = new ArrayList<>();
+        todoItemMoveDtos.add(todoItemMoveDto);
+        TodoListPutDto todoListPutDto = TodoListPutDto.builder()
+                                       .id(1L)
+                                       .todoItems(todoItemMoveDtos)
+                                       .todoListTitle("1")
+                                       .build();
+
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
+        todoListPutDtos.add(todoListPutDto);
+
+        MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
+                        .todoLists(todoListPutDtos)
+                        .build();
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists")
+                        .content(objectMapper.writeValueAsString(moveTodoListDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void throwBadRequestIfMovedListsIsEmpty() throws Exception {
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
+        MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
+                .todoLists(todoListPutDtos)
+                .build();
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todolists")
+                        .content(objectMapper.writeValueAsString(moveTodoListDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    public void  shouldReturnOkIfmoveTodoItemsIsSuccessful() throws Exception {
+        TodoItemMoveDto todoItemMoveDto = TodoItemMoveDto.builder().todoItemId(1L).build();
+        List<TodoItemMoveDto> todoItemMoveDtos = new ArrayList<>();
+        todoItemMoveDtos.add(todoItemMoveDto);
+        TodoListPutDto todoListPutDto = null;
+
+
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
+        todoListPutDtos.add(todoListPutDto);
+
+        MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
+                .todoLists(todoListPutDtos)
+                .build();
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolists")
+                        .content(objectMapper.writeValueAsString(moveTodoListDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void throwBadRequestIfmoveTodoItemsIsEmpty() throws Exception {
+        List<TodoListPutDto> todoListPutDtos = new ArrayList<>();
+        MoveTodoListDto moveTodoListDto = MoveTodoListDto.builder()
+                .todoLists(todoListPutDtos)
+                .build();
+        mockMvc.perform(MockMvcRequestBuilders.put("/companies/1/projects/1/todoitems/todolists")
+                        .content(objectMapper.writeValueAsString(moveTodoListDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
