@@ -193,7 +193,7 @@ public class TodoService {
 
     private TodoList findTodoListById(Long todoListId) {
         return todoListRepository.findById(todoListId)
-                .orElseThrow(() -> new ProjectNotFoundException("Cannot find TodoList by id: " + todoListId));
+                .orElseThrow(() -> new TodoListNotFoundException("Cannot find TodoList by id: " + todoListId));
     }
 
 
@@ -230,8 +230,10 @@ public class TodoService {
         AtomicReference<Integer> listOrderRef = new AtomicReference<>(0);
         moveLists.stream().forEach(moveList -> {
             TodoList todoList = todoListMap.get(moveList.getId());
-            todoList.setUpdatedTime(OffsetDateTime.now(UTC));
-            todoList.setListOrder(listOrderRef.get());
+            if (todoList.getListOrder() != listOrderRef.get()){
+                todoList.setUpdatedTime(OffsetDateTime.now(UTC));
+                todoList.setListOrder(listOrderRef.get());
+            }
             int order = listOrderRef.get() + 1;
             listOrderRef.set(order);
         });
