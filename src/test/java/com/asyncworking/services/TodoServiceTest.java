@@ -163,10 +163,8 @@ public class TodoServiceTest {
                 .thenReturn(Optional.of(todoList));
         when(todoItemRepository.save(any())).
                 thenReturn(todoItem);
-        ArgumentCaptor<TodoItem> todoItemCaptor = ArgumentCaptor.forClass(TodoItem.class);
-        todoService.createTodoItem(project.getCompanyId(), project.getId(), mockTodoItemPostDto);
-        verify(todoItemRepository).save(todoItemCaptor.capture());
-        assertEquals(todoList.getId(), todoItemCaptor.getValue().getTodoList().getId());
+        Long todoItemId = todoService.createTodoItem(project.getCompanyId(), project.getId(), mockTodoItemPostDto);
+        assertEquals(todoList.getId(), todoItemId);
     }
 
     @Test
