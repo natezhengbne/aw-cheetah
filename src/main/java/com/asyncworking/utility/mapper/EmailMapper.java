@@ -39,7 +39,7 @@ public interface EmailMapper {
 
     @Mapping(target = "email", source = "accountDto.email")
     @Mapping(target = "userName", source = "accountDto.name")
-    @Mapping(target = "verificationLink", source = "link")
+    @Mapping(target = "invitationLink", source = "link")
     EmailContentDto toEmailContentDto(
             String templateType,
             String link,
