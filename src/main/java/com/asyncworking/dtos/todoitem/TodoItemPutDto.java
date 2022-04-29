@@ -1,7 +1,5 @@
 package com.asyncworking.dtos.todoitem;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
