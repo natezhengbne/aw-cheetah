@@ -5,7 +5,6 @@ import com.asyncworking.dtos.todoitem.TodoItemPageDto;
 import com.asyncworking.dtos.todoitem.TodoItemPostDto;
 import com.asyncworking.dtos.todoitem.TodoItemPutDto;
 import com.asyncworking.dtos.todolist.MoveTodoListDto;
-import com.asyncworking.dtos.todolist.MovedItemsListDto;
 import com.asyncworking.services.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
