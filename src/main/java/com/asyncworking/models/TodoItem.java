@@ -66,6 +66,9 @@ public class TodoItem {
     @Column(name = "priority")
     private String priority;
 
+    @Column(name = "pending_id")
+    private Long pendingId;
+
     @Column(name = "item_order")
     private int itemOrder;
 

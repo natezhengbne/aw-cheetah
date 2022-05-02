@@ -32,6 +32,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import static java.time.OffsetDateTime.now;
 import static java.time.ZoneOffset.UTC;
@@ -104,6 +105,7 @@ public class TodoServiceTest {
                 .isPrivate(false)
                 .leaderId(1L)
                 .companyId(1L)
+                .doneListId(0L)
                 .createdTime(now(UTC))
                 .updatedTime(now(UTC))
                 .build();
@@ -130,6 +132,7 @@ public class TodoServiceTest {
                 .companyId(todoList.getCompanyId())
                 .projectId(project.getId())
                 .completed(false)
+                .pendingId(1L)
                 .build();
 
         todoItem1 = buildTodoItem(todoList, "test1", "High", "des1", "1,2,3");
@@ -225,6 +228,78 @@ public class TodoServiceTest {
                 mockTodoList.getId())).thenReturn(Optional.of(mockTodoList));
         assertEquals(returnedMockTodoListDto.getTodoListTitle(), todoService.fetchSingleTodoList(project.getCompanyId(), project.getId(),
                 mockTodoList.getId()).getTodoListTitle());
+    }
+
+    @Test
+    public void returnDoneListStatusIfUserClickTheDoneButton(){
+        List<TodoList> todoLists = new ArrayList<>();
+        List<TodoItem> todoItems = new ArrayList<>();
+        todoLists.add(TodoList.builder()
+                .companyId(project.getCompanyId())
+                .project(project)
+                .id(0L)
+                .todoListTitle("Done")
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .todoItems(todoItems)
+                .build());
+        todoItems.add(todoItem);
+        todoLists.add(TodoList.builder()
+                .companyId(project.getCompanyId())
+                .project(project)
+                .id(1L)
+                .todoListTitle("listA")
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .todoItems(todoItems)
+                .build());
+
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndId(project.getCompanyId(), project.getId(), todoItems.get(0).getId()))
+                .thenReturn(Optional.of(todoItems.get(0)));
+        when(projectRepository.findByCompanyIdAndId(project.getCompanyId(), project.getId()))
+                .thenReturn(Optional.of(project));
+        when(todoListRepository.findByCompanyIdAndProjectIdAndId(project.getCompanyId(), project.getId(), todoLists.get(0).getId()))
+                .thenReturn(Optional.of(todoLists.get(0)));
+
+        boolean status = todoService.changeTodoItemCompleted(project.getCompanyId(), project.getId(), todoItems.get(0).getId(), true);
+        assertEquals(todoItems.get(0).getCompleted(), status);
+        assertEquals(todoItems.get(0).getTodoList().getTodoListTitle(), "Done");
+    }
+
+    @Test
+    public void returnOriginListStatusIfUserClickTheDoneButton(){
+        List<TodoList> todoLists = new ArrayList<>();
+        List<TodoItem> todoItems = new ArrayList<>();
+        todoLists.add(TodoList.builder()
+                .companyId(project.getCompanyId())
+                .project(project)
+                .id(0L)
+                .todoListTitle("Done")
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .todoItems(todoItems)
+                .build());
+        todoItems.add(todoItem);
+        todoLists.add(TodoList.builder()
+                .companyId(project.getCompanyId())
+                .project(project)
+                .id(1L)
+                .todoListTitle("listA")
+                .createdTime(now(UTC))
+                .updatedTime(now(UTC))
+                .todoItems(todoItems)
+                .build());
+
+        when(todoItemRepository.findByCompanyIdAndProjectIdAndId(project.getCompanyId(), project.getId(), todoItems.get(0).getId()))
+                .thenReturn(Optional.of(todoItems.get(0)));
+        when(projectRepository.findByCompanyIdAndId(project.getCompanyId(), project.getId()))
+                .thenReturn(Optional.of(project));
+        when(todoListRepository.findByCompanyIdAndProjectIdAndId(project.getCompanyId(), project.getId(), todoLists.get(1).getId()))
+                .thenReturn(Optional.of(todoLists.get(1)));
+
+        boolean status = todoService.changeTodoItemCompleted(project.getCompanyId(), project.getId(), todoItems.get(0).getId(), false);
+        assertEquals(todoItems.get(0).getCompleted(), status);
+        assertEquals(todoItems.get(0).getTodoList().getTodoListTitle(), "listA");
     }
 
     @Test
@@ -328,6 +403,7 @@ public class TodoServiceTest {
                 .createdTime(now(UTC))
                 .updatedTime(now(UTC))
                 .subscribersIds(subscribersIds)
+                .pendingId(todoList.getId())
                 .build();
     }
 
