@@ -108,16 +108,18 @@ public class TodoService {
         TodoItem todoItem = todoMapper.toTodoItemEntity(todoItemPostDto, todoList);
         TodoItem savedTodoItem = todoItemRepository.save(todoItem);
         savedTodoItem.setItemOrder(savedTodoItem.getId().intValue());
+        savedTodoItem.setPendingId(todoItemPostDto.getTodoListId());
         todoItemRepository.save(savedTodoItem);
         log.info("created a item with id: {} ", savedTodoItem.getId());
         return savedTodoItem.getId();
     }
 
-
     public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         Project project = findProjectByCompanyIdAndProjectId(companyId, projectId);
-        TodoList todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, project.getDoneListId());
+        long destinationListId = completed ? project.getDoneListId() : todoItem.getPendingId();
+        TodoList todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, destinationListId);
+
         todoItem.setTodoList(todoList);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
@@ -133,7 +135,7 @@ public class TodoService {
         }
         TodoItem todoItem = todoList.getTodoItems().stream().max(Comparator.comparing(TodoItem::getItemOrder))
                            .orElseThrow(() ->
-                                   new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
+                                    new TodoItemNotFoundException("Cannot find higestOrderTodoItem by given todoList: " + todoList));
         return todoItem.getItemOrder();
     }
 
@@ -206,7 +208,7 @@ public class TodoService {
                 .split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
         List<UserEntity> userEntityList = userRepository.findByIdIn(idList)
                 .orElseThrow(() -> new UserNotFoundException("cannot find user by id in " + idList));
-        return userEntityList.stream().map(userEntity -> userMapper.mapEntityToAssignedPeopleDto(userEntity)).collect(Collectors.toList());
+        return userEntityList.stream().map(userMapper::mapEntityToAssignedPeopleDto).collect(Collectors.toList());
     }
 
     private List<TodoItem> findTodoItemByGivenMoveItems(List<TodoItemMoveDto> moveItems) {
@@ -239,7 +241,7 @@ public class TodoService {
 
         log.info(todoLists.toString());
         todoListRepository.saveAll(todoLists);
-        return todoLists.stream().map(todoList -> todoList.getId()).collect(Collectors.toList());
+        return todoLists.stream().map(TodoList::getId).collect(Collectors.toList());
     }
 
     private List<TodoItem> updateTodoItems(List<TodoItem> todoItems, List<TodoItemMoveDto> moveItems, TodoList todoList) {
@@ -249,6 +251,7 @@ public class TodoService {
         moveItems.stream().forEach(moveItem -> {
             TodoItem todoItem = todoItemsMap.get(moveItem.getTodoItemId());
             todoItem.setTodoList(todoList);
+            todoItem.setPendingId(todoList.getId());
             todoItem.setItemOrder(itemOrderRef.get());
             int order = itemOrderRef.get();
             itemOrderRef.set(--order);
