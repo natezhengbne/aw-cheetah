@@ -1,11 +1,11 @@
 ALTER TABLE "todo_item" ADD "item_order" BIGINT;
 
-update "todo_item"
-set "item_order" = "todo_item".id;
+UPDATE "todo_item"
+SET "item_order" = "todo_item".id;
 
 ALTER TABLE "todo_list" ADD "list_order" BIGINT;
 
-update "todo_list"
-set "list_order" = "todo_list".id;
+UPDATE "todo_list"
+SET "list_order" = "todo_list".id;
 
 
