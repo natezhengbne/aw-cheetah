@@ -23,7 +23,6 @@ import com.asyncworking.repositories.TodoListRepository;
 import com.asyncworking.repositories.UserRepository;
 import com.asyncworking.utility.mapper.TodoMapper;
 import com.asyncworking.utility.mapper.UserMapper;
-import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -118,12 +117,9 @@ public class TodoService {
     public Boolean changeTodoItemCompleted(Long companyId, Long projectId, Long id, boolean completed) {
         TodoItem todoItem = findTodoItemByCompanyIdAndProjectIdAndId(companyId, projectId, id);
         Project project = findProjectByCompanyIdAndProjectId(companyId, projectId);
-        TodoList todoList;
-        if (completed){
-            todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, project.getDoneListId());
-        } else {
-            todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, todoItem.getPendingId());
-        }
+        long destinationListId = completed ? project.getDoneListId() : todoItem.getPendingId();
+        TodoList todoList = findTodoListByCompanyIdAndProjectIdAndId(companyId, projectId, destinationListId);
+
         todoItem.setTodoList(todoList);
         log.info("todoItem origin completed status: " + todoItem.getCompleted());
         todoItem.setCompleted(completed);
